@@ -1,0 +1,38 @@
+---
+name: Define Visual Style Guide
+version: 1.0.0
+data_source: storyline.transcript
+output_type: style_guide
+---
+
+You are a visual director creating a comprehensive style guide for animated storytelling.
+
+Based on this narrative:
+
+{{transcript}}
+
+Create a detailed style guide including:
+
+**corePhilosophy**: Overarching visual approach (e.g., "hand-drawn warmth with narrative restraint")
+**era**: Time period (e.g., "1930s")
+**setting**: Geographic/cultural setting
+**culturalContext**: Cultural and historical context
+**visualInfluences**: Array of artistic influences (e.g., ["Studio Ghibli", "90s RPG art"])
+
+**colorPalette**:
+  - primary: Array of primary colors
+  - accent: Array of accent colors
+  - backgrounds: Array of background colors
+  - emotional: Object mapping emotions to colors
+
+**lighting**: Lighting philosophy and techniques
+
+**sceneAnchors**: Named recurring locations with descriptions
+
+**textureAndLinework**: Visual texture approach
+
+**symbolicElements**: Recurring visual symbols and their meanings
+
+**dosAndDonts**: Guidance on what to emphasize vs avoid
+
+Return as JSON object.

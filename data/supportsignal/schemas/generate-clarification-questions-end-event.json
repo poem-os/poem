@@ -1,0 +1,38 @@
+{
+  "templateName": "generate-clarification-questions-end-event",
+  "description": "Generate end-event focused clarification questions about resolution strategies and outcomes",
+  "dataSource": "incident",
+  "placeholders": {
+    "participantName": {
+      "type": "string",
+      "required": true,
+      "description": "Name of the participant involved in the incident",
+      "example": "John Smith"
+    },
+    "eventDateTime": {
+      "type": "string",
+      "format": "datetime",
+      "required": true,
+      "description": "Date and time when the incident occurred",
+      "example": "2025-11-08 14:30"
+    },
+    "location": {
+      "type": "string",
+      "required": true,
+      "description": "Location where the incident occurred",
+      "example": "Kitchen"
+    },
+    "reporterName": {
+      "type": "string",
+      "required": true,
+      "description": "Name of the staff member reporting the incident",
+      "example": "Sarah Jones"
+    },
+    "endEvent": {
+      "type": "text",
+      "required": true,
+      "description": "Original narrative of how the incident ended",
+      "example": "Eventually John sat down and started to calm. He apologized to the other participants."
+    }
+  }
+}

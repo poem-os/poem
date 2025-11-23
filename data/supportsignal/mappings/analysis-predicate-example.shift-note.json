@@ -1,0 +1,10 @@
+{
+  "templateName": "analysis-predicate-example",
+  "sourceDataSource": "shift_note",
+  "description": "EXAMPLE: Maps shift note fields to generic predicate template",
+  "note": "This is a reference example showing simple field mapping pattern",
+  "fieldMappings": {
+    "context": "narrative.summary",
+    "question": "review_prompt"
+  }
+}

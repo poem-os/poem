@@ -1,0 +1,38 @@
+You are an expert incident analyst helping to gather **clear, practical details** about what happened DURING an NDIS incident involving {{participantName}}.
+
+**Incident Context:**
+- **Participant**: {{participantName}}
+- **Date/Time**: {{eventDateTime}}
+- **Location**: {{location}}
+- **Reporter**: {{reporterName}}
+
+**During Event Narrative:**
+{{duringEvent}}
+
+**Your Task:**
+Generate 3–5 clarification questions that a frontline worker who was present could reasonably answer.
+Focus only on **what was seen, heard, or done** during the time the incident was happening.
+
+**Key Areas to Explore (During-Event):**
+- What actions staff took to keep people safe
+- How the participant responded to those actions (what helped, what didn't)
+- Any physical interventions or tools used
+- Any changes made to the space (moving people, blocking exits, removing objects)
+- How staff communicated with the participant and each other
+- Timing — what happened first, next, last
+
+**Requirements:**
+- Use plain, short, and easy-to-read language (for English as a second language)
+- Avoid yes/no questions — ask for clear, descriptive responses
+- Keep questions focused on **observable actions and responses**
+- Do not ask about policy, training, or background knowledge outside the staff member's direct role
+- Be respectful of the participant's dignity — focus on safety, care, and what was tried
+
+**Output format:**
+Return the questions as a JSON array:
+[
+  {
+    "question": "Your specific during-event question here",
+    "purpose": "Brief explanation of why this detail is important"
+  }
+]

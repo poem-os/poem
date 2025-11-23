@@ -1,0 +1,25 @@
+{
+  "templateName": "analysis-predicate-example",
+  "description": "Binary yes/no decision based on context - determining if specific criteria are met",
+  "dataSource": "flexible",
+  "outputType": "predicate",
+  "useCase": "Determining if an incident meets specific criteria (e.g., 'Is this a critical safety incident?', 'Does this require immediate reporting?')",
+  "placeholders": {
+    "context": {
+      "type": "text",
+      "required": true,
+      "description": "The contextual information needed to make the decision",
+      "example": "An incident occurred where a participant fell from a chair and sustained a minor bruise on their arm. Staff provided first aid immediately."
+    },
+    "question": {
+      "type": "string",
+      "required": true,
+      "description": "The yes/no question to be answered",
+      "example": "Is this a reportable incident under NDIS guidelines?"
+    }
+  },
+  "outputFormat": "Yes/No with brief justification",
+  "recommendedModel": "openai/gpt-4o-mini",
+  "maxTokens": 150,
+  "temperature": 0.3
+}

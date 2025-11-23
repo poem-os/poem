@@ -133,7 +133,42 @@ sections:
 
   - id: technical-considerations
     title: Technical Considerations
-    instruction: Document known technical constraints and preferences. Note these are initial thoughts, not final decisions.
+    instruction: |
+      Document known technical constraints and preferences. Note these are initial thoughts, not final decisions.
+
+      **IMPORTANT - For Framework/OS Projects (like BMAD, POEM):**
+      If this is a framework, OS, or agent-based system (rather than traditional application), focus on:
+
+      **Framework Components** (95% of the system):
+      - Document structure: Agents, workflows, templates, skills, knowledge base
+      - Installation model: How core files get distributed to user projects
+      - User workspace: Directory structure and file organization
+      - Abstraction layers: Provider patterns, interfaces (NOT specific implementations)
+
+      **Runtime Tool Component** (5% of the system - if applicable):
+      - Local services: Internal web servers, APIs, tooling (NOT public-facing apps)
+      - Template engines: Compilation, helper loading, rendering
+      - Web UI: Internal tools (like admin dashboards), NOT marketing sites
+      - API endpoints: For agents and skills to interact with
+
+      **Installation & Deployment**:
+      - Development: Monorepo structure with packages
+      - User installation: NPX-based or similar (copy files to user's project)
+      - Multi-project support: How multiple installations coexist (ports, isolation)
+
+      **What NOT to include for Framework/OS projects**:
+      - Specific external system implementations (these are user-created)
+      - Traditional databases (frameworks use file-based: YAML, JSON, Markdown)
+      - Cloud hosting (frameworks are local-only, like BMAD)
+      - Full CI/CD pipelines (YAGNI for MVP)
+
+      **Key Distinction**: Most development = writing documents/prompts/workflows.
+      Only small runtime components require traditional coding.
+
+      ---
+
+      **For Traditional Applications:**
+      Document standard technical considerations (platforms, stack, architecture, infrastructure).
     sections:
       - id: platform-requirements
         title: Platform Requirements

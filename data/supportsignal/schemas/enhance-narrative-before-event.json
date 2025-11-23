@@ -1,0 +1,53 @@
+{
+  "templateName": "enhance-narrative-before-event",
+  "description": "Enhance before-event narrative - focus on environmental setup and participant state",
+  "dataSource": "incident",
+  "placeholders": {
+    "participantName": {
+      "type": "string",
+      "required": true,
+      "description": "Name of the participant involved in the incident",
+      "example": "John Smith"
+    },
+    "eventDateTime": {
+      "type": "string",
+      "format": "datetime",
+      "required": true,
+      "description": "Date and time when the incident occurred",
+      "example": "2025-11-08 14:30"
+    },
+    "location": {
+      "type": "string",
+      "required": true,
+      "description": "Location where the incident occurred",
+      "example": "Kitchen"
+    },
+    "reporterName": {
+      "type": "string",
+      "required": true,
+      "description": "Name of the staff member reporting the incident",
+      "example": "Sarah Jones"
+    },
+    "beforeEvent": {
+      "type": "text",
+      "required": true,
+      "description": "Original narrative of what happened before the incident",
+      "example": "John was in the day room watching TV. He seemed quiet and was sitting alone."
+    },
+    "beforeEventQA": {
+      "type": "array",
+      "items": {
+        "question": "string",
+        "answer": "string"
+      },
+      "required": true,
+      "description": "Clarification questions and answers for the before-event phase",
+      "example": [
+        {
+          "question": "How did John seem when you first saw him?",
+          "answer": "He looked tired and wasn't talking to anyone"
+        }
+      ]
+    }
+  }
+}

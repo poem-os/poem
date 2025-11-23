@@ -1,0 +1,682 @@
+{
+  "schemaVersion": "2.0.0",
+  "metadata": {
+    "title": "The Boy and the Baker by vOz",
+    "projectName": "boy-baker",
+    "totalBeats": 64,
+    "generatedAt": "2025-10-07T13:19:35.125Z",
+    "generationTechnique": "animated-image",
+    "totalVisualConcepts": 16,
+    "totalImageVariations": 68,
+    "totalAnimations": 68,
+    "totalWords": 631,
+    "totalDuration": 298.84,
+    "whisperModel": "medium",
+    "dataSize": 474351,
+    "lastModified": "2025-11-04T00:00:00.000Z",
+    "projectPath": "/Users/davidcruwys/dev/clients/voz/projects/boy-baker",
+    "hasImages": false,
+    "errors": 0,
+    "migrationNotes": "V2 schema migration in progress: Beats 1-11 complete (17.2%). Beat-driven structure with cast list, machine-readable style guide, director-driven visual concept breakdown, and attribute inheritance."
+  },
+  "cast": [
+    {
+      "key": "baker",
+      "name": "The Baker",
+      "age": "60-63",
+      "role": "Mentor and moral anchor",
+      "emotionalCore": "Compassionate, principled, humble",
+      "firstAppearance": 1,
+      "visualProfile": {
+        "build": "Sturdy frame, gently weathered",
+        "clothing": "Earth-tone shirt, rolled sleeves, cream flour-dusted apron, simple leather shoes",
+        "colorSignature": [
+          "warm ochre",
+          "dusty brown",
+          "cream",
+          "burnt orange"
+        ],
+        "restrictions": [
+          "NEVER depicted with a hat"
+        ],
+        "bodyLanguage": "Deliberate, still, strong hands; speaks little but listens deeply",
+        "symbolism": "Bread as sacrament; represents sanctuary, process, care"
+      },
+      "characterArc": "Largely constant — a fixed light in the boy's shifting world"
+    },
+    {
+      "key": "boy",
+      "name": "The Boy",
+      "age": "10-12",
+      "role": "Catalyst for the emotional arc",
+      "emotionalCore": "Vulnerable but quietly resilient",
+      "firstAppearance": 1,
+      "visualProfile": {
+        "build": "Underweight, small-framed",
+        "clothing": "Oversized dusty blue shirt, worn shoes, later flour-dusted apron",
+        "colorSignature": [
+          "dusty blue",
+          "faded sage",
+          "soft cream (later)"
+        ],
+        "bodyLanguage": "Guarded early on, softens gradually",
+        "symbolism": "Sparrow-like — small, unnoticed, capable of rising"
+      },
+      "characterArc": "Slouched and hollow early → stands straighter after bakery scenes → composed but worn in final scenes"
+    },
+    {
+      "key": "gang",
+      "name": "The Gang",
+      "age": "Older children/teens",
+      "role": "Antagonists representing cruelty",
+      "emotionalCore": "Aggressive, cruel",
+      "firstAppearance": 1,
+      "visualProfile": {
+        "build": "Varied, physically imposing to the boy",
+        "clothing": "Period-appropriate street clothes",
+        "colorSignature": [
+          "darker tones",
+          "muted colors"
+        ],
+        "bodyLanguage": "Threatening, aggressive postures"
+      },
+      "characterArc": "Appear early, flee when confronted by authority"
+    }
+  ],
+  "styleGuide": {
+    "corePhilosophy": "Hand-drawn warmth with narrative restraint. Emotional but grounded, metaphorical without fantasy excess.",
+    "era": "1930s",
+    "setting": "Fictional French village",
+    "culturalContext": "Time of hardship and quiet resilience; baker possibly Greek-French heritage",
+    "visualInfluences": [
+      "Studio Ghibli",
+      "90s RPG storybook art",
+      "European illustrated books"
+    ],
+    "colorPalette": {
+      "primary": [
+        "soft browns",
+        "warm earth tones",
+        "dusty oranges",
+        "muted greens",
+        "sky blues"
+      ],
+      "accents": [
+        "brick red",
+        "faded yellow",
+        "charcoal gray"
+      ]
+    },
+    "textureAndLinework": {
+      "texture": "Visible hand-drawn texture or watercolor grain",
+      "lines": "Clean but not vector-perfect",
+      "depth": "Layered depth using subtle outlines + color blending",
+      "aesthetic": "Painterly, never plastic",
+      "consistency": "Unified semi-anime, painterly aesthetic across all elements"
+    },
+    "lighting": {
+      "warm": "Golden light for bakery and safe spaces",
+      "cool": "Cooler tones in courtroom and jail scenes",
+      "transformative": "Amber or radiant glow in transformation/final moments",
+      "particles": "Dust and particles catch sunlight indoors",
+      "shadows": "Soft-edged, deep but gentle"
+    },
+    "sceneAnchors": [
+      {
+        "key": "dusty-street-corner",
+        "name": "Dusty Street Corner",
+        "description": "Transitional village edge, signs of wear, low sun",
+        "location": "Village edge"
+      },
+      {
+        "key": "bakery-interior",
+        "name": "Bakery Interior",
+        "description": "Soft light, wooden textures, flour-dusted surfaces, aroma-rich air",
+        "location": "Always on corner between main road and alley"
+      },
+      {
+        "key": "back-alley",
+        "name": "Back Alley",
+        "description": "Quiet, shadowed, partially hidden from street",
+        "location": "Behind bakery"
+      },
+      {
+        "key": "village-center",
+        "name": "Village Center",
+        "description": "Loose square of buildings, background activity",
+        "location": "Central gathering area"
+      },
+      {
+        "key": "countryside-road",
+        "name": "Countryside Road",
+        "description": "Winding path, fences, trees, journey energy",
+        "location": "Outside village"
+      },
+      {
+        "key": "riverbank",
+        "name": "Riverbank",
+        "description": "Still water, tall grass, moment of reflection",
+        "location": "Near village"
+      },
+      {
+        "key": "hill-overlook",
+        "name": "Hill Overlook",
+        "description": "Viewpoint for transformation or closure",
+        "location": "Above village"
+      },
+      {
+        "key": "courtroom",
+        "name": "Courtroom",
+        "description": "Village hall-style space, rustic wood and stone",
+        "location": "Village hall"
+      },
+      {
+        "key": "jail-cell",
+        "name": "Jail Cell",
+        "description": "Sparse, cold stone, barred light, emotional weight",
+        "location": "Village detention"
+      }
+    ],
+    "symbolicElements": [
+      {
+        "element": "sparrow",
+        "meaning": "Compassionate intelligence, gentle presence, unseen guardianship",
+        "appearancesInBeats": [
+          1,
+          10,
+          12
+        ],
+        "notes": "Symbolic, never intervening"
+      }
+    ],
+    "dosAndDonts": {
+      "do": [
+        "Use soft, earthy palettes",
+        "Layer clutter and asymmetry",
+        "Embrace painterly softness",
+        "Express emotion through posture",
+        "Use nature as a framing device"
+      ],
+      "dont": [
+        "Use saturated neons or synthetic blues",
+        "Frame with sterile, symmetrical layouts",
+        "Use hyper-real rendering or 3D plasticity",
+        "Use deadpan or generic T-poses",
+        "Use sterile backdrops or minimalist voids"
+      ]
+    }
+  },
+  "contextDocuments": [
+    {
+      "type": "styleguide",
+      "reference": "data/styleguide.md",
+      "summary": "1930s French village, Studio Ghibli watercolor style, warm earth tones"
+    }
+  ],
+  "chapterStyleOverrides": [],
+  "beats": [
+    {
+      "id": 1,
+      "timing": {
+        "start": "00:05.56",
+        "end": "00:13.36",
+        "duration": 7800,
+        "startSeconds": 5.56,
+        "endSeconds": 13.36
+      },
+      "narrative": {
+        "text": "An elderly baker walking to his shop sees a boy being bullied and beaten by a gang of older children.",
+        "speaker": "narrator"
+      },
+      "beatLevelDefaults": {
+        "sceneAnchor": "dusty-street-corner",
+        "ambiance": "Warm morning sun, long angled shadows",
+        "timeOfDay": "Early morning"
+      },
+      "visualConcepts": [
+        {
+          "conceptNumber": 1,
+          "description": "Baker walks toward shop, morning stillness",
+          "shotType": "wide",
+          "cameraAngle": "eye-level",
+          "mood": "warm, peaceful",
+          "characters": [
+            "baker"
+          ],
+          "attributeOverrides": {},
+          "purpose": "Establish the peaceful morning routine before disruption",
+          "duration": "2-3 seconds"
+        },
+        {
+          "conceptNumber": 2,
+          "description": "Baker pauses, sees violence down the street",
+          "shotType": "ots",
+          "cameraAngle": "eye-level",
+          "mood": "concerned, alert",
+          "characters": [
+            "baker",
+            "boy",
+            "gang"
+          ],
+          "attributeOverrides": {
+            "ambiance": "Tension builds, shadows lengthen"
+          },
+          "purpose": "Show the moment Baker becomes aware of the bullying",
+          "duration": "2-3 seconds"
+        },
+        {
+          "conceptNumber": 3,
+          "description": "Gang surrounds and beats the boy",
+          "shotType": "close",
+          "cameraAngle": "low",
+          "mood": "chaotic, violent, dark",
+          "characters": [
+            "boy",
+            "gang"
+          ],
+          "attributeOverrides": {
+            "sceneAnchor": "back-alley",
+            "ambiance": "Harsh shadows, dust kicked up"
+          },
+          "purpose": "Reveal the brutal reality of what Baker witnesses",
+          "duration": "3-4 seconds"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "timing": {
+        "start": "00:14.42",
+        "end": "00:16.94",
+        "duration": 2520,
+        "startSeconds": 14.42,
+        "endSeconds": 16.94
+      },
+      "narrative": {
+        "text": "He shouts and the children run off.",
+        "speaker": "narrator"
+      },
+      "beatLevelDefaults": {
+        "sceneAnchor": "dusty-street-corner",
+        "ambiance": "Golden light cuts into alley shadows",
+        "timeOfDay": "Early morning"
+      },
+      "visualConcepts": [
+        {
+          "conceptNumber": 1,
+          "description": "Baker shouts, gang flees",
+          "shotType": "medium",
+          "cameraAngle": "eye-level",
+          "mood": "urgent, defensive, resolute",
+          "characters": [
+            "baker",
+            "gang",
+            "boy"
+          ],
+          "attributeOverrides": {},
+          "purpose": "Show Baker's intervention causing immediate retreat",
+          "duration": "2.5 seconds"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "timing": {
+        "start": "00:17.78",
+        "end": "00:20.72",
+        "duration": 2940,
+        "startSeconds": 17.78,
+        "endSeconds": 20.72
+      },
+      "narrative": {
+        "text": "He goes to the boy who is bruised and shaken.",
+        "speaker": "narrator"
+      },
+      "beatLevelDefaults": {
+        "sceneAnchor": "dusty-street-corner",
+        "ambiance": "Sunlight slicing through haze, sense of sudden calm",
+        "timeOfDay": "Early morning"
+      },
+      "visualConcepts": [
+        {
+          "conceptNumber": 1,
+          "description": "Baker approaches injured boy",
+          "shotType": "medium",
+          "cameraAngle": "eye-level",
+          "mood": "concerned, gentle, protective",
+          "characters": [
+            "baker",
+            "boy"
+          ],
+          "attributeOverrides": {},
+          "purpose": "Show Baker's compassionate response to the boy's injuries",
+          "duration": "2.9 seconds"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "timing": {
+        "start": "00:21.60",
+        "end": "00:25.62",
+        "duration": 4020,
+        "startSeconds": 21.6,
+        "endSeconds": 25.62
+      },
+      "narrative": {
+        "text": "The baker puts his arm around him and brings him into his shop.",
+        "speaker": "narrator"
+      },
+      "beatLevelDefaults": {
+        "sceneAnchor": "dusty-street-corner",
+        "ambiance": "Warm light returns, tender atmosphere",
+        "timeOfDay": "Early morning"
+      },
+      "visualConcepts": [
+        {
+          "conceptNumber": 1,
+          "description": "Baker comforts injured boy",
+          "shotType": "medium",
+          "cameraAngle": "eye-level",
+          "mood": "warm, compassionate, gentle",
+          "characters": [
+            "baker",
+            "boy"
+          ],
+          "attributeOverrides": {},
+          "purpose": "Show Baker's protective care, establishing their connection",
+          "duration": "2 seconds"
+        },
+        {
+          "conceptNumber": 2,
+          "description": "Baker guides boy toward bakery",
+          "shotType": "medium",
+          "cameraAngle": "eye-level",
+          "mood": "warm, safe, protective",
+          "characters": [
+            "baker",
+            "boy"
+          ],
+          "attributeOverrides": {
+            "sceneAnchor": "bakery-interior",
+            "ambiance": "Threshold between street and sanctuary, soft bakery light ahead"
+          },
+          "purpose": "Transition from street danger to bakery safety",
+          "duration": "2 seconds"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "timing": {
+        "start": "00:27.14",
+        "end": "00:29.60",
+        "duration": 2460,
+        "startSeconds": 27.14,
+        "endSeconds": 29.6
+      },
+      "narrative": {
+        "text": "Once inside he asks the boy,",
+        "speaker": "narrator"
+      },
+      "beatLevelDefaults": {
+        "sceneAnchor": "bakery-interior",
+        "ambiance": "Amber light from windows, flour dust catching beams",
+        "timeOfDay": "Early morning"
+      },
+      "visualConcepts": [
+        {
+          "conceptNumber": 1,
+          "description": "Baker asks the boy",
+          "shotType": "medium",
+          "cameraAngle": "eye-level",
+          "mood": "gentle, questioning, caring",
+          "characters": [
+            "baker",
+            "boy"
+          ],
+          "attributeOverrides": {},
+          "purpose": "Setup for dialogue, Baker seeking to understand boy's situation",
+          "duration": "2.5 seconds"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "timing": {
+        "start": "00:30.40",
+        "end": "00:31.42",
+        "duration": 1020,
+        "startSeconds": 30.4,
+        "endSeconds": 31.42
+      },
+      "narrative": {
+        "text": "Where are your parents?",
+        "speaker": "baker"
+      },
+      "beatLevelDefaults": {
+        "sceneAnchor": "bakery-interior",
+        "ambiance": "Warm amber light, safe but serious atmosphere",
+        "timeOfDay": "Early morning"
+      },
+      "visualConcepts": [
+        {
+          "conceptNumber": 1,
+          "description": "Baker asks difficult question",
+          "shotType": "ots",
+          "cameraAngle": "eye-level",
+          "mood": "gentle but serious, questioning, vulnerable",
+          "characters": [
+            "baker",
+            "boy"
+          ],
+          "attributeOverrides": {},
+          "purpose": "Capture boy's emotional reaction to the baker's difficult question about his parents",
+          "duration": "1 second"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "timing": {
+        "start": "00:32.78",
+        "end": "00:34.40",
+        "duration": 1620,
+        "startSeconds": 32.78,
+        "endSeconds": 34.4
+      },
+      "narrative": {
+        "text": "The boy meekly replies,",
+        "speaker": "narrator"
+      },
+      "beatLevelDefaults": {
+        "sceneAnchor": "bakery-interior",
+        "ambiance": "Golden light softens sadness, intimate atmosphere",
+        "timeOfDay": "Early morning"
+      },
+      "visualConcepts": [
+        {
+          "conceptNumber": 1,
+          "description": "Boy prepares to respond, vulnerable and alone",
+          "shotType": "close",
+          "cameraAngle": "eye-level",
+          "mood": "sad, vulnerable, isolated, meek",
+          "characters": [
+            "boy"
+          ],
+          "attributeOverrides": {},
+          "purpose": "Focus entirely on boy's emotional state - downcast eyes, bruised face, preparing to admit he's alone",
+          "duration": "1.6 seconds"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "timing": {
+        "start": "00:35.40",
+        "end": "00:38.18",
+        "duration": 2780,
+        "startSeconds": 35.4,
+        "endSeconds": 38.18
+      },
+      "narrative": {
+        "text": "I have no parents. I'm all alone.",
+        "speaker": "narrator"
+      },
+      "beatLevelDefaults": {
+        "sceneAnchor": "bakery-interior",
+        "ambiance": "Still warmth, introspective quiet",
+        "timeOfDay": "Early morning"
+      },
+      "visualConcepts": [
+        {
+          "conceptNumber": 1,
+          "description": "Boy confesses he's alone, baker responds with quiet empathy",
+          "shotType": "medium",
+          "cameraAngle": "eye-level",
+          "mood": "sorrowful, tender, empathetic, defeated",
+          "characters": [
+            "baker",
+            "boy"
+          ],
+          "attributeOverrides": {},
+          "purpose": "Capture the emotional exchange - boy's painful admission and baker's compassionate response",
+          "duration": "2.8 seconds"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "timing": {
+        "start": "00:39.86",
+        "end": "00:42.98",
+        "duration": 3120,
+        "startSeconds": 39.86,
+        "endSeconds": 42.98
+      },
+      "narrative": {
+        "text": "The baker sees a lost look in the boy's eyes.",
+        "speaker": "narrator"
+      },
+      "beatLevelDefaults": {
+        "sceneAnchor": "bakery-interior",
+        "ambiance": "Warm light fades, introspective moment",
+        "timeOfDay": "Early morning"
+      },
+      "visualConcepts": [
+        {
+          "conceptNumber": 1,
+          "description": "Baker observes the depth of the boy's loss",
+          "shotType": "close",
+          "cameraAngle": "eye-level",
+          "mood": "empathetic, sorrowful, realizing",
+          "characters": [
+            "baker",
+            "boy"
+          ],
+          "attributeOverrides": {},
+          "purpose": "Baker perceives the boy's traumatic past in his eyes",
+          "duration": "1.5 seconds"
+        },
+        {
+          "conceptNumber": 2,
+          "description": "Symbolic montage of abandoned children in the streets",
+          "shotType": "wide",
+          "cameraAngle": "eye-level",
+          "mood": "desolate, muted, symbolic",
+          "characters": [],
+          "attributeOverrides": {
+            "sceneAnchor": "village-center",
+            "ambiance": "Cooler muted tones, gray-blue light with distant warm glow"
+          },
+          "purpose": "Visual metaphor for what the baker sees in the boy's eyes - the broader tragedy of abandoned children",
+          "duration": "1.6 seconds"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "timing": {
+        "start": "00:43.72",
+        "end": "00:49.62",
+        "duration": 5900,
+        "startSeconds": 43.72,
+        "endSeconds": 49.62
+      },
+      "narrative": {
+        "text": "He understands the boy is one of many countless children who are abandoned and alone,",
+        "speaker": "narrator"
+      },
+      "beatLevelDefaults": {
+        "sceneAnchor": "bakery-interior",
+        "ambiance": "Golden amber light returns, hopeful atmosphere",
+        "timeOfDay": "Early morning"
+      },
+      "visualConcepts": [
+        {
+          "conceptNumber": 1,
+          "description": "Baker processes the broader tragedy, compassion deepens",
+          "shotType": "medium",
+          "cameraAngle": "eye-level",
+          "mood": "contemplative, compassionate, resolute",
+          "characters": [
+            "baker",
+            "boy"
+          ],
+          "attributeOverrides": {},
+          "purpose": "Baker's internal realization - this boy represents countless abandoned children",
+          "duration": "3 seconds"
+        },
+        {
+          "conceptNumber": 2,
+          "description": "Baker extends hand in offer, boy softens and begins to trust",
+          "shotType": "close",
+          "cameraAngle": "eye-level",
+          "mood": "hopeful, tender, tentative",
+          "characters": [
+            "baker",
+            "boy"
+          ],
+          "attributeOverrides": {},
+          "purpose": "Physical gesture of help - baker's hand extended, boy's hesitant response, trust forming",
+          "duration": "2.9 seconds"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "timing": {
+        "start": "00:50.40",
+        "end": "00:53.30",
+        "duration": 2900,
+        "startSeconds": 50.4,
+        "endSeconds": 53.3
+      },
+      "narrative": {
+        "text": "left to live on the streets fending for themselves.",
+        "speaker": "narrator"
+      },
+      "beatLevelDefaults": {
+        "sceneAnchor": "bakery-interior",
+        "ambiance": "Golden light persists, but weight of tragedy lingers in the air",
+        "timeOfDay": "Early morning"
+      },
+      "visualConcepts": [
+        {
+          "conceptNumber": 1,
+          "description": "Boy's hesitant response to baker's extended hand, trust tentatively forming",
+          "shotType": "close",
+          "cameraAngle": "eye-level",
+          "mood": "vulnerable, tentative, beginning of acceptance",
+          "characters": [
+            "baker",
+            "boy"
+          ],
+          "attributeOverrides": {},
+          "purpose": "Boy responds to baker's offer - the moment connection solidifies despite the harsh reality narration describes",
+          "duration": "2.9 seconds"
+        }
+      ]
+    }
+  ]
+}

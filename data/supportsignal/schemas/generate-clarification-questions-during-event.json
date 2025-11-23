@@ -1,0 +1,38 @@
+{
+  "templateName": "generate-clarification-questions-during-event",
+  "description": "Generate during-event focused clarification questions about interventions and safety measures",
+  "dataSource": "incident",
+  "placeholders": {
+    "participantName": {
+      "type": "string",
+      "required": true,
+      "description": "Name of the participant involved in the incident",
+      "example": "John Smith"
+    },
+    "eventDateTime": {
+      "type": "string",
+      "format": "datetime",
+      "required": true,
+      "description": "Date and time when the incident occurred",
+      "example": "2025-11-08 14:30"
+    },
+    "location": {
+      "type": "string",
+      "required": true,
+      "description": "Location where the incident occurred",
+      "example": "Kitchen"
+    },
+    "reporterName": {
+      "type": "string",
+      "required": true,
+      "description": "Name of the staff member reporting the incident",
+      "example": "Sarah Jones"
+    },
+    "duringEvent": {
+      "type": "text",
+      "required": true,
+      "description": "Original narrative of what happened during the incident",
+      "example": "John started yelling and threw a chair. I asked him to calm down but he continued."
+    }
+  }
+}

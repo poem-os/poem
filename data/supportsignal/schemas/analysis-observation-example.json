@@ -1,0 +1,25 @@
+{
+  "templateName": "analysis-observation-example",
+  "description": "Generate brief, actionable insights from data - providing descriptive observations",
+  "dataSource": "flexible",
+  "outputType": "observation",
+  "useCase": "Generating brief insights from incident data (e.g., identifying patterns, suggesting improvements, highlighting trends)",
+  "placeholders": {
+    "data": {
+      "type": "text",
+      "required": true,
+      "description": "The data to analyze and provide insight about",
+      "example": "Over the past month, 5 incidents occurred in the kitchen during meal preparation times, all involving different participants."
+    },
+    "focus_area": {
+      "type": "string",
+      "required": true,
+      "description": "The specific area or angle to focus the observation on",
+      "example": "Environmental factors and possible preventive measures"
+    }
+  },
+  "outputFormat": "Brief observation (1-2 sentences)",
+  "recommendedModel": "openai/gpt-5",
+  "maxTokens": 150,
+  "temperature": 0.3
+}

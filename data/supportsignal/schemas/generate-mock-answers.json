@@ -1,0 +1,52 @@
+{
+  "templateName": "generate-mock-answers",
+  "description": "Generate realistic mock answers for clarification questions about an NDIS incident report",
+  "dataSource": "incident",
+  "placeholders": {
+    "participant_name": {
+      "type": "string",
+      "required": true,
+      "description": "Name of the participant involved in the incident",
+      "example": "John Smith"
+    },
+    "reporter_name": {
+      "type": "string",
+      "required": true,
+      "description": "Name of the staff member reporting the incident",
+      "example": "Sarah Jones"
+    },
+    "location": {
+      "type": "string",
+      "required": true,
+      "description": "Location where the incident occurred",
+      "example": "Kitchen"
+    },
+    "phase": {
+      "type": "string",
+      "required": true,
+      "description": "Phase of the incident (before, during, end, or post)",
+      "example": "before"
+    },
+    "phase_narrative": {
+      "type": "text",
+      "required": true,
+      "description": "The narrative text for the specified phase",
+      "example": "John was in the day room watching TV. He seemed quiet and was sitting alone."
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "question_id": "string",
+        "question": "string"
+      },
+      "required": true,
+      "description": "List of clarification questions to generate answers for",
+      "example": [
+        {
+          "question_id": "q1",
+          "question": "How did John seem when you first saw him?"
+        }
+      ]
+    }
+  }
+}

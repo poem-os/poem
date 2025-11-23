@@ -1,0 +1,105 @@
+{
+  "mappingName": "Transcript to Storyline Transformation",
+  "version": "1.0.0",
+  "description": "Multi-step transformation from simple transcript to rich storyline structure",
+  "inputDataSource": "storyline.transcript",
+  "outputDataSource": "storyline.complete",
+  "transformationPipeline": [
+    {
+      "step": 1,
+      "name": "Extract Characters",
+      "prompt": "extract-characters.hbs",
+      "input": {
+        "transcript": "source/transcript.txt"
+      },
+      "output": {
+        "field": "cast",
+        "type": "array",
+        "schema": "character-schema.json"
+      }
+    },
+    {
+      "step": 2,
+      "name": "Define Visual Style",
+      "prompt": "define-visual-style.hbs",
+      "input": {
+        "transcript": "source/transcript.txt"
+      },
+      "output": {
+        "field": "styleGuide",
+        "type": "object",
+        "schema": "style-guide-schema.json"
+      }
+    },
+    {
+      "step": 3,
+      "name": "Break Into Beats",
+      "prompt": "break-into-beats.hbs",
+      "input": {
+        "transcript": "source/transcript.txt",
+        "timing_data": "source/timestamps.txt"
+      },
+      "output": {
+        "field": "beats[].narrative",
+        "type": "array",
+        "schema": "beat-schema.json"
+      }
+    },
+    {
+      "step": 4,
+      "name": "Generate Visual Concepts",
+      "prompt": "generate-visual-concepts.hbs",
+      "input": {
+        "beat_narrative": "beats[current].narrative.text",
+        "beat_duration": "beats[current].timing.duration",
+        "scene_anchor": "beats[current].beatLevelDefaults.sceneAnchor",
+        "ambiance": "beats[current].beatLevelDefaults.ambiance",
+        "characters": "cast",
+        "style_guide": "styleGuide"
+      },
+      "output": {
+        "field": "beats[current].visualConcepts",
+        "type": "array",
+        "schema": "visual-concept-schema.json"
+      },
+      "note": "This step runs for EACH beat, using context from previous steps"
+    }
+  ],
+  "fieldMappings": {
+    "input": {
+      "transcript": {
+        "source": "transcript.txt",
+        "type": "text",
+        "size": "~3,250 characters"
+      }
+    },
+    "output": {
+      "metadata.totalBeats": {
+        "derivedFrom": "count(beats)",
+        "example": 64
+      },
+      "metadata.totalVisualConcepts": {
+        "derivedFrom": "count(beats[].visualConcepts[])",
+        "example": 68
+      },
+      "cast[].key": {
+        "generatedBy": "extract-characters prompt",
+        "example": "baker"
+      },
+      "beats[].timing": {
+        "sourceData": "timestamps.txt",
+        "processedBy": "break-into-beats prompt"
+      },
+      "beats[].visualConcepts[]": {
+        "generatedBy": "generate-visual-concepts prompt (per beat)",
+        "contextDependent": true
+      }
+    }
+  },
+  "notes": [
+    "This is a MULTI-STEP transformation requiring sequential prompt execution",
+    "Later steps depend on outputs from earlier steps (e.g., visual concepts need cast + styleGuide)",
+    "Input: 631 words → Output: 21KB structured data",
+    "Transformation ratio: ~33x size expansion with semantic enrichment"
+  ]
+}

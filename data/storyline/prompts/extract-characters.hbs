@@ -1,0 +1,28 @@
+---
+name: Extract Characters from Narrative
+version: 1.0.0
+data_source: storyline.transcript
+output_type: cast_list
+---
+
+You are an expert character analyst for visual storytelling.
+
+Read the following narrative and extract all characters:
+
+{{transcript}}
+
+For each character, provide:
+- **key**: Short identifier (e.g., "baker", "boy", "gang")
+- **name**: Full character name or role
+- **age**: Age or age range
+- **role**: Narrative function (protagonist, antagonist, mentor, etc.)
+- **emotionalCore**: Primary emotional qualities
+- **visualProfile**:
+  - build: Physical build/appearance
+  - clothing: Typical clothing description
+  - colorSignature: Array of colors associated with character
+  - bodyLanguage: Typical postures and movements
+  - symbolism: What the character represents thematically
+- **characterArc**: How the character changes through the story
+
+Return as JSON array of character objects.

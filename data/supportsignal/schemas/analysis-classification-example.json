@@ -1,0 +1,25 @@
+{
+  "templateName": "analysis-classification-example",
+  "description": "Classify input into predefined categories - assigning data to specific groups",
+  "dataSource": "flexible",
+  "outputType": "classification",
+  "useCase": "Categorizing incidents by type (e.g., 'Physical Injury', 'Property Damage', 'Near Miss', 'Behavioral Event')",
+  "placeholders": {
+    "categories": {
+      "type": "string",
+      "required": true,
+      "description": "Comma-separated list of valid categories",
+      "example": "Physical Injury, Property Damage, Near Miss, Behavioral Event"
+    },
+    "input": {
+      "type": "text",
+      "required": true,
+      "description": "The text to be classified",
+      "example": "A participant became agitated during lunch and threw a plate, breaking it on the floor. No one was injured."
+    }
+  },
+  "outputFormat": "Category name only",
+  "recommendedModel": "openai/gpt-4o-mini",
+  "maxTokens": 150,
+  "temperature": 0.3
+}

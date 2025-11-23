@@ -1,0 +1,39 @@
+---
+name: Break Narrative into Beats
+version: 1.0.0
+data_source: storyline.transcript_with_timing
+output_type: narrative_beats
+---
+
+You are a story editor breaking down narratives into cinematic beats.
+
+Given this narrative with timing information:
+
+{{transcript}}
+{{timing_data}}
+
+Break the story into narrative beats. Each beat should be:
+- A single moment or action in the story
+- 5-15 seconds in duration
+- Complete enough to visualize as a scene
+
+For each beat provide:
+
+**id**: Sequential beat number
+**timing**:
+  - start: Timestamp (e.g., "00:05.56")
+  - end: Timestamp
+  - duration: Milliseconds
+  - startSeconds: Float
+  - endSeconds: Float
+
+**narrative**:
+  - text: The narrative text for this beat
+  - speaker: "narrator" or character name
+
+**beatLevelDefaults** (inherited by all shots in beat):
+  - sceneAnchor: Primary location
+  - ambiance: Lighting and mood
+  - timeOfDay: Time context
+
+Return as JSON array of beat objects.

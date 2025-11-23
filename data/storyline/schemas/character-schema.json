@@ -1,0 +1,81 @@
+{
+  "templateName": "extract-characters",
+  "dataSource": "storyline.transcript",
+  "outputType": "cast_list",
+  "description": "Schema for character extraction from narrative",
+  "outputSchema": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "required": ["key", "name", "role", "emotionalCore", "firstAppearance", "visualProfile"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Short identifier for character",
+          "example": "baker"
+        },
+        "name": {
+          "type": "string",
+          "description": "Character name or role title",
+          "example": "The Baker"
+        },
+        "age": {
+          "type": "string",
+          "description": "Age or age range",
+          "example": "60-63"
+        },
+        "role": {
+          "type": "string",
+          "description": "Narrative function",
+          "example": "Mentor and moral anchor"
+        },
+        "emotionalCore": {
+          "type": "string",
+          "description": "Primary emotional qualities",
+          "example": "Compassionate, principled, humble"
+        },
+        "firstAppearance": {
+          "type": "number",
+          "description": "Beat number where character first appears",
+          "example": 1
+        },
+        "visualProfile": {
+          "type": "object",
+          "required": ["build", "clothing", "colorSignature"],
+          "properties": {
+            "build": {
+              "type": "string",
+              "description": "Physical build and appearance"
+            },
+            "clothing": {
+              "type": "string",
+              "description": "Typical clothing description"
+            },
+            "colorSignature": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "Colors associated with character"
+            },
+            "restrictions": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "Visual restrictions (e.g., 'NEVER depicted with a hat')"
+            },
+            "bodyLanguage": {
+              "type": "string",
+              "description": "Typical postures and movements"
+            },
+            "symbolism": {
+              "type": "string",
+              "description": "What the character represents thematically"
+            }
+          }
+        },
+        "characterArc": {
+          "type": "string",
+          "description": "How character changes through story"
+        }
+      }
+    }
+  }
+}

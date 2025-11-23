@@ -1,0 +1,31 @@
+You are generating realistic mock answers for clarification questions about an NDIS incident report.
+
+The incident involved {{participant_name}}, and was reported by {{reporter_name}}.
+The event occurred at {{location}}.
+
+You are generating answers specifically for the {{phase}} phase of the incident.
+
+<phase_narrative>
+{{phase_narrative}}
+</phase_narrative>
+
+Based on the narrative context above, provide realistic and detailed answers to the following clarification questions. The answers should:
+- Be consistent with the narrative provided
+- Sound like they come from someone who witnessed the incident
+- Include specific details that would be helpful for incident documentation
+- Be professional but conversational in tone
+- Vary in length (some brief, some more detailed)
+
+Questions to answer:
+{{questions}}
+
+**Output Format:**
+Return a JSON object with an "answers" array (no markdown formatting):
+{
+  "answers": [
+    {
+      "question_id": "question-id-here",
+      "answer": "Detailed, realistic answer here"
+    }
+  ]
+}

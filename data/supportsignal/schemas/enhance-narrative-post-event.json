@@ -1,0 +1,53 @@
+{
+  "templateName": "enhance-narrative-post-event",
+  "description": "Enhance post-event narrative - focus on follow-up care, support modifications, and lessons learned",
+  "dataSource": "incident",
+  "placeholders": {
+    "participantName": {
+      "type": "string",
+      "required": true,
+      "description": "Name of the participant involved in the incident",
+      "example": "John Smith"
+    },
+    "eventDateTime": {
+      "type": "string",
+      "format": "datetime",
+      "required": true,
+      "description": "Date and time when the incident occurred",
+      "example": "2025-11-08 14:30"
+    },
+    "location": {
+      "type": "string",
+      "required": true,
+      "description": "Location where the incident occurred",
+      "example": "Kitchen"
+    },
+    "reporterName": {
+      "type": "string",
+      "required": true,
+      "description": "Name of the staff member reporting the incident",
+      "example": "Sarah Jones"
+    },
+    "postEvent": {
+      "type": "text",
+      "required": true,
+      "description": "Original narrative of what happened after the incident",
+      "example": "John went to his room to rest. I checked on him every 30 minutes and he seemed okay."
+    },
+    "postEventQA": {
+      "type": "array",
+      "items": {
+        "question": "string",
+        "answer": "string"
+      },
+      "required": true,
+      "description": "Clarification questions and answers for the post-event phase",
+      "example": [
+        {
+          "question": "Did you notify anyone about the incident?",
+          "answer": "Yes, I called his family and filled out the incident report"
+        }
+      ]
+    }
+  }
+}
