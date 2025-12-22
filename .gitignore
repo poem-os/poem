@@ -37,3 +37,4 @@ Thumbs.db
 
 # Project-specific
 data/                   # Example data (may contain proprietary info)
+tmp/                    # Temporary/scratch files
