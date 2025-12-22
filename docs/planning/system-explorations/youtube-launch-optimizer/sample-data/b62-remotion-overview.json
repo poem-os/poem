@@ -1,0 +1,517 @@
+{
+  "workflow": "youtube_launch_optimizer",
+  "section": "Social Media Posts",
+  "step": "Add To Video List",
+  "attributes": {
+    "gpt_links": {
+      "name": "gpt_links",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Gpt Links",
+      "value": "https://chatgpt.com/g/g-p-675cc0f39fdc81918b8aafa02baae707-ad-videos/c/68a40e94-07ec-832c-9742-4dacbaaead0d"
+    },
+    "gpt_links2": {
+      "name": "gpt_links2",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Gpt Links2"
+    },
+    "project_code": {
+      "name": "project_code",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Project Code",
+      "value": "b62"
+    },
+    "project_folder": {
+      "name": "project_folder",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Project Folder",
+      "value": "remotion-overview"
+    },
+    "short_title": {
+      "name": "short_title",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Short Title",
+      "value": "Remotion Example Animated Videos"
+    },
+    "transcript": {
+      "name": "transcript",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Transcript",
+      "value": "Are you interested in YouTube automation? Maybe what you want to do is automate an  infographic. It could be a top ten AI products. Or maybe you want to do a Twitter  card automation. Or maybe you want to automate the outro. This is something I did  as a proof of concept in a loom for a client recently, and I thought I'd showcase  exactly how you can do that using simple tools like Claude Code and Remotion. In  this case, I'm AppyDave, let's get into it Okay, this video is to showcase how you can automate video creation of things like  these tables. And it comes because this table showed up on the AI-TLDR channel.  you can see the little animation of tools appearing. It's very much based off a social  media graphic that you see all the time, the top 10 XYZs,  and they all show up. And you notice that there's a little bit of image misalignment  going on, and it's because of the nature of how these slides were created in Canva.  So what happened was at different times, slides were duplicated, more information  was happening, and somewhere it shifted a little bit to the left. We can also see  some misalignment in these two bars. So this is actually quite time consuming to  do in Canva. And it's not the prettiest. It's pretty good. It's is like it is Canva.  You can do some pretty good stuff, but what if we could take that to a much greater  level? And that's what I wanna show with Remotion.  So here we have Remotion. It looks like a video editor, a timeline video editor,  and it looks like that 'cause it is. But what makes it very different to any video  editor you've ever seen is that it's a programming language based video editor. So  everything that we see here is just little micro applications that have been,  built. And they've got things like color controls that we can do and we can play  around with different settings. We could change the text, which I've already done  once and we'll just change that.  Hello from David. So this little hello world application,  came with the Remotion studio, but I built a bunch of other graphics. So I think  the first one we're gonna look at is the top 10 reveal. So if we come back over to  the video that we're seeing here from AI-TLDR, this is a top 10 AI tools,  reveal where we've got categories down the left and we've got AI tools down the right.  So what I ended up doing  was going into ChatGPT and describing different,  micro apps that I wanted to create. One of them is  the O one top 10 reveal.  And we can see the,  requirements docs here.  We can change information, stuff like that. And through a little bit of extra prompt  magic, I went in and turned it into a complex structure for video animations within  this Remotion Hello world. And so let's go and actually have a look at  the top 10 AI reveal tools for 2025. And we've got number four, number five, number  six. And these are all coming through in red. That is actually changeable. If we  wanted, we can go with that, but we'll leave it at red because number one, two, and  three are all now about to pop in. And the good thing about this animation is I could  go and click the render button down in the bottom right and turn this into a video.  Now that's one sort of animation, but I saw another variation of a animation online  that I thought I wanted to do for myself. So what I did is I just went over to my  GitHub username. It's got some 88,  code repositories in this.  I wanna see this information in an animation. Now, as I was building it, I did misalign  the names a little bit.  so we are going to see this in the tweet type on is where we're going to see the  GitHub repository. So here it's coming through. Let's just change the size of it  so it's a little bit more readable and we'll get rid of the property grid over on  the right. And what we are now seeing is an animation around my guitar programming  repository. We can put my name in there, the name of the repository. We've got the  pinned repositories all just typing across as we go and we can see the contributions.  And all of this was done in a one shot prompt. So then let's look at the next one  I did, which was really a tweet like what happens if we, and that's  when we click on this particular thing, we've got an animated Twitter post. So we  see AppyDave AppyDave just shipped a new feature, sometimes the smallest optimizations.  And we've got all this information coming through. Now all the data is all configurable,  as you can see over here on the right in the property grid. And all of it was generated  in one shot prompt based on  a little prompt structure that I put together for Remotion.  Now for the last one, I wanted to,  look into an idea that I've had on my channel a  year and a half ago, and it was animated YouTube outros. Now it doesn't look like  what I want, but most of the information is there. So what we're seeing at the moment  is the sort of thing that I kind of say at the end of a YouTube video. Usually I  say,  I'll do a little bit of a recap. I'll talk about what the next video is. I'll ask  for a like and subscribe.  I'll  maybe suggest people,  comment down below and tell 'em what's coming up next. So here it is AppyDave, we've  got the number of subscribers. Here are three videos that you might find interesting.  Please like and subscribe and I'll see you in the next video. And then the next video  can pop up like this and that could be what it is. And I could also tell people about  the chapter codes. So all of this animation, again, was a one shot prompt.  and it built it all. Now it's just a case of tweaking it to make it look pretty.  So this is using prompt engineering, Claude code and promotion to generate any sort  of animation that you want, where you're doing infographics and information like  that. So let's just recap. What we did was created these four video infographic animations.  the first one was the top 10 reveal, which was the sort of showcase of maybe 10,  different products that you wanna see on a video. Then I took one of my GitHub profiles  and we animated it. We also took a tweet and animated that.  I took care of the outro of a YouTube video where we talk about the next video, the  like, of the subscribe, and the please comment down below. Now, the visuals in all  of this were a bit low quality 'cause of the Loom video, but if you wanna see more  videos on Remotion, the next video is actually going to be how I built each of those,  I'mAppyDave. Please like and subscribe. I'll see you in the next video"
+    },
+    "transcript_abridgement": {
+      "name": "transcript_abridgement",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Transcript Abridgement",
+      "value": "I’m AppyDave, and in this video I show how to automate video creation using Claude Code and Remotion. I first tried this as a proof-of-concept in a Loom for a client, showing how things like infographics, Twitter cards, or even YouTube outros can be automated.  Canva can do decent graphics, but it’s time-consuming and prone to errors like duplicated slides, shifting alignments, and misaligned bars. Remotion takes this to another level—it’s a programming-language-based video editor where animations are built as configurable micro-apps.  Using one-shot prompts, I created four examples:  Top 10 Reveal – an animated list of AI tools, inspired by social media “top 10” graphics.  GitHub Profile Animation – visualizing repositories and contributions.  Animated Tweet – a live-style Twitter post, with fully configurable data.  YouTube Outro – recap, next video, like/subscribe, comments, subscriber count, suggested videos, and chapter codes."
+    },
+    "transcript_abridgement_descrepencies": {
+      "name": "transcript_abridgement_descrepencies",
+      "type": "array",
+      "is_array": false,
+      "description": null,
+      "title": "Transcript Abridgement Descrepencies"
+    },
+    "transcript_intro": {
+      "name": "transcript_intro",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Transcript Intro",
+      "value": "Are you interested in YouTube automation? Maybe what you want to do is automate an  infographic. It could be a top ten AI products. Or maybe you want to do a Twitter  card automation. Or maybe you want to automate the outro. This is something I did  as a proof of concept in a loom for a client recently, and I thought I'd showcase  exactly how you can do that using simple tools like Claude Code and Remotion."
+    },
+    "transcript_outro": {
+      "name": "transcript_outro",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Transcript Outro",
+      "value": "So let's just recap. What we did was created these four video infographic animations.  the first one was the top 10 reveal, which was the sort of showcase of maybe 10,  different products that you wanna see on a video. Then I took one of my GitHub profiles  and we animated it. We also took a tweet and animated that.  I took care of the outro of a YouTube video where we talk about the next video, the  like, of the subscribe, and the please comment down below. Now, the visuals in all  of this were a bit low quality 'cause of the Loom video, but if you wanna see more  videos on Remotion, the next video is actually going to be how I built each of those,  I'mAppyDave. Please like and subscribe. I'll see you in the next video"
+    },
+    "transcript_hook": {
+      "name": "transcript_hook",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Transcript Hook"
+    },
+    "transcript_recap": {
+      "name": "transcript_recap",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Transcript Recap"
+    },
+    "video_editor_instructions": {
+      "name": "video_editor_instructions",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Video Editor Instructions"
+    },
+    "intro_outro_design_ideas": {
+      "name": "intro_outro_design_ideas",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Intro Outro Design Ideas"
+    },
+    "design_style": {
+      "name": "design_style",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Design Style",
+      "value": "Minimal Flat Design: Clean, pastel-colored visuals with flat vector shapes representing simplified infographics and automated content generation."
+    },
+    "design_ideas": {
+      "name": "design_ideas",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Design Ideas"
+    },
+    "editor_brief": {
+      "name": "editor_brief",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Editor Brief"
+    },
+    "srt": {
+      "name": "srt",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Srt"
+    },
+    "analyze_cta_competitors": {
+      "name": "analyze_cta_competitors",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Analyze Cta Competitors"
+    },
+    "video_title": {
+      "name": "video_title",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Video Title",
+      "value": "Stop Using Canva! Create Animated Videos with Remotion & Claude"
+    },
+    "video_link": {
+      "name": "video_link",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Video Link",
+      "value": "https://youtu.be/_nJcQdDHtyg"
+    },
+    "video_link_playlist": {
+      "name": "video_link_playlist",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Video Link Playlist",
+      "value": "list=PLx0FU01Q5blyN8hoB4JFo4hHBeBpXNIbH"
+    },
+    "video_topic_theme": {
+      "name": "video_topic_theme",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Video Topic Theme",
+      "value": "Automating video creation with Claude Code and Remotion through one-shot prompts and programmable micro-app animations."
+    },
+    "video_related_links": {
+      "name": "video_related_links",
+      "type": "array",
+      "is_array": false,
+      "description": null,
+      "title": "Video Related Links",
+      "value": "Vibe Code a Multi‑App UI Shell with Just 2 AI Prompts [2025] https://www.youtube.com/watch?v=MLkhK39jyRU&list=PLx0FU01Q5blxTmki_sgTrDTz53KwOTBNV  Simplify UX Design: AI-Powered Prompting for Single Apps https://youtu.be/mWw0ltHV2x4&list=PLx0FU01Q5blyN8hoB4JFo4hHBeBpXNIbH"
+    },
+    "video_keywords": {
+      "name": "video_keywords",
+      "type": "array",
+      "is_array": false,
+      "description": null,
+      "title": "Video Keywords",
+      "value": "AppyDave Claude Code Remotion video automation infographics Twitter cards YouTube outros programming-language-based video editor micro-apps one-shot prompts Top 10 Reveal GitHub profile animation Animated Tweet YouTube Outro animation"
+    },
+    "important_statistics": {
+      "name": "important_statistics",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Important Statistics",
+      "value": "Four examples (Top 10 Reveal, GitHub Profile, Animated Tweet, YouTube Outro)"
+    },
+    "video_description": {
+      "name": "video_description",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Video Description",
+      "value": "Discover how video automation with ClaudeCode and Remotion can transform your workflow 🚀 Learn how one-shot prompts and micro-apps replace time-consuming design struggles. Watch automation in action and see what’s possible.   Coffe Me Up: https://buymeacoffee.com/appydave    ---  Discover how AppyDave uses ClaudeCode and Remotion to transform video automation into a faster, smarter process. Instead of struggling with Canva misalignments and repetitive edits, this walkthrough shows how a programming-language-based video editor powered by micro-apps and one-shot prompts can create polished animations in minutes. Watch as infographics, Twitter cards, and YouTube outros come to life with practical examples, including a Top 10 Reveal, GitHub profile animation, Animated Tweet, and YouTube Outro animation. This approach highlights the power of combining ClaudeCode with Remotion to build dynamic, customizable videos that elevate your content creation workflow.    ---  Chapters:   0:00 Automating Video Infographics   1:12 The Problem with Canva   2:30 What Makes Remotion Different   4:05 Creating a Top 10 Animation   6:15 Animating GitHub Repositories   8:00 Building a Tweet Animation   9:45 Designing YouTube Outros   11:20 Recap and Closing Thoughts    ---  Related Videos:   Vibe Code a Multi-App UI Shell with Just 2 AI Prompts [2025] https://www.youtube.com/watch?v=MLkhK39jyRU&list=PLx0FU01Q5blxTmki_sgTrDTz53KwOTBNV   Simplify UX Design: AI-Powered Prompting for Single Apps https://youtu.be/mWw0ltHV2x4&list=PLx0FU01Q5blyN8hoB4JFo4hHBeBpXNIbH    ---  Access Benefits: https://www.appydave.com/opt-in    Affiliate Links:   Buy Me a Coffee: https://buymeacoffee.com/appydave   DZine: https://www.dzine.ai/?via=aitldr   Digital Ocean: https://m.do.co/c/77d8793060cf   ECamm Live: https://www.ecamm.com/mac/ecammlive/?fp_ref=appydave   PickAxe: https://pickaxe.co/?utm_campaign=AFFILIATE_ENX4MQ1   Gling.AI: https://gling.ai/?via=appydave   Digital Stage Summit: https://www.takeonetech.io/a/2147948540/PrfAQcmG   Kajabi: https://app.kajabi.com/r/jMLhRhFi   ElevenLabs: https://try.elevenlabs.io/zh43n4omex1o    ---  Connect with AppyDave 🌐   Website: https://appydave.com   Twitter: https://twitter.com/appyDave   AI-TLDR Channel: https://youtube.com/@aitldr   AppyDave Channel: https://youtube.com/@appydave   Join the community: https://www.appydave.com/opt-in    ---  Thanks for watching 🙏 If you enjoyed this breakdown of ClaudeCode and Remotion, stay tuned for more tutorials, automation deep dives, and creative experiments that make AI tools practical for content creators.    #ClaudeCode #Remotion #VideoAutomation    ---  Disclosure: Some of the links above are affiliate links, which means I may earn a small commission if you choose to use them. This comes at no additional cost to you and helps support the channel.  "
+    },
+    "video_simple_description": {
+      "name": "video_simple_description",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Video Simple Description",
+      "value": "Discover how AppyDave uses ClaudeCode and Remotion to transform video automation into a faster, smarter process. Instead of struggling with Canva misalignments and repetitive edits, this walkthrough shows how a programming-language-based video editor powered by micro-apps and one-shot prompts can create polished animations in minutes. Watch as infographics, Twitter cards, and YouTube outros come to life with practical examples, including a Top 10 Reveal, GitHub profile animation, Animated Tweet, and YouTube Outro animation. This approach highlights the power of combining ClaudeCode with Remotion to build dynamic, customizable videos that elevate your content creation workflow."
+    },
+    "video_description_custom_gpt": {
+      "name": "video_description_custom_gpt",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Video Description Custom Gpt"
+    },
+    "video_pinned_comment": {
+      "name": "video_pinned_comment",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Video Pinned Comment"
+    },
+    "video_metadata": {
+      "name": "video_metadata",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Video Metadata"
+    },
+    "video_references": {
+      "name": "video_references",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Video References"
+    },
+    "key_takeaways": {
+      "name": "key_takeaways",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Key Takeaways"
+    },
+    "content_highlights": {
+      "name": "content_highlights",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Content Highlights",
+      "value": "- Canva is useful but prone to errors and inefficiencies for animation work.   - Remotion enables higher-level automation by treating animations as programmable micro-apps.   - One-shot prompts can generate complete video animations quickly.   - Demonstrated automation covers social-style infographics, developer profiles, live tweets, and YouTube outros.  "
+    },
+    "identify_chapters": {
+      "name": "identify_chapters",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Identify Chapters",
+      "value": "1. Introduction   \"Are you interested in YouTube automation? Maybe what you want to do is automate an infographic. It could be a top ten AI products. Or maybe you want to do a Twitter card automation. Or maybe you want to automate the outro. This is something I did as a proof of concept in a loom for a client recently, and I thought I'd showcase exactly how you can do that using simple tools like Claude Code and Remotion. In this case, I'm AppyDave, let's get into it\"  2. Canva Limitations   \"Okay, this video is to showcase how you can automate video creation of things like these tables. And it comes because this table showed up on the AI-TLDR channel. you can see the little animation of tools appearing. It's very much based off a social media graphic that you see all the time, the top 10 XYZs, and they all show up. And you notice that there's a little bit of image misalignment going on, and it's because of the nature of how these slides were created in Canva. So what happened was at different times, slides were duplicated, more information was happening, and somewhere it shifted a little bit to the left. We can also see some misalignment in these two bars. So this is actually quite time consuming to do in Canva. And it's not the prettiest. It's pretty good. It's is like it is Canva. You can do some pretty good stuff, but what if we could take that to a much greater level? And that's what I wanna show with Remotion.\"  3. Remotion Overview   \"So here we have Remotion. It looks like a video editor, a timeline video editor, and it looks like that 'cause it is. But what makes it very different to any video editor you've ever seen is that it's a programming language based video editor. So everything that we see here is just little micro applications that have been, built. And they've got things like color controls that we can do and we can play around with different settings. We could change the text, which I've already done once and we'll just change that. Hello from David. So this little hello world application, came with the Remotion studio, but I built a bunch of other graphics.\"  4. Top 10 Animation   \"So I think the first one we're gonna look at is the top 10 reveal. So if we come back over to the video that we're seeing here from AI-TLDR, this is a top 10 AI tools, reveal where we've got categories down the left and we've got AI tools down the right. So what I ended up doing was going into ChatGPT and describing different, micro apps that I wanted to create. One of them is the O one top 10 reveal. And we can see the, requirements docs here. We can change information, stuff like that. And through a little bit of extra prompt magic, I went in and turned it into a complex structure for video animations within this Remotion Hello world.\"  5. GitHub Animation   \"Now that's one sort of animation, but I saw another variation of a animation online that I thought I wanted to do for myself. So what I did is I just went over to my GitHub username. It's got some 88, code repositories in this. I wanna see this information in an animation. Now, as I was building it, I did misalign the names a little bit. so we are going to see this in the tweet type on is where we're going to see the GitHub repository. So here it's coming through. Let's just change the size of it so it's a little bit more readable and we'll get rid of the property grid over on the right. And what we are now seeing is an animation around my guitar programming repository.\"  6. Tweet Animation   \"So then let's look at the next one I did, which was really a tweet like what happens if we, and that's when we click on this particular thing, we've got an animated Twitter post. So we see AppyDave AppyDave just shipped a new feature, sometimes the smallest optimizations. And we've got all this information coming through. Now all the data is all configurable, as you can see over here on the right in the property grid. And all of it was generated in one shot prompt based on a little prompt structure that I put together for Remotion.\"  7. Outro Animation   \"Now for the last one, I wanted to, look into an idea that I've had on my channel a year and a half ago, and it was animated YouTube outros. Now it doesn't look like what I want, but most of the information is there. So what we're seeing at the moment is the sort of thing that I kind of say at the end of a YouTube video. Usually I say, I'll do a little bit of a recap. I'll talk about what the next video is. I'll ask for a like and subscribe. I'll maybe suggest people, comment down below and tell 'em what's coming up next. So here it is AppyDave, we've got the number of subscribers. Here are three videos that you might find interesting. Please like and subscribe and I'll see you in the next video.\"  8. Recap and Closing   \"So all of this animation, again, was a one shot prompt. and it built it all. Now it's just a case of tweaking it to make it look pretty. So this is using prompt engineering, Claude code and promotion to generate any sort of animation that you want, where you're doing infographics and information like that. So let's just recap. What we did was created these four video infographic animations. the first one was the top 10 reveal, which was the sort of showcase of maybe 10, different products that you wanna see on a video. Then I took one of my GitHub profiles and we animated it. We also took a tweet and animated that. I took care of the outro of a YouTube video where we talk about the next video, the like, of the subscribe, and the please comment down below. Now, the visuals in all of this were a bit low quality 'cause of the Loom video, but if you wanna see more videos on Remotion, the next video is actually going to be how I built each of those, I'mAppyDave. Please like and subscribe. I'll see you in the next video\""
+    },
+    "chapter_folder_names": {
+      "name": "chapter_folder_names",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Chapter Folder Names"
+    },
+    "chapters": {
+      "name": "chapters",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Chapters",
+      "value": "Chapters: Automating Video Infographics The Problem with Canva What Makes Remotion Different Creating a Top 10 Animation Animating GitHub Repositories Building a Tweet Animation Designing YouTube Outros Recap and Closing Thoughts"
+    },
+    "fold_cta": {
+      "name": "fold_cta",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Fold Cta",
+      "value": "Coffe Me Up: https://buymeacoffee.com/appydave"
+    },
+    "primary_cta": {
+      "name": "primary_cta",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Primary Cta",
+      "value": "Access Benefits: https://www.appydave.com/opt-in"
+    },
+    "affiliate_cta": {
+      "name": "affiliate_cta",
+      "type": "array",
+      "is_array": false,
+      "description": null,
+      "title": "Affiliate Cta",
+      "value": "Affiliate Links: - Buy Me a Coffee: https://buymeacoffee.com/appydave - DZine: https://www.dzine.ai/?via=aitldr - Digital Ocean: https://m.do.co/c/77d8793060cf - ECamm Live: https://www.ecamm.com/mac/ecammlive/?fp_ref=appydave - PickAxe: https://pickaxe.co/?utm_campaign=AFFILIATE_ENX4MQ1 - Gling.AI: https://gling.ai/?via=appydave - Digital Stage Summit: https://www.takeonetech.io/a/2147948540/PrfAQcmG - Kajabi: https://app.kajabi.com/r/jMLhRhFi - ElevenLabs: https://try.elevenlabs.io/zh43n4omex1o"
+    },
+    "future_video_cta": {
+      "name": "future_video_cta",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Future Video Cta"
+    },
+    "past_video_cta": {
+      "name": "past_video_cta",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Past Video Cta"
+    },
+    "brand_info": {
+      "name": "brand_info",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Brand Info",
+      "value": "- Name & Pseudonym: David (Pseudonym: AppyDave) - Profession: AI Strategist, Workflows & Agents for Content Creators - Brands & Focus:   - @AppyDave: Prompt Engineering, AI Workflows, AI Agents for YouTube & Content Creators.   - @AiTLDR: Experiments with YouTube Automation, AI tools, and faceless channel content creation.  Social: - Website: https://appydave.com - Twitter: https://twitter.com/appyDave  My Sites & Channels: - AI-TLDR: https://youtube.com/@aitldr - AppyDave: https://youtube.com/@appydave - Website: https://www.appydave.com/opt-in"
+    },
+    "title_ideas": {
+      "name": "title_ideas",
+      "type": "array",
+      "is_array": false,
+      "description": null,
+      "title": "Title Ideas",
+      "value": "- Automating Infographic Videos with Remotion   - Top 10 AI Tools Animation   - Prompt-Driven Video Automation   - Animate Tweets and GitHub Data   - Create YouTube Outros with Remotion   - Remotion for Social Media Graphics   - One-Shot Prompts for Video Animations   - From Canva to Code: Remotion   - Automating Video Creation with Claude   - Infographic Animations Made Easy  "
+    },
+    "thumbnail_text": {
+      "name": "thumbnail_text",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Thumbnail Text"
+    },
+    "thumbnail_text_csv": {
+      "name": "thumbnail_text_csv",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Thumbnail Text Csv"
+    },
+    "thumbnail_visual_elements": {
+      "name": "thumbnail_visual_elements",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Thumbnail Visual Elements"
+    },
+    "tweet_content": {
+      "name": "tweet_content",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Tweet Content"
+    },
+    "facebook_post": {
+      "name": "facebook_post",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Facebook Post"
+    },
+    "linkedin_post": {
+      "name": "linkedin_post",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Linkedin Post"
+    },
+    "shorts_context": {
+      "name": "shorts_context",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Shorts Context"
+    },
+    "shorts_title": {
+      "name": "shorts_title",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Shorts Title"
+    },
+    "shorts_description": {
+      "name": "shorts_description",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Shorts Description"
+    },
+    "outcome_notes": {
+      "name": "outcome_notes",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Outcome Notes"
+    },
+    "transcript_summary": {
+      "name": "transcript_summary",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Transcript Summary",
+      "value": "Here’s a condensed version of the transcript, keeping the core meaning and highlights intact:  ---  **Summary:** AppyDave demonstrates how to automate video creation using Claude Code and Remotion, a code-based video editor. Instead of relying on Canva, which can be time-consuming and misaligned, Remotion allows animations to be generated through prompts.  He showcases four proof-of-concepts built with one-shot prompts:  1. **Top 10 Reveal Animation** – lists AI tools with animated entries. 2. **GitHub Repository Animation** – visualizes repositories and contributions. 3. **Animated Tweet** – simulates a live Twitter post. 4. **YouTube Outro** – generates end-screen elements like subscriber counts and suggested videos.  These examples highlight how prompt engineering and Remotion can automate the creation of infographics and social media-style video animations, making the process faster, customizable, and more powerful than manual design tools.  ---  Do you want me to also **trim this even further** into a short *video description style summary* (2–3 sentences max)?"
+    },
+    "emotional_trigger_tone": {
+      "name": "emotional_trigger_tone",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Emotional Trigger Tone",
+      "value": "* Frustration with manual design (Canva misalignment/time sink)   - Taps into creators’ pain about tedious fixes and inconsistency, priming them to seek an automated alternative.  * Promise of efficiency and control (automation, one-shot prompts)   - Evokes relief and confidence—fewer steps, predictable results, faster turnaround.  * Credibility/Reassurance (client Loom proof-of-concept)   - Signals real-world validation, reducing perceived risk and increasing trust.  * Innovation/Empowerment (programming-language-based editor, micro‑apps)   - Inspires curiosity and a “power user” identity; appeals to builders who want extensibility.  * Social-media relevance (Top 10s, tweets, YouTube outros)   - Sparks resonance with common creator formats, increasing perceived applicability and immediate utility."
+    },
+    "overal_tone_style": {
+      "name": "overal_tone_style",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Overal Tone Style",
+      "value": "* Casual-professional, instructional, and solution-oriented. * Examples:   - “I show how to automate video creation…” (instructional, direct)   - “proof-of-concept in a Loom for a client” (practical, credible)   - “Remotion… programming-language-based video editor… configurable micro-apps” (technical but approachable)"
+    },
+    "audience_insights": {
+      "name": "audience_insights",
+      "type": "array",
+      "is_array": true,
+      "description": null,
+      "title": "Audience Insights",
+      "value": "* Content creators/YouTubers   - Mentions YouTube outros, subscriber counts, suggested videos; directly targets YouTube workflow.  * Social media marketers/indie makers   - References Twitter cards and “Top 10” graphics—common growth and engagement formats.  * Developers/AI-automation practitioners   - Tools: Claude Code + Remotion; “programming-language-based” and “micro-apps” indicate a builder-friendly stack.  * Freelancers/agencies/small teams   - “client” proof-of-concept suggests client-facing deliverables and repeatable workflows valued by service providers."
+    },
+    "usp": {
+      "name": "usp",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Usp",
+      "value": "* Programmable animations via micro-apps (Remotion)   - Fine-grained control and extensibility beyond template-driven tools.  * One-shot prompt generation   - Rapid creation of complete animations reduces setup time and cognitive load.  * Multi-format coverage in one workflow   - Handles Top 10 lists, GitHub profiles, tweets, and YouTube outros—broad utility across content types.  * Practical credibility (client Loom PoC)   - Demonstrates real-world effectiveness, not just theory.  * Clear upgrade over Canva for motion/consistency   - Addresses specific pain points (duplication, shifting alignment, misaligned bars) with a robust, code-first solution."
+    },
+    "cta_phrases": {
+      "name": "cta_phrases",
+      "type": "array",
+      "is_array": true,
+      "description": null,
+      "title": "Cta Phrases"
+    },
+    "catchy_phrases": {
+      "name": "catchy_phrases",
+      "type": "array",
+      "is_array": true,
+      "description": null,
+      "title": "Catchy Phrases",
+      "value": "automate video creation using Claude Code and Remotion proof-of-concept in a Loom for a client Remotion takes this to another level programming-language-based video editor configurable micro-apps one-shot prompts"
+    },
+    "questions_posed_or_answered": {
+      "name": "questions_posed_or_answered",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Questions Posed Or Answered"
+    },
+    "competitor_search_terms": {
+      "name": "competitor_search_terms",
+      "type": "array",
+      "is_array": true,
+      "description": null,
+      "title": "Competitor Search Terms",
+      "value": "Claude Code video automation Remotion video editor Remotion micro-apps automating infographics Twitter card automation YouTube outro automation Top 10 reveal animation GitHub profile animation one-shot prompt animations Canva animation limitations"
+    },
+    "thumbnail_image": {
+      "name": "thumbnail_image",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Thumbnail Image"
+    },
+    "short_transcription": {
+      "name": "short_transcription",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Short Transcription"
+    },
+    "shorts_video_link": {
+      "name": "shorts_video_link",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Shorts Video Link"
+    },
+    "shorts_video_keywords": {
+      "name": "shorts_video_keywords",
+      "type": "array",
+      "is_array": true,
+      "description": null,
+      "title": "Shorts Video Keywords"
+    },
+    "shorts_tweet": {
+      "name": "shorts_tweet",
+      "type": "string",
+      "is_array": false,
+      "description": null,
+      "title": "Shorts Tweet"
+    }
+  },
+  "timestamp": "2025-08-20T11:29:23.972Z"
+}

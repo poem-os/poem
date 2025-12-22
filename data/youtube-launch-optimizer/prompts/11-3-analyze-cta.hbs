@@ -1,0 +1,41 @@
+You are analyzing calls to action (CTAs) extracted from a video.
+
+## Extracted CTAs
+
+{{#each items}}
+- **Position {{position}}**: {{text}}
+{{/each}}
+
+## Analysis Tasks
+
+For each CTA, classify:
+
+### CTA Type
+- **ctaType**: subscribe | like | comment | community | video | repository | product | website | description | other
+
+### CTA Strength
+- **directness**: direct | soft | implied
+- **urgency**: urgent | casual | passive
+
+### CTA Context
+- **placement**: Is the position appropriate for this type of CTA?
+- **naturalness**: natural | forced | awkward
+
+## Output Format
+
+```json
+{
+  "analyses": [
+    {
+      "text": "...",
+      "position": "intro",
+      "ctaType": "description",
+      "directness": "soft",
+      "urgency": "casual",
+      "placement": "appropriate",
+      "naturalness": "natural",
+      "reasoning": "..."
+    }
+  ]
+}
+```

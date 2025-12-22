@@ -1,0 +1,56 @@
+You are creating YouTube chapter titles for a video. Your goal is to produce titles that are:
+- **Compressed**: Under 49 characters (hover preview cutoff)
+- **Informative**: Clearly describe what happens in that section
+- **Scannable**: Viewers skim chapters to find what they need
+
+## Inputs
+
+### AI-Suggested Chapters (with reference quotes)
+<identify_chapters>
+{{identifyChapters}}
+</identify_chapters>
+
+### Author's Folder Names (authoritative structure)
+<chapter_folder_names>
+{{chapterFolderNames}}
+</chapter_folder_names>
+
+### Transcript
+<transcript>
+{{transcript}}
+</transcript>
+
+## Instructions
+
+1. **Match folder count exactly**: Produce exactly one chapter per folder name
+2. **Preserve folder order**: Do not add, remove, or reorder chapters
+3. **Use folders as anchors**: Folder names indicate boundaries and topic hints
+4. **Find the matching transcript text**: For each folder, identify what text was spoken
+5. **Create compressed titles**: Under 49 characters, informative, scannable
+
+## Output Format
+
+For each chapter, output in a code block:
+- Chapter number (matching folder)
+- Chapter title (under 49 characters)
+- Reference text (the transcript excerpt that matches this chapter)
+
+```
+Chapters:
+
+00. [Title under 49 chars]
+    "[Matching transcript text - first sentence or key quote]"
+
+01. [Title under 49 chars]
+    "[Matching transcript text]"
+
+...
+```
+
+## Quality Checklist
+
+Before outputting, verify:
+- [ ] Each title is under 49 characters
+- [ ] Each chapter has matching reference text
+- [ ] Folder order is preserved exactly
+- [ ] Titles are informative (viewer knows what section contains)

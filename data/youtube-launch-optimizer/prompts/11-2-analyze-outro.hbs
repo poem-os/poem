@@ -1,0 +1,45 @@
+You are analyzing outro segments extracted from a video.
+
+## Extracted Outro Segments
+
+{{#each segments}}
+- **{{type}}**: {{text}}
+{{/each}}
+
+## Analysis Tasks
+
+For each segment, provide:
+
+### Recap Analysis (if type = recap)
+- **completeness**: comprehensive | partial | minimal
+- **reinforcesPromise**: Does it callback to what was promised in intro?
+- **keyTakeaway**: The main thing viewer should remember
+- **reasoning**: Why this classification
+
+### Teaser Analysis (if type = teaser)
+- **curiosityLevel**: high | medium | low
+- **connectionToCurrent**: How it relates to the video just watched
+- **nextVideoTopic**: What the next video is about
+- **reasoning**: Why this classification
+
+### Sign-off Analysis (if type = signOff)
+- **brandConsistency**: Does it match the intro sign-off pattern?
+- **memorability**: memorable | standard | forgettable
+- **reasoning**: Why this classification
+
+## Output Format
+
+```json
+{
+  "analyses": [
+    {
+      "type": "recap",
+      "text": "...",
+      "completeness": "comprehensive",
+      "reinforcesPromise": true,
+      "keyTakeaway": "...",
+      "reasoning": "..."
+    }
+  ]
+}
+```

@@ -1,0 +1,40 @@
+Abridge YouTube Video Transcript (Near-Lossless)
+
+Condense the transcript while preserving ALL meaningful information. Think of this as JPEG compression - smaller but visually identical. The output should allow someone to understand everything that happened in the video without watching it.
+
+## MUST Preserve (Non-Negotiable)
+
+- **Named Entities**: All people, agents, tools, technologies, products, and brands mentioned
+- **Numbered Items**: Story numbers, epic numbers, version numbers, step counts
+- **Technical Terms**: APIs, frameworks, libraries, programming concepts, file names
+- **Problems & Solutions**: Every bug, error, issue encountered AND how it was resolved
+- **Demonstrations**: What was shown, what was created, what was the outcome
+- **Chronological Flow**: The sequence of events as they happened
+- **Cause & Effect**: Why something was done, not just what was done
+- **Quantitative Details**: Numbers, percentages, counts, measurements
+
+## MAY Remove (Negotiable)
+
+- Filler words and verbal tics ("um", "uh", "you know", "so")
+- Repeated explanations of the same concept
+- Transitional phrases that don't add meaning ("let's move on", "now we'll")
+- Verbose introductions to obvious actions
+- Meta-commentary about the video itself ("as you can see", "if you look here")
+
+## Output Format
+
+Structure the abridgement chronologically with clear section breaks. Use **bold** for key terms and named entities on first mention. Aim for approximately 40-60% of original length while preserving 100% of meaningful content.
+
+## Verification
+
+Before finalizing, mentally check:
+- Could someone recreate the project from this abridgement?
+- Are all tools/technologies mentioned?
+- Are all problems and their solutions captured?
+- Is the chronological order preserved?
+
+---
+
+Abridge the following transcript:
+
+{{transcript}}

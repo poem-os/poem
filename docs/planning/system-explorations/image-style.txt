@@ -1,0 +1,24 @@
+image:
+Create a simple diagram or flowchart in the “Comic Panel Tech Flow” style.
+
+Aspect Ration: 16:9
+
+STYLE RULES (always apply):
+- Retro comic-book look with mid-century poster vibes
+- Heavy Brand Brown (#342d2d) outlines
+- Pop-art headings in Brand Yellow (#FFD43B)
+- Two-tone AppyDave branding where applicable
+- Blue Accent motion arrows with speed-line energy
+- Warm tan background with light halftone dots
+- Characters or icons with thick black line art
+- Minimal shading, flat retro color blocks
+- Dynamic comic panel framing for each major step
+- Occasional action bursts: “RENDER!”, “UNLOCK!”, “SYNC!”
+- Clean, readable typography:
+    * Bebas Neue → panel titles
+    * Oswald → speech bubbles or callouts
+    * Roboto → captions or labels
+
+CONTENT TO DRAW:
+
+

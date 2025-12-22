@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**POEM** (Prompt Orchestration and Engineering Method) is a Prompt Engineering Operating System designed to help teams create, manage, and deploy AI prompts with schemas, mappings, and mock data generation. This is a planning/pre-implementation repository using the **BMAD Method v4** for structured AI-driven development.
+**POEM** (Prompt Orchestration and Engineering Method) is a Prompt Engineering Operating System designed to help teams create, manage, and deploy AI prompts with schemas, mappings, and mock data generation. This project uses the **BMAD Method v4** for structured AI-driven development.
 
-**Current Status**: Planning phase complete, ready for BMAD implementation workflow.
+**Current Status**: PRD and Architecture complete. Ready for story creation and implementation.
 
 ## Understanding the BMAD Framework
 
@@ -65,11 +65,13 @@ Access BMAD agents and tasks via Claude Code slash commands:
 poem/
 ├── .bmad-core/                    # BMAD Method framework (v4.44.3)
 │   ├── agents/                    # 10 AI agent personas (sm, dev, qa, architect, etc.)
+│   ├── agent-teams/               # Team configurations
 │   ├── tasks/                     # 23 executable task workflows
 │   ├── templates/                 # YAML templates (PRD, architecture, stories, etc.)
 │   ├── workflows/                 # Greenfield/brownfield workflows
 │   ├── checklists/                # Quality checklists
 │   ├── data/                      # BMAD knowledge base, test frameworks
+│   ├── utils/                     # Utility scripts
 │   ├── core-config.yaml           # Project configuration
 │   ├── user-guide.md              # Complete BMAD methodology guide
 │   └── working-in-the-brownfield.md # Brownfield workflow guide
@@ -80,10 +82,35 @@ poem/
 │
 ├── docs/                          # Project documentation
 │   ├── index.md                   # Documentation navigation
-│   └── planning/                  # Pre-implementation planning (READ ONLY)
-│       ├── POEM.md                # ⭐ PRIMARY: Complete POEM requirements
+│   ├── brief.md                   # Project brief (34KB)
+│   ├── prd.md                     # ⭐ Consolidated PRD (48KB)
+│   ├── prd/                       # Sharded PRD documents
+│   │   ├── index.md               # PRD navigation
+│   │   ├── goals-and-background-context.md
+│   │   ├── requirements.md
+│   │   ├── epic-list.md
+│   │   ├── epic-details.md
+│   │   ├── technical-assumptions.md
+│   │   └── next-steps.md
+│   ├── architecture.md            # ⭐ Consolidated Architecture (86KB)
+│   ├── architecture/              # Sharded Architecture documents
+│   │   ├── index.md               # Architecture navigation
+│   │   ├── introduction.md
+│   │   ├── high-level-architecture.md
+│   │   ├── components.md
+│   │   ├── data-models.md
+│   │   ├── core-workflows.md
+│   │   ├── api-specification.md
+│   │   ├── tech-stack.md
+│   │   ├── coding-standards.md
+│   │   ├── testing-strategy.md
+│   │   ├── unified-project-structure.md
+│   │   ├── cicd-strategy.md
+│   │   └── next-steps.md
+│   └── planning/                  # Pre-implementation planning (historical)
+│       ├── POEM.md                # Original POEM requirements
 │       ├── README.md              # Planning navigation hub
-│       ├── system-explorations/   # Architecture ideas (NOT final specs)
+│       ├── system-explorations/   # Architecture ideas
 │       ├── decisions/             # Open questions and alternatives
 │       ├── exploration/           # Discovery journey
 │       └── reference/             # External knowledge (BMAD, SupportSignal)
@@ -91,35 +118,47 @@ poem/
 └── data/                          # Example data for development
     ├── supportsignal/             # SupportSignal schemas and mappings
     │   ├── schemas/               # JSON schemas (narrative enhancement, questions)
+    │   ├── prompts/               # Handlebars prompt templates
     │   └── mappings/              # Predicate-to-shift-note mappings
-    └── storyline/                 # Storyline app data
-        ├── schemas/               # Character, output schemas
-        ├── mappings/              # Transcript-to-storyline mappings
-        └── source/                # Source storyline data
+    ├── storyline/                 # Storyline app data
+    │   ├── schemas/               # Character, output schemas
+    │   ├── prompts/               # Handlebars prompt templates
+    │   ├── mappings/              # Transcript-to-storyline mappings
+    │   └── source/                # Source storyline data
+    └── youtube-launch-optimizer/  # YouTube workflow example (54 prompts)
+        ├── schemas/               # Workflow attribute schemas
+        ├── prompts/               # Comprehensive prompt library
+        └── brand-config.json      # Brand configuration
 ```
 
 ## Documentation Philosophy
 
-### Planning vs Implementation
+### Document Hierarchy
 
-**`docs/planning/` is planning exploration, NOT implementation specs**:
-- Contains pre-BMAD brainstorming and architectural ideas
-- Use for context and understanding, not as locked requirements
-- BMAD workflow will create actual implementation specs (PRD, Architecture, Stories)
+The project has completed PRD and Architecture phases. Documents are organized by purpose:
 
-**Start with**: `docs/planning/POEM.md` - Complete POEM overview and requirements
+**Implementation Specs** (use these for development):
+- `docs/prd.md` - Product requirements (consolidated)
+- `docs/architecture.md` - Technical architecture (consolidated)
+- `docs/architecture/` - Sharded architecture docs (coding standards, tech stack, etc.)
 
-**Don't treat as**: Final API docs, implementation specs, or locked decisions
+**Historical/Context** (reference only):
+- `docs/planning/` - Pre-BMAD brainstorming and exploration
+- `docs/brief.md` - Original project brief
+
+**Start with**: `docs/prd.md` for requirements, `docs/architecture.md` for technical design
 
 ### Key Documentation
 
 | Document | Purpose | When to Read |
 |----------|---------|--------------|
-| `docs/planning/POEM.md` | Complete POEM requirements and vision | ⭐ START HERE |
+| `docs/prd.md` | Complete product requirements | ⭐ START HERE for requirements |
+| `docs/architecture.md` | Complete technical architecture | ⭐ START HERE for technical design |
+| `docs/architecture/coding-standards.md` | Code style and conventions | Before writing code |
+| `docs/architecture/tech-stack.md` | Technology choices | Understanding stack |
 | `.bmad-core/user-guide.md` | BMAD methodology guide | Understanding workflow |
 | `.bmad-core/enhanced-ide-development-workflow.md` | Step-by-step dev process | During implementation |
-| `docs/planning/system-explorations/` | Architecture ideas | Planning context only |
-| `docs/planning/reference/` | External knowledge (BMAD, SupportSignal patterns) | Reference during work |
+| `docs/planning/POEM.md` | Original requirements exploration | Historical context |
 
 ## Development Commands
 
@@ -271,6 +310,12 @@ POEM (Prompt Orchestration and Engineering Method) is a system for:
 - Transcript-to-storyline transformations
 - Output format schemas
 
+**YouTube Launch Optimizer** (`data/youtube-launch-optimizer/`):
+- Comprehensive workflow with 54 prompt templates
+- Multi-phase video publishing pipeline (chapters, titles, descriptions, thumbnails)
+- Brand configuration system
+- Workflow attribute schemas
+
 ### POEM's Value Proposition
 
 **Key Features** (from planning):
@@ -284,10 +329,11 @@ POEM (Prompt Orchestration and Engineering Method) is a system for:
 
 ### Starting Development
 
-1. **Read primary requirements**: `docs/planning/POEM.md`
-2. **Understand BMAD workflow**: `.bmad-core/enhanced-ide-development-workflow.md`
-3. **Check existing stories**: `docs/stories/` (if any exist)
-4. **Load agent**: `/BMad/agents/sm` or `/BMad/agents/dev`
+1. **Read PRD**: `docs/prd.md` - Product requirements and epics
+2. **Read Architecture**: `docs/architecture.md` - Technical design and standards
+3. **Understand BMAD workflow**: `.bmad-core/enhanced-ide-development-workflow.md`
+4. **Check existing stories**: `docs/stories/` (if any exist)
+5. **Load agent**: `/BMad/agents/sm` or `/BMad/agents/dev`
 
 ### Creating a New Story
 
@@ -396,9 +442,10 @@ npx bmad-method install -f -i claude-code
 - YouTube: https://www.youtube.com/@BMadCode
 
 **POEM Project**:
-- Primary requirements: `docs/planning/POEM.md`
-- Planning navigation: `docs/planning/README.md`
-- Example data: `data/supportsignal/`, `data/storyline/`
+- Product requirements: `docs/prd.md`
+- Technical architecture: `docs/architecture.md`
+- Example data: `data/supportsignal/`, `data/storyline/`, `data/youtube-launch-optimizer/`
+- Historical planning: `docs/planning/`
 
 ## Quick Reference
 
@@ -419,12 +466,14 @@ npx bmad-method install -f -i claude-code
 - `*gate` - Gate decision
 
 **Document Locations**:
+- PRD: `docs/prd.md` (consolidated) or `docs/prd/` (sharded)
+- Architecture: `docs/architecture.md` (consolidated) or `docs/architecture/` (sharded)
 - Stories: `docs/stories/`
 - QA Assessments: `docs/qa/assessments/`
 - Quality Gates: `docs/qa/gates/`
-- Planning: `docs/planning/`
+- Planning (historical): `docs/planning/`
 - Example Data: `data/`
 
 ---
 
-**Last Updated**: 2025-11-22
+**Last Updated**: 2025-12-21

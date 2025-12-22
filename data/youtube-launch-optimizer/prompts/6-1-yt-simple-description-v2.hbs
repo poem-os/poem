@@ -1,0 +1,76 @@
+Write the core description for a YouTube video in two parts.
+
+## Purpose
+
+This creates the main text content for a YouTube description. Part 1 appears "above the fold" (visible before clicking "Show more"). Part 2 is the detailed description below.
+
+## Part 1: First Line (Above the Fold)
+
+**Constraints:**
+- ~40-50 words (must fit in ~150 characters visible on YouTube)
+- Front-load the primary keyword for SEO
+- End with the community CTA link
+- Single flowing sentence or two short sentences
+
+**Goal:** Hook the viewer AND give them a reason to click the community link.
+
+## Part 2: Simple Description (Below the Fold)
+
+**Constraints:**
+- 400-600 characters
+- Format: 2-3 sentences OR 1 sentence + 3-4 bullet points
+- Tone: Direct, informative, no hype
+- No fluff phrases like "In this video we will explore..."
+
+**Goal:** Tell viewers what they'll learn and who it's for.
+
+## Flow Requirement
+
+Part 1 should naturally lead into Part 2. They're written together as one cohesive piece - the first line hooks, the description delivers.
+
+## What NOT to Include
+
+- Video title (handled separately)
+- Chapters/timestamps (handled in 6-2)
+- Related videos (handled in 6-2)
+- Affiliate links (handled in 6-2)
+- Brand/social links (handled in 6-2)
+- Hashtags (handled in 6-2)
+- Emojis (added in 6-2 if desired)
+
+## Inputs
+
+**Video Title**:
+{{selectedTitles.[0]}}
+
+**Community CTA** (include this link at end of first line):
+{{foldCta.label}}: {{foldCta.url}}
+
+**Main Topic** (front-load this for SEO):
+{{analyzeContentEssence.mainTopic}}
+
+**Search Terms** (phrases people actually search - weave 2-3 in naturally):
+{{#each analyzeCtaCompetitors.searchTerms}}
+- {{this}}
+{{/each}}
+
+**Core Keywords** (technical terms to include where natural):
+{{#each analyzeContentEssence.keywords}}
+- {{this}}
+{{/each}}
+
+**Video Content Summary**:
+{{transcriptAbridgement_v2}}
+
+## Output Format
+
+Return JSON with two fields:
+
+```json
+{
+  "firstLine": "~40-50 words ending with community CTA link",
+  "simpleDescription": "400-600 character detailed description"
+}
+```
+
+Return ONLY the JSON. No explanation, no markdown wrapper.

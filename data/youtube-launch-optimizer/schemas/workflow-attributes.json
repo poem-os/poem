@@ -1,0 +1,287 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "YouTube Launch Optimizer Workflow Attributes",
+  "description": "All attributes collected throughout the YouTube video launch optimization workflow. These attributes accumulate as data flows through the production line (sections/steps).",
+  "type": "object",
+  "properties": {
+    "gptLinks": {
+      "type": "string",
+      "description": "Links to GPT resources"
+    },
+    "gptLinks2": {
+      "type": "string",
+      "description": "Additional GPT resource links"
+    },
+    "projectCode": {
+      "type": "string",
+      "description": "Unique identifier for the video project (e.g., 'b64')"
+    },
+    "projectFolder": {
+      "type": "string",
+      "description": "Path to the project folder"
+    },
+    "shortTitle": {
+      "type": "string",
+      "description": "Brief working title for the video"
+    },
+    "transcript": {
+      "type": "string",
+      "description": "Full video transcript text"
+    },
+    "transcriptSummary": {
+      "type": "string",
+      "description": "Condensed summary of the transcript"
+    },
+    "transcriptAbridgement": {
+      "type": "string",
+      "description": "Abridged version of the transcript with key points"
+    },
+    "transcriptAbridgementDescrepencies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of discrepancies found between transcript and abridgement"
+    },
+    "transcriptIntro": {
+      "type": "string",
+      "description": "Extracted introduction section from transcript"
+    },
+    "transcriptOutro": {
+      "type": "string",
+      "description": "Extracted outro/conclusion section from transcript"
+    },
+    "transcriptHook": {
+      "type": "string",
+      "description": "The hook or attention-grabbing opening"
+    },
+    "transcriptRecap": {
+      "type": "string",
+      "description": "Summary/recap section from transcript"
+    },
+    "srt": {
+      "type": "string",
+      "description": "SRT subtitle file content with timestamps"
+    },
+    "videoEditorInstructions": {
+      "type": "string",
+      "description": "Instructions for the video editor"
+    },
+    "introOutroDesignIdeas": {
+      "type": "string",
+      "description": "B-roll and design suggestions for intro/outro"
+    },
+    "designStyle": {
+      "type": "string",
+      "description": "Visual design style recommendations"
+    },
+    "designIdeas": {
+      "type": "string",
+      "description": "General design ideas for the video"
+    },
+    "editorBrief": {
+      "type": "string",
+      "description": "Complete brief for the video editor"
+    },
+    "analyzeCtaCompetitors": {
+      "type": "string",
+      "description": "Analysis of CTAs and competitor content"
+    },
+    "videoTitle": {
+      "type": "string",
+      "description": "Final chosen video title"
+    },
+    "videoLink": {
+      "type": "string",
+      "description": "YouTube video URL"
+    },
+    "videoLinkPlaylist": {
+      "type": "string",
+      "description": "YouTube playlist URL containing the video"
+    },
+    "videoTopicTheme": {
+      "type": "string",
+      "description": "Main topic or theme of the video"
+    },
+    "videoRelatedLinks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Links to related videos or resources"
+    },
+    "videoKeywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "SEO keywords for the video"
+    },
+    "importantStatistics": {
+      "type": "string",
+      "description": "Key statistics mentioned in the video"
+    },
+    "videoDescription": {
+      "type": "string",
+      "description": "Full YouTube video description"
+    },
+    "videoSimpleDescription": {
+      "type": "string",
+      "description": "Short, simple description of the video"
+    },
+    "videoDescriptionCustomGpt": {
+      "type": "string",
+      "description": "Description generated via custom GPT"
+    },
+    "videoPinnedComment": {
+      "type": "string",
+      "description": "Content for the pinned comment"
+    },
+    "videoMetadata": {
+      "type": "string",
+      "description": "Additional metadata for the video"
+    },
+    "videoReferences": {
+      "type": "string",
+      "description": "References to other videos or content"
+    },
+    "keyTakeaways": {
+      "type": "string",
+      "description": "Key takeaways from the video content"
+    },
+    "contentHighlights": {
+      "type": "string",
+      "description": "Keywords, insights, takeaways, audience-related insights"
+    },
+    "identifyChapters": {
+      "type": "string",
+      "description": "Initial chapter identification output"
+    },
+    "chapterFolderNames": {
+      "type": "string",
+      "description": "Folder names for chapter organization"
+    },
+    "chapters": {
+      "type": "string",
+      "description": "Final formatted chapters with timestamps"
+    },
+    "foldCta": {
+      "type": "string",
+      "description": "Call-to-action for above the fold section"
+    },
+    "primaryCta": {
+      "type": "string",
+      "description": "Primary call-to-action"
+    },
+    "affiliateCta": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Affiliate link CTAs"
+    },
+    "futureVideoCta": {
+      "type": "string",
+      "description": "CTA referencing future videos"
+    },
+    "pastVideoCta": {
+      "type": "string",
+      "description": "CTA referencing past videos"
+    },
+    "brandInfo": {
+      "type": "string",
+      "description": "Brand information and social links"
+    },
+    "titleIdeas": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Generated title options"
+    },
+    "thumbnailText": {
+      "type": "string",
+      "description": "Text suggestions for thumbnail"
+    },
+    "thumbnailTextCsv": {
+      "type": "string",
+      "description": "Thumbnail text options in CSV format"
+    },
+    "thumbnailVisualElements": {
+      "type": "string",
+      "description": "Visual element suggestions for thumbnail"
+    },
+    "thumbnailImage": {
+      "type": "string",
+      "description": "Generated or selected thumbnail image path/URL"
+    },
+    "tweetContent": {
+      "type": "string",
+      "description": "Tweet content for video promotion"
+    },
+    "facebookPost": {
+      "type": "string",
+      "description": "Facebook post content"
+    },
+    "linkedinPost": {
+      "type": "string",
+      "description": "LinkedIn post content"
+    },
+    "shortsContext": {
+      "type": "string",
+      "description": "Context for YouTube Shorts"
+    },
+    "shortsTitle": {
+      "type": "string",
+      "description": "Title for YouTube Short"
+    },
+    "shortsDescription": {
+      "type": "string",
+      "description": "Description for YouTube Short"
+    },
+    "shortsTweet": {
+      "type": "string",
+      "description": "Tweet content for Shorts promotion"
+    },
+    "outcomeNotes": {
+      "type": "string",
+      "description": "Notes about the workflow outcome"
+    },
+    "emotionalTriggerTone": {
+      "type": "string",
+      "description": "Emotional triggers and tone analysis"
+    },
+    "overalToneStyle": {
+      "type": "string",
+      "description": "Overall tone and style of the content"
+    },
+    "audienceInsights": {
+      "type": "string",
+      "description": "Insights about the target audience"
+    },
+    "usp": {
+      "type": "string",
+      "description": "Unique selling proposition"
+    },
+    "ctaPhrases": {
+      "type": "string",
+      "description": "CTA phrases extracted from content"
+    },
+    "catchyPhrases": {
+      "type": "string",
+      "description": "Catchy phrases from the content"
+    },
+    "questionsPosedOrAnswered": {
+      "type": "string",
+      "description": "Questions posed or answered in the video"
+    },
+    "competitorSearchTerms": {
+      "type": "string",
+      "description": "Search terms for competitor analysis"
+    },
+    "shortTranscription": {
+      "type": "string",
+      "description": "Transcription for YouTube Short"
+    },
+    "shortsVideoLink": {
+      "type": "string",
+      "description": "Link to the YouTube Short"
+    },
+    "shortsVideoKeywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Keywords for YouTube Short"
+    }
+  },
+  "required": ["transcript"]
+}

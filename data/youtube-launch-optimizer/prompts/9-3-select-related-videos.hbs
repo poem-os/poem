@@ -1,0 +1,62 @@
+You are selecting related videos for YouTube cards and end screen.
+
+## Current Video
+
+**Title**: {{title}}
+**Main Topic**: {{mainTopic}}
+**Keywords**: {{keywords}}
+**Video Code**: {{videoCode}}
+
+## Available Videos
+
+{{#each videos}}
+- **{{code}}**: "{{title}}"
+  {{#if synopsis}}Synopsis: {{synopsis}}{{/if}}
+  URL: {{url}}
+{{/each}}
+
+## Task
+
+Select 2-3 related videos that would be good recommendations for viewers who watched this video.
+
+### Selection Criteria
+
+1. **Topic Continuity**: Next logical video in a learning path
+2. **Concept Depth**: Goes deeper on a concept mentioned in this video
+3. **Complementary Skills**: Related skill the viewer would need
+4. **Series Connection**: Part of same series or playlist
+
+### Placement Recommendations
+
+| Placement | Best For |
+|-----------|----------|
+| End Screen | Most relevant "watch next" video |
+| Card (early) | Prerequisite or background video |
+| Card (middle) | Deeper dive on mentioned concept |
+| Card (late) | Related advanced topic |
+
+## Output Format
+
+```json
+{
+  "relatedVideos": [
+    {
+      "code": "b63",
+      "title": "Video Title",
+      "url": "https://...",
+      "relationship": "How this relates to current video",
+      "placement": "end_screen | card_early | card_middle | card_late",
+      "cardTimestamp": "MM:SS (if card, when to show)"
+    }
+  ],
+  "reasoning": "Overall strategy for video connections"
+}
+```
+
+## Notes
+
+- Prioritize your own channel's videos over external links
+- End screen should have strongest "watch next" recommendation
+- Cards can link to prerequisite content for context
+- Consider the viewer's journey: what would help them most?
+- If no good matches exist, it's OK to select fewer than 3

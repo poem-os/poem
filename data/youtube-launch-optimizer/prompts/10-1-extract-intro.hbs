@@ -1,0 +1,41 @@
+You are extracting the intro section from a video transcript.
+
+## Transcript
+
+<transcript>
+{{transcript}}
+</transcript>
+
+## What is an Intro?
+
+The intro is everything from the start until the main content begins. It typically ends with a sign-off phrase like "Let's get into it" or "Let's go."
+
+## Structural Types to Find
+
+| Type | Description |
+|------|-------------|
+| hook | Opening line(s) to grab attention |
+| promise | What the viewer will learn/see |
+| seriesContext | Reference to being part of a series |
+| signOff | Transition phrase to main content (e.g., "I'm AppyDave, let's get into it") |
+| chapterMention | Reference to chapter links in description |
+| demoPreview | Brief showing of the end result |
+
+## Output Format
+
+```json
+{
+  "segments": [
+    { "type": "hook", "text": "..." },
+    { "type": "promise", "text": "..." },
+    { "type": "signOff", "text": "..." }
+  ]
+}
+```
+
+## Notes
+
+- Extract the actual text, not a paraphrase
+- Only include segments that are present
+- A segment may span multiple sentences
+- The intro may not have all types - only extract what exists
