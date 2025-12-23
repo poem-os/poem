@@ -3,9 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "POEM Core - Agents, workflows, skills, and templates",
+  "description": "POEM Core - Agents, workflows, skills, and templates for prompt engineering",
   "exports": {
-    ".": "./core-config.yaml"
+    ".": "./core-config.yaml",
+    "./config": "./core-config.yaml",
+    "./agents/*": "./agents/*",
+    "./workflows/*": "./workflows/*",
+    "./skills/*": "./skills/*",
+    "./templates/*": "./templates/*",
+    "./data/*": "./data/*"
   },
   "files": [
     "agents",
@@ -13,14 +19,22 @@
     "skills",
     "templates",
     "data",
-    "core-config.yaml"
+    "core-config.yaml",
+    "README.md"
   ],
   "keywords": [
     "poem",
     "prompt-engineering",
     "agents",
-    "workflows"
+    "workflows",
+    "skills",
+    "handlebars",
+    "templates"
   ],
   "author": "AppyDave",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appydave/poem-os"
+  }
 }

@@ -1,0 +1,113 @@
+# New Prompt Workflow
+# Creates a new prompt template with corresponding schema
+
+id: new-prompt
+name: Create New Prompt
+description: |
+  Guides users through creating a new Handlebars prompt template
+  with corresponding JSON schema and optional mock data generation.
+
+steps:
+  - id: gather-purpose
+    name: Gather Prompt Purpose
+    type: elicit
+    elicit: true
+    prompt: |
+      What is the purpose of this prompt? Please describe:
+      1. What the prompt should accomplish
+      2. What output format you expect (text, list, JSON, etc.)
+      3. Any specific requirements or constraints
+
+  - id: gather-inputs
+    name: Gather Input Data
+    type: elicit
+    elicit: true
+    prompt: |
+      What input data will this prompt use? List the fields:
+      - Field name
+      - Type (string, number, array, object)
+      - Brief description
+
+      Example: "userName (string) - The user's display name"
+
+  - id: gather-name
+    name: Choose Prompt Name
+    type: elicit
+    elicit: true
+    prompt: |
+      What should we name this prompt?
+      Use kebab-case (e.g., generate-titles, enhance-narrative)
+
+  - id: create-template
+    name: Create Template File
+    type: action
+    action: create-file
+    instruction: |
+      Create the Handlebars template file at:
+      /poem/prompts/{{promptName}}.hbs
+
+      Include the gathered requirements as a well-structured prompt
+      with appropriate Handlebars placeholders.
+
+  - id: generate-schema
+    name: Generate Schema
+    type: action
+    action: invoke-skill
+    skill: generate-schema.md
+    instruction: |
+      Extract schema from the created template.
+      Save to /poem/schemas/{{promptName}}.json
+
+  - id: offer-mock-data
+    name: Offer Mock Data Generation
+    type: elicit
+    elicit: true
+    prompt: |
+      Would you like to generate mock data for testing?
+      1. Yes - Generate mock data now
+      2. No - Skip for now
+
+  - id: generate-mock
+    name: Generate Mock Data
+    type: action
+    action: api-call
+    endpoint: POST /api/mock/generate
+    condition: user-selected-yes
+    instruction: |
+      Generate mock data from schema.
+      Save to /poem/mock-data/{{promptName}}.json
+
+  - id: preview
+    name: Preview Rendered Prompt
+    type: action
+    action: api-call
+    endpoint: POST /api/prompt/render
+    instruction: |
+      Render the template with mock or example data.
+      Display the output for user review.
+
+  - id: complete
+    name: Workflow Complete
+    type: output
+    instruction: |
+      Summarize what was created:
+      - Template: /poem/prompts/{{promptName}}.hbs
+      - Schema: /poem/schemas/{{promptName}}.json
+      - Mock data: /poem/mock-data/{{promptName}}.json (if generated)
+
+      Suggest next steps:
+      - Use *test to run additional test scenarios
+      - Use *refine to iterate on the template
+      - Use *validate to check for issues
+
+outputs:
+  - name: template
+    path: /poem/prompts/{{promptName}}.hbs
+    format: hbs
+  - name: schema
+    path: /poem/schemas/{{promptName}}.json
+    format: json
+  - name: mockData
+    path: /poem/mock-data/{{promptName}}.json
+    format: json
+    optional: true
