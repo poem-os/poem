@@ -20,21 +20,21 @@ These are **minimal but critical** standards for AI-driven development. Focus is
 
 ## Naming Conventions
 
-| Element | Convention | Example |
-|---------|------------|---------|
-| **poem-core** |
-| Agent files | kebab-case.md | `prompt-engineer.md` |
-| Workflow files | kebab-case.yaml | `new-prompt.yaml` |
-| Skill files | kebab-case.md | `check-my-prompt.md` |
-| **poem-app** |
-| API routes | kebab-case directories | `/api/prompt/render.ts` |
-| Services | PascalCase classes | `HandlebarsService` |
-| Helpers | camelCase files | `titleCase.js`, `formatTimestamp.js` |
-| Tests | *.test.ts | `handlebars.test.ts` |
+| Element            | Convention             | Example                              |
+| ------------------ | ---------------------- | ------------------------------------ |
+| **poem-core**      |
+| Agent files        | kebab-case.md          | `prompt-engineer.md`                 |
+| Workflow files     | kebab-case.yaml        | `new-prompt.yaml`                    |
+| Skill files        | kebab-case.md          | `check-my-prompt.md`                 |
+| **poem-app**       |
+| API routes         | kebab-case directories | `/api/prompt/render.ts`              |
+| Services           | PascalCase classes     | `HandlebarsService`                  |
+| Helpers            | camelCase files        | `titleCase.js`, `formatTimestamp.js` |
+| Tests              | \*.test.ts             | `handlebars.test.ts`                 |
 | **User Workspace** |
-| Prompts | kebab-case.hbs | `generate-titles.hbs` |
-| Schemas | kebab-case.json | `generate-titles.json` |
-| Config | kebab-case.yaml/json | `supportsignal.yaml` |
+| Prompts            | kebab-case.hbs         | `generate-titles.hbs`                |
+| Schemas            | kebab-case.json        | `generate-titles.json`               |
+| Config             | kebab-case.yaml/json   | `supportsignal.yaml`                 |
 
 ## TypeScript Standards
 
@@ -70,21 +70,21 @@ import { something } from '../../../poem-core/...'; // Wrong
  * @returns {string} Truncated string
  * @example {{truncate title 50}} → "First 50 characters..."
  */
-module.exports = function(str, length) {
-  if (typeof str !== 'string') return '';
+module.exports = function (str, length) {
+  if (typeof str !== "string") return "";
   if (str.length <= length) return str;
-  return str.slice(0, length - 3) + '...';
+  return str.slice(0, length - 3) + "...";
 };
 
 // ❌ DON'T: Throw errors that crash rendering
-module.exports = function(str, length) {
-  if (!str) throw new Error('str required'); // Crashes template
+module.exports = function (str, length) {
+  if (!str) throw new Error("str required"); // Crashes template
 };
 
 // ✅ DO: Handle edge cases gracefully
-module.exports = function(str, length) {
-  if (!str) return '';
-  if (typeof length !== 'number') return str;
+module.exports = function (str, length) {
+  if (!str) return "";
+  if (typeof length !== "number") return str;
   // ...
 };
 ```
@@ -103,7 +103,9 @@ export async function POST({ request }: APIContext) {
       JSON.stringify({
         success: false,
         error: error.message,
-        details: { /* context */ }
+        details: {
+          /* context */
+        },
       }),
       { status: 400 }
     );
@@ -114,7 +116,7 @@ export async function POST({ request }: APIContext) {
 const schema = z.object({
   template: z.string().min(1),
   data: z.record(z.unknown()).optional(),
-  isRawTemplate: z.boolean().default(false)
+  isRawTemplate: z.boolean().default(false),
 });
 
 // ❌ DON'T: Trust input blindly
@@ -125,3 +127,5 @@ render(template); // No validation
 ## Agent/Workflow Document Standards
 
 ```yaml
+
+```

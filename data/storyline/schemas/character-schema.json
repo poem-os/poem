@@ -53,12 +53,12 @@
             },
             "colorSignature": {
               "type": "array",
-              "items": {"type": "string"},
+              "items": { "type": "string" },
               "description": "Colors associated with character"
             },
             "restrictions": {
               "type": "array",
-              "items": {"type": "string"},
+              "items": { "type": "string" },
               "description": "Visual restrictions (e.g., 'NEVER depicted with a hat')"
             },
             "bodyLanguage": {

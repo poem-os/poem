@@ -5,10 +5,12 @@
 **When to create**: Only when Angela wants to reuse a generic template with a data source that has different field names
 
 **Two types**:
+
 1. **Simple mappings** (`.json`) - Angela creates these (potentially with agent assistance)
 2. **Complex requirements** (`.requirements.md`) - Angela writes these (potentially with agent assistance), developer implements in main app code
 
 **Agent/Skill Assistance**:
+
 - Angela can use agents to help create mapping files by providing the template schema and data source
 - Agent can suggest field mappings based on data dictionary
 - Agent can generate requirements documents for complex transformations

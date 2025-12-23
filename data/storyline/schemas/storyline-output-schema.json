@@ -15,15 +15,15 @@
       "metadata": {
         "type": "object",
         "properties": {
-          "title": {"type": "string"},
-          "projectName": {"type": "string"},
-          "totalBeats": {"type": "number"},
-          "totalVisualConcepts": {"type": "number"},
-          "totalImageVariations": {"type": "number"},
-          "totalAnimations": {"type": "number"},
-          "totalWords": {"type": "number"},
-          "totalDuration": {"type": "number"},
-          "generatedAt": {"type": "string", "format": "date-time"}
+          "title": { "type": "string" },
+          "projectName": { "type": "string" },
+          "totalBeats": { "type": "number" },
+          "totalVisualConcepts": { "type": "number" },
+          "totalImageVariations": { "type": "number" },
+          "totalAnimations": { "type": "number" },
+          "totalWords": { "type": "number" },
+          "totalDuration": { "type": "number" },
+          "generatedAt": { "type": "string", "format": "date-time" }
         }
       },
       "cast": {
@@ -35,20 +35,23 @@
         "type": "object",
         "description": "Visual style guidelines",
         "properties": {
-          "corePhilosophy": {"type": "string"},
-          "era": {"type": "string"},
-          "setting": {"type": "string"},
-          "culturalContext": {"type": "string"},
-          "visualInfluences": {"type": "array", "items": {"type": "string"}},
+          "corePhilosophy": { "type": "string" },
+          "era": { "type": "string" },
+          "setting": { "type": "string" },
+          "culturalContext": { "type": "string" },
+          "visualInfluences": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
           "colorPalette": {
             "type": "object",
             "properties": {
-              "primary": {"type": "array", "items": {"type": "string"}},
-              "accent": {"type": "array", "items": {"type": "string"}},
-              "backgrounds": {"type": "array", "items": {"type": "string"}}
+              "primary": { "type": "array", "items": { "type": "string" } },
+              "accent": { "type": "array", "items": { "type": "string" } },
+              "backgrounds": { "type": "array", "items": { "type": "string" } }
             }
           },
-          "sceneAnchors": {"type": "object"}
+          "sceneAnchors": { "type": "object" }
         }
       },
       "beats": {
@@ -58,30 +61,30 @@
           "type": "object",
           "required": ["id", "timing", "narrative", "visualConcepts"],
           "properties": {
-            "id": {"type": "number"},
+            "id": { "type": "number" },
             "timing": {
               "type": "object",
               "properties": {
-                "start": {"type": "string"},
-                "end": {"type": "string"},
-                "duration": {"type": "number"},
-                "startSeconds": {"type": "number"},
-                "endSeconds": {"type": "number"}
+                "start": { "type": "string" },
+                "end": { "type": "string" },
+                "duration": { "type": "number" },
+                "startSeconds": { "type": "number" },
+                "endSeconds": { "type": "number" }
               }
             },
             "narrative": {
               "type": "object",
               "properties": {
-                "text": {"type": "string"},
-                "speaker": {"type": "string"}
+                "text": { "type": "string" },
+                "speaker": { "type": "string" }
               }
             },
             "beatLevelDefaults": {
               "type": "object",
               "properties": {
-                "sceneAnchor": {"type": "string"},
-                "ambiance": {"type": "string"},
-                "timeOfDay": {"type": "string"}
+                "sceneAnchor": { "type": "string" },
+                "ambiance": { "type": "string" },
+                "timeOfDay": { "type": "string" }
               }
             },
             "visualConcepts": {
@@ -89,8 +92,8 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "conceptNumber": {"type": "number"},
-                  "description": {"type": "string"},
+                  "conceptNumber": { "type": "number" },
+                  "description": { "type": "string" },
                   "shotType": {
                     "type": "string",
                     "enum": ["wide", "medium", "close", "ots", "extreme-close"]
@@ -99,11 +102,14 @@
                     "type": "string",
                     "enum": ["eye-level", "high", "low", "dutch"]
                   },
-                  "mood": {"type": "string"},
-                  "characters": {"type": "array", "items": {"type": "string"}},
-                  "attributeOverrides": {"type": "object"},
-                  "purpose": {"type": "string"},
-                  "duration": {"type": "string"}
+                  "mood": { "type": "string" },
+                  "characters": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "attributeOverrides": { "type": "object" },
+                  "purpose": { "type": "string" },
+                  "duration": { "type": "string" }
                 }
               }
             }

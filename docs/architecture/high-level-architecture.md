@@ -13,6 +13,7 @@ The key architectural insight is that most "development" in POEM involves creati
 **Platform:** Local Development (No Cloud Infrastructure)
 
 POEM runs entirely on the developer's local machine:
+
 - **Runtime**: Node.js (cross-platform: macOS, Linux, Windows)
 - **Server**: Astro (local, configurable port)
 - **Storage**: File-based (no database)
@@ -20,12 +21,12 @@ POEM runs entirely on the developer's local machine:
 
 **Key Services:**
 
-| Service | Technology | Purpose |
-|---------|------------|---------|
-| Template Engine | Handlebars.js | Compile and render .hbs templates |
-| API Server | Astro | REST endpoints for rendering, schema extraction |
-| Mock Data | Faker.js | Generate test data from schemas |
-| Package Distribution | NPM | `npx poem-os install` command |
+| Service              | Technology    | Purpose                                         |
+| -------------------- | ------------- | ----------------------------------------------- |
+| Template Engine      | Handlebars.js | Compile and render .hbs templates               |
+| API Server           | Astro         | REST endpoints for rendering, schema extraction |
+| Mock Data            | Faker.js      | Generate test data from schemas                 |
+| Package Distribution | NPM           | `npx poem-os install` command                   |
 
 **Deployment Host and Regions:** N/A — Local development tool only. No cloud hosting required.
 
@@ -46,11 +47,13 @@ poem-os/poem/
 **Monorepo Tool:** NPM Workspaces (native, no additional tooling)
 
 **Package Organization:**
+
 - `packages/poem-core/` — Document framework (agents, workflows, skills, templates, data)
 - `packages/poem-app/` — Astro runtime server (API endpoints, Handlebars service, providers)
 - Root — NPX installer, shared configuration, documentation
 
 **Rationale:**
+
 - Single repository simplifies versioning, testing, and release coordination
 - NPM workspaces are native and require no additional tooling (Nx, Turborepo unnecessary for this scale)
 - Clear separation between framework documents and runtime code

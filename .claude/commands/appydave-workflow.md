@@ -9,6 +9,7 @@ You are orchestrating AppyDave's complete BMAD v4 story lifecycle workflow. This
 ## CRITICAL INSTRUCTIONS
 
 **SEQUENTIAL EXECUTION ONLY**:
+
 - Execute steps ONE AT A TIME
 - ALWAYS HALT and wait for user confirmation before proceeding to next step
 - Do NOT load multiple agents simultaneously
@@ -16,6 +17,7 @@ You are orchestrating AppyDave's complete BMAD v4 story lifecycle workflow. This
 - User must explicitly type 'go', 'skip', or other specified commands to proceed
 
 **HUMAN-IN-LOOP GATES**:
+
 - Story validation (optional)
 - Status change from Draft → Ready (required)
 - Manual acceptance testing (required)
@@ -28,10 +30,11 @@ You are orchestrating AppyDave's complete BMAD v4 story lifecycle workflow. This
 ### Step 0: Initialize
 
 **Discover next story**:
+
 1. Load `.bmad-core/core-config.yaml` and extract:
    - `devStoryLocation` (where story files are stored)
    - `prdShardedLocation` (where epic PRD files are stored)
-   - `epicFilePattern` (pattern for epic files, e.g., "epic-{n}*.md")
+   - `epicFilePattern` (pattern for epic files, e.g., "epic-{n}\*.md")
 
 2. List all story files in `{devStoryLocation}` matching pattern `{epic}.{story}.story.md`
 
@@ -58,6 +61,7 @@ You are orchestrating AppyDave's complete BMAD v4 story lifecycle workflow. This
 **Ask user**: "Which story number do you want to work on? [Suggested: {nextStory}]"
 
 **If suggesting incomplete story**:
+
 ```
 ⚠️  Warning: Story {current} has status "{status}" (not Done).
 Would you like to:
@@ -67,6 +71,7 @@ Would you like to:
 ```
 
 **If suggesting story from epic PRD that has no file yet**:
+
 ```
 📋 Story {nextStory} found in Epic {epic} PRD but not yet created.
 Epic {epic} Progress: {completedCount}/{totalCount} stories completed
@@ -86,10 +91,12 @@ Store the story number for use throughout the workflow.
 **Action**: Run `*draft-story` command for the specified story number
 
 **After story is created**:
+
 - Display story file path (make it clickable)
 - Show current status (should be "Draft")
 
 **STOP and display**:
+
 ```
 ✅ Story {number} created successfully!
 📄 File: docs/stories/{number}.story.md
@@ -116,10 +123,12 @@ Options:
 **Action**: Run `*validate-story-draft {story-number}` command
 
 **After validation completes**:
+
 - Display validation summary (Critical/Should-Fix/Nice-to-Have issues)
 - Show GO/NO-GO decision
 
 **STOP and display (if GO)**:
+
 ```
 ✅ Validation complete for Story {number}
 
@@ -132,6 +141,7 @@ Type 'go' to proceed to status change gate.
 ```
 
 **STOP and display (if NO-GO)**:
+
 ```
 ❌ Validation complete for Story {number}
 
@@ -153,6 +163,7 @@ Type 'exit' to stop workflow and address issues.
 **No agent needed** - This is a manual human step
 
 **STOP and display**:
+
 ```
 ⚠️  HUMAN ACTION REQUIRED
 
@@ -168,6 +179,7 @@ Options:
 ```
 
 **If user types 'verify'**:
+
 - Read the story file
 - Check the Status field
 - If "Ready": Display "✅ Status confirmed as Ready. Type 'go' to proceed."
@@ -182,15 +194,18 @@ Options:
 **Agent**: Load Dev agent
 
 **Pre-check**: Verify story status is "Ready" (read file and check)
+
 - If not Ready: HALT with error "Story status is not 'Ready'. Cannot proceed."
 
 **Action**: Run `*develop-story {story-number}` command
 
 **After development completes**:
+
 - Show summary (files created, tests added)
 - Confirm status changed to "Review"
 
 **STOP and display**:
+
 ```
 ✅ Development complete for Story {number}!
 
@@ -212,10 +227,12 @@ Type 'go' to proceed to acceptance testing.
 **Action**: Run `*create-sat {story-number}` command
 
 **After SAT guide is created**:
+
 - Display SAT file path (make it clickable)
 - Explain that human must execute tests manually
 
 **STOP and display**:
+
 ```
 ✅ Story Acceptance Test guide created!
 
@@ -243,6 +260,7 @@ When all tests are executed and results documented, type 'go' for QA review.
 **Action**: Run `*review {story-number}` command
 
 **CRITICAL - What the QA agent does**:
+
 1. Reads and follows `.bmad-core/tasks/review-story.md` task
 2. Reviews the story file (`docs/stories/{story-number}.story.md`)
 3. Updates ONLY the "QA Results" section in the story file
@@ -250,16 +268,19 @@ When all tests are executed and results documented, type 'go' for QA review.
 5. Gate file contains PASS/CONCERNS/FAIL/WAIVED decision with score
 
 **DO NOT**:
+
 - Create a separate QA markdown document
 - Simulate the QA agent with general-purpose agent
 - Modify any other sections of the story file
 
 **After QA review completes**:
+
 - Read the gate file to get the decision and score
 - Read the story file QA Results section for summary
 - Display decision to user
 
 **If PASS - Automatically close the story**:
+
 1. Update story file (`docs/stories/{number}.story.md`):
    - Change Status from "Review" to "Done"
    - Mark any incomplete tasks as completed (change `[ ]` to `[x]`)
@@ -267,6 +288,7 @@ When all tests are executed and results documented, type 'go' for QA review.
 2. Display completion summary
 
 **STOP and display (if PASS)**:
+
 ```
 ✅ QA Review PASSED for Story {number}!
 
@@ -289,6 +311,7 @@ Options:
 ```
 
 **STOP and display (if FAIL)**:
+
 ```
 ❌ QA Review FAILED for Story {number}
 
@@ -307,15 +330,18 @@ Options:
 ## Error Handling
 
 **If user types unexpected input**:
+
 - Display: "Invalid input. Please choose from: {list valid options for current step}"
 - Re-display the current HALT point message
 
 **If file not found**:
+
 - Display clear error with expected file path
 - Suggest corrective action
 - Offer to retry or exit
 
 **If agent fails to load**:
+
 - Display: "Failed to load {agent-name} agent. Please check .bmad-core/agents/ directory."
 - Halt workflow
 

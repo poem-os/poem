@@ -39,7 +39,7 @@ agent:
   id: sat
   title: Story Acceptance Test Guide Creator
   icon: 📋
-  whenToUse: 'Use after story completion to create human-friendly acceptance test guides for visual/manual testing'
+  whenToUse: "Use after story completion to create human-friendly acceptance test guides for visual/manual testing"
   customization: null
 persona:
   role: Acceptance Test Guide Creator

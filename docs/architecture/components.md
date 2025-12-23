@@ -7,11 +7,13 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Define AI agent personas that guide users through workflows via Claude Code slash commands.
 
 **Key Interfaces:**
+
 - Slash command activation: `/poem/agents/{agent-name}`
 - Agent commands: `*new`, `*refine`, `*test`, `*help`, etc.
 - Workflow invocation based on user requests
 
 **Dependencies:**
+
 - Workflows (invokes based on user needs)
 - Skills (uses for autonomous operations)
 - Knowledge Base (consults for POEM principles)
@@ -20,12 +22,12 @@ POEM's components are organized into three installation targets: the framework (
 
 **Agents:**
 
-| Agent | File | Primary Commands |
-|-------|------|------------------|
-| Prompt Engineer | `agents/prompt-engineer.md` | `*new`, `*refine`, `*test`, `*validate` |
-| System Agent | `agents/system-agent.md` | `*add-helper`, `*server-status`, `*create-provider` |
-| Integration Agent | `agents/integration-agent.md` | `*connect`, `*pull-dictionary`, `*publish` |
-| Mock Data Agent | `agents/mock-data-agent.md` | `*generate-mock`, `*create-scenario`, `*curate-library` |
+| Agent             | File                          | Primary Commands                                        |
+| ----------------- | ----------------------------- | ------------------------------------------------------- |
+| Prompt Engineer   | `agents/prompt-engineer.md`   | `*new`, `*refine`, `*test`, `*validate`                 |
+| System Agent      | `agents/system-agent.md`      | `*add-helper`, `*server-status`, `*create-provider`     |
+| Integration Agent | `agents/integration-agent.md` | `*connect`, `*pull-dictionary`, `*publish`              |
+| Mock Data Agent   | `agents/mock-data-agent.md`   | `*generate-mock`, `*create-scenario`, `*curate-library` |
 
 ---
 
@@ -34,11 +36,13 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Define multi-step guided processes as YAML templates that agents execute.
 
 **Key Interfaces:**
+
 - Invoked by agents based on command or user request
 - Step-by-step execution with user interaction
 - Calls skills and APIs as needed
 
 **Dependencies:**
+
 - Skills (invokes for specific operations)
 - Astro APIs (calls for rendering, schema operations)
 - User Workspace (reads/writes files)
@@ -47,14 +51,14 @@ POEM's components are organized into three installation targets: the framework (
 
 **Workflows:**
 
-| Workflow | File | Steps |
-|----------|------|-------|
-| New Prompt | `workflows/new-prompt.yaml` | Gather purpose → Create template → Generate schema → Preview |
-| Refine Prompt | `workflows/refine-prompt.yaml` | Load → Test → Identify issues → Update → Repeat |
-| Test Prompt | `workflows/test-prompt.yaml` | Select data source → Render → Report |
-| Validate Prompt | `workflows/validate-prompt.yaml` | Check syntax → Validate schema → Check helpers → Report |
-| Deploy Prompt | `workflows/deploy-prompt.yaml` | Validate → Test connection → Publish → Confirm |
-| Add Helper | `workflows/add-helper.yaml` | Describe need → Generate code → Register → Test |
+| Workflow        | File                             | Steps                                                        |
+| --------------- | -------------------------------- | ------------------------------------------------------------ |
+| New Prompt      | `workflows/new-prompt.yaml`      | Gather purpose → Create template → Generate schema → Preview |
+| Refine Prompt   | `workflows/refine-prompt.yaml`   | Load → Test → Identify issues → Update → Repeat              |
+| Test Prompt     | `workflows/test-prompt.yaml`     | Select data source → Render → Report                         |
+| Validate Prompt | `workflows/validate-prompt.yaml` | Check syntax → Validate schema → Check helpers → Report      |
+| Deploy Prompt   | `workflows/deploy-prompt.yaml`   | Validate → Test connection → Publish → Confirm               |
+| Add Helper      | `workflows/add-helper.yaml`      | Describe need → Generate code → Register → Test              |
 
 ---
 
@@ -63,11 +67,13 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Autonomous single-responsibility capabilities that Claude invokes based on context.
 
 **Key Interfaces:**
+
 - Self-describing (suggest when useful)
 - Invoke via context, not explicit commands
 - Call Astro APIs for heavy operations
 
 **Dependencies:**
+
 - Astro APIs (HTTP calls for rendering, schema extraction)
 - User Workspace (file operations)
 
@@ -75,16 +81,16 @@ POEM's components are organized into three installation targets: the framework (
 
 **Skills:**
 
-| Skill | File | Purpose |
-|-------|------|---------|
-| Check My Prompt | `skills/check-my-prompt.md` | Validate prompt structure |
+| Skill             | File                          | Purpose                       |
+| ----------------- | ----------------------------- | ----------------------------- |
+| Check My Prompt   | `skills/check-my-prompt.md`   | Validate prompt structure     |
 | Preview with Data | `skills/preview-with-data.md` | Render with mock/example data |
-| Generate Schema | `skills/generate-schema.md` | Extract schema from template |
-| Find Fields | `skills/find-fields.md` | Search data dictionaries |
-| Validate Schema | `skills/validate-schema.md` | Check against dictionary |
-| Suggest Mappings | `skills/suggest-mappings.md` | Recommend field mappings |
-| Pull Dictionary | `skills/pull-dictionary.md` | Import from provider |
-| Publish Prompt | `skills/publish-prompt.md` | Deploy to production |
+| Generate Schema   | `skills/generate-schema.md`   | Extract schema from template  |
+| Find Fields       | `skills/find-fields.md`       | Search data dictionaries      |
+| Validate Schema   | `skills/validate-schema.md`   | Check against dictionary      |
+| Suggest Mappings  | `skills/suggest-mappings.md`  | Recommend field mappings      |
+| Pull Dictionary   | `skills/pull-dictionary.md`   | Import from provider          |
+| Publish Prompt    | `skills/publish-prompt.md`    | Deploy to production          |
 
 ---
 
@@ -93,11 +99,13 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Provide HTTP server with REST APIs for template rendering, schema operations, and provider integration.
 
 **Key Interfaces:**
+
 - REST API endpoints (see API Specification)
 - HTTP calls from skills and workflows
 - File system access to user workspace
 
 **Dependencies:**
+
 - Handlebars Service (template operations)
 - Provider implementations (external integrations)
 - User Workspace (file access)
@@ -111,18 +119,21 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Compile Handlebars templates, register helpers, render with data.
 
 **Key Interfaces:**
+
 - `compile(template: string): CompiledTemplate`
 - `render(compiled: CompiledTemplate, data: object): string`
 - `registerHelper(name: string, fn: Function): void`
 - `extractPlaceholders(template: string): PlaceholderInfo[]`
 
 **Dependencies:**
+
 - Custom Helpers (loaded from helpers directory)
 - File System (read template files)
 
 **Technology Stack:** Handlebars.js 4.x
 
 **Initialization:**
+
 1. Server starts
 2. Scan `src/services/handlebars/helpers/` directory
 3. Load and register all `.js` helper files
@@ -135,29 +146,31 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Provide domain-specific formatting and transformation functions for Handlebars templates.
 
 **Key Interfaces:**
+
 - Handlebars helper signature: `(args..., options) => string`
 - Auto-registered on server start
 - Hot-reload on file change
 
 **Dependencies:**
+
 - Handlebars Service (registration)
 
 **Technology Stack:** JavaScript/TypeScript modules
 
 **Built-in Helpers:**
 
-| Helper | Purpose | Example |
-|--------|---------|---------|
-| `titleCase` | Title case string | `{{titleCase "hello world"}}` → "Hello World" |
-| `upperCase` | Uppercase string | `{{upperCase "hello"}}` → "HELLO" |
-| `lowerCase` | Lowercase string | `{{lowerCase "HELLO"}}` → "hello" |
-| `truncate` | Limit length | `{{truncate title 49}}` → first 49 chars |
-| `default` | Fallback value | `{{default value "N/A"}}` |
-| `json` | JSON stringify | `{{json object}}` |
-| `dateFormat` | Format date | `{{dateFormat date "YYYY-MM-DD"}}` |
-| `gt` | Greater than | `{{#if (gt count 10)}}` |
-| `join` | Join array | `{{join items ", "}}` |
-| `formatTimestamp` | MM:SS format | `{{formatTimestamp 125}}` → "2:05" |
+| Helper            | Purpose           | Example                                       |
+| ----------------- | ----------------- | --------------------------------------------- |
+| `titleCase`       | Title case string | `{{titleCase "hello world"}}` → "Hello World" |
+| `upperCase`       | Uppercase string  | `{{upperCase "hello"}}` → "HELLO"             |
+| `lowerCase`       | Lowercase string  | `{{lowerCase "HELLO"}}` → "hello"             |
+| `truncate`        | Limit length      | `{{truncate title 49}}` → first 49 chars      |
+| `default`         | Fallback value    | `{{default value "N/A"}}`                     |
+| `json`            | JSON stringify    | `{{json object}}`                             |
+| `dateFormat`      | Format date       | `{{dateFormat date "YYYY-MM-DD"}}`            |
+| `gt`              | Greater than      | `{{#if (gt count 10)}}`                       |
+| `join`            | Join array        | `{{join items ", "}}`                         |
+| `formatTimestamp` | MM:SS format      | `{{formatTimestamp 125}}` → "2:05"            |
 
 ---
 
@@ -166,17 +179,20 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Abstract interface for external system integration with concrete implementations.
 
 **Key Interfaces:**
+
 - `testConnection(): Promise<ConnectionResult>`
 - `pullDictionary(): Promise<DataDictionary>`
 - `publishPrompt(template, schema): Promise<PublishResult>`
 
 **Dependencies:**
+
 - Provider configurations (from user workspace)
 - External system APIs
 
 **Technology Stack:** TypeScript interfaces, Astro API routes
 
 **Provider Structure:**
+
 ```
 src/pages/api/providers/
 ├── _base.ts           # Abstract provider interface
@@ -197,10 +213,12 @@ src/pages/api/providers/
 **Responsibility:** Generate realistic fake data from JSON schemas using Faker.js.
 
 **Key Interfaces:**
+
 - `generate(schema: Schema, options: GenerateOptions): MockData`
 - Configurable: count, seed, edge cases
 
 **Dependencies:**
+
 - Schema definitions
 - Faker.js library
 
@@ -208,14 +226,14 @@ src/pages/api/providers/
 
 **Generation Strategy:**
 
-| Field Type | Faker Method |
-|------------|--------------|
-| `string` | Infer from name (firstName → `faker.person.firstName()`) |
-| `number` | `faker.number.int({ min, max })` |
-| `boolean` | `faker.datatype.boolean()` |
-| `array` | Generate N items of item type |
-| `object` | Recursively generate properties |
-| With `fakerHint` | Use specified method |
+| Field Type       | Faker Method                                             |
+| ---------------- | -------------------------------------------------------- |
+| `string`         | Infer from name (firstName → `faker.person.firstName()`) |
+| `number`         | `faker.number.int({ min, max })`                         |
+| `boolean`        | `faker.datatype.boolean()`                               |
+| `array`          | Generate N items of item type                            |
+| `object`         | Recursively generate properties                          |
+| With `fakerHint` | Use specified method                                     |
 
 ---
 
@@ -224,12 +242,14 @@ src/pages/api/providers/
 **Responsibility:** Store user-created prompts, schemas, mock data, and configuration.
 
 **Key Interfaces:**
+
 - File system structure
 - Read/write by agents and APIs
 
 **Dependencies:** None (leaf component)
 
 **Structure:**
+
 ```
 /poem/
 ├── prompts/           # .hbs template files

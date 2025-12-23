@@ -8,10 +8,12 @@
 ## The Problem
 
 Some prompts are **domain-specific** (tightly coupled to one data source):
+
 - `enhance-narrative-before-event` - Only makes sense for incidents
 - Uses incident-specific vocabulary and context
 
 Other prompts are **generic** (could work with multiple data sources):
+
 - `analysis-predicate-example` - Just needs context and a question
 - `analysis-classification-example` - Just needs input and categories
 
@@ -24,6 +26,7 @@ When a generic prompt works great on incidents, business might want to use it on
 When field names differ but structure is similar, Angela creates a JSON mapping file.
 
 **Example**: `data/mappings/analysis-predicate.shift-note.json`
+
 ```json
 {
   "templateName": "analysis-predicate-example",
@@ -41,6 +44,7 @@ When field names differ but structure is similar, Angela creates a JSON mapping 
 **Angela needs**: Data dictionary showing what fields exist in each data source
 
 **Process**:
+
 1. Angela tests prompt on incidents (works great)
 2. Business wants it for shift notes
 3. Angela checks data dictionary
@@ -52,6 +56,7 @@ When field names differ but structure is similar, Angela creates a JSON mapping 
 When data needs transformation logic (combining names, converting codes, lookups), Angela writes requirements and developer builds code mapper in main app.
 
 **Example**: `data/mappings/analysis-predicate.moment.requirements.md`
+
 ```markdown
 # Mapping Requirement: Analysis Predicate for Moments
 
@@ -67,6 +72,7 @@ When data needs transformation logic (combining names, converting codes, lookups
 ```
 
 **Developer builds** (in main app code):
+
 ```javascript
 // EXAMPLE ONLY - Shows what COULD be built in target system
 // This is NOT part of the prompts management app
@@ -77,13 +83,14 @@ class MomentToAnalysisMapper {
       participant_name: `${momentData.person.first_name} ${momentData.person.last_name}`,
       event_type: this.translateType(momentData.moment_type),
       severity_level: this.convertRating(momentData.impact_rating),
-      description: momentData.observation_notes
-    }
+      description: momentData.observation_notes,
+    };
   }
 }
 ```
 
 **Process**:
+
 1. Angela realizes she needs complex transformation
 2. Angela writes requirements document (or uses agent to help)
 3. Developer builds mapper class in main app
@@ -92,6 +99,7 @@ class MomentToAnalysisMapper {
 ## Agent-Assisted Requirements
 
 Potential future feature: Agent helps Angela write requirements by:
+
 - Knowing the template placeholders (from schema)
 - Knowing the data source fields (from data dictionary)
 - Asking Angela what transformations are needed
@@ -102,12 +110,14 @@ Potential future feature: Agent helps Angela write requirements by:
 **Critical dependency**: Angela needs to know what fields exist in each data source.
 
 **Future work needed**:
+
 1. Document current data sources and their fields
 2. Build export feature in main app to generate data dictionary
 3. Keep data dictionary updated as schema evolves
 4. Show relationships between tables
 
 **Example data dictionary entry**:
+
 ```
 Data Source: shift_note
 Fields:
@@ -148,13 +158,13 @@ Relationships:
 
 ## Example Use Cases
 
-| Scenario | Solution | Owner |
-|----------|----------|-------|
-| Shift note field names differ from incident | JSON mapping file | Angela |
-| Need to combine first+last name | Requirements → Code mapper | Angela → Dev |
-| Need to decode legacy codes | Requirements → Code mapper | Angela → Dev |
-| Need database lookup for location | Requirements → Code mapper | Angela → Dev |
-| Simple field path changes | JSON mapping file | Angela |
+| Scenario                                    | Solution                   | Owner        |
+| ------------------------------------------- | -------------------------- | ------------ |
+| Shift note field names differ from incident | JSON mapping file          | Angela       |
+| Need to combine first+last name             | Requirements → Code mapper | Angela → Dev |
+| Need to decode legacy codes                 | Requirements → Code mapper | Angela → Dev |
+| Need database lookup for location           | Requirements → Code mapper | Angela → Dev |
+| Simple field path changes                   | JSON mapping file          | Angela       |
 
 ---
 

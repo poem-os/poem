@@ -91,11 +91,13 @@ Now I'll draft the functional and non-functional requirements based on the Proje
 ## Rationale
 
 **Functional Requirements Organization:**
+
 - **Group 1 (15 FRs)**: Agent-guided workflows represent POEM's core value proposition—systematic, agent-driven prompt engineering vs ad-hoc text editing
 - **Group 2 (7 FRs)**: Framework and runtime infrastructure provides the foundation that enables agent capabilities
 - **Group 3 (3 FRs)**: Cross-cutting capabilities ensure system-wide consistency and usability
 
 **Key Architectural Decisions Reflected:**
+
 - **Four agents** (FR-FI-2): Prompt Engineer, System Agent, Integration Agent, Mock/Test Data Agent—each with distinct responsibilities
 - **~15-20 workflows** (FR-FI-3): Not all workflows available from day 1; some unlock as infrastructure capabilities are built
 - **8 skills** (FR-FI-4): Autonomous capabilities that bridge agents to infrastructure (some work pre-infrastructure via LLM simulation, others require Astro APIs)
@@ -103,13 +105,15 @@ Now I'll draft the functional and non-functional requirements based on the Proje
 - **Two-level mock data** (FR-MD-1, FR-MD-2): Level 1 (fake) works standalone, Level 2 (realistic) requires provider integration
 
 **Dependency Progression (Not Reflected in FRs, Documented Separately):**
+
 - Phase 1: Agent 1 (Prompt Engineer) works standalone with .poem-core/ only
 - Phase 2: Agent 2 (System Agent) creates Handlebars helpers, unlocking enhanced templating for Agent 1
 - Phase 3: Agent 2 creates provider implementations, enabling Agent 3 (Integration Agent) workflows
 - Phase 4: Agent 4 (Mock/Test Data) Level 2 capabilities enabled by provider access
-- FRs describe *what's possible*, not *when it becomes possible*—that's for epic/story planning
+- FRs describe _what's possible_, not _when it becomes possible_—that's for epic/story planning
 
 **Non-Functional Requirements Assumptions:**
+
 - Performance targets (NFR1-3) based on Project Brief's "Performance Targets" section
 - Cross-platform (NFR5) from "Platform Requirements" in Technical Considerations
 - Offline-first (NFR4) from "Must work offline" constraint—critical for independence and rapid iteration
@@ -119,12 +123,14 @@ Now I'll draft the functional and non-functional requirements based on the Proje
 - BMAD v4 alignment (NFR12) ensures methodology consistency
 
 **Trade-offs Made:**
+
 - Grouped workflows by agent (not by feature) to emphasize agent-first experience
 - Separated "fake" vs "realistic" mock data (FR-MD-1 vs FR-MD-2) to clarify phased capability
 - Made provider pattern explicit (FR-RI-3, FR-SA-2) to emphasize extensibility architecture
 - Included all 4 agents and 8 skills in FRs even though some are post-MVP—FRs describe full system capability, not MVP subset
 
 **What's Explicitly Out of MVP Scope:**
+
 - Level 2 mock data (entity relationships, realistic anonymization)—FR-MD-2 describes capability but marked for post-MVP implementation
 - Multi-step pipeline orchestration (workflow chaining)
 - Visual UI/dashboard (Astro pages beyond API endpoints)
@@ -133,8 +139,8 @@ Now I'll draft the functional and non-functional requirements based on the Proje
 - Additional providers beyond initial SupportSignal/Storyline implementations
 
 **Areas That Might Need Refinement:**
+
 - FR-FI-3 says "approximately 15-20 workflows"—actual count will emerge during agent implementation
 - FR-UC-3 mentions "10+ scenarios"—this is illustrative; actual test coverage will vary by use case
 - Provider pattern (FR-RI-3) described abstractly; concrete implementations will be user/project-specific
 - Skills (FR-FI-4) listed as 8 total, but some may work pre-infrastructure (via LLM simulation) vs post-infrastructure (via APIs)—this distinction is behavioral, not in FR itself
-

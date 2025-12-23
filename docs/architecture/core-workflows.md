@@ -210,7 +210,7 @@ sequenceDiagram
 
 ## Workflow 6: Add Custom Helper
 
-```mermaid
+````mermaid
 sequenceDiagram
     participant U as User
     participant SA as System Agent
@@ -240,6 +240,6 @@ sequenceDiagram
     API-->>SA: "2:05"
 
     SA->>U: Helper created and tested!<br/>Usage: {{formatTimestamp 125}} → "2:05"<br/>Available immediately.
-```
+````
 
 ---

@@ -5,6 +5,7 @@
 ## Purpose
 
 This document analyzes the youtube_launch_optimizer workflow step-by-step to understand:
+
 - Human-in-the-loop requirements and types
 - Dependencies (which attributes must be populated)
 - Parallelization opportunities
@@ -17,6 +18,7 @@ This document analyzes the youtube_launch_optimizer workflow step-by-step to und
 ## Section 1: Video Preparation
 
 ### Overview
+
 **Purpose**: Prepare raw transcript for analysis
 **Steps**: 6
 **Input Materials**: transcript, project_code, project_folder (+ optional pre-filled values)
@@ -26,6 +28,7 @@ This document analyzes the youtube_launch_optimizer workflow step-by-step to und
 ### Step 1: Configure
 
 **Inputs:**
+
 - gpt_links
 - gpt_links2
 - project_code
@@ -53,11 +56,13 @@ This document analyzes the youtube_launch_optimizer workflow step-by-step to und
 **Prompt**: short_title_prompt
 
 **Outputs:**
+
 - project_code
 - short_title
 - title_ideas
 
 **Prompt Analysis:**
+
 ```
 1. Extract project code from project_folder (e.g., "b62-remotion-overview" → "b62")
 2. Generate short title from project_folder name
@@ -69,28 +74,33 @@ Placeholders used: [project_folder], [transcript]
 **Reality Check (from David):**
 
 **Why 23 inputs?**
+
 - UX artifact: Human might jump back to this step from step 10, wants to see all loaded data
 - Or human pre-fills values manually before starting
 - NOT because all 23 are functionally required
 - This is human convenience, not step logic
 
 **Required vs Optional:**
+
 - **REQUIRED**: transcript
 - **USEFUL**: project_folder (helps extract code + generate short title)
 - **OPTIONAL CONFIG**: brand_info (static across runs, should come from config/second brain)
 - **OPTIONAL PRE-FILLS**: Everything else (human might fill ahead of time)
 
 **Human-in-the-loop:**
+
 - **START**: Human provides transcript (minimum), optionally project_folder
 - **EXECUTION**: AI generates project_code, short_title, title_ideas
 - **REVIEW**: Human reviews generated values?
 - **PROCEED**: Human approves to continue? Or auto-advances?
 
 **Dependencies:**
+
 - Cannot run until: transcript provided
 - Outputs become available immediately after execution
 
 **Analysis:**
+
 - This is the **initialization step** - sets up project metadata
 - Generates multiple title options for human to choose from later
 - Creates project_code used throughout workflow (e.g., file storage paths)
@@ -100,6 +110,7 @@ Placeholders used: [project_folder], [transcript]
 ### Step 2: Script Summary
 
 **Inputs:**
+
 - transcript
 - title_ideas
 - project_code
@@ -107,9 +118,11 @@ Placeholders used: [project_folder], [transcript]
 **Prompt**: video_summary_prompt
 
 **Outputs:**
+
 - transcript_summary
 
 **Prompt Analysis:**
+
 ```
 Summarize YouTube video transcript
 - Extract main topics, key arguments, essential points
@@ -121,23 +134,28 @@ Placeholders used: [transcript] only
 ```
 
 **Observation:**
+
 - Prompt ONLY uses [transcript]
 - But RBX declares title_ideas and project_code as inputs
 - **These are unused by the prompt** - possibly for context/reference?
 
 **Dependencies:**
+
 - REQUIRES: transcript (from raw materials)
 - DECLARED BUT UNUSED: title_ideas, project_code (from Step 1)
 - **Technically could run in parallel with Step 1** if we ignore unused inputs
 
 **Human-in-the-loop:**
+
 - [DAVID TO CONFIRM] Fully automated? Or review checkpoint?
 
 **Purpose:**
+
 - Create condensed version of transcript
 - Used by later steps that need shorter context
 
 **Data File Evidence (b62):**
+
 - transcript_summary: Used later (e.g., tweets, social media)
 - Different from transcript_abridgement:
   - **summary** = high-level overview (smallest)
@@ -145,6 +163,7 @@ Placeholders used: [transcript] only
   - **transcript** = full detail (largest)
 
 **Reality Check (from David):**
+
 - Unused inputs (title_ideas, project_code): Keep them, they're there for convenience
 - transcript_summary IS used: Primarily for social media posts requiring brevity
 - **Human checkpoint**: NO - auto-advance
@@ -155,15 +174,18 @@ Placeholders used: [transcript] only
 ### Step 3: Script Abridgement
 
 **Inputs:**
+
 - transcript_summary (from Step 2)
 - transcript
 
 **Prompt**: video_abridgement_prompt
 
 **Outputs:**
+
 - transcript_abridgement
 
 **Prompt Analysis:**
+
 ```
 Condense video transcript while preserving key details
 - Keep essential information, context, structure
@@ -176,27 +198,32 @@ Placeholders used: [transcript] only
 ```
 
 **Observation:**
+
 - Prompt ONLY uses [transcript]
 - RBX declares transcript_summary as input but **prompt doesn't use it**
 - Similar to Step 2 - input declared for convenience/reference
 
 **Dependencies:**
+
 - REQUIRES: transcript (raw material)
 - DECLARED BUT UNUSED: transcript_summary (from Step 2)
 - **Could technically run in parallel with Step 2** (both only need transcript)
 
 **Reality Check (from David):**
+
 - **Human checkpoint**: NO - auto-advance
 - **Fully automated step**
 - **CAN RUN IN PARALLEL WITH STEP 2** (both only need transcript)
 
 **Purpose:**
+
 - Create detailed-but-compressed version
 - Retains more info than summary
 - Used extensively in later steps (chapters, analysis, etc.)
 - **Most important derived attribute** in the workflow
 
 **Parallelization Discovery:**
+
 ```
 After Step 1 completes:
 ├── Step 2: Script Summary (transcript → transcript_summary) ─┐
@@ -210,15 +237,18 @@ After Step 1 completes:
 ### Step 4: Abridge QA ⚠️ HUMAN CHECKPOINT
 
 **Inputs:**
+
 - transcript
 - transcript_abridgement (from Step 3)
 
 **Prompt**: abridgement_descrepencies_prompt
 
 **Outputs:**
+
 - transcript_abridgement_descrepencies
 
 **Prompt Analysis:**
+
 ```
 Compare abridged transcript to original
 - Identify missing important information
@@ -233,18 +263,21 @@ Uses: [transcript] and [transcript_abridgement]
 ```
 
 **Dependencies:**
+
 - REQUIRES: transcript (raw material)
 - REQUIRES: transcript_abridgement (from Step 3)
 - **Must run AFTER Step 3 completes**
 - **Cannot parallelize** - needs Step 3 output
 
 **Human-in-the-loop:** ⚠️ **YES - QUALITY CHECK (CONVERSATIONAL REFINEMENT)**
+
 - AI always generates list of discrepancies
 - Human reviews the list
 - ~20% of time: Issues need fixing
 - ~80% of time: Good enough, proceed
 
 **When issues found:**
+
 - Human provides modified guidance in same conversation
 - AI has full context (transcript + transcript_abridgement already loaded)
 - AI regenerates improved transcript_abridgement
@@ -252,6 +285,7 @@ Uses: [transcript] and [transcript_abridgement]
 - Could be recursive/iterative until human satisfied
 
 **Reality Check (from David):**
+
 - Always produces discrepancy list (it's the output)
 - Issues found: ~20% of videos
 - Fix method: Conversational guidance within same context
@@ -259,11 +293,13 @@ Uses: [transcript] and [transcript_abridgement]
 - **This is the ONLY human checkpoint in Section 1**
 
 **Purpose:**
+
 - Quality assurance gate
 - Catch missing critical information before it propagates
 - Most important QA step since transcript_abridgement feeds 20+ later steps
 
 **Motus Implementation Notes:**
+
 - Could be agent loop: generate → human review → refine → human review → approve
 - Or separate "refine" agent triggered by human feedback
 - Need state management for "approved" flag
@@ -273,6 +309,7 @@ Uses: [transcript] and [transcript_abridgement]
 ### Step 5: Intro/Outro Separation
 
 **Inputs:**
+
 - transcript
 - transcript_intro (optional pre-fill)
 - transcript_outro (optional pre-fill)
@@ -280,10 +317,12 @@ Uses: [transcript] and [transcript_abridgement]
 **Prompt**: intro_outro_seperation_prompt
 
 **Outputs:**
+
 - transcript_intro
 - transcript_outro
 
 **Prompt Analysis:**
+
 ```
 Extract intro and outro sections from transcript
 - Intro: Everything before main content begins
@@ -294,27 +333,32 @@ Placeholders used: [transcript] only
 ```
 
 **Dependencies:**
+
 - REQUIRES: transcript (raw material)
 - OPTIONAL: transcript_intro/outro (for manual override/pre-fill)
 - **Could run in PARALLEL with Steps 2-4** (all only need transcript)
 
 **Reality Check (from David):**
+
 - **Can run in PARALLEL** with Steps 2, 3, 6
 - **Sometimes needs human review** - doesn't always pick correct split points
 - Accuracy issue: Intro/outro boundaries can be ambiguous
 
 **Human-in-the-loop:** ⚠️ **SOMETIMES - BOUNDARY VALIDATION**
+
 - AI extracts intro and outro
 - Sometimes picks wrong split location
 - Human reviews if boundaries look incorrect
 - Frequency: [not specified, but less critical than Abridge QA]
 
 **Purpose:**
+
 - Extract opening/closing segments
 - Used for: B-roll suggestions, outro animations, contextual framing
 - Separate processing of beginning and end
 
 **Improvement Note (from David):**
+
 - **Should be 2 separate steps:**
   - Step 5a: Extract Intro
   - Step 5b: Extract Outro
@@ -326,16 +370,19 @@ Placeholders used: [transcript] only
 ### Step 6: Find Video CTA
 
 **Inputs:**
+
 - transcript
 
 **Prompt**: find_video_cta_prompt
 
 **Outputs:**
+
 - video_references
 - future_video_cta
 - past_video_cta
 
 **Prompt Analysis:**
+
 ```
 Identify video cross-references in transcript
 - Past videos: "As I mentioned in...", "In previous video..."
@@ -347,10 +394,12 @@ Placeholders used: [transcript] only
 ```
 
 **Dependencies:**
+
 - REQUIRES: transcript (raw material)
 - **Could run in PARALLEL with Steps 2-5** (all only need transcript)
 
 **Reality Check (from David):**
+
 - **Can run in PARALLEL** with Steps 2, 3, 5
 - **Currently NOT USED in actual workflow**
 - Needs different approach to be useful
@@ -359,11 +408,13 @@ Placeholders used: [transcript] only
 **Human-in-the-loop:** ❌ **NOT APPLICABLE - STEP NOT USED**
 
 **Purpose (intended):**
+
 - Identify creator's other videos mentioned in content
 - Use in: YouTube description, pinned comments, related links
 - Build content interconnectivity
 
 **Real-World Insight:**
+
 - This step doesn't provide useful output in practice
 - May need manual curation of related videos instead
 - Or different prompt approach to extract actionable CTAs
@@ -374,6 +425,7 @@ Placeholders used: [transcript] only
 ## Preliminary Parallelization Analysis (Section 1)
 
 ### Current Sequential Flow (as designed):
+
 ```
 Step 1: Configure
   ↓
@@ -410,6 +462,7 @@ Step 4: Abridge QA (needs transcript + transcript_abridgement)
 **However, Step 4 must wait for Step 3** because it needs `transcript_abridgement`.
 
 **Revised optimal flow:**
+
 ```
 Step 1: Configure
   ↓
@@ -431,28 +484,33 @@ Step 4: Abridge QA ⚠️ HUMAN CHECKPOINT
 ### Pattern Types
 
 **Pattern 1: Review & Select (Curation)**
+
 - AI generates analysis/comparisons/options
 - Human reviews findings
 - Human selects which items to include/apply
 - Example: Abridge QA - AI finds discrepancies, human decides which to fix
 
 **Pattern 2: Correction/Refinement (Directive Feedback)**
+
 - AI generates output
 - If wrong, human provides specific correction
 - Usually 1-2 simple directives: "start here", "stop there"
 - Example: Intro/Outro - AI extracts boundaries, human corrects: "should've started at this word"
 
 **Pattern 3: Categorization**
+
 - AI generates list of items with categories/types
 - Human reviews categorized results
 - Example: CTA - list of calls-to-action with types
 
 **Pattern 4: Predicate/Boolean**
+
 - AI answers yes/no question
 - Human verifies answer
 - Example: CTA - "Is there a CTA present? Yes/No"
 
 **Pattern 5: Approval Gate**
+
 - AI generates output
 - Human approves or rejects (simple gate)
 - No refinement, just proceed/stop decision
@@ -460,15 +518,16 @@ Step 4: Abridge QA ⚠️ HUMAN CHECKPOINT
 ### Schema Enhancement Proposal
 
 Add to Step definition:
+
 ```yaml
 step:
   name: "Abridge QA"
   human_in_loop:
     enabled: true
-    type: "review_and_select"      # Pattern type
-    frequency: "always"             # always | sometimes | rare
-    blocking: true                  # Must complete before next step
-    correction_rounds: 1-3          # Expected iterations
+    type: "review_and_select" # Pattern type
+    frequency: "always" # always | sometimes | rare
+    blocking: true # Must complete before next step
+    correction_rounds: 1-3 # Expected iterations
     description: "Review discrepancy list, select fixes to apply"
 ```
 
@@ -479,6 +538,7 @@ step:
 ### Human Checkpoints (with Patterns)
 
 **Step 4: Abridge QA** ⚠️ **PRIMARY CHECKPOINT**
+
 - **Pattern**: Review & Select (Curation)
 - AI generates discrepancy list with comparisons/questions
 - Human reviews: "Should I include these findings in the abridgement?"
@@ -487,6 +547,7 @@ step:
 - Most critical QA gate (transcript_abridgement feeds 20+ later steps)
 
 **Step 5: Intro/Outro Separation** ⚠️ **OCCASIONAL CHECKPOINT**
+
 - **Pattern**: Correction/Refinement (Directive Feedback)
 - AI extracts intro/outro boundaries
 - If wrong, human provides simple correction: "should've started at this word"
@@ -494,6 +555,7 @@ step:
 - Frequency: Sometimes (when boundaries ambiguous)
 
 **Step 6: Find CTA** ❌ **NOT CURRENTLY USED**
+
 - **Pattern**: Could be Categorization OR Predicate/Boolean
   - Option A: List of CTAs with types (categorization)
   - Option B: "Is there a CTA? Yes/No" (predicate)
@@ -505,6 +567,7 @@ step:
 ### What Actually Works
 
 **Highly Valuable:**
+
 - Step 1: Configure - Sets up project metadata ✓
 - Step 2: Script Summary - Used for social media ✓
 - Step 3: Script Abridgement - Most important derived attribute ✓
@@ -512,6 +575,7 @@ step:
 - Step 5: Intro/Outro - Useful but accuracy issues ⚠️
 
 **Doesn't Work in Practice:**
+
 - Step 6: Find CTA - Not used, needs redesign ❌
 
 ### Design Improvements Identified
@@ -538,18 +602,21 @@ step:
 ### Parallelization Findings
 
 **Massive opportunity discovered:**
+
 - Steps 2, 3, 5, 6 ALL only need `transcript`
 - Could run simultaneously after Step 1
 - Current design: Sequential (1→2→3→4→5→6)
 - Optimal design: 1 → [2,3,5,6 parallel] → 4 (human checkpoints)
 
 **Critical Insight:**
+
 - Human checkpoints DON'T block parallel execution
 - Steps 2, 3, 5, 6 can all run in parallel
 - Human reviews happen AFTER all complete
 - Workflow: Execute parallel → Present all results → Human reviews each
 
 **Revised optimal flow with human checkpoints:**
+
 ```
 Step 1: Configure
   ↓
@@ -570,6 +637,7 @@ Step 1: Configure
 ```
 
 **Time savings potential:**
+
 - If each step takes 30-60 seconds
 - Sequential: 4-6 minutes for Steps 2-6
 - Parallel: 30-60 seconds (longest step wins) + human review time
@@ -578,11 +646,13 @@ Step 1: Configure
 ### Data Flow Insights
 
 **Three transcript variants:**
+
 - `transcript` (4000 words) - Full detail
 - `transcript_summary` (400 words) - High-level overview, used in social media
 - `transcript_abridgement` (800 words) - Detailed but compressed, used in 20+ later steps
 
 **Most important attributes from Section 1:**
+
 1. `transcript_abridgement` - Used extensively in later sections
 2. `project_code` - Used for file organization
 3. `transcript_summary` - Used for social media posts
@@ -593,6 +663,7 @@ Step 1: Configure
 ## Section 2: Build Chapters
 
 ### Overview
+
 **Purpose**: Create YouTube chapter markers with timestamps
 **Steps**: 3
 **Dependencies from Section 1**: transcript, transcript_abridgement
@@ -602,15 +673,18 @@ Step 1: Configure
 ### Step 1: Find Chapters
 
 **Inputs:**
+
 - transcript
 - transcript_abridgement
 
 **Prompt**: identify_chapters_prompt
 
 **Outputs:**
+
 - identify_chapters
 
 **Prompt Analysis:**
+
 ```
 Generate initial chapter list from video content
 - Identify logical sections/topics
@@ -624,27 +698,32 @@ Note: Prompt has unusual [x-transcript-abridgement] prefix
 ```
 
 **Dependencies:**
+
 - REQUIRES: transcript (from raw materials)
 - REQUIRES: transcript_abridgement (from Section 1, Step 3)
 - **Must wait for Section 1, Step 3 to complete**
 - **Cannot run in parallel with Section 1**
 
 **Reality Check (from David):**
+
 - **Accuracy: POOR** - Usually generates WAY TOO MANY chapters
 - Only becomes accurate when Step 2 adds human folder names
 - [x-transcript-abridgement] prefix: Prevents it from being included in data (not actually used)
 
 **Human-in-the-loop:** ✅ **AUTO-ADVANCE (but output not very useful)**
+
 - AI attempts chapter identification
 - Result is usually poor (too many chapters)
 - Real value comes in Step 2 when human provides structure
 
 **Purpose:**
+
 - Give AI "contextual understanding" of chapter possibilities
 - Sets up context for Step 2 refinement
 - Could potentially be combined with Step 2, but kept separate for AI context
 
 **Critical Insight:**
+
 - **Chapter creation is THE HARDEST task for AI in entire workflow**
 - David manually does 90% of chapter work himself
 - Hasn't done in 6 months (AI may be better now)
@@ -654,6 +733,7 @@ Note: Prompt has unusual [x-transcript-abridgement] prefix
 ### Step 2: Refine Chapters
 
 **Inputs:**
+
 - identify_chapters (from Step 1)
 - chapter_folder_names
 - transcript
@@ -661,9 +741,11 @@ Note: Prompt has unusual [x-transcript-abridgement] prefix
 **Prompt**: chapter_folder_names_prompt
 
 **Outputs:**
+
 - chapters
 
 **Prompt Analysis:**
+
 ```
 Align AI-suggested chapters with author's folder structure
 - Folder names are AUTHORITATIVE (human-provided structure)
@@ -676,18 +758,21 @@ Placeholders used: [identify_chapters], [transcript], [chapter_folder_names]
 ```
 
 **Reality Check (from David):**
+
 - **THIS IS WHERE THE MAGIC HAPPENS**
 - Human provides `chapter_folder_names` from their file system
 - These come from video recording process: David records videos in separate files with short names (e.g., "introduction", "setup", "demo")
 - Folder names are LIMITED LIST that dramatically improves accuracy
 
 **How David Records Videos:**
+
 - Records in separate files (not one continuous recording)
 - Each file has short descriptive name = natural chapter structure
 - Feeds these file names into workflow as `chapter_folder_names`
 - AI uses these as authoritative structure to refine its poor Step 1 attempt
 
 **Dependencies:**
+
 - REQUIRES: identify_chapters (from Step 1 - though it's poor quality)
 - REQUIRES: chapter_folder_names (**human provides from file system**)
 - REQUIRES: transcript (raw material)
@@ -695,12 +780,14 @@ Placeholders used: [identify_chapters], [transcript], [chapter_folder_names]
 - **Sequential within Section 2**
 
 **Human-in-the-loop:** ⚠️ **YES - HUMAN PROVIDES FRAMEWORK**
+
 - **Pattern**: Human defines framework (folder names), AI populates/refines
 - Human supplies folder names at this step
 - If folder names provided → can auto-advance
 - **Usage: ALL THE TIME** - Step 2 is the only step that actually helps David
 
 **Purpose:**
+
 - Transform AI's poor many-chapter attempt → accurate limited list
 - Align AI understanding with human's natural recording structure
 - Makes chapters actually usable
@@ -710,15 +797,18 @@ Placeholders used: [identify_chapters], [transcript], [chapter_folder_names]
 ### Step 3: Create Chapters
 
 **Inputs:**
+
 - chapters (from Step 2)
 - srt
 
 **Prompt**: create_chapters_prompt
 
 **Outputs:**
+
 - chapters (updates same attribute with timestamps)
 
 **Prompt Analysis:**
+
 ```
 Add timestamps to chapters using SRT file
 - Match chapter sentences to SRT timestamps
@@ -731,12 +821,14 @@ Placeholders used: [srt], [chapters]
 ```
 
 **Dependencies:**
+
 - REQUIRES: chapters (from Step 2)
 - REQUIRES: srt (subtitle file from YouTube or external tool)
 - **Must run AFTER Step 2**
 - **Sequential within Section 2**
 
 **Reality Check (from David):**
+
 - **THIS STEP DOESN'T WORK IN PRACTICE** ❌
 - Would be wonderful if it did
 - Problem: Couldn't easily process machine-readable files (SRT) with LLMs at the time
@@ -745,21 +837,25 @@ Placeholders used: [srt], [chapters]
 - **THIS IS THE HARDEST, MOST TIME-CONSUMING STEP** - David HATES doing this
 
 **Human-in-the-loop:** ⚠️ **COMPLETELY MANUAL (step doesn't work)**
+
 - Current process: Watch entire video, manually assign timestamps
 - Extremely time-consuming
 - Not automated at all
 
 **Purpose (intended but not achieved):**
+
 - Automatically match chapter names to SRT timestamps
 - Create YouTube-formatted chapter list
 - Save massive manual effort
 
 **Critical Gap:**
+
 - This is HIGH-VALUE automation opportunity
 - If Step 3 could work, it would eliminate David's most hated task
 - Worth revisiting with modern LLM capabilities
 
 **Post-Step 3 Reality:**
+
 - Even after all this, David writes FINAL chapter names while watching video
 - So the flow is:
   1. AI attempts (poor)
@@ -774,6 +870,7 @@ Placeholders used: [srt], [chapters]
 ### The Chapter Creation Challenge
 
 **THE HARDEST AI TASK IN ENTIRE WORKFLOW**
+
 - David manually does 90% of chapter work himself
 - AI struggles significantly with this task
 - More manual intervention required than any other section
@@ -781,11 +878,13 @@ Placeholders used: [srt], [chapters]
 ### What Works vs What Doesn't
 
 **Step 1: Find Chapters** ⚠️
+
 - **AI Output: POOR** - Generates way too many chapters
 - But provides contextual understanding for Step 2
 - Auto-advance but output not very useful
 
 **Step 2: Refine Chapters** ✅ **THE ONLY STEP THAT HELPS**
+
 - **THIS IS WHERE IT WORKS**
 - Human provides folder names from recording file system
 - AI refines poor Step 1 attempt into accurate limited list
@@ -793,6 +892,7 @@ Placeholders used: [srt], [chapters]
 - Pattern: Human defines framework, AI populates
 
 **Step 3: Create Chapters** ❌ **COMPLETELY BROKEN**
+
 - **DOESN'T WORK AT ALL**
 - Was supposed to match chapters to SRT timestamps
 - LLMs couldn't handle structured files well at the time
@@ -803,6 +903,7 @@ Placeholders used: [srt], [chapters]
 ### David's Recording Process (Key Insight)
 
 **Why Step 2 works:**
+
 - David records videos in **separate files** (not continuous)
 - Each file has **short descriptive name** (e.g., "introduction", "setup", "demo")
 - These file names = natural chapter structure
@@ -810,6 +911,7 @@ Placeholders used: [srt], [chapters]
 - AI uses as authoritative framework
 
 **This is brilliant because:**
+
 - Chapter structure created DURING recording, not after
 - Natural workflow alignment
 - Provides clear boundaries for AI
@@ -818,18 +920,21 @@ Placeholders used: [srt], [chapters]
 ### The Full Reality of Chapter Creation
 
 **Actual workflow:**
+
 1. **Step 1**: AI attempts chapters (poor, too many)
 2. **Step 2**: Add folder names → AI refines (this helps!)
 3. **Step 3**: Manual timestamp assignment by watching video (PAINFUL - doesn't work)
 4. **Post-workflow**: David writes final chapter names while watching video
 
 **So really:**
+
 - 10% AI-assisted (Step 2 refinement with folder names)
 - 90% manual (timestamp assignment + final naming)
 
 ### Human-in-the-Loop Patterns
 
 **Pattern: Human Defines Framework, AI Populates**
+
 - Step 2 demonstrates this perfectly
 - Human provides structure (folder names)
 - AI refines within that structure
@@ -838,6 +943,7 @@ Placeholders used: [srt], [chapters]
 ### Dependencies
 
 **Sequential within section:**
+
 ```
 Section 1 completes (need transcript_abridgement)
   ↓
@@ -851,6 +957,7 @@ Post-process: Final chapter names (manual)
 ```
 
 **Cannot parallelize:**
+
 - All 3 steps must run sequentially
 - Each depends on previous step output
 - But Step 3 doesn't actually work anyway
@@ -858,6 +965,7 @@ Post-process: Final chapter names (manual)
 ### Opportunity for Motus
 
 **High-value automation target:**
+
 - Step 3 (timestamp matching) with modern LLMs
 - Could eliminate David's most time-consuming manual task
 - SRT file processing now feasible with Claude/GPT-4
@@ -877,6 +985,7 @@ Post-process: Final chapter names (manual)
 ### Step 1: Design Style List
 
 **RBX Declaration:**
+
 ```ruby
 step 'Design Style List' do
   input :transcript
@@ -888,21 +997,25 @@ end
 **Prompt File**: `3-1-transcript-design-style.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[transcript]` - Full video transcript
 
 **Output**: `design_style` - List of 10 style ideas (e.g., "Neon Cyberpunk: Vibrant colors with holographic effects...")
 
 **What it does:**
+
 - Analyzes transcript mood, themes, and content
 - Generates 10 distinct visual style options for Midjourney images
 - Each style has short label + descriptive sentence
 - Considers: color schemes, textures, lighting, art styles, time periods, atmosphere
 
 **Dependencies:**
+
 - Requires: Section 1 Step 1 (transcript loaded)
 - Can run: After transcript is available
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 1**: Do you review and select from the 10 style options, or just use all of them?
 - ⚠️ **QUESTION 2**: Is this step actually used in your current workflow?
 
@@ -913,6 +1026,7 @@ end
 ### Step 2: Intro/Outro B-Roll
 
 **RBX Declaration:**
+
 ```ruby
 step 'Intro/Outro B-Roll' do
   input :transcript_intro
@@ -926,6 +1040,7 @@ end
 **Prompt File**: `3-2-intro-outro-design-ideas.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[design_style]` - Style guidelines from Step 1
 - ✅ `[transcript_intro]` - Intro text from Section 1 Step 5
 - ✅ `[transcript_outro]` - Outro text from Section 1 Step 5
@@ -933,16 +1048,19 @@ end
 **Output**: `intro_outro_design_ideas` - List of concepts + Midjourney prompts for intro/outro visuals
 
 **What it does:**
+
 - Identifies key concepts/sentences from intro & outro
 - Generates 2 Midjourney prompts per concept
 - Uses selected design style for consistency
 - Creates numbered list of visual concepts
 
 **Dependencies:**
+
 - Requires: Section 1 Step 5 (intro/outro), Section 3 Step 1 (design_style)
 - Can run: After Step 1 completes
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 3**: Do you review/edit these prompts before sending to Midjourney?
 - ⚠️ **QUESTION 4**: Or does someone (video editor) generate the images directly?
 
@@ -953,6 +1071,7 @@ end
 ### Step 3: Brief for Video Editor
 
 **RBX Declaration:**
+
 ```ruby
 step 'Brief for Video Editor' do
   input :video_editor_instructions
@@ -968,6 +1087,7 @@ end
 **Prompt File**: `3-3-editor-brief.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[intro_outro_design_ideas]` - From Step 2
 - ✅ `[chapters]` - From Section 2 Step 2
 - ✅ `[video_editor_instructions]` - Special instructions (human-provided?)
@@ -977,16 +1097,19 @@ end
 **Output**: `editor_brief` - Instructions for video editor
 
 **What it does:**
+
 - Creates brief for video editor (who knows your systems)
 - Includes intro/outro design guidelines
 - Includes chapters structure
 - Special handling: If past_video_cta exists → needs thumbnail overlay for that specific video
 
 **Dependencies:**
+
 - Requires: Step 2, Section 1 Step 6 (CTAs), Section 2 (chapters)
 - Can run: After Step 2 completes
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 5**: Who provides `video_editor_instructions`? You? Or is it from config?
 - ⚠️ **QUESTION 6**: Do you review/edit this brief before sending to editor?
 - ⚠️ **QUESTION 7**: Or does this go directly to your editor?
@@ -998,6 +1121,7 @@ end
 ### Step 4: Transcript Design Ideas
 
 **RBX Declaration:**
+
 ```ruby
 step 'Transcript Design Ideas' do
   input :transcript
@@ -1010,22 +1134,26 @@ end
 **Prompt File**: `3-4-transcript-design-ideas.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[transcript]` - Full transcript
 - ✅ `[design_style]` - Style from Step 1
 
 **Output**: `design_ideas` - CSV file with visual concepts mapped to transcript sentences + Midjourney prompts
 
 **What it does:**
+
 - Breaks down transcript into visual concepts (1 per sentence or few sentences)
 - For each concept: creates 2-3 Midjourney prompts
 - Outputs CSV with columns: File, Concept, Sentence, Prompt
 - Example: "01-futuristic-city-skyline-1-", "Futuristic city skyline", "In 2050...", "futuristic city with floating buildings..."
 
 **Dependencies:**
+
 - Requires: Section 1 Step 1 (transcript), Section 3 Step 1 (design_style)
 - Can run: After Step 1 completes (PARALLEL with Step 2!)
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 8**: This CSV goes to someone who generates Midjourney images?
 - ⚠️ **QUESTION 9**: Do you review/filter the CSV first?
 - ⚠️ **QUESTION 10**: How many images actually get generated? (CSV could be 50+ concepts)
@@ -1058,22 +1186,26 @@ Section 2 (chapters) ────────────┤    ┌────�
 ```
 
 **Dependencies:**
+
 - Step 1: Only needs transcript (can run after Section 1 Step 1)
 - Step 2: Needs Step 1 + Section 1 Step 5 (intro/outro) + Section 1 Step 6 (CTAs, but may not exist)
 - Step 3: Needs Step 2 + Section 2 (chapters) + video_editor_instructions
 - Step 4: Needs Step 1 + transcript (PARALLEL with Step 2!)
 
 **Parallelization Opportunity:**
+
 - Steps 2 and 4 can run in PARALLEL after Step 1 completes
 - Both only need design_style from Step 1
 - Step 3 must wait for Step 2 to complete
 
 **Time Savings:**
+
 - Sequential: ~6-8 minutes (Step 1: 1-2min, Step 2: 2-3min, Step 3: 1min, Step 4: 2-3min)
 - Parallel: ~5-6 minutes (Steps 2+4 run simultaneously)
 - Savings: 1-2 minutes
 
 **Human Checkpoints:**
+
 - ⚠️ UNKNOWN: 10 questions about workflow (see individual steps)
 - Key questions:
   1. Is design style selection manual or automatic?
@@ -1082,9 +1214,11 @@ Section 2 (chapters) ────────────┤    ┌────�
   4. Is editor brief reviewed before sending to editor?
 
 **What Actually Works:**
+
 - ❌ **NOTHING - ENTIRE SECTION DEPRECATED**
 
 **Real-World Usage Pattern:**
+
 - ❌ **Step 1: NOT USED** - Multi-select/fork pattern too complex to implement in AWB
   - Would want to test multiple design styles simultaneously (branching)
   - Current workflow doesn't support this pattern
@@ -1093,6 +1227,7 @@ Section 2 (chapters) ────────────┤    ┌────�
 - ❌ **Step 4: DEPRECATED** - Transcript design ideas no longer used
 
 **Key Insight:**
+
 - B-Roll generation is complex enough to warrant its own **independent workflow**
 - Should not be a section within Launch Optimizer
 - Would need complete redesign if reactivated
@@ -1113,6 +1248,7 @@ Section 2 (chapters) ────────────┤    ┌────�
 ### Step 1: Content Essence
 
 **RBX Declaration:**
+
 ```ruby
 step 'Content Essence' do
   input :transcript_abridgement
@@ -1131,15 +1267,18 @@ end
 **Prompt File**: `4-1-analyze-content-essence.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[transcript_abridgement]` - Condensed transcript from Section 1 Step 3
 
 **Outputs**:
+
 - `video_topic_theme` - Main topic/theme
 - `video_keywords` - Relevant keywords
 - `important_statistics` - Numbers/stats mentioned
 - `content_highlights` - Key takeaways/insights
 
 **What it does:**
+
 - Extracts core content elements
 - Identifies main topic/theme
 - Lists relevant keywords for SEO
@@ -1147,10 +1286,12 @@ end
 - Highlights key takeaways
 
 **Dependencies:**
+
 - Requires: Section 1 Step 3 (transcript_abridgement)
 - Can run: Immediately after transcript_abridgement available
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 1**: Do you review/edit these extracted elements?
 - ⚠️ **QUESTION 2**: Or do they feed directly into later steps (title, description, etc.)?
 
@@ -1163,6 +1304,7 @@ end
 ### Step 2: Audience Engagement
 
 **RBX Declaration:**
+
 ```ruby
 step 'Audience Engagement' do
   input :transcript_abridgement
@@ -1181,25 +1323,30 @@ end
 **Prompt File**: `4-2-analyze-audience-engagement.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[transcript_abridgement]` - Condensed transcript from Section 1 Step 3
 
 **Outputs**:
+
 - `emotional_trigger_tone` - Emotional triggers/tone
 - `overal_tone_style` - Overall tone (formal/casual/humorous)
 - `audience_insights` - References to demographics/groups
 - `usp` - Unique selling points
 
 **What it does:**
+
 - Identifies emotional triggers that influence audience response
 - Determines overall tone/style (with examples)
 - Identifies audience-related insights (demographics, references)
 - Lists unique selling points (USPs)
 
 **Dependencies:**
+
 - Requires: Section 1 Step 3 (transcript_abridgement)
 - Can run: PARALLEL with Step 1 and Step 3!
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 3**: Are these insights reviewed/validated?
 - ⚠️ **QUESTION 4**: Used for title/thumbnail/description generation?
 
@@ -1210,6 +1357,7 @@ end
 ### Step 3: CTA/Competitors
 
 **RBX Declaration:**
+
 ```ruby
 step 'CTA/Competitors' do
   input :transcript_abridgement
@@ -1228,25 +1376,30 @@ end
 **Prompt File**: `4-3-analyze-cta-competitors.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[transcript_abridgement]` - Condensed transcript from Section 1 Step 3
 
 **Outputs**:
+
 - `cta_phrases` - Call-to-action phrases (NOT generic "like and subscribe")
 - `catchy_phrases` - Memorable/unique expressions for marketing
 - `questions_posed_or_answered` - Questions for engagement
 - `competitor_search_terms` - Keywords for competitor research
 
 **What it does:**
+
 - Extracts specific CTA phrases (not generic ones)
 - Identifies catchy/memorable phrases for promotion
 - Lists relevant questions (rhetorical or engagement-driving)
 - Determines search terms for Google/YouTube competitor research
 
 **Dependencies:**
+
 - Requires: Section 1 Step 3 (transcript_abridgement)
 - Can run: PARALLEL with Step 1 and Step 2!
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 5**: Do you actually use competitor search terms for research?
 - ⚠️ **QUESTION 6**: Are catchy phrases selected for social media posts?
 
@@ -1274,26 +1427,31 @@ Essence         Engagement      Competitors
 ```
 
 **Dependencies:**
+
 - **ALL 3 STEPS**: Only need transcript_abridgement
 - **NO INTERDEPENDENCIES**: Steps don't depend on each other
 - **PERFECT PARALLELIZATION**: All 3 can run simultaneously
 
 **Parallelization Opportunity:**
+
 - ⚡ **HUGE TIME SAVINGS**
 - Sequential: ~6-9 minutes (Step 1: 2-3min, Step 2: 2-3min, Step 3: 2-3min)
 - Parallel: ~2-3 minutes (all run simultaneously)
 - **Savings: 4-6 minutes** (50-67% reduction!)
 
 **Human Checkpoints:**
+
 - ⚠️ UNKNOWN: 6 questions about usage/review patterns
 - Likely all auto-advance if feeding into later sections
 - Outputs used in Sections 5-7 (Title/Thumbnail, YouTube Meta, Social Media)
 
 **What Actually Works:**
+
 - ✅ All 3 steps execute successfully and produce output
 - ⚠️ **But outputs are mostly INFORMATIONAL/UNUSED**
 
 **Real-World Usage Pattern:**
+
 - **Step 1 (Content Essence):**
   - Keywords are **seeded** (rough starting point) for YouTube description/Twitter
   - Problems: Too many keywords, not quite right quality
@@ -1303,17 +1461,20 @@ Essence         Engagement      Competitors
 - **Step 3 (CTA/Competitors):** ❌ All outputs discarded (CTA phrases, catchy phrases, questions, search terms)
 
 **Summary:**
+
 - Only partial use of keywords from Step 1
 - Everything else generated but not applied
 - David reads outputs but doesn't know what to do with them
 - **Question:** What could actually be done with this analysis?
 
 **For Motus:**
+
 - Could auto-advance (no human checkpoint needed)
 - Consider making these "optional analysis" steps
 - Questionable value if 90% of outputs unused
 
 **Pattern Note:**
+
 - All steps use "refinement" pattern: inputs match outputs
 - Allows iterative improvement if run multiple times
 - Initial values may come from config/templates
@@ -1332,6 +1493,7 @@ Essence         Engagement      Competitors
 ### Step 1: Title Ideas
 
 **RBX Declaration:**
+
 ```ruby
 step 'Title Ideas' do
   input :short_title
@@ -1345,6 +1507,7 @@ end
 **Prompt File**: `5-1-generate-title.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[short_title]` - From Section 1 Step 1
 - ✅ `[video_topic_theme]` - From Section 4 Step 1
 - ✅ `[content_highlights]` - From Section 4 Step 1
@@ -1352,6 +1515,7 @@ end
 **Output**: `title_ideas` - 10 YouTube titles
 
 **What it does:**
+
 - Creates 10 YouTube title options
 - Under 70 characters for full visibility
 - Uses action verbs, curiosity-driven (not clickbait)
@@ -1360,10 +1524,12 @@ end
 - Includes "how-to" solutions for pain points
 
 **Dependencies:**
+
 - Requires: Section 1 Step 1 (short_title), Section 4 Step 1 (theme, highlights)
 - Can run: After Section 4 Step 1 completes
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 1**: Do you select one title from the 10 options?
 - ⚠️ **QUESTION 2**: Or review/refine before selecting?
 - ⚠️ **QUESTION 3**: Does selection happen now or later in workflow?
@@ -1375,6 +1541,7 @@ end
 ### Step 2: Thumb Text Ideas
 
 **RBX Declaration:**
+
 ```ruby
 step 'Thumb Text Ideas' do
   input :video_title
@@ -1389,6 +1556,7 @@ end
 **Prompt File**: `5-2-generate-thumbnail-text.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[video_title]` - From config or Step 1 selection?
 - ✅ `[video_topic_theme]` - From Section 4 Step 1
 - ✅ `[title_ideas]` - From Step 1
@@ -1396,6 +1564,7 @@ end
 **Output**: `thumbnail_text` - Table with 3-5 thumbnail text ideas, split into 1-4 parts
 
 **What it does:**
+
 - Creates text for thumbnail overlay (different from title)
 - Short, impactful (3-5 words)
 - Uses different psychological hook than title
@@ -1404,6 +1573,7 @@ end
 - Complementary to title (different emotional perspective)
 
 **Example output**:
+
 ```
 | Thumb Text          | Part 1    | Part 2   | Part 3 | Title Idea |
 | Build AI Fast!      | Build AI  | Fast!    |        | Agent as Code... |
@@ -1411,10 +1581,12 @@ end
 ```
 
 **Dependencies:**
+
 - Requires: Step 1 (title_ideas), Section 4 Step 1 (theme, highlights)
 - Can run: After Step 1 completes (PARALLEL with Step 5!)
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 4**: Do you select one thumb text from 3-5 options?
 - ⚠️ **QUESTION 5**: Or review/edit before selecting?
 
@@ -1425,6 +1597,7 @@ end
 ### Step 3: Thumb Text CSV
 
 **RBX Declaration:**
+
 ```ruby
 step 'Thumb Text CSV' do
   input :thumbnail_text
@@ -1436,19 +1609,23 @@ end
 **Prompt File**: `5-3-generate-thumbnail-text-csv.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[thumbnail_text]` - From Step 2
 
 **Output**: `thumbnail_text_csv` - CSV format of thumbnail text table
 
 **What it does:**
+
 - Simple conversion: takes table from Step 2
 - Converts to CSV format with headers: "Thumb Text,Part 1,Part 2,Part 3,Title"
 
 **Dependencies:**
+
 - Requires: Step 2 (thumbnail_text)
 - Can run: Immediately after Step 2
 
 **Human-in-the-Loop:**
+
 - None (automatic conversion)
 
 **Can auto-advance**: ✅ YES - simple formatting step
@@ -1458,6 +1635,7 @@ end
 ### Step 4: THUMB THUMB THUMB
 
 **RBX Declaration:**
+
 ```ruby
 step 'THUMB THUMB THUMB' do
   # https://websim.ai/@wonderwhy_er/youtube-thumbnail-brainstormer
@@ -1467,14 +1645,17 @@ end
 **No prompt file** - External manual step
 
 **What it does:**
+
 - Links to external tool: websim.ai YouTube thumbnail brainstormer
 - Likely manual experimentation/brainstorming step
 - Not automated in AWB workflow
 
 **Dependencies:**
+
 - None (manual external tool)
 
 **Human-in-the-Loop:**
+
 - ✅ Fully manual
 
 **Can auto-advance**: ❌ NO - external manual process
@@ -1486,6 +1667,7 @@ end
 ### Step 5: Visual Element Ideas
 
 **RBX Declaration:**
+
 ```ruby
 step 'Visual Element Ideas' do
   input :video_title
@@ -1499,6 +1681,7 @@ end
 **Prompt File**: `5-4-thumbnail-visual-elements.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[video_topic_theme]` - From Section 4 Step 1
 - ✅ `[content_highlights]` - From Section 4 Step 1
 - ✅ `[title_ideas]` - From Step 1
@@ -1506,6 +1689,7 @@ end
 **Output**: `thumbnail_visual_elements` - 3 sets of visual guidelines with prompts
 
 **What it does:**
+
 - Generates 3 distinct visual concepts for thumbnail
 - Each set includes:
   1. Visual concept description
@@ -1517,10 +1701,12 @@ end
 - Simple visuals (1-2 elements) for maximum impact
 
 **Dependencies:**
+
 - Requires: Step 1 (title_ideas), Section 4 Step 1 (theme, highlights)
 - Can run: After Step 1 completes (PARALLEL with Step 2!)
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 6**: Do you select one visual guideline from 3 options?
 - ⚠️ **QUESTION 7**: Or used for inspiration/reference?
 
@@ -1531,6 +1717,7 @@ end
 ### Step 6: Create Thumbnail
 
 **RBX Declaration:**
+
 ```ruby
 step 'Create Thumbnail' do
   input :video_title
@@ -1544,6 +1731,7 @@ end
 **Prompt File**: `5-5-thumbnail.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[video_title]` - From Step 1 selection or config
 - ✅ `[thumbnail_text]` - From Step 2
 - ✅ `[transcript_abridgement]` - From Section 1 Step 3
@@ -1551,6 +1739,7 @@ end
 **Output**: `thumbnail_image` - Leonardo AI prompt for generating thumbnail
 
 **What it does:**
+
 - Creates Leonardo AI prompt for 16:9 YouTube thumbnail
 - Visually captures core idea/emotion from title + description
 - Vivid, eye-catching, clean (optimized for small screens)
@@ -1559,10 +1748,12 @@ end
 - Can pick one line from thumbnail_text options
 
 **Dependencies:**
+
 - Requires: Step 2 (thumbnail_text), Section 1 Step 3 (transcript_abridgement)
 - Can run: After Step 2 completes
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 8**: Do you manually run this prompt in Leonardo AI?
 - ⚠️ **QUESTION 9**: Or is there automation/integration?
 - ⚠️ **QUESTION 10**: Do you iterate on the prompt based on results?
@@ -1603,6 +1794,7 @@ Section 1 Step 3 (abridgement) ────────┤      title_ideas
 ```
 
 **Dependencies:**
+
 - Step 1: Needs Section 1 Step 1 + Section 4 Step 1
 - Step 2: Needs Step 1 (can run PARALLEL with Step 5 after Step 1)
 - Step 3: Needs Step 2 (auto-conversion)
@@ -1611,16 +1803,19 @@ Section 1 Step 3 (abridgement) ────────┤      title_ideas
 - Step 6: Needs Step 2 + Section 1 Step 3
 
 **Parallelization Opportunity:**
+
 - Steps 2 and 5 can run in PARALLEL after Step 1 completes
 - Both need title_ideas but don't depend on each other
 - Time savings: ~1-2 minutes
 
 **Time Estimate:**
+
 - Sequential: ~8-10 minutes (Step 1: 2min, Step 2: 2min, Step 3: 30sec, Step 5: 2min, Step 6: 2min, Step 4: manual)
 - Parallel: ~7-8 minutes (Steps 2+5 parallel)
 - Savings: ~1-2 minutes
 
 **Human Checkpoints:**
+
 - ⚠️ UNKNOWN: 10 questions about selection/review/iteration patterns
 - Key questions:
   1. When/how is final title selected from 10 options?
@@ -1629,6 +1824,7 @@ Section 1 Step 3 (abridgement) ────────┤      title_ideas
   4. Is Leonardo AI generation automated or manual?
 
 **What Actually Works:**
+
 - ✅ **Step 1 (Title Ideas): ACTIVELY USED**
   - Generates 10 titles, David selects one
   - **Future enhancement:** Support A/B testing (1-3 title options for YouTube A/B testing)
@@ -1652,6 +1848,7 @@ Section 1 Step 3 (abridgement) ────────┤      title_ideas
   - Not used
 
 **Real-World Usage Pattern:**
+
 - Only Step 1 actively used (title generation)
 - Step 2 informational (prompts need improvement)
 - Steps 3-6 not used or need rethinking
@@ -1659,6 +1856,7 @@ Section 1 Step 3 (abridgement) ────────┤      title_ideas
 - Similar to B-Roll: Thumbnail design may need to be its own independent workflow
 
 **For Motus:**
+
 - Step 1: Implement with A/B testing support (1-3 title outputs)
 - Steps 2-6: Low priority or defer until thumbnail workflow designed
 
@@ -1676,6 +1874,7 @@ Section 1 Step 3 (abridgement) ────────┤      title_ideas
 ### Step 1: Simple Description
 
 **RBX Declaration:**
+
 ```ruby
 step 'Simple Description' do
   input :video_title
@@ -1689,6 +1888,7 @@ end
 **Prompt File**: `6-1-yt-simple-description.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[video_title]` - From Section 5 Step 1 (or config)
 - ✅ `[video_keywords]` - From Section 4 Step 1
 - ✅ `[transcript_abridgement]` - From Section 1 Step 3
@@ -1696,6 +1896,7 @@ end
 **Output**: `video_simple_description` - Simple description (<1000 chars)
 
 **What it does:**
+
 - Creates SEO-optimized YouTube description
 - Focuses on essence of video
 - Weaves in keywords naturally (no keyword section)
@@ -1703,10 +1904,12 @@ end
 - Simple version to be embedded in final description (Step 2)
 
 **Dependencies:**
+
 - Requires: Section 1 Step 3 (abridgement), Section 4 Step 1 (keywords), Section 5 Step 1 (title)
 - Can run: After all dependencies available
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 1**: Do you review/edit this simple description?
 - ⚠️ **QUESTION 2**: Or auto-advance to Step 2?
 
@@ -1717,6 +1920,7 @@ end
 ### Step 2: Write Description
 
 **RBX Declaration:**
+
 ```ruby
 step 'Write Description' do
   input :video_title
@@ -1736,6 +1940,7 @@ end
 **Prompt File**: `6-2-yt-write-description.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[video_simple_description]` - From Step 1
 - ✅ `[fold_cta]` - From config (above-the-fold CTA)
 - ✅ `[primary_cta]` - From config
@@ -1748,6 +1953,7 @@ end
 **Output**: `video_description` - Full YouTube description with structure
 
 **What it does:**
+
 - Assembles complete YouTube description with sections:
   1. Above the fold (40 words, primary keyword early, clickable fold_cta link)
   2. Simple Description (from Step 1)
@@ -1762,10 +1968,12 @@ end
 - Scattered emojis for engagement
 
 **Dependencies:**
+
 - Requires: Step 1 (simple_description), Section 2 (chapters), Section 4 Step 1 (keywords), config (CTAs, brand)
 - Can run: After Step 1 completes
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 3**: Do you review/edit the assembled description?
 - ⚠️ **QUESTION 4**: Or auto-advance to Step 3 (formatting)?
 
@@ -1776,6 +1984,7 @@ end
 ### Step 3: Format Description
 
 **RBX Declaration:**
+
 ```ruby
 step 'Format Description' do
   input :video_description
@@ -1787,11 +1996,13 @@ end
 **Prompt File**: `6-3-yt-format-description.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[video_description]` - From Step 2
 
 **Output**: `video_description` - YouTube-formatted description (overwrites input)
 
 **What it does:**
+
 - Converts markdown-like formatting to YouTube format
 - Headings: Use #, ##, ### (same as markdown)
 - Bold: Single asterisk `*` (NOT double `**`)
@@ -1801,10 +2012,12 @@ end
 - Remove horizontal lines `---`
 
 **Dependencies:**
+
 - Requires: Step 2 (video_description)
 - Can run: Immediately after Step 2
 
 **Human-in-the-Loop:**
+
 - None (automatic formatting)
 
 **Can auto-advance**: ✅ YES - simple formatting conversion
@@ -1814,6 +2027,7 @@ end
 ### Step 4: Custom GPT Description
 
 **RBX Declaration:**
+
 ```ruby
 step 'Custom GPT Description' do
   input :video_title
@@ -1833,6 +2047,7 @@ end
 **Prompt File**: `6-4-yt-description-custom-gpt.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[video_title]` - From Section 5 Step 1
 - ✅ `[video_keywords]` - From Section 4 Step 1
 - ✅ `[chapters]` - From Section 2 Step 2
@@ -1846,16 +2061,19 @@ end
 **Output**: `video_description_custom_gpt` - Alternative description using custom GPT
 
 **What it does:**
+
 - Alternative path to create YouTube description
 - Uses custom GPT with commands: CREATE, HASHTAGS, HELP
 - Produces structured description with SEO focus
 - Separate output from Steps 1-3 pipeline
 
 **Dependencies:**
+
 - Requires: Section 1 Step 3, Section 2 Step 2, Section 4 Step 1, Section 5 Step 1, config
 - Can run: PARALLEL with Steps 1-3! (no interdependencies)
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 5**: Do you compare output from Step 3 vs Step 4?
 - ⚠️ **QUESTION 6**: Or only use one path (either 1-3 or 4)?
 - ⚠️ **QUESTION 7**: Is custom GPT a specific GPT you've created?
@@ -1867,6 +2085,7 @@ end
 ### Step 5: Pinned Comment
 
 **RBX Declaration:**
+
 ```ruby
 step 'Pinned Comment' do
   # I don't need all these, but not sure which ones I do need yet
@@ -1888,6 +2107,7 @@ end
 **Prompt File**: `6-5-yt-pinned-comment.txt` (EMPTY - not implemented)
 
 **What it does:**
+
 - ❌ **NOT IMPLEMENTED**
 - Intended to create pinned comment for YouTube video
 - Comment in RBX: "I don't need all these, but not sure which ones I do need yet"
@@ -1899,6 +2119,7 @@ end
 ### Step 6: Extra Metadata
 
 **RBX Declaration:**
+
 ```ruby
 step 'Extra Metadata' do
   input :video_title
@@ -1911,6 +2132,7 @@ end
 **Prompt File**: `6-6-yt-meta-data.txt` (EMPTY - not implemented)
 
 **What it does:**
+
 - ❌ **NOT IMPLEMENTED**
 - Intended to generate additional YouTube metadata
 - Tags? Category? Other fields?
@@ -1945,6 +2167,7 @@ Config (CTAs, brand, links) ─────────┤      video_simple_des
 ```
 
 **Dependencies:**
+
 - Steps 1-3: Sequential pipeline
   - Step 1 → Step 2 → Step 3
 - Step 4: Independent parallel path
@@ -1952,17 +2175,20 @@ Config (CTAs, brand, links) ─────────┤      video_simple_des
 - Steps 5-6: Not implemented
 
 **Parallelization Opportunity:**
+
 - ⚡ Step 4 can run in PARALLEL with Steps 1-3
 - Both produce YouTube descriptions
 - Likely compare/choose between outputs
 - Time savings: None (same duration), but provides options
 
 **Time Estimate:**
+
 - Steps 1-3 Sequential: ~3-4 minutes (Step 1: 1min, Step 2: 2min, Step 3: 30sec)
 - Step 4 (if used): ~2-3 minutes
 - Total if both paths: ~3-4 minutes (parallel)
 
 **Human Checkpoints:**
+
 - ⚠️ UNKNOWN: 7 questions about review/selection patterns
 - Key questions:
   1. Is simple description (Step 1) reviewed?
@@ -1971,6 +2197,7 @@ Config (CTAs, brand, links) ─────────┤      video_simple_des
   4. How is final description selected/approved?
 
 **What Actually Works:**
+
 - ✅ **Steps 1-3: FULLY WORKING SEQUENTIAL PIPELINE**
   - Step 1 (Simple Description): Auto-advances (occasionally needs manual refinement later)
   - Step 2 (Write Description): Auto-advances - assembles full 9-section YouTube description
@@ -1981,11 +2208,13 @@ Config (CTAs, brand, links) ─────────┤      video_simple_des
 - ❌ **Step 6 (Extra Metadata): DEPRECATED** - Not implemented
 
 **Real-World Usage Pattern:**
+
 - Steps 1-3 form a working auto-advance pipeline
 - Step 1 output occasionally needs manual refinement after the fact
 - Steps 4-6 all deprecated/unused
 
 **For Motus:**
+
 - Implement Steps 1-3 as sequential auto-advance pipeline
 - Optional: Allow manual review/edit hook after Step 1 if refinement needed
 - Skip Steps 4-6 entirely
@@ -2006,6 +2235,7 @@ Config (CTAs, brand, links) ─────────┤      video_simple_des
 ### Step 1: Create Tweet
 
 **RBX Declaration:**
+
 ```ruby
 step 'Create Tweet' do
   input :video_title
@@ -2021,6 +2251,7 @@ end
 **Prompt File**: `7-1-create-tweet.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[video_title]` - From Section 5 Step 1
 - ✅ `[video_link]` - From config
 - ✅ `[transcript_summary]` - From Section 1 Step 2
@@ -2030,6 +2261,7 @@ end
 **Output**: `tweet_content` - Twitter post (280 chars)
 
 **What it does:**
+
 - Creates engaging tweet promoting video
 - Captures video essence in tweet format
 - 280-character limit including link + hashtags
@@ -2038,10 +2270,12 @@ end
 - Video link near end, hashtags after
 
 **Dependencies:**
+
 - Requires: Section 1 Step 2 (summary), Section 4 Step 1 (keywords, highlights), Section 5 Step 1 (title), config (link)
 - Can run: PARALLEL with Steps 2 & 3 (no interdependencies!)
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 1**: Do you review/edit tweet before posting?
 - ⚠️ **QUESTION 2**: Or does it auto-post somewhere?
 
@@ -2052,6 +2286,7 @@ end
 ### Step 2: Create FB Post
 
 **RBX Declaration:**
+
 ```ruby
 step 'Create FB Post' do
   input :transcript_summary
@@ -2064,6 +2299,7 @@ end
 **Prompt File**: `7-2-create-fb-post.txt` (EMPTY - not implemented)
 
 **What it does:**
+
 - ❌ **NOT IMPLEMENTED**
 - Intended to create Facebook post
 
@@ -2074,6 +2310,7 @@ end
 ### Step 3: Create LinkedIn Post
 
 **RBX Declaration:**
+
 ```ruby
 step 'Create LinkedIn Post' do
   input :video_title
@@ -2089,6 +2326,7 @@ end
 **Prompt File**: `7-3-create-linkedin-post.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[video_title]` - From Section 5 Step 1
 - ✅ `[video_link]` - From config
 - ✅ `[transcript_abridgement]` - From Section 1 Step 3
@@ -2097,6 +2335,7 @@ end
 **Output**: `linkedin_post` - LinkedIn article post (1300-1700 chars)
 
 **What it does:**
+
 - Creates professional LinkedIn article post
 - Attention-grabbing headline with keywords
 - Engaging intro (value proposition)
@@ -2108,10 +2347,12 @@ end
 - Formatted with line breaks, sparse emojis
 
 **Dependencies:**
+
 - Requires: Section 1 Step 3 (abridgement), Section 5 Step 1 (title), config (link)
 - Can run: PARALLEL with Steps 1 & 3 (no interdependencies!)
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 3**: Do you review/edit LinkedIn post?
 - ⚠️ **QUESTION 4**: Or auto-post to LinkedIn?
 
@@ -2122,6 +2363,7 @@ end
 ### Step 4: Add To Video List
 
 **RBX Declaration:**
+
 ```ruby
 step 'Add To Video List' do
   input :project_folder
@@ -2136,6 +2378,7 @@ end
 **Prompt File**: `7-4-add-to-video-list.txt` (MINIMAL - just placeholder text)
 
 **Actual Dependencies:**
+
 - ✅ `[project_folder]` - From config
 - ✅ `[video_title]` - From Section 5 Step 1
 - ✅ `[video_link]` - From config
@@ -2143,15 +2386,18 @@ end
 **Output**: `video_references` - Updated video list
 
 **What it does:**
+
 - Adds video to master video list/database
 - Tracks: project folder, title, link, playlist link
 - Minimal prompt (just lists placeholders - not fully implemented)
 
 **Dependencies:**
+
 - Requires: Section 5 Step 1 (title), config (folder, links)
 - Can run: After title available
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 5**: Is this a manual database update?
 - ⚠️ **QUESTION 6**: Or automated append to file/spreadsheet?
 
@@ -2178,11 +2424,13 @@ Config (links) ──────────────────┤    │ 
 ```
 
 **Dependencies:**
+
 - Steps 1 & 3: Independent (can run in PARALLEL)
 - Step 2: Not implemented
 - Step 4: Only needs title (can run anytime after Section 5)
 
 **Parallelization Opportunity:**
+
 - ⚡ **HUGE TIME SAVINGS**
 - Steps 1 and 3 can run 100% in parallel
 - Sequential: ~4-5 minutes (Step 1: 2min, Step 3: 2-3min, Step 4: 30sec)
@@ -2190,10 +2438,12 @@ Config (links) ──────────────────┤    │ 
 - **Savings: 2 minutes** (40-50% reduction!)
 
 **Human Checkpoints:**
+
 - ⚠️ UNKNOWN: 6 questions about posting automation
 - Likely all posts need human review before publishing
 
 **What Actually Works:**
+
 - ✅ **Step 1 (Create Tweet): ACTIVELY USED**
   - Generates 5 tweets (not just 1)
   - David walks through and picks one
@@ -2213,16 +2463,19 @@ Config (links) ──────────────────┤    │ 
   - Needs proper implementation
 
 **Real-World Usage Pattern:**
+
 - Steps 1 & 3 actively used with human review
 - Step 2 not used (poor prompt quality)
 - Step 4 needs proper implementation
 - Steps 1 & 3 can run in parallel (2-minute savings)
 
 **Future Needs:**
+
 - **Skool community posts** - new platform to support
 - Multiple audience-targeted posts per platform (Facebook, Skool, etc.)
 
 **For Motus:**
+
 - Step 1: Implement with 5 tweet options + human selection/merge capability
 - Step 2: Improve prompt quality, add multi-audience support
 - Step 3: Implement as-is (working well)
@@ -2246,6 +2499,7 @@ Config (links) ──────────────────┤    │ 
 **Prompt File**: `8-1-create-shorts-context.txt`
 
 **What it does:**
+
 - Provides context from long-form video abridgement
 - "Read and absorb" instruction for AI
 - Shorts transcripts are priority, but long-form provides context
@@ -2258,6 +2512,7 @@ Config (links) ──────────────────┤    │ 
 ### Step 1: Create Shorts Title
 
 **RBX Declaration:**
+
 ```ruby
 step 'Create Shorts Title' do
   input :short_transcription
@@ -2269,11 +2524,13 @@ end
 **Prompt File**: `8-2-create-shorts-title.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[short_transcription]` - Transcript of SHORT video (external input)
 
 **Output**: `shorts_title` - 10 YouTube Shorts title options
 
 **What it does:**
+
 - Creates 10 YouTube Shorts titles
 - Under 70 characters
 - Action verbs, curiosity-driven
@@ -2282,10 +2539,12 @@ end
 - How-to solutions for pain points
 
 **Dependencies:**
+
 - Requires: short_transcription (external - from Shorts video)
 - Can run: Immediately (independent of main workflow)
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 1**: Do you select one title from 10 options?
 - ⚠️ **QUESTION 2**: Or review/refine before selecting?
 
@@ -2296,6 +2555,7 @@ end
 ### Step 2: Create Shorts Description
 
 **RBX Declaration:**
+
 ```ruby
 step 'Create Shorts Description' do
   input :shorts_title
@@ -2310,6 +2570,7 @@ end
 **Prompt File**: `8-3-create-shorts-description.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[shorts_title]` - From Step 1
 - ✅ `[short_transcription]` - Shorts transcript (external)
 - ✅ `[video_keywords]` - Shorts keywords (external or from Section 4?)
@@ -2317,6 +2578,7 @@ end
 **Output**: `shorts_description` - YouTube Shorts description (<1000 chars)
 
 **What it does:**
+
 - Creates SEO-optimized Shorts description
 - Under 1000 characters
 - Weaves in keywords naturally
@@ -2324,10 +2586,12 @@ end
 - YouTube guidelines compliance
 
 **Dependencies:**
+
 - Requires: Step 1 (shorts_title), external (transcription, keywords)
 - Can run: After Step 1 completes
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 3**: Do you review/edit description?
 
 **Can auto-advance**: ⚠️ UNKNOWN - likely auto or quick review
@@ -2337,6 +2601,7 @@ end
 ### Step 3: Create Tweet
 
 **RBX Declaration:**
+
 ```ruby
 step 'Create Tweet' do
   input :shorts_title
@@ -2351,6 +2616,7 @@ end
 **Prompt File**: `8-4-create-shorts-tweet.txt`
 
 **Actual Dependencies:**
+
 - ✅ `[shorts_title]` - From Step 1
 - ✅ `[shorts_video_link]` - External (Shorts link)
 - ✅ `[shorts_video_keywords]` - External
@@ -2360,16 +2626,19 @@ end
 **Output**: `shorts_tweet` - Twitter post for Shorts (280 chars)
 
 **What it does:**
+
 - Creates engaging tweet for Shorts video
 - 280-character limit including link + hashtags
 - 1-3 hashtags from keywords
 - Video link near end
 
 **Dependencies:**
+
 - Requires: Step 1 (shorts_title), external (link, transcription, keywords)
 - Can run: After Step 1 completes (PARALLEL with Step 2!)
 
 **Human-in-the-Loop:**
+
 - ⚠️ **QUESTION 4**: Do you review tweet before posting?
 
 **Can auto-advance**: ⚠️ UNKNOWN - likely needs review
@@ -2401,39 +2670,47 @@ Description    Tweet
 ```
 
 **Dependencies:**
+
 - Step 1: Independent (only needs external shorts transcript)
 - Steps 2 & 3: Both depend on Step 1 (shorts_title)
 - Steps 2 & 3: Can run in PARALLEL after Step 1
 
 **Parallelization Opportunity:**
+
 - Steps 2 and 3 can run in PARALLEL after Step 1
 - Time savings: ~1 minute
 
 **Time Estimate:**
+
 - Sequential: ~4-5 minutes (Step 1: 2min, Step 2: 1-2min, Step 3: 1min)
 - Parallel: ~3-4 minutes (Step 1, then Steps 2+3 parallel)
 - Savings: ~1 minute
 
 **Human Checkpoints:**
+
 - ⚠️ UNKNOWN: 4 questions about review/selection
 - Likely title selection (Step 1) and tweet review (Step 3) need human input
 
 **What Actually Works:**
+
 - All 3 steps fully implemented
 - Context prompt provides helpful background from long-form video
 
 **Real-World Usage Pattern:**
+
 - ❌ **NEEDS TO BE SPLIT OFF INTO OWN WORKFLOW**
 - Should NOT be a section within Launch Optimizer
 - Should be separate "YouTube Shorts Optimizer" workflow
 - Processes completely different input (Shorts videos vs long-form videos)
 
 **Key Note:**
+
 - Section 8 is INDEPENDENT from Sections 1-7
 - Processes different input (Shorts transcripts, not main video)
 - Similar to B-Roll and Thumbnail design: complex enough to warrant own workflow
 
 **For Motus:**
+
 - Remove from Launch Optimizer
 - Create separate "YouTube Shorts Optimizer" workflow
 - Can reference long-form video context if Shorts are clips from main video
@@ -2445,6 +2722,7 @@ Description    Tweet
 ### Core Launch Optimizer Workflow (Sections to Keep)
 
 **✅ SECTION 1: Video Preparation (6 steps)**
+
 - Step 1: Configure ✅ Auto-advance
 - Step 2: Script Summary ✅ Auto-advance (can run PARALLEL with Steps 3, 5, 6)
 - Step 3: Script Abridgement ✅ Auto-advance (can run PARALLEL with Steps 2, 5, 6)
@@ -2453,26 +2731,31 @@ Description    Tweet
 - Step 6: Find CTA ❌ Not used (but could be in future)
 
 **✅ SECTION 2: Build Chapters (3 steps)**
+
 - Step 1: Find Chapters ⚠️ Poor quality (generates too many)
 - Step 2: Refine Chapters ✅ ONLY STEP THAT HELPS (uses folder names from recording)
 - Step 3: Create Chapters ❌ COMPLETELY BROKEN (David does manually - most hated task)
 - **HIGH-VALUE opportunity:** Step 3 automation with modern LLMs
 
 **❌ SECTION 3: B-Roll Suggestions (4 steps) - ENTIRE SECTION DEPRECATED**
+
 - Needs to be own independent workflow
 - Too complex for section within Launch Optimizer
 
 **⚠️ SECTION 4: Content Analysis (3 steps) - INFORMATIONAL/UNUSED**
+
 - All 3 steps run successfully but outputs mostly discarded
 - Only keywords partially used (too many, not quite right)
 - Could auto-advance but questionable value
 
 **✅ SECTION 5: Title & Thumbnail (6 steps)**
+
 - Step 1: Title Ideas ✅ ACTIVELY USED (select from 10 options, want A/B testing support)
 - Steps 2-6: Not used or need rethinking
 - **Note:** Thumbnail design may need own workflow (like B-Roll)
 
 **✅ SECTION 6: YouTube Meta Data (6 steps)**
+
 - Steps 1-3: ✅ FULLY WORKING AUTO-ADVANCE PIPELINE
   - Step 1: Simple Description (occasionally needs refinement)
   - Step 2: Write Description (9-section structure)
@@ -2480,6 +2763,7 @@ Description    Tweet
 - Steps 4-6: ❌ All deprecated
 
 **✅ SECTION 7: Social Media Posts (4 steps)**
+
 - Step 1: Create Tweet ✅ ACTIVELY USED (5 options, human picks/merges)
 - Step 2: Create FB Post ❌ Poor prompt (want to use if improved)
 - Step 3: Create LinkedIn Post ✅ ACTIVELY USED (works well as-is)
@@ -2487,6 +2771,7 @@ Description    Tweet
 - **Steps 1 & 3 run in PARALLEL**
 
 **❌ SECTION 8: YouTube Shorts (3 steps) - SPLIT OFF TO OWN WORKFLOW**
+
 - Completely independent from main workflow
 - Should be separate "YouTube Shorts Optimizer" workflow
 
@@ -2505,6 +2790,7 @@ Description    Tweet
 **Original AWB:** 8 sections, 35 steps
 
 **Actually Used in Core Workflow:**
+
 - Section 1: 5-6 steps (Step 6 not used but could be)
 - Section 2: 2 steps actively work, 1 broken (high-value fix opportunity)
 - Section 3: 0 steps (deprecated)
@@ -2554,15 +2840,19 @@ Description    Tweet
 [TO BE SYNTHESIZED AFTER STEP-BY-STEP ANALYSIS]
 
 ### Dependency Types
+
 [TO BE FILLED]
 
 ### Human-in-the-Loop Patterns
+
 [TO BE FILLED]
 
 ### Parallelization Opportunities
+
 [TO BE FILLED]
 
 ### Sequential Requirements
+
 [TO BE FILLED]
 
 ---

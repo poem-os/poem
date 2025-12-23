@@ -5,6 +5,7 @@
 This document outlines the complete architecture for **POEM** (Prompt Orchestration and Engineering Method), a Prompt Engineering Operating System designed to run on Claude Code.
 
 **POEM is NOT a traditional fullstack application.** It is a **hybrid system**:
+
 - **95% Document-Based Framework**: Agents (YAML + Markdown), workflows (YAML), templates (Handlebars), schemas (JSON), skills (Markdown) — similar to BMAD
 - **5% Runtime Tool**: `.poem-app/` Astro server providing Handlebars engine, API endpoints, and provider integrations
 
@@ -20,9 +21,9 @@ This unified architecture document covers both the document framework and the ru
 
 ### Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-12-08 | 0.1 | Initial architecture draft | Winston (Architect Agent) |
+| Date       | Version | Description                | Author                    |
+| ---------- | ------- | -------------------------- | ------------------------- |
+| 2025-12-08 | 0.1     | Initial architecture draft | Winston (Architect Agent) |
 
 ---
 
@@ -41,6 +42,7 @@ The key architectural insight is that most "development" in POEM involves creati
 **Platform:** Local Development (No Cloud Infrastructure)
 
 POEM runs entirely on the developer's local machine:
+
 - **Runtime**: Node.js (cross-platform: macOS, Linux, Windows)
 - **Server**: Astro (local, configurable port)
 - **Storage**: File-based (no database)
@@ -48,12 +50,12 @@ POEM runs entirely on the developer's local machine:
 
 **Key Services:**
 
-| Service | Technology | Purpose |
-|---------|------------|---------|
-| Template Engine | Handlebars.js | Compile and render .hbs templates |
-| API Server | Astro | REST endpoints for rendering, schema extraction |
-| Mock Data | Faker.js | Generate test data from schemas |
-| Package Distribution | NPM | `npx poem-os install` command |
+| Service              | Technology    | Purpose                                         |
+| -------------------- | ------------- | ----------------------------------------------- |
+| Template Engine      | Handlebars.js | Compile and render .hbs templates               |
+| API Server           | Astro         | REST endpoints for rendering, schema extraction |
+| Mock Data            | Faker.js      | Generate test data from schemas                 |
+| Package Distribution | NPM           | `npx poem-os install` command                   |
 
 **Deployment Host and Regions:** N/A — Local development tool only. No cloud hosting required.
 
@@ -74,11 +76,13 @@ poem-os/poem/
 **Monorepo Tool:** NPM Workspaces (native, no additional tooling)
 
 **Package Organization:**
+
 - `packages/poem-core/` — Document framework (agents, workflows, skills, templates, data)
 - `packages/poem-app/` — Astro runtime server (API endpoints, Handlebars service, providers)
 - Root — NPX installer, shared configuration, documentation
 
 **Rationale:**
+
 - Single repository simplifies versioning, testing, and release coordination
 - NPM workspaces are native and require no additional tooling (Nx, Turborepo unnecessary for this scale)
 - Clear separation between framework documents and runtime code
@@ -161,55 +165,58 @@ This is the **definitive technology selection** for POEM. Note that POEM is a hy
 
 ### Technology Stack Table
 
-| Category | Technology | Version | Purpose | Rationale |
-|----------|------------|---------|---------|-----------|
-| **Framework Documents** |
-| Agent Definitions | Markdown + YAML | - | Define AI agent personas, commands, behaviors | BMAD v4 pattern; readable, maintainable |
-| Workflows | YAML | - | Define multi-step guided processes | Declarative, template-driven per BMAD |
-| Skills | Markdown | - | Define autonomous capabilities | Self-describing, context-aware |
-| Prompt Templates | Handlebars (.hbs) | 4.x | User prompt files with placeholders | Industry standard templating; helpers, conditionals, loops |
-| Schemas | JSON | - | Define data structures for prompts | Simple, universal, tool-friendly |
-| **Runtime Server** |
-| Server Framework | Astro | 4.x (latest) | API endpoints, file-based routing | Fast startup, TypeScript native, minimal overhead |
-| Runtime Language | TypeScript | 5.x | Type-safe server code | Type safety, IDE support, modern JS features |
-| Node.js | Node.js | 20.x LTS | Server runtime | Cross-platform, stable LTS |
-| **Template Engine** |
-| Templating | Handlebars.js | 4.x | Compile and render .hbs templates | Mature, extensible helpers, logic-less by default |
-| **Mock Data** |
-| Fake Data | @faker-js/faker | 8.x | Generate realistic test data | Comprehensive data types, TypeScript support |
-| **Styling (Minimal)** |
-| CSS Framework | Tailwind CSS | 3.x | Future visualization pages | Utility-first, minimal footprint |
-| **Testing** |
-| Unit/Integration | Vitest | 1.x | Test Astro APIs, Handlebars service | Fast, Vite-native, TypeScript support |
-| Manual Testing | Claude Code | - | Test agent workflows, skills | Conversation-based validation |
+| Category                 | Technology        | Version      | Purpose                                       | Rationale                                                  |
+| ------------------------ | ----------------- | ------------ | --------------------------------------------- | ---------------------------------------------------------- |
+| **Framework Documents**  |
+| Agent Definitions        | Markdown + YAML   | -            | Define AI agent personas, commands, behaviors | BMAD v4 pattern; readable, maintainable                    |
+| Workflows                | YAML              | -            | Define multi-step guided processes            | Declarative, template-driven per BMAD                      |
+| Skills                   | Markdown          | -            | Define autonomous capabilities                | Self-describing, context-aware                             |
+| Prompt Templates         | Handlebars (.hbs) | 4.x          | User prompt files with placeholders           | Industry standard templating; helpers, conditionals, loops |
+| Schemas                  | JSON              | -            | Define data structures for prompts            | Simple, universal, tool-friendly                           |
+| **Runtime Server**       |
+| Server Framework         | Astro             | 4.x (latest) | API endpoints, file-based routing             | Fast startup, TypeScript native, minimal overhead          |
+| Runtime Language         | TypeScript        | 5.x          | Type-safe server code                         | Type safety, IDE support, modern JS features               |
+| Node.js                  | Node.js           | 20.x LTS     | Server runtime                                | Cross-platform, stable LTS                                 |
+| **Template Engine**      |
+| Templating               | Handlebars.js     | 4.x          | Compile and render .hbs templates             | Mature, extensible helpers, logic-less by default          |
+| **Mock Data**            |
+| Fake Data                | @faker-js/faker   | 8.x          | Generate realistic test data                  | Comprehensive data types, TypeScript support               |
+| **Styling (Minimal)**    |
+| CSS Framework            | Tailwind CSS      | 3.x          | Future visualization pages                    | Utility-first, minimal footprint                           |
+| **Testing**              |
+| Unit/Integration         | Vitest            | 1.x          | Test Astro APIs, Handlebars service           | Fast, Vite-native, TypeScript support                      |
+| Manual Testing           | Claude Code       | -            | Test agent workflows, skills                  | Conversation-based validation                              |
 | **Build & Distribution** |
-| Package Manager | npm | 10.x | Dependency management, workspaces | Native workspaces, no extra tooling |
-| Distribution | npx | - | `npx poem-os install` | Zero-install execution |
-| Bundler | Vite | 5.x | Astro's built-in bundler | Fast builds, HMR |
-| **Development** |
-| Linting | ESLint | 8.x | Code quality | Standard, configurable |
-| Formatting | Prettier | 3.x | Code formatting | Consistent style |
-| **Not Used** |
-| Database | None | - | File-based storage only | Simplicity, privacy, offline operation |
-| Authentication | None | - | Local tool, no auth needed | Single-user developer tool |
-| CI/CD | Phased | - | Manual-first, automate incrementally | See CI/CD Strategy section |
-| E2E Testing | None | - | Not a deployed web app | Manual testing via Claude Code |
+| Package Manager          | npm               | 10.x         | Dependency management, workspaces             | Native workspaces, no extra tooling                        |
+| Distribution             | npx               | -            | `npx poem-os install`                         | Zero-install execution                                     |
+| Bundler                  | Vite              | 5.x          | Astro's built-in bundler                      | Fast builds, HMR                                           |
+| **Development**          |
+| Linting                  | ESLint            | 8.x          | Code quality                                  | Standard, configurable                                     |
+| Formatting               | Prettier          | 3.x          | Code formatting                               | Consistent style                                           |
+| **Not Used**             |
+| Database                 | None              | -            | File-based storage only                       | Simplicity, privacy, offline operation                     |
+| Authentication           | None              | -            | Local tool, no auth needed                    | Single-user developer tool                                 |
+| CI/CD                    | Phased            | -            | Manual-first, automate incrementally          | See CI/CD Strategy section                                 |
+| E2E Testing              | None              | -            | Not a deployed web app                        | Manual testing via Claude Code                             |
 
 ### Key Technology Decisions
 
 **Why Astro over Express/Fastify?**
+
 - File-based API routing (`src/pages/api/*.ts`) matches POEM's file-centric philosophy
 - Built-in TypeScript support without configuration
 - Vite-powered with fast startup (< 3 seconds per NFR2)
 - Future option for visualization pages if needed
 
 **Why Handlebars over other templating?**
+
 - Logic-less by default encourages clean prompts
 - Custom helpers enable domain-specific formatting
 - Mature ecosystem with predictable behavior
 - Already specified in PRD requirements
 
 **Why Vitest over Jest?**
+
 - Native Vite integration (Astro uses Vite)
 - Faster execution, modern API
 - Compatible with existing Jest patterns
@@ -225,6 +232,7 @@ POEM's data models are primarily **file-based documents**, not database entities
 **Purpose:** Handlebars template file containing an AI prompt with data placeholders.
 
 **Key Attributes:**
+
 - `path`: string - File path relative to `/poem/prompts/`
 - `content`: string - Handlebars template content
 - `placeholders`: string[] - Extracted placeholder names
@@ -254,7 +262,7 @@ interface PlaceholderInfo {
   path: string;
 
   /** Inferred type from usage */
-  inferredType: 'string' | 'number' | 'boolean' | 'array' | 'object';
+  inferredType: "string" | "number" | "boolean" | "array" | "object";
 
   /** Is inside #each block */
   isArrayItem: boolean;
@@ -265,6 +273,7 @@ interface PlaceholderInfo {
 ```
 
 **Relationships:**
+
 - Has one optional Schema (validation)
 - May reference many Helpers
 - May be part of a Workflow chain
@@ -276,6 +285,7 @@ interface PlaceholderInfo {
 **Purpose:** JSON document defining the data structure required by a prompt template.
 
 **Key Attributes:**
+
 - `path`: string - File path relative to `/poem/schemas/`
 - `fields`: Field[] - Schema field definitions
 - `version`: string - Schema version for evolution
@@ -300,7 +310,7 @@ interface SchemaField {
   name: string;
 
   /** Field type */
-  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
+  type: "string" | "number" | "boolean" | "array" | "object";
 
   /** Is field required */
   required: boolean;
@@ -339,6 +349,7 @@ interface FieldConstraints {
 ```
 
 **Relationships:**
+
 - Belongs to one or more PromptTemplates
 - Used by MockDataGenerator
 - May reference a DataDictionary for validation
@@ -350,6 +361,7 @@ interface FieldConstraints {
 **Purpose:** Runtime state that accumulates as prompts execute in a chain.
 
 **Key Attributes:**
+
 - `id`: string - Workflow execution identifier
 - `templateChain`: string[] - Ordered list of executed templates
 - `data`: Record - Accumulated field values
@@ -395,7 +407,7 @@ interface CheckpointInfo {
   templatePath: string;
 
   /** Type of input needed */
-  inputType: 'selection' | 'freeform' | 'approval';
+  inputType: "selection" | "freeform" | "approval";
 
   /** Options for selection type */
   options?: string[];
@@ -406,6 +418,7 @@ interface CheckpointInfo {
 ```
 
 **Relationships:**
+
 - References multiple PromptTemplates (chain)
 - Persisted to `/poem/workflow-data/` during execution
 
@@ -416,6 +429,7 @@ interface CheckpointInfo {
 **Purpose:** Configuration for external system integration.
 
 **Key Attributes:**
+
 - `name`: string - Provider identifier
 - `type`: string - Provider type (e.g., 'convex', 'supabase')
 - `endpoints`: Record - API endpoint configuration
@@ -426,7 +440,7 @@ interface ProviderConfig {
   name: string;
 
   /** Provider type */
-  type: 'convex' | 'supabase' | 'custom';
+  type: "convex" | "supabase" | "custom";
 
   /** Base URL for API calls */
   baseUrl: string;
@@ -443,7 +457,7 @@ interface ProviderConfig {
 
 interface ProviderAuth {
   /** Auth type */
-  type: 'bearer' | 'api-key' | 'basic' | 'none';
+  type: "bearer" | "api-key" | "basic" | "none";
 
   /** Environment variable containing credential */
   envVar?: string;
@@ -465,6 +479,7 @@ interface ProviderEndpoints {
 ```
 
 **Relationships:**
+
 - Used by Integration Agent
 - Stored in `/poem/config/providers/`
 
@@ -511,6 +526,7 @@ interface DictionaryField {
 ```
 
 **Relationships:**
+
 - Pulled from Provider
 - Used for schema validation
 - Stored in `/poem/schemas/dictionaries/`
@@ -567,7 +583,7 @@ paths:
       summary: Health check endpoint
       description: Returns server status and version
       responses:
-        '200':
+        "200":
           description: Server is healthy
           content:
             application/json:
@@ -618,7 +634,7 @@ paths:
                   description: If true, template field contains raw Handlebars content
                   default: false
       responses:
-        '200':
+        "200":
           description: Template rendered successfully
           content:
             application/json:
@@ -639,9 +655,9 @@ paths:
                   templatePath:
                     type: string
                     description: Resolved template path
-        '400':
+        "400":
           description: Invalid request (missing template, syntax error)
-        '404':
+        "404":
           description: Template file not found
 
   /schema/extract:
@@ -666,7 +682,7 @@ paths:
                   type: boolean
                   default: false
       responses:
-        '200':
+        "200":
           description: Schema extracted successfully
           content:
             application/json:
@@ -705,7 +721,7 @@ paths:
                   type: object
                   description: Data to validate
       responses:
-        '200':
+        "200":
           description: Validation result
           content:
             application/json:
@@ -754,7 +770,7 @@ paths:
                   description: Include edge cases (empty, long, special chars)
                   default: false
       responses:
-        '200':
+        "200":
           description: Mock data generated
           content:
             application/json:
@@ -775,7 +791,7 @@ paths:
       summary: List registered Handlebars helpers
       description: Returns all available helpers with their descriptions
       responses:
-        '200':
+        "200":
           description: List of helpers
           content:
             application/json:
@@ -815,7 +831,7 @@ paths:
                   type: array
                   description: Arguments to pass to helper
       responses:
-        '200':
+        "200":
           description: Helper executed
           content:
             application/json:
@@ -839,7 +855,7 @@ paths:
             type: string
           description: Provider name (e.g., "supportsignal")
       responses:
-        '200':
+        "200":
           description: Connection test result
           content:
             application/json:
@@ -864,7 +880,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Data dictionary
           content:
             application/json:
@@ -900,7 +916,7 @@ paths:
                   type: string
                   description: Provider-specific deployment location
       responses:
-        '200':
+        "200":
           description: Publish result
           content:
             application/json:
@@ -918,18 +934,18 @@ paths:
 
 ### API Summary Table
 
-| Endpoint | Method | Purpose | NFR |
-|----------|--------|---------|-----|
-| `/api/health` | GET | Server status check | - |
-| `/api/prompt/render` | POST | Render template with data | < 1s (NFR3) |
-| `/api/schema/extract` | POST | Extract schema from template | - |
-| `/api/schema/validate` | POST | Validate data against schema | - |
-| `/api/mock/generate` | POST | Generate mock data from schema | - |
-| `/api/helpers` | GET | List available helpers | - |
-| `/api/helpers/test` | POST | Test a helper | - |
-| `/api/providers/{name}/test` | POST | Test provider connection | - |
-| `/api/providers/{name}/dictionary` | GET | Pull data dictionary | - |
-| `/api/providers/{name}/publish` | POST | Publish prompt to provider | - |
+| Endpoint                           | Method | Purpose                        | NFR         |
+| ---------------------------------- | ------ | ------------------------------ | ----------- |
+| `/api/health`                      | GET    | Server status check            | -           |
+| `/api/prompt/render`               | POST   | Render template with data      | < 1s (NFR3) |
+| `/api/schema/extract`              | POST   | Extract schema from template   | -           |
+| `/api/schema/validate`             | POST   | Validate data against schema   | -           |
+| `/api/mock/generate`               | POST   | Generate mock data from schema | -           |
+| `/api/helpers`                     | GET    | List available helpers         | -           |
+| `/api/helpers/test`                | POST   | Test a helper                  | -           |
+| `/api/providers/{name}/test`       | POST   | Test provider connection       | -           |
+| `/api/providers/{name}/dictionary` | GET    | Pull data dictionary           | -           |
+| `/api/providers/{name}/publish`    | POST   | Publish prompt to provider     | -           |
 
 ---
 
@@ -942,11 +958,13 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Define AI agent personas that guide users through workflows via Claude Code slash commands.
 
 **Key Interfaces:**
+
 - Slash command activation: `/poem/agents/{agent-name}`
 - Agent commands: `*new`, `*refine`, `*test`, `*help`, etc.
 - Workflow invocation based on user requests
 
 **Dependencies:**
+
 - Workflows (invokes based on user needs)
 - Skills (uses for autonomous operations)
 - Knowledge Base (consults for POEM principles)
@@ -955,12 +973,12 @@ POEM's components are organized into three installation targets: the framework (
 
 **Agents:**
 
-| Agent | File | Primary Commands |
-|-------|------|------------------|
-| Prompt Engineer | `agents/prompt-engineer.md` | `*new`, `*refine`, `*test`, `*validate` |
-| System Agent | `agents/system-agent.md` | `*add-helper`, `*server-status`, `*create-provider` |
-| Integration Agent | `agents/integration-agent.md` | `*connect`, `*pull-dictionary`, `*publish` |
-| Mock Data Agent | `agents/mock-data-agent.md` | `*generate-mock`, `*create-scenario`, `*curate-library` |
+| Agent             | File                          | Primary Commands                                        |
+| ----------------- | ----------------------------- | ------------------------------------------------------- |
+| Prompt Engineer   | `agents/prompt-engineer.md`   | `*new`, `*refine`, `*test`, `*validate`                 |
+| System Agent      | `agents/system-agent.md`      | `*add-helper`, `*server-status`, `*create-provider`     |
+| Integration Agent | `agents/integration-agent.md` | `*connect`, `*pull-dictionary`, `*publish`              |
+| Mock Data Agent   | `agents/mock-data-agent.md`   | `*generate-mock`, `*create-scenario`, `*curate-library` |
 
 ---
 
@@ -969,11 +987,13 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Define multi-step guided processes as YAML templates that agents execute.
 
 **Key Interfaces:**
+
 - Invoked by agents based on command or user request
 - Step-by-step execution with user interaction
 - Calls skills and APIs as needed
 
 **Dependencies:**
+
 - Skills (invokes for specific operations)
 - Astro APIs (calls for rendering, schema operations)
 - User Workspace (reads/writes files)
@@ -982,14 +1002,14 @@ POEM's components are organized into three installation targets: the framework (
 
 **Workflows:**
 
-| Workflow | File | Steps |
-|----------|------|-------|
-| New Prompt | `workflows/new-prompt.yaml` | Gather purpose → Create template → Generate schema → Preview |
-| Refine Prompt | `workflows/refine-prompt.yaml` | Load → Test → Identify issues → Update → Repeat |
-| Test Prompt | `workflows/test-prompt.yaml` | Select data source → Render → Report |
-| Validate Prompt | `workflows/validate-prompt.yaml` | Check syntax → Validate schema → Check helpers → Report |
-| Deploy Prompt | `workflows/deploy-prompt.yaml` | Validate → Test connection → Publish → Confirm |
-| Add Helper | `workflows/add-helper.yaml` | Describe need → Generate code → Register → Test |
+| Workflow        | File                             | Steps                                                        |
+| --------------- | -------------------------------- | ------------------------------------------------------------ |
+| New Prompt      | `workflows/new-prompt.yaml`      | Gather purpose → Create template → Generate schema → Preview |
+| Refine Prompt   | `workflows/refine-prompt.yaml`   | Load → Test → Identify issues → Update → Repeat              |
+| Test Prompt     | `workflows/test-prompt.yaml`     | Select data source → Render → Report                         |
+| Validate Prompt | `workflows/validate-prompt.yaml` | Check syntax → Validate schema → Check helpers → Report      |
+| Deploy Prompt   | `workflows/deploy-prompt.yaml`   | Validate → Test connection → Publish → Confirm               |
+| Add Helper      | `workflows/add-helper.yaml`      | Describe need → Generate code → Register → Test              |
 
 ---
 
@@ -998,11 +1018,13 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Autonomous single-responsibility capabilities that Claude invokes based on context.
 
 **Key Interfaces:**
+
 - Self-describing (suggest when useful)
 - Invoke via context, not explicit commands
 - Call Astro APIs for heavy operations
 
 **Dependencies:**
+
 - Astro APIs (HTTP calls for rendering, schema extraction)
 - User Workspace (file operations)
 
@@ -1010,16 +1032,16 @@ POEM's components are organized into three installation targets: the framework (
 
 **Skills:**
 
-| Skill | File | Purpose |
-|-------|------|---------|
-| Check My Prompt | `skills/check-my-prompt.md` | Validate prompt structure |
+| Skill             | File                          | Purpose                       |
+| ----------------- | ----------------------------- | ----------------------------- |
+| Check My Prompt   | `skills/check-my-prompt.md`   | Validate prompt structure     |
 | Preview with Data | `skills/preview-with-data.md` | Render with mock/example data |
-| Generate Schema | `skills/generate-schema.md` | Extract schema from template |
-| Find Fields | `skills/find-fields.md` | Search data dictionaries |
-| Validate Schema | `skills/validate-schema.md` | Check against dictionary |
-| Suggest Mappings | `skills/suggest-mappings.md` | Recommend field mappings |
-| Pull Dictionary | `skills/pull-dictionary.md` | Import from provider |
-| Publish Prompt | `skills/publish-prompt.md` | Deploy to production |
+| Generate Schema   | `skills/generate-schema.md`   | Extract schema from template  |
+| Find Fields       | `skills/find-fields.md`       | Search data dictionaries      |
+| Validate Schema   | `skills/validate-schema.md`   | Check against dictionary      |
+| Suggest Mappings  | `skills/suggest-mappings.md`  | Recommend field mappings      |
+| Pull Dictionary   | `skills/pull-dictionary.md`   | Import from provider          |
+| Publish Prompt    | `skills/publish-prompt.md`    | Deploy to production          |
 
 ---
 
@@ -1028,11 +1050,13 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Provide HTTP server with REST APIs for template rendering, schema operations, and provider integration.
 
 **Key Interfaces:**
+
 - REST API endpoints (see API Specification)
 - HTTP calls from skills and workflows
 - File system access to user workspace
 
 **Dependencies:**
+
 - Handlebars Service (template operations)
 - Provider implementations (external integrations)
 - User Workspace (file access)
@@ -1046,18 +1070,21 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Compile Handlebars templates, register helpers, render with data.
 
 **Key Interfaces:**
+
 - `compile(template: string): CompiledTemplate`
 - `render(compiled: CompiledTemplate, data: object): string`
 - `registerHelper(name: string, fn: Function): void`
 - `extractPlaceholders(template: string): PlaceholderInfo[]`
 
 **Dependencies:**
+
 - Custom Helpers (loaded from helpers directory)
 - File System (read template files)
 
 **Technology Stack:** Handlebars.js 4.x
 
 **Initialization:**
+
 1. Server starts
 2. Scan `src/services/handlebars/helpers/` directory
 3. Load and register all `.js` helper files
@@ -1070,29 +1097,31 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Provide domain-specific formatting and transformation functions for Handlebars templates.
 
 **Key Interfaces:**
+
 - Handlebars helper signature: `(args..., options) => string`
 - Auto-registered on server start
 - Hot-reload on file change
 
 **Dependencies:**
+
 - Handlebars Service (registration)
 
 **Technology Stack:** JavaScript/TypeScript modules
 
 **Built-in Helpers:**
 
-| Helper | Purpose | Example |
-|--------|---------|---------|
-| `titleCase` | Title case string | `{{titleCase "hello world"}}` → "Hello World" |
-| `upperCase` | Uppercase string | `{{upperCase "hello"}}` → "HELLO" |
-| `lowerCase` | Lowercase string | `{{lowerCase "HELLO"}}` → "hello" |
-| `truncate` | Limit length | `{{truncate title 49}}` → first 49 chars |
-| `default` | Fallback value | `{{default value "N/A"}}` |
-| `json` | JSON stringify | `{{json object}}` |
-| `dateFormat` | Format date | `{{dateFormat date "YYYY-MM-DD"}}` |
-| `gt` | Greater than | `{{#if (gt count 10)}}` |
-| `join` | Join array | `{{join items ", "}}` |
-| `formatTimestamp` | MM:SS format | `{{formatTimestamp 125}}` → "2:05" |
+| Helper            | Purpose           | Example                                       |
+| ----------------- | ----------------- | --------------------------------------------- |
+| `titleCase`       | Title case string | `{{titleCase "hello world"}}` → "Hello World" |
+| `upperCase`       | Uppercase string  | `{{upperCase "hello"}}` → "HELLO"             |
+| `lowerCase`       | Lowercase string  | `{{lowerCase "HELLO"}}` → "hello"             |
+| `truncate`        | Limit length      | `{{truncate title 49}}` → first 49 chars      |
+| `default`         | Fallback value    | `{{default value "N/A"}}`                     |
+| `json`            | JSON stringify    | `{{json object}}`                             |
+| `dateFormat`      | Format date       | `{{dateFormat date "YYYY-MM-DD"}}`            |
+| `gt`              | Greater than      | `{{#if (gt count 10)}}`                       |
+| `join`            | Join array        | `{{join items ", "}}`                         |
+| `formatTimestamp` | MM:SS format      | `{{formatTimestamp 125}}` → "2:05"            |
 
 ---
 
@@ -1101,17 +1130,20 @@ POEM's components are organized into three installation targets: the framework (
 **Responsibility:** Abstract interface for external system integration with concrete implementations.
 
 **Key Interfaces:**
+
 - `testConnection(): Promise<ConnectionResult>`
 - `pullDictionary(): Promise<DataDictionary>`
 - `publishPrompt(template, schema): Promise<PublishResult>`
 
 **Dependencies:**
+
 - Provider configurations (from user workspace)
 - External system APIs
 
 **Technology Stack:** TypeScript interfaces, Astro API routes
 
 **Provider Structure:**
+
 ```
 src/pages/api/providers/
 ├── _base.ts           # Abstract provider interface
@@ -1132,10 +1164,12 @@ src/pages/api/providers/
 **Responsibility:** Generate realistic fake data from JSON schemas using Faker.js.
 
 **Key Interfaces:**
+
 - `generate(schema: Schema, options: GenerateOptions): MockData`
 - Configurable: count, seed, edge cases
 
 **Dependencies:**
+
 - Schema definitions
 - Faker.js library
 
@@ -1143,14 +1177,14 @@ src/pages/api/providers/
 
 **Generation Strategy:**
 
-| Field Type | Faker Method |
-|------------|--------------|
-| `string` | Infer from name (firstName → `faker.person.firstName()`) |
-| `number` | `faker.number.int({ min, max })` |
-| `boolean` | `faker.datatype.boolean()` |
-| `array` | Generate N items of item type |
-| `object` | Recursively generate properties |
-| With `fakerHint` | Use specified method |
+| Field Type       | Faker Method                                             |
+| ---------------- | -------------------------------------------------------- |
+| `string`         | Infer from name (firstName → `faker.person.firstName()`) |
+| `number`         | `faker.number.int({ min, max })`                         |
+| `boolean`        | `faker.datatype.boolean()`                               |
+| `array`          | Generate N items of item type                            |
+| `object`         | Recursively generate properties                          |
+| With `fakerHint` | Use specified method                                     |
 
 ---
 
@@ -1159,12 +1193,14 @@ src/pages/api/providers/
 **Responsibility:** Store user-created prompts, schemas, mock data, and configuration.
 
 **Key Interfaces:**
+
 - File system structure
 - Read/write by agents and APIs
 
 **Dependencies:** None (leaf component)
 
 **Structure:**
+
 ```
 /poem/
 ├── prompts/           # .hbs template files
@@ -1448,7 +1484,7 @@ sequenceDiagram
 
 ### Workflow 6: Add Custom Helper
 
-```mermaid
+````mermaid
 sequenceDiagram
     participant U as User
     participant SA as System Agent
@@ -1478,7 +1514,7 @@ sequenceDiagram
     API-->>SA: "2:05"
 
     SA->>U: Helper created and tested!<br/>Usage: {{formatTimestamp 125}} → "2:05"<br/>Available immediately.
-```
+````
 
 ---
 
@@ -1664,13 +1700,13 @@ user-project/
 
 ### Key Directories Explained
 
-| Directory | Purpose | Modifiable by User |
-|-----------|---------|-------------------|
-| `.poem-core/` | Framework documents (agents, workflows, skills) | No (reinstall to update) |
-| `.poem-app/` | Runtime server code | No (except helpers/) |
-| `.poem-app/src/services/handlebars/helpers/` | Custom helpers | **Yes** (generated by System Agent) |
-| `/poem/` | User workspace | **Yes** (all user content) |
-| `.claude/commands/poem/` | Slash command wrappers | No |
+| Directory                                    | Purpose                                         | Modifiable by User                  |
+| -------------------------------------------- | ----------------------------------------------- | ----------------------------------- |
+| `.poem-core/`                                | Framework documents (agents, workflows, skills) | No (reinstall to update)            |
+| `.poem-app/`                                 | Runtime server code                             | No (except helpers/)                |
+| `.poem-app/src/services/handlebars/helpers/` | Custom helpers                                  | **Yes** (generated by System Agent) |
+| `/poem/`                                     | User workspace                                  | **Yes** (all user content)          |
+| `.claude/commands/poem/`                     | Slash command wrappers                          | No                                  |
 
 ---
 
@@ -1974,62 +2010,62 @@ Manual Test Scenarios:
 
 ```typescript
 // tests/services/handlebars/service.test.ts
-import { describe, it, expect, beforeEach } from 'vitest';
-import { HandlebarsService } from '../../../src/services/handlebars';
+import { describe, it, expect, beforeEach } from "vitest";
+import { HandlebarsService } from "../../../src/services/handlebars";
 
-describe('HandlebarsService', () => {
+describe("HandlebarsService", () => {
   let service: HandlebarsService;
 
   beforeEach(() => {
     service = new HandlebarsService();
   });
 
-  describe('compile', () => {
-    it('should compile a simple template', () => {
-      const template = 'Hello {{name}}';
+  describe("compile", () => {
+    it("should compile a simple template", () => {
+      const template = "Hello {{name}}";
       const compiled = service.compile(template);
       expect(compiled).toBeDefined();
     });
 
-    it('should throw on invalid syntax', () => {
-      const template = 'Hello {{name}'; // Missing closing
+    it("should throw on invalid syntax", () => {
+      const template = "Hello {{name}"; // Missing closing
       expect(() => service.compile(template)).toThrow();
     });
   });
 
-  describe('render', () => {
-    it('should render template with data', () => {
-      const template = 'Hello {{name}}';
-      const result = service.render(template, { name: 'World' });
-      expect(result).toBe('Hello World');
+  describe("render", () => {
+    it("should render template with data", () => {
+      const template = "Hello {{name}}";
+      const result = service.render(template, { name: "World" });
+      expect(result).toBe("Hello World");
     });
 
-    it('should handle nested data', () => {
-      const template = '{{user.firstName}} {{user.lastName}}';
+    it("should handle nested data", () => {
+      const template = "{{user.firstName}} {{user.lastName}}";
       const result = service.render(template, {
-        user: { firstName: 'John', lastName: 'Doe' }
+        user: { firstName: "John", lastName: "Doe" },
       });
-      expect(result).toBe('John Doe');
+      expect(result).toBe("John Doe");
     });
 
-    it('should handle missing data gracefully', () => {
-      const template = 'Hello {{name}}';
+    it("should handle missing data gracefully", () => {
+      const template = "Hello {{name}}";
       const result = service.render(template, {});
-      expect(result).toBe('Hello ');
+      expect(result).toBe("Hello ");
     });
   });
 
-  describe('helpers', () => {
-    it('should use titleCase helper', () => {
-      const template = '{{titleCase name}}';
-      const result = service.render(template, { name: 'hello world' });
-      expect(result).toBe('Hello World');
+  describe("helpers", () => {
+    it("should use titleCase helper", () => {
+      const template = "{{titleCase name}}";
+      const result = service.render(template, { name: "hello world" });
+      expect(result).toBe("Hello World");
     });
 
-    it('should use truncate helper', () => {
-      const template = '{{truncate text 10}}';
-      const result = service.render(template, { text: 'This is a long text' });
-      expect(result).toBe('This is a...');
+    it("should use truncate helper", () => {
+      const template = "{{truncate text 10}}";
+      const result = service.render(template, { text: "This is a long text" });
+      expect(result).toBe("This is a...");
     });
   });
 });
@@ -2039,10 +2075,10 @@ describe('HandlebarsService', () => {
 
 ```typescript
 // tests/api/prompt-render.test.ts
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createServer } from '../../src/server';
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { createServer } from "../../src/server";
 
-describe('POST /api/prompt/render', () => {
+describe("POST /api/prompt/render", () => {
   let server: any;
   let baseUrl: string;
 
@@ -2055,32 +2091,32 @@ describe('POST /api/prompt/render', () => {
     await server.close();
   });
 
-  it('should render a raw template', async () => {
+  it("should render a raw template", async () => {
     const response = await fetch(`${baseUrl}/api/prompt/render`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        template: 'Hello {{name}}',
-        data: { name: 'World' },
-        isRawTemplate: true
-      })
+        template: "Hello {{name}}",
+        data: { name: "World" },
+        isRawTemplate: true,
+      }),
     });
 
     expect(response.ok).toBe(true);
     const result = await response.json();
-    expect(result.rendered).toBe('Hello World');
+    expect(result.rendered).toBe("Hello World");
     expect(result.renderTimeMs).toBeDefined();
   });
 
-  it('should return 400 for invalid template', async () => {
+  it("should return 400 for invalid template", async () => {
     const response = await fetch(`${baseUrl}/api/prompt/render`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        template: 'Hello {{name}',
+        template: "Hello {{name}",
         data: {},
-        isRawTemplate: true
-      })
+        isRawTemplate: true,
+      }),
     });
 
     expect(response.status).toBe(400);
@@ -2088,41 +2124,41 @@ describe('POST /api/prompt/render', () => {
     expect(result.error).toBeDefined();
   });
 
-  it('should report missing fields as warnings', async () => {
+  it("should report missing fields as warnings", async () => {
     const response = await fetch(`${baseUrl}/api/prompt/render`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        template: '{{firstName}} {{lastName}}',
-        data: { firstName: 'John' },
-        isRawTemplate: true
-      })
+        template: "{{firstName}} {{lastName}}",
+        data: { firstName: "John" },
+        isRawTemplate: true,
+      }),
     });
 
     const result = await response.json();
-    expect(result.warnings).toContain('Missing field: lastName');
+    expect(result.warnings).toContain("Missing field: lastName");
   });
 });
 ```
 
 ### Coverage Targets
 
-| Area | Target | Rationale |
-|------|--------|-----------|
-| Handlebars Service | 90% | Core functionality, many edge cases |
-| Schema Extractor | 85% | Complex parsing logic |
-| Mock Generator | 80% | Type mapping coverage |
-| API Endpoints | 75% | Integration paths |
-| Helpers | 100% | Simple, deterministic functions |
+| Area               | Target | Rationale                           |
+| ------------------ | ------ | ----------------------------------- |
+| Handlebars Service | 90%    | Core functionality, many edge cases |
+| Schema Extractor   | 85%    | Complex parsing logic               |
+| Mock Generator     | 80%    | Type mapping coverage               |
+| API Endpoints      | 75%    | Integration paths                   |
+| Helpers            | 100%   | Simple, deterministic functions     |
 
 ### NFR Validation Tests
 
 ```typescript
 // tests/nfr/performance.test.ts
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vitest";
 
-describe('NFR Performance', () => {
-  it('NFR2: Server starts in under 3 seconds', async () => {
+describe("NFR Performance", () => {
+  it("NFR2: Server starts in under 3 seconds", async () => {
     const start = Date.now();
     const server = await createServer();
     const elapsed = Date.now() - start;
@@ -2131,14 +2167,14 @@ describe('NFR Performance', () => {
     await server.close();
   });
 
-  it('NFR3: Render completes in under 1 second', async () => {
-    const template = loadFixture('large-template.hbs'); // ~5KB
-    const data = loadFixture('large-data.json');
+  it("NFR3: Render completes in under 1 second", async () => {
+    const template = loadFixture("large-template.hbs"); // ~5KB
+    const data = loadFixture("large-data.json");
 
     const start = Date.now();
-    await fetch('/api/prompt/render', {
-      method: 'POST',
-      body: JSON.stringify({ template, data, isRawTemplate: true })
+    await fetch("/api/prompt/render", {
+      method: "POST",
+      body: JSON.stringify({ template, data, isRawTemplate: true }),
     });
     const elapsed = Date.now() - start;
 
@@ -2171,21 +2207,21 @@ These are **minimal but critical** standards for AI-driven development. Focus is
 
 ### Naming Conventions
 
-| Element | Convention | Example |
-|---------|------------|---------|
-| **poem-core** |
-| Agent files | kebab-case.md | `prompt-engineer.md` |
-| Workflow files | kebab-case.yaml | `new-prompt.yaml` |
-| Skill files | kebab-case.md | `check-my-prompt.md` |
-| **poem-app** |
-| API routes | kebab-case directories | `/api/prompt/render.ts` |
-| Services | PascalCase classes | `HandlebarsService` |
-| Helpers | camelCase files | `titleCase.js`, `formatTimestamp.js` |
-| Tests | *.test.ts | `handlebars.test.ts` |
+| Element            | Convention             | Example                              |
+| ------------------ | ---------------------- | ------------------------------------ |
+| **poem-core**      |
+| Agent files        | kebab-case.md          | `prompt-engineer.md`                 |
+| Workflow files     | kebab-case.yaml        | `new-prompt.yaml`                    |
+| Skill files        | kebab-case.md          | `check-my-prompt.md`                 |
+| **poem-app**       |
+| API routes         | kebab-case directories | `/api/prompt/render.ts`              |
+| Services           | PascalCase classes     | `HandlebarsService`                  |
+| Helpers            | camelCase files        | `titleCase.js`, `formatTimestamp.js` |
+| Tests              | \*.test.ts             | `handlebars.test.ts`                 |
 | **User Workspace** |
-| Prompts | kebab-case.hbs | `generate-titles.hbs` |
-| Schemas | kebab-case.json | `generate-titles.json` |
-| Config | kebab-case.yaml/json | `supportsignal.yaml` |
+| Prompts            | kebab-case.hbs         | `generate-titles.hbs`                |
+| Schemas            | kebab-case.json        | `generate-titles.json`               |
+| Config             | kebab-case.yaml/json   | `supportsignal.yaml`                 |
 
 ### TypeScript Standards
 
@@ -2221,21 +2257,21 @@ import { something } from '../../../poem-core/...'; // Wrong
  * @returns {string} Truncated string
  * @example {{truncate title 50}} → "First 50 characters..."
  */
-module.exports = function(str, length) {
-  if (typeof str !== 'string') return '';
+module.exports = function (str, length) {
+  if (typeof str !== "string") return "";
   if (str.length <= length) return str;
-  return str.slice(0, length - 3) + '...';
+  return str.slice(0, length - 3) + "...";
 };
 
 // ❌ DON'T: Throw errors that crash rendering
-module.exports = function(str, length) {
-  if (!str) throw new Error('str required'); // Crashes template
+module.exports = function (str, length) {
+  if (!str) throw new Error("str required"); // Crashes template
 };
 
 // ✅ DO: Handle edge cases gracefully
-module.exports = function(str, length) {
-  if (!str) return '';
-  if (typeof length !== 'number') return str;
+module.exports = function (str, length) {
+  if (!str) return "";
+  if (typeof length !== "number") return str;
   // ...
 };
 ```
@@ -2254,7 +2290,9 @@ export async function POST({ request }: APIContext) {
       JSON.stringify({
         success: false,
         error: error.message,
-        details: { /* context */ }
+        details: {
+          /* context */
+        },
       }),
       { status: 400 }
     );
@@ -2265,7 +2303,7 @@ export async function POST({ request }: APIContext) {
 const schema = z.object({
   template: z.string().min(1),
   data: z.record(z.unknown()).optional(),
-  isRawTemplate: z.boolean().default(false)
+  isRawTemplate: z.boolean().default(false),
 });
 
 // ❌ DON'T: Trust input blindly
@@ -2460,6 +2498,7 @@ Implement just-in-time as the codebase matures. Each phase automates the corresp
 **Trigger:** Implement when test suite is stable and PRs are common.
 
 **Implementation:**
+
 ```yaml
 # .github/workflows/ci.yaml
 name: CI
@@ -2472,8 +2511,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
@@ -2491,6 +2530,7 @@ jobs:
 **Trigger:** Implement when package-specific failures are hard to diagnose in combined output.
 
 **Implementation:**
+
 ```yaml
 # .github/workflows/ci.yaml
 name: CI
@@ -2503,8 +2543,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
       - run: npm ci
 
       # Document validation
@@ -2521,8 +2561,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
       - run: npm ci
 
       # Code validation
@@ -2543,6 +2583,7 @@ jobs:
 **Trigger:** Implement when installer is stable and integration bugs are costly.
 
 **Implementation:**
+
 ```yaml
 # .github/workflows/ci.yaml (add to existing)
 jobs:
@@ -2555,8 +2596,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
       - run: npm ci
 
       - name: Test installer end-to-end
@@ -2592,13 +2633,14 @@ jobs:
 **Trigger:** Implement when ready for NPM distribution.
 
 **Implementation:**
+
 ```yaml
 # .github/workflows/publish.yaml
 name: Publish
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   publish:
@@ -2607,8 +2649,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
 
       - run: npm ci
 
@@ -2628,6 +2670,7 @@ jobs:
 ```
 
 **Release process (still manual tagging):**
+
 ```bash
 npm version patch  # or minor/major
 npm run version:sync
@@ -2646,12 +2689,14 @@ git push origin main --tags  # Triggers publish workflow
 Implement early to catch issues before they reach CI or manual validation.
 
 **Setup:**
+
 ```bash
 npm install -D husky lint-staged secretlint @secretlint/secretlint-rule-preset-recommend
 npx husky init
 ```
 
 **Configuration:**
+
 ```json
 // package.json
 {
@@ -2700,6 +2745,7 @@ All packages use lock-step versioning:
 ```
 
 **Release workflow:**
+
 ```bash
 # 1. Bump version (updates root package.json)
 npm version patch  # or minor/major
@@ -2720,13 +2766,13 @@ git push origin main --tags
 
 ### Phase Implementation Timeline
 
-| Phase | Checklist Sections Automated | Implement When |
-|-------|------------------------------|----------------|
-| Pre-commit | Lint, secrets | Early (multi-developer or sensitive data) |
-| Phase 1 | Steps 1-3 (Validate) | Test suite stable, PRs common |
-| Phase 2 | Split core/app validation | Package-specific debugging needed |
-| Phase 3 | Steps 4-9 (Test Installer) | Installer stable, integration bugs costly |
-| Phase 4 | Steps 10-13 (Release) | Ready for NPM distribution |
+| Phase      | Checklist Sections Automated | Implement When                            |
+| ---------- | ---------------------------- | ----------------------------------------- |
+| Pre-commit | Lint, secrets                | Early (multi-developer or sensitive data) |
+| Phase 1    | Steps 1-3 (Validate)         | Test suite stable, PRs common             |
+| Phase 2    | Split core/app validation    | Package-specific debugging needed         |
+| Phase 3    | Steps 4-9 (Test Installer)   | Installer stable, integration bugs costly |
+| Phase 4    | Steps 10-13 (Release)        | Ready for NPM distribution                |
 
 **Current State:** Manual checklist only. Implement phases just-in-time.
 
@@ -2736,50 +2782,53 @@ git push origin main --tags
 
 ### Executive Summary
 
-| Metric | Assessment |
-|--------|------------|
-| **Overall Architecture Readiness** | **HIGH** |
-| **Project Type** | Hybrid (Document Framework + Local Runtime) |
-| **Critical Risks** | 2 (Medium severity) |
-| **Key Strengths** | Clear component boundaries, BMAD-aligned patterns, comprehensive API spec |
-| **Sections Skipped** | Frontend UI sections (conversation-first product) |
+| Metric                             | Assessment                                                                |
+| ---------------------------------- | ------------------------------------------------------------------------- |
+| **Overall Architecture Readiness** | **HIGH**                                                                  |
+| **Project Type**                   | Hybrid (Document Framework + Local Runtime)                               |
+| **Critical Risks**                 | 2 (Medium severity)                                                       |
+| **Key Strengths**                  | Clear component boundaries, BMAD-aligned patterns, comprehensive API spec |
+| **Sections Skipped**               | Frontend UI sections (conversation-first product)                         |
 
 ### Section Analysis
 
-| Section | Pass Rate | Status | Notes |
-|---------|-----------|--------|-------|
-| 1. Requirements Alignment | 95% | ✅ PASS | All FRs/NFRs addressed |
-| 2. Architecture Fundamentals | 100% | ✅ PASS | Clear diagrams, well-defined components |
-| 3. Technical Stack | 100% | ✅ PASS | Versions specified, rationale documented |
-| 4. Frontend Architecture | SKIPPED | ➖ N/A | Conversation-first, no visual UI |
-| 5. Resilience & Operations | 75% | ⚠️ CONCERNS | Limited monitoring (acceptable for local tool) |
-| 6. Security & Compliance | 80% | ⚠️ CONCERNS | Minimal (appropriate for local dev tool) |
-| 7. Implementation Guidance | 95% | ✅ PASS | Clear standards, testing strategy |
-| 8. Dependencies & Integration | 90% | ✅ PASS | Provider pattern well-defined |
-| 9. AI Agent Suitability | 100% | ✅ PASS | Designed for AI implementation |
-| 10. Accessibility | SKIPPED | ➖ N/A | No visual UI |
+| Section                       | Pass Rate | Status      | Notes                                          |
+| ----------------------------- | --------- | ----------- | ---------------------------------------------- |
+| 1. Requirements Alignment     | 95%       | ✅ PASS     | All FRs/NFRs addressed                         |
+| 2. Architecture Fundamentals  | 100%      | ✅ PASS     | Clear diagrams, well-defined components        |
+| 3. Technical Stack            | 100%      | ✅ PASS     | Versions specified, rationale documented       |
+| 4. Frontend Architecture      | SKIPPED   | ➖ N/A      | Conversation-first, no visual UI               |
+| 5. Resilience & Operations    | 75%       | ⚠️ CONCERNS | Limited monitoring (acceptable for local tool) |
+| 6. Security & Compliance      | 80%       | ⚠️ CONCERNS | Minimal (appropriate for local dev tool)       |
+| 7. Implementation Guidance    | 95%       | ✅ PASS     | Clear standards, testing strategy              |
+| 8. Dependencies & Integration | 90%       | ✅ PASS     | Provider pattern well-defined                  |
+| 9. AI Agent Suitability       | 100%      | ✅ PASS     | Designed for AI implementation                 |
+| 10. Accessibility             | SKIPPED   | ➖ N/A      | No visual UI                                   |
 
 ### Risk Assessment
 
-| # | Risk | Severity | Mitigation |
-|---|------|----------|------------|
-| 1 | **Handlebars AST parsing complexity** | Medium | Epic 4 validates with real YouTube templates |
-| 2 | **Hot-reload edge cases** | Medium | Comprehensive unit tests, graceful degradation |
-| 3 | **Provider pattern generalization** | Low | Mock provider first, abstract after patterns emerge |
-| 4 | **Workflow-data persistence format** | Low | Start simple (JSON files), evolve as needed |
-| 5 | **Cross-platform process management** | Low | Use native Node.js APIs, test on all platforms |
+| #   | Risk                                  | Severity | Mitigation                                          |
+| --- | ------------------------------------- | -------- | --------------------------------------------------- |
+| 1   | **Handlebars AST parsing complexity** | Medium   | Epic 4 validates with real YouTube templates        |
+| 2   | **Hot-reload edge cases**             | Medium   | Comprehensive unit tests, graceful degradation      |
+| 3   | **Provider pattern generalization**   | Low      | Mock provider first, abstract after patterns emerge |
+| 4   | **Workflow-data persistence format**  | Low      | Start simple (JSON files), evolve as needed         |
+| 5   | **Cross-platform process management** | Low      | Use native Node.js APIs, test on all platforms      |
 
 ### Recommendations
 
 #### Must-Fix Before Development
+
 - None identified. Architecture is ready for implementation.
 
 #### Should-Fix for Better Quality
+
 1. **Add schema extraction algorithm pseudo-code** - Clarify AST traversal approach for Epic 4
 2. **Define workflow-data.json format explicitly** - Support chain pause/resume
 3. **Document provider contract TypeScript interface** - Formal contract before Epic 5
 
 #### Nice-to-Have Improvements
+
 1. Add architecture decision records (ADRs) for major choices
 2. Create visual diagram for provider data flow
 3. Add example workflow-data.json for YouTube Launch Optimizer
@@ -2797,6 +2846,7 @@ The architecture is specifically designed for AI agent implementation:
 - ✅ **Error guidance**: Critical Rules section prevents common mistakes
 
 **Complexity Hotspots:**
+
 1. `schema/extractor.ts` - Handlebars AST parsing (mitigated by Epic 4 validation)
 2. `watcher.ts` - Hot-reload file watching (well-documented pattern)
 
@@ -2837,4 +2887,4 @@ OpenAPI spec for all API endpoints - use these as implementation contracts.
 
 ---
 
-*Document generated by Winston (Architect Agent) using BMAD Method v4.44.3*
+_Document generated by Winston (Architect Agent) using BMAD Method v4.44.3_

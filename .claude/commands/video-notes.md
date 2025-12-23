@@ -5,6 +5,7 @@ description: Generate AppyDave video notes (.AD.md) with talking points and imag
 # Video Notes Generator
 
 Read and follow the Video Notes Agent instructions:
+
 - **Agent**: `/Users/davidcruwys/dev/video-projects/v-appydave/b64-bmad-claude-sdk/launch-optimizer/video-notes-agent.md`
 - **Design Brief**: `/Users/davidcruwys/dev/video-projects/v-appydave/b64-bmad-claude-sdk/launch-optimizer/design-brief.md`
 

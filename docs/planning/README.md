@@ -96,44 +96,44 @@ docs/planning/
 
 ### Major Architecture Decisions (2025-11-19)
 
-| Date | Decision | Doc |
-|------|----------|-----|
-| 2025-11-18 | **Application Type**: Prompt Engineering OS | POEM.md |
-| 2025-11-19 | **Name**: POEM (Prompt Orchestration and Engineering Method) | exploration/naming.md |
-| 2025-11-19 | **3-4 Agents**: Function-based naming, skills autonomous | system-explorations/agents.md |
-| 2025-11-19 | **8 Skills**: Core POEM capabilities | system-explorations/skills.md |
-| 2025-11-19 | **Structure**: .poem-core/ + .poem-app/ + /poem/ | system-explorations/structure.md |
-| 2025-11-19 | **Mock Data**: Core value proposition | system-explorations/mock-data.md |
-| 2025-11-19 | **v4 BMAD Patterns**: Template-driven, 3x faster | system-explorations/structure.md |
-| 2025-11-19 | **Astro API**: Persistent server (not MCP) | system-explorations/structure.md |
-| 2025-11-19 | **Two Domains**: SupportSignal + Storyline | reference/examples.md |
-| 2025-11-20 | **Documentation Structure**: Primary doc + modular references | This restructure |
-| 2025-11-21 | **Glossary**: Domain terminology reference | reference/glossary.md |
+| Date       | Decision                                                              | Doc                              |
+| ---------- | --------------------------------------------------------------------- | -------------------------------- |
+| 2025-11-18 | **Application Type**: Prompt Engineering OS                           | POEM.md                          |
+| 2025-11-19 | **Name**: POEM (Prompt Orchestration and Engineering Method)          | exploration/naming.md            |
+| 2025-11-19 | **3-4 Agents**: Function-based naming, skills autonomous              | system-explorations/agents.md    |
+| 2025-11-19 | **8 Skills**: Core POEM capabilities                                  | system-explorations/skills.md    |
+| 2025-11-19 | **Structure**: .poem-core/ + .poem-app/ + /poem/                      | system-explorations/structure.md |
+| 2025-11-19 | **Mock Data**: Core value proposition                                 | system-explorations/mock-data.md |
+| 2025-11-19 | **v4 BMAD Patterns**: Template-driven, 3x faster                      | system-explorations/structure.md |
+| 2025-11-19 | **Astro API**: Persistent server (not MCP)                            | system-explorations/structure.md |
+| 2025-11-19 | **Two Domains**: SupportSignal + Storyline                            | reference/examples.md            |
+| 2025-11-20 | **Documentation Structure**: Primary doc + modular references         | This restructure                 |
+| 2025-11-21 | **Glossary**: Domain terminology reference                            | reference/glossary.md            |
 | 2025-11-21 | **Level 2 Mock Data**: Persistent scenarios, anonymization, workflows | system-explorations/mock-data.md |
-| 2025-11-21 | **TOON Format**: Token-efficient data format option | system-explorations/workflows.md |
-| 2025-11-21 | **Folder Reorganization**: architecture/ → system-explorations/ | README.md |
+| 2025-11-21 | **TOON Format**: Token-efficient data format option                   | system-explorations/workflows.md |
+| 2025-11-21 | **Folder Reorganization**: architecture/ → system-explorations/       | README.md                        |
 
 ### 🚧 Active Planning Areas (Watch During Implementation)
 
-| Area | Status | What to Watch For | Doc |
-|------|--------|-------------------|-----|
-| **Fourth Agent** | Under consideration | Mock data bottlenecks, testing orchestration needs, Prompt Engineer overwhelmed | system-explorations/agents.md |
-| **Mock Data Library** | Designing Level 2 | Anonymization complexity, entity persistence patterns, workflow scenarios | system-explorations/mock-data.md |
+| Area                  | Status              | What to Watch For                                                               | Doc                              |
+| --------------------- | ------------------- | ------------------------------------------------------------------------------- | -------------------------------- |
+| **Fourth Agent**      | Under consideration | Mock data bottlenecks, testing orchestration needs, Prompt Engineer overwhelmed | system-explorations/agents.md    |
+| **Mock Data Library** | Designing Level 2   | Anonymization complexity, entity persistence patterns, workflow scenarios       | system-explorations/mock-data.md |
 
 **📌 NOTE TO CLAUDE**: These are areas we're actively evaluating. Flag observations that inform these decisions!
 
 ### Open Decisions
 
-| Question | Options | Current Thinking | Doc |
-|----------|---------|------------------|-----|
-| Handlebars or simple placeholders? | Handlebars vs {{simple}} | Handlebars preferred | decisions/handlebars-templating.md |
-| Schema format? | JSON, Zod, YAML, HCL | JSON now, Zod later? | decisions/schema-format-alternatives.md |
-| Build mapping system? | Yes/No/Later | YAGNI - wait for need | decisions/mapping-architecture-concepts.md |
+| Question                           | Options                  | Current Thinking      | Doc                                        |
+| ---------------------------------- | ------------------------ | --------------------- | ------------------------------------------ |
+| Handlebars or simple placeholders? | Handlebars vs {{simple}} | Handlebars preferred  | decisions/handlebars-templating.md         |
+| Schema format?                     | JSON, Zod, YAML, HCL     | JSON now, Zod later?  | decisions/schema-format-alternatives.md    |
+| Build mapping system?              | Yes/No/Later             | YAGNI - wait for need | decisions/mapping-architecture-concepts.md |
 
 ### Blocked Items
 
-| Item | Blocker | Impact | Doc |
-|------|---------|--------|-----|
+| Item                       | Blocker                | Impact                       | Doc                          |
+| -------------------------- | ---------------------- | ---------------------------- | ---------------------------- |
 | Data dictionary population | Main app export needed | Can't fully validate schemas | reference/data-dictionary.md |
 
 ---
@@ -159,7 +159,7 @@ docs/planning/
 
 10. **[exploration/brief.md](./exploration/brief.md)** - Original project brief
 11. **[exploration/application-type-README.md](./exploration/application-type-README.md)** - Discovery journey (tool → OS)
-12. **[decisions/*.md](./decisions/)** - Open questions and alternatives
+12. **[decisions/\*.md](./decisions/)** - Open questions and alternatives
 
 ### For BMAD Team
 

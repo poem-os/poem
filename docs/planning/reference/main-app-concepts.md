@@ -18,6 +18,7 @@ This document consolidates key concepts learned from the main SupportSignal appl
 **Decision made**: 2025-11-08
 
 Prompt management was slowing down main app development and isn't a core customer requirement for SupportSignal. By separating it:
+
 - Main app team focuses on customer-facing features
 - Prompt engineering happens independently
 - We might bring pieces back to main app later
@@ -43,12 +44,14 @@ Prompt management was slowing down main app development and isn't a core custome
 ### Tech Stacks
 
 **Main App**:
+
 - Next.js (App Router) with TypeScript
 - Convex for backend and database
 - Tailwind CSS + ShadCN UI
 - Purpose: AI-powered NDIS support application
 
 **Prompts App** (this repo):
+
 - Astro for visualization
 - Text files for storage
 - Claude Code for development
@@ -70,6 +73,7 @@ Prompt management was slowing down main app development and isn't a core custome
 A **prompt** is an instruction sent to an AI model with placeholders that get filled with real data.
 
 **Template Example**:
+
 ```
 You are an expert analyst. Review the incident for {{participantName}}
 on {{eventDateTime}} at {{location}}.
@@ -79,6 +83,7 @@ Answer: YES or NO with one-sentence justification.
 ```
 
 **After Placeholder Substitution**:
+
 ```
 You are an expert analyst. Review the incident for John Smith
 on 2025-11-08 14:30 at Kitchen.
@@ -88,6 +93,7 @@ Answer: YES or NO with one-sentence justification.
 ```
 
 **Template Components**:
+
 1. **Prompt Template**: The text with `{{placeholders}}`
 2. **Placeholder Schema**: Definition of what variables are available
 3. **Data Source**: Where the placeholder values come from
@@ -100,12 +106,14 @@ Answer: YES or NO with one-sentence justification.
 **Examples from Main App**:
 
 **Incident Data Source**:
+
 - Metadata: participant name, location, date/time, reporter
 - Four narrative phases: before/during/end/post event
 - Clarification Q&A pairs
 - Enhanced narratives
 
 **Moment Data Source** (planned):
+
 - Voice recording transcripts
 - Shift notes
 - Bundle of daily observations
@@ -123,6 +131,7 @@ The main app discovered that prompts fall into two fundamentally different categ
 **Examples**: Generate clarification questions, enhance narratives
 
 **Characteristics**:
+
 - Tied to specific workflow step
 - Output consumed right away
 - No human review needed
@@ -135,6 +144,7 @@ The main app discovered that prompts fall into two fundamentally different categ
 **Examples**: "Is this reportable?", "What's the risk level?", "Training gaps?"
 
 **Characteristics**:
+
 - Can apply to incidents, moments, narratives
 - Creates reviewable data records
 - Supports human override
@@ -187,19 +197,20 @@ Flexible prompts produce three types of outputs:
 #### Wrong Model ❌
 
 ```typescript
-ai_output: any
-review_status: "approved" | "rejected" | "modified"
+ai_output: any;
+review_status: "approved" | "rejected" | "modified";
 ```
 
 #### Correct Model ✅
 
 ```typescript
-ai_value: any        // AI's assessment (immutable)
-human_value: any     // Human's assessment (mutable, initially null)
-effective_value = human_value ?? ai_value  // Computed: human wins if present
+ai_value: any; // AI's assessment (immutable)
+human_value: any; // Human's assessment (mutable, initially null)
+effective_value = human_value ?? ai_value; // Computed: human wins if present
 ```
 
 **Why This Matters**:
+
 - AI's original assessment is preserved (for learning/improvement)
 - Human can override without destroying AI's conclusion
 - You can see when humans and AI disagree
@@ -212,6 +223,7 @@ effective_value = human_value ?? ai_value  // Computed: human wins if present
 **Purpose**: Improve prompt quality
 
 **Actions**:
+
 - Reviews AI outputs to assess prompt quality
 - Marks prompts as "good" or "needs refinement"
 - Provides feedback: "This prompt is too vague"
@@ -224,6 +236,7 @@ effective_value = human_value ?? ai_value  // Computed: human wins if present
 **Purpose**: Validate incident analysis
 
 **Actions**:
+
 - Reviews AI outputs for THEIR incidents
 - Overrides when AI is wrong
 - Their override becomes official classification
@@ -237,6 +250,7 @@ effective_value = human_value ?? ai_value  // Computed: human wins if present
 #### Current Main App Placeholders
 
 **Incident-related**:
+
 - `{{participantName}}` - Who the incident is about
 - `{{eventDateTime}}` - When it occurred
 - `{{location}}` - Where it occurred
@@ -262,6 +276,7 @@ effective_value = human_value ?? ai_value  // Computed: human wins if present
 **Solution**: Keep them separate
 
 **For Our Text App**:
+
 - Both types in same flat folder
 - Distinguished by tags in schema: `"tags": ["workflow"]` vs `"tags": ["analysis"]`
 - Can be organized by type if needed in future
@@ -280,7 +295,7 @@ effective_value = human_value ?? ai_value  // Computed: human wins if present
   "dataSource": "incident",
   "outputType": "predicate",
   "placeholderSchema": {
-    "participantName": {"type": "string", "required": true}
+    "participantName": { "type": "string", "required": true }
   },
   "aiConfig": {
     "model": "gpt-4o",
@@ -316,6 +331,7 @@ git diff HEAD~1 data/prompts/ndis-reportable.txt
 
 **Claude Skill for Archiving**:
 When Angela needs backup before edit:
+
 1. Copy current file to `data/archive/[template-name]-YYYY-MM-DD.txt`
 2. Git commit with message "Archive: [template-name] before edit"
 3. Current file stays in place, ready for editing
@@ -344,6 +360,7 @@ This isn't "version control" - it's just a backup-before-edit workflow. Git prov
 ```
 
 **Benefits**:
+
 - Clear documentation of what's available
 - Astro can show available placeholders when viewing template
 - Can validate template uses only available placeholders
@@ -354,6 +371,7 @@ This isn't "version control" - it's just a backup-before-edit workflow. Git prov
 ## Template Processing Flows
 
 ### Main App Flow
+
 ```
 1. Hardcoded templates (code)
    ↓
@@ -367,6 +385,7 @@ This isn't "version control" - it's just a backup-before-edit workflow. Git prov
 ```
 
 ### Our Text-Driven Flow (Future)
+
 ```
 1. Text file templates (data/prompts/)
    ↓
@@ -383,13 +402,13 @@ This isn't "version control" - it's just a backup-before-edit workflow. Git prov
 
 ## What We're Building Differently
 
-| Aspect | Main App | Prompts App |
-|--------|----------|-------------|
-| Storage | Database tables | Text files |
-| UI | React forms | Astro pages |
-| Processing | Backend mutations | Claude skills |
-| Versioning | Event sourcing | Git |
-| Organization | Database queries | File system |
+| Aspect       | Main App          | Prompts App   |
+| ------------ | ----------------- | ------------- |
+| Storage      | Database tables   | Text files    |
+| UI           | React forms       | Astro pages   |
+| Processing   | Backend mutations | Claude skills |
+| Versioning   | Event sourcing    | Git           |
+| Organization | Database queries  | File system   |
 
 **Same Concepts**: Templates, placeholders, data sources, output types, dual-field pattern
 

@@ -14,27 +14,27 @@ The YouTube Launch Optimizer is the **primary validation case** for POEM's Epic 
 
 ## Documents in This Folder
 
-| Document | Purpose |
-|----------|---------|
-| `flow-analysis.md` | Step-by-step analysis of all 35 steps across 8 sections. Includes what works, what doesn't, human checkpoints, and parallelization opportunities. **The gold mine.** |
-| `workflow-patterns.md` | Cross-workflow pattern comparison and Motus execution primitives. |
-| `schema-analysis.md` | Data model deep dive: entities, relationships, storage strategies. |
-| `sample-data/b62-remotion-overview.json` | Real workflow data showing 60+ attributes accumulated through execution. |
+| Document                                 | Purpose                                                                                                                                                              |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `flow-analysis.md`                       | Step-by-step analysis of all 35 steps across 8 sections. Includes what works, what doesn't, human checkpoints, and parallelization opportunities. **The gold mine.** |
+| `workflow-patterns.md`                   | Cross-workflow pattern comparison and Motus execution primitives.                                                                                                    |
+| `schema-analysis.md`                     | Data model deep dive: entities, relationships, storage strategies.                                                                                                   |
+| `sample-data/b62-remotion-overview.json` | Real workflow data showing 60+ attributes accumulated through execution.                                                                                             |
 
 ## Key Findings Summary
 
 ### What Actually Works (16-18 steps vs 35 designed)
 
-| Section | Status | Notes |
-|---------|--------|-------|
-| 1. Video Preparation | ✅ Works | 5/6 steps, parallelizable |
-| 2. Build Chapters | ⚠️ Partial | Step 2 helps (folder names), Step 3 broken |
-| 3. B-Roll Suggestions | ❌ Deprecated | Should be own workflow |
-| 4. Content Analysis | ⚠️ Informational | Runs but outputs mostly unused |
-| 5. Title & Thumbnail | ⚠️ Partial | Only Step 1 (title ideas) used |
-| 6. YouTube Meta Data | ✅ Works | Steps 1-3 auto-advance pipeline |
-| 7. Social Media | ✅ Works | Tweet + LinkedIn work, can run parallel |
-| 8. YouTube Shorts | ❌ Split off | Should be separate workflow |
+| Section               | Status           | Notes                                      |
+| --------------------- | ---------------- | ------------------------------------------ |
+| 1. Video Preparation  | ✅ Works         | 5/6 steps, parallelizable                  |
+| 2. Build Chapters     | ⚠️ Partial       | Step 2 helps (folder names), Step 3 broken |
+| 3. B-Roll Suggestions | ❌ Deprecated    | Should be own workflow                     |
+| 4. Content Analysis   | ⚠️ Informational | Runs but outputs mostly unused             |
+| 5. Title & Thumbnail  | ⚠️ Partial       | Only Step 1 (title ideas) used             |
+| 6. YouTube Meta Data  | ✅ Works         | Steps 1-3 auto-advance pipeline            |
+| 7. Social Media       | ✅ Works         | Tweet + LinkedIn work, can run parallel    |
+| 8. YouTube Shorts     | ❌ Split off     | Should be separate workflow                |
 
 ### Human Checkpoint Patterns Identified
 

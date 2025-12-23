@@ -1,0 +1,22 @@
+# POEM Core Configuration
+# This file configures the POEM framework for your project
+
+# Server configuration
+server:
+  port: 4321
+  host: localhost
+
+# Workspace paths (relative to project root)
+workspace:
+  prompts: poem/prompts
+  schemas: poem/schemas
+  mockData: poem/mock-data
+  config: poem/config
+
+# Provider configuration
+providers: []
+
+# Feature flags
+features:
+  hotReload: true
+  mockDataGeneration: true

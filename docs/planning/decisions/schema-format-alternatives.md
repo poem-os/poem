@@ -25,11 +25,13 @@
 ```
 
 **Pros**:
+
 - Simple, readable
 - Easy for Angela to edit
 - No dependencies
 
 **Cons**:
+
 - No validation tooling
 - No type safety
 - Custom format (not standard)
@@ -74,12 +76,14 @@
 ```
 
 **Pros**:
+
 - Industry standard (W3C)
 - Validation tooling exists (ajv, etc.)
 - IDE support (autocomplete, validation)
 - Can generate TypeScript types
 
 **Cons**:
+
 - More verbose
 - Complex for simple cases
 - Harder for Angela to edit
@@ -90,40 +94,43 @@
 
 ```typescript
 // data/schemas/analysis-predicate-example.schema.ts
-import { z } from 'zod'
+import { z } from "zod";
 
 export const AnalysisPredicateSchema = z.object({
-  templateName: z.literal('analysis-predicate-example'),
+  templateName: z.literal("analysis-predicate-example"),
   description: z.string(),
-  dataSource: z.literal('flexible'),
-  outputType: z.literal('predicate'),
+  dataSource: z.literal("flexible"),
+  outputType: z.literal("predicate"),
 
   placeholders: z.object({
-    context: z.string()
-      .describe('The contextual information needed to make the decision')
-      .openapi({ example: 'An incident occurred where...' }),
+    context: z
+      .string()
+      .describe("The contextual information needed to make the decision")
+      .openapi({ example: "An incident occurred where..." }),
 
-    question: z.string()
-      .describe('The yes/no question to be answered')
-      .openapi({ example: 'Is this a reportable incident?' })
+    question: z
+      .string()
+      .describe("The yes/no question to be answered")
+      .openapi({ example: "Is this a reportable incident?" }),
   }),
 
   outputFormat: z.string().optional(),
-  recommendedModel: z.string().default('openai/gpt-4o-mini'),
+  recommendedModel: z.string().default("openai/gpt-4o-mini"),
   maxTokens: z.number().int().positive().default(150),
-  temperature: z.number().min(0).max(1).default(0.3)
-})
+  temperature: z.number().min(0).max(1).default(0.3),
+});
 
 // Infer TypeScript type from schema
-export type AnalysisPredicateTemplate = z.infer<typeof AnalysisPredicateSchema>
+export type AnalysisPredicateTemplate = z.infer<typeof AnalysisPredicateSchema>;
 
 // Validation function
 export function validateTemplate(data: unknown) {
-  return AnalysisPredicateSchema.parse(data)
+  return AnalysisPredicateSchema.parse(data);
 }
 ```
 
 **Pros**:
+
 - Type-safe (TypeScript)
 - Runtime validation
 - Excellent IDE support
@@ -132,6 +139,7 @@ export function validateTemplate(data: unknown) {
 - Great error messages
 
 **Cons**:
+
 - Requires TypeScript/Node.js
 - Not editable by Angela (code, not data)
 - Build step required
@@ -169,12 +177,14 @@ temperature: 0.3
 ```
 
 **Pros**:
+
 - More readable than JSON
 - Supports multiline strings naturally
 - Comments allowed
 - Less syntactic noise
 
 **Cons**:
+
 - Indentation-sensitive
 - Parsing more complex
 - Less universal than JSON
@@ -186,6 +196,7 @@ temperature: 0.3
 **Approach**: Keep data in JSON (Angela-editable), validate with Zod (type-safe)
 
 **Schema file** (Angela edits): `data/schemas/analysis-predicate-example.json`
+
 ```json
 {
   "templateName": "analysis-predicate-example",
@@ -199,35 +210,38 @@ temperature: 0.3
 ```
 
 **Validator** (Developer provides): `lib/validators/template-schema.ts`
+
 ```typescript
-import { z } from 'zod'
+import { z } from "zod";
 
 const PlaceholderSchema = z.object({
-  type: z.enum(['string', 'text', 'number', 'datetime', 'array']),
+  type: z.enum(["string", "text", "number", "datetime", "array"]),
   required: z.boolean(),
   description: z.string().optional(),
-  example: z.any().optional()
-})
+  example: z.any().optional(),
+});
 
 export const TemplateSchemaValidator = z.object({
   templateName: z.string(),
   description: z.string(),
   dataSource: z.string(),
-  placeholders: z.record(PlaceholderSchema)
-})
+  placeholders: z.record(PlaceholderSchema),
+});
 
 // Validate JSON files
 export function validateSchemaFile(jsonContent: unknown) {
-  return TemplateSchemaValidator.parse(jsonContent)
+  return TemplateSchemaValidator.parse(jsonContent);
 }
 ```
 
 **Pros**:
+
 - Angela edits simple JSON
 - Type safety + validation via code
 - Best of both worlds
 
 **Cons**:
+
 - Requires build tooling
 - Two-layer approach
 
@@ -267,6 +281,7 @@ ai_config {
 ```
 
 **Pros**:
+
 - Very readable
 - Supports blocks/nesting naturally
 - Heredoc strings
@@ -274,6 +289,7 @@ ai_config {
 - Used by Terraform (proven)
 
 **Cons**:
+
 - Requires HCL parser
 - Less common than JSON/YAML
 - Not standard for web apps
@@ -285,6 +301,7 @@ ai_config {
 **For this project**: Stick with **Custom JSON** for now
 
 **Why**:
+
 1. Angela can edit directly
 2. Simple, no dependencies
 3. Astro can read easily
@@ -292,11 +309,13 @@ ai_config {
 5. Validation can be added later if needed
 
 **Future enhancement**: Add Zod validation as a Claude skill
+
 - Angela continues editing JSON
 - Skill validates on save
 - Best of both worlds
 
 **If Astro app grows**: Consider **Hybrid (JSON + Zod)**
+
 - Keeps JSON for data
 - Adds type safety
 - Still Angela-friendly
@@ -310,22 +329,22 @@ ai_config {
 ```typescript
 // Claude skill validates schema file
 async function validateSchemaFile(filePath: string) {
-  const content = await readFile(filePath)
-  const json = JSON.parse(content)
+  const content = await readFile(filePath);
+  const json = JSON.parse(content);
 
   // Check required fields
-  if (!json.templateName) throw new Error('Missing templateName')
-  if (!json.placeholders) throw new Error('Missing placeholders')
+  if (!json.templateName) throw new Error("Missing templateName");
+  if (!json.placeholders) throw new Error("Missing placeholders");
 
   // Validate placeholder structure
   for (const [name, config] of Object.entries(json.placeholders)) {
-    if (!config.type) throw new Error(`Placeholder ${name} missing type`)
-    if (!['string', 'text', 'number', 'datetime', 'array'].includes(config.type)) {
-      throw new Error(`Invalid type for ${name}: ${config.type}`)
+    if (!config.type) throw new Error(`Placeholder ${name} missing type`);
+    if (!["string", "text", "number", "datetime", "array"].includes(config.type)) {
+      throw new Error(`Invalid type for ${name}: ${config.type}`);
     }
   }
 
-  return { valid: true }
+  return { valid: true };
 }
 ```
 

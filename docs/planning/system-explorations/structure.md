@@ -77,6 +77,7 @@
 ```
 
 **Notes**:
+
 - No `handlebars/helpers/` here - those live in `.poem-app/src/services/handlebars/helpers/`
 - `mock-data/` is new top-level folder for Level 2 mock data ecosystem
 - See [mock-data.md](./mock-data.md) for complete mock data architecture
@@ -174,6 +175,7 @@
 **Solution**: Persistent Astro server with APIs
 
 **Skills call Astro APIs explicitly** (not MCP's implicit context):
+
 ```typescript
 // Skill: render-template
 POST http://localhost:4321/api/handlebars/render
@@ -186,11 +188,12 @@ Response: {"result": "John"}
 ```
 
 **Configuration-driven endpoints**:
+
 ```yaml
 # .poem-core/config.yaml
 astro_server:
   host: "localhost"
-  port: 4321  # Configurable per project
+  port: 4321 # Configurable per project
   base_url: "http://localhost:4321"
 
 endpoints:
@@ -206,6 +209,7 @@ endpoints:
 ## On-Demand Helper Creation
 
 **Angela's workflow**:
+
 ```
 Angela (in System Agent): "I need a fullName helper that combines firstName + lastName"
 
@@ -229,6 +233,7 @@ Agent:
 **Problem**: SupportSignal/Convex is specific, need generic integration pattern
 
 **Solution**: Provider pattern via Astro APIs
+
 ```
 Astro API Endpoints:
 ├── /api/providers/supportsignal/read-dictionary
@@ -241,6 +246,7 @@ Future providers:
 ```
 
 **Skills invoke providers**:
+
 ```
 Skill: "publish-to-provider"
 Config: provider = "supportsignal"
@@ -256,6 +262,7 @@ Action: POST /api/providers/supportsignal/publish-template
 **Use v4 patterns for POEM** ✅
 
 **Why**:
+
 - **3x faster** workflows (5 min vs 15 min for simple tasks)
 - **Template-driven** (YAML workflows, single-step commands)
 - **Stable** (not alpha)
@@ -263,6 +270,7 @@ Action: POST /api/providers/supportsignal/publish-template
 - **Solo-optimized** (Angela works alone, no team coordination)
 
 **What we steal from v4**:
+
 - `.poem-core/` structure (like `.bmad-core/`)
 - YAML workflow templates
 - Single-step commands (like `*draft` → complete story)
@@ -270,6 +278,7 @@ Action: POST /api/providers/supportsignal/publish-template
 - File system as source of truth
 
 **v6 advantages don't apply**:
+
 - ❌ Team coordination - Angela is solo
 - ❌ Complex projects - Prompts are straightforward
 - ❌ Module system - POEM is single-purpose
@@ -284,12 +293,14 @@ Action: POST /api/providers/supportsignal/publish-template
 **NPM Package Availability** (checked 2025-11-19):
 
 **Status**:
+
 - ❌ `poem` - **TAKEN** (v0.0.1, abandoned ISC package)
 - ✅ `poem-os` - **AVAILABLE** ✨
 
 **Decision**: Use `poem-os` (like `bmad-method` pattern)
 
 **User installation**:
+
 ```bash
 npx poem-os install           # Installs everything (.poem-core/ + .poem-app/)
 npx poem-os install --core    # Just .poem-core/
@@ -299,6 +310,7 @@ npx poem-os install --app     # Just .poem-app/
 **Simple and clean** - matches BMAD's `npx bmad-method install` pattern
 
 **Repository structure** (monorepo):
+
 ```
 poem-os/poem/
 ├── packages/
@@ -313,16 +325,19 @@ poem-os/poem/
 ## Skills vs MCP vs Astro API - Clarity
 
 **Research findings**:
+
 - **Skills**: Teach Claude HOW to do tasks (procedures, workflows, orchestration)
 - **MCP**: Connect Claude TO data sources (implicit, context-based)
 - **Astro API**: Persistent services with explicit HTTP calls
 
 **POEM architecture**:
+
 - ✅ **Skills** orchestrate workflows → Call Astro APIs explicitly
 - ✅ **Astro APIs** provide heavy lifting → Handlebars engine, Provider connectors
 - ❌ **No MCP needed** → Direct HTTP is simpler and explicit (as David intuited)
 
 **Why explicit > implicit**:
+
 - Skills call APIs with clear intent (`POST /api/handlebars/render`)
 - No "muddy waters" of MCP context magic
 - Testable (can `curl` the endpoints)
@@ -331,6 +346,7 @@ poem-os/poem/
 ---
 
 **See also**:
+
 - [agents.md](./agents.md) - Agent definitions and capabilities
 - [workflows.md](./workflows.md) - Core workflow patterns
 - [skills.md](./skills.md) - Individual skill specifications

@@ -1,64 +1,32 @@
-You are generating YouTube tags for a video.
-
-## Video Context
-
-**Title**: {{title}}
-**Main Topic**: {{mainTopic}}
+You are generating YouTube tags for a video. ## Video Context **Title**:
+{{title}}
+**Main Topic**:
+{{mainTopic}}
 
 **Keywords**:
 {{#each keywords}}
-- {{this}}
+  -
+  {{this}}
 {{/each}}
 
 **Search Terms**:
 {{#each searchTerms}}
-- {{this}}
+  -
+  {{this}}
 {{/each}}
 
-## Task
-
-Generate TWO types of tags:
-
-### 1. YouTube Tags (for tag field)
-
-- 2-5 words per tag (long phrases perform better)
-- Stay under 500 characters total
-- 10-15 tags optimal
-- Include: primary keywords, variations, related concepts, long-tail phrases
-- Avoid: single generic words, misleading tags
-
-### 2. Description Hashtags (for selection)
-
-Generate 10 hashtags in recommended order. User will select 5.
-
-**Why order matters:**
-- First 3 hashtags appear "above the fold" in YouTube description
-- These are prime real estate for discoverability
-- Order = priority
-
-**Mix of:**
-- Niche tags (#bmadmethod, #claudeagentsdk)
-- Broader discovery tags (#aicoding, #vibecoding)
-- Trending/timely tags if relevant
-
-## Output Format
-
-```json
-{
-  "youtubeTags": {
-    "tags": ["tag one", "tag two"],
-    "tagString": "tag one, tag two",
-    "totalCharacters": 123,
-    "count": 12
-  },
-  "descriptionHashtags": {
-    "recommended": [
-      { "position": 1, "hashtag": "#example", "reason": "Why this should be first" },
-      { "position": 2, "hashtag": "#example2", "reason": "Why second" }
-    ],
-    "count": 10
-  }
-}
-```
-
-After output, ask user to select 5 hashtags and confirm their preferred order.
+## Task Generate TWO types of tags: ### 1. YouTube Tags (for tag field) - 2-5
+words per tag (long phrases perform better) - Stay under 500 characters total -
+10-15 tags optimal - Include: primary keywords, variations, related concepts,
+long-tail phrases - Avoid: single generic words, misleading tags ### 2.
+Description Hashtags (for selection) Generate 10 hashtags in recommended order.
+User will select 5. **Why order matters:** - First 3 hashtags appear "above the
+fold" in YouTube description - These are prime real estate for discoverability -
+Order = priority **Mix of:** - Niche tags (#bmadmethod, #claudeagentsdk) -
+Broader discovery tags (#aicoding, #vibecoding) - Trending/timely tags if
+relevant ## Output Format ```json { "youtubeTags": { "tags": ["tag one", "tag
+two"], "tagString": "tag one, tag two", "totalCharacters": 123, "count": 12 },
+"descriptionHashtags": { "recommended": [ { "position": 1, "hashtag":
+"#example", "reason": "Why this should be first" }, { "position": 2, "hashtag":
+"#example2", "reason": "Why second" } ], "count": 10 } } ``` After output, ask
+user to select 5 hashtags and confirm their preferred order.

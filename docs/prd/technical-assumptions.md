@@ -3,6 +3,7 @@
 ## Repository Structure: Monorepo
 
 POEM uses a monorepo structure for development:
+
 ```
 poem-os/poem/
 ├── packages/
@@ -16,6 +17,7 @@ poem-os/poem/
 ## Service Architecture: Hybrid (Document Framework + Local Runtime)
 
 POEM is a **Framework/Operating System** (like BMAD), not a traditional web application:
+
 - **95% Document-Based**: Agents (YAML + Markdown), workflows (YAML), templates (Handlebars), schemas (JSON), skills (Markdown)
 - **5% Runtime Tool**: `.poem-app/` Astro server providing Handlebars engine, API endpoints, and provider integrations
 
@@ -33,6 +35,7 @@ POEM is a **Framework/Operating System** (like BMAD), not a traditional web appl
 ## Additional Technical Assumptions and Requests
 
 **Technology Stack**:
+
 - **Server**: Astro (latest version) with Node.js/TypeScript for `.poem-app/`
 - **Templating**: Handlebars.js with custom helpers (eager loading on server start, with hot-reload support for dynamically generated helpers)
 - **Mock Data**: Faker.js (@faker-js/faker)
@@ -41,21 +44,25 @@ POEM is a **Framework/Operating System** (like BMAD), not a traditional web appl
 - **Package Distribution**: NPM via `npx poem-os install`
 
 **Platform Requirements**:
+
 - **Primary Platform**: Claude Code (slash commands, skills)
 - **OS Support**: Cross-platform (macOS, Linux, Windows) via Node.js
 - **Offline Support**: Core functionality works without cloud dependencies
 
 **Integration Patterns**:
+
 - **Provider Pattern**: Abstract contract interface for external system integration (concrete implementations created by System Agent per provider)
 - **API Endpoints**: REST-style endpoints in `.poem-app/src/pages/api/`
 - **Skill Communication**: Skills call Astro APIs via HTTP (not MCP)
 
 **Schema Format**:
+
 - **Initial Approach**: Simple JSON documents describing field names, types, and constraints
 - **Evolution Path**: May adopt formal JSON Schema spec or validation libraries as needs emerge
 - **Rationale**: Start simple, add complexity only when required by actual use cases
 
 **File Structure Conventions**:
+
 - Prompts: `/poem/prompts/*.hbs`
 - Schemas: `/poem/schemas/*.json`
 - Mappings: `/poem/mappings/*.json` (if needed)
@@ -63,6 +70,7 @@ POEM is a **Framework/Operating System** (like BMAD), not a traditional web appl
 - Provider Implementations: `.poem-app/src/pages/api/providers/{name}/`
 
 **What's Explicitly Excluded**:
+
 - Database systems (SQLite, PostgreSQL, etc.)
 - Cloud hosting infrastructure
 - Authentication/authorization systems

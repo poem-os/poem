@@ -88,62 +88,62 @@ Manual Test Scenarios:
 
 ```typescript
 // tests/services/handlebars/service.test.ts
-import { describe, it, expect, beforeEach } from 'vitest';
-import { HandlebarsService } from '../../../src/services/handlebars';
+import { describe, it, expect, beforeEach } from "vitest";
+import { HandlebarsService } from "../../../src/services/handlebars";
 
-describe('HandlebarsService', () => {
+describe("HandlebarsService", () => {
   let service: HandlebarsService;
 
   beforeEach(() => {
     service = new HandlebarsService();
   });
 
-  describe('compile', () => {
-    it('should compile a simple template', () => {
-      const template = 'Hello {{name}}';
+  describe("compile", () => {
+    it("should compile a simple template", () => {
+      const template = "Hello {{name}}";
       const compiled = service.compile(template);
       expect(compiled).toBeDefined();
     });
 
-    it('should throw on invalid syntax', () => {
-      const template = 'Hello {{name}'; // Missing closing
+    it("should throw on invalid syntax", () => {
+      const template = "Hello {{name}"; // Missing closing
       expect(() => service.compile(template)).toThrow();
     });
   });
 
-  describe('render', () => {
-    it('should render template with data', () => {
-      const template = 'Hello {{name}}';
-      const result = service.render(template, { name: 'World' });
-      expect(result).toBe('Hello World');
+  describe("render", () => {
+    it("should render template with data", () => {
+      const template = "Hello {{name}}";
+      const result = service.render(template, { name: "World" });
+      expect(result).toBe("Hello World");
     });
 
-    it('should handle nested data', () => {
-      const template = '{{user.firstName}} {{user.lastName}}';
+    it("should handle nested data", () => {
+      const template = "{{user.firstName}} {{user.lastName}}";
       const result = service.render(template, {
-        user: { firstName: 'John', lastName: 'Doe' }
+        user: { firstName: "John", lastName: "Doe" },
       });
-      expect(result).toBe('John Doe');
+      expect(result).toBe("John Doe");
     });
 
-    it('should handle missing data gracefully', () => {
-      const template = 'Hello {{name}}';
+    it("should handle missing data gracefully", () => {
+      const template = "Hello {{name}}";
       const result = service.render(template, {});
-      expect(result).toBe('Hello ');
+      expect(result).toBe("Hello ");
     });
   });
 
-  describe('helpers', () => {
-    it('should use titleCase helper', () => {
-      const template = '{{titleCase name}}';
-      const result = service.render(template, { name: 'hello world' });
-      expect(result).toBe('Hello World');
+  describe("helpers", () => {
+    it("should use titleCase helper", () => {
+      const template = "{{titleCase name}}";
+      const result = service.render(template, { name: "hello world" });
+      expect(result).toBe("Hello World");
     });
 
-    it('should use truncate helper', () => {
-      const template = '{{truncate text 10}}';
-      const result = service.render(template, { text: 'This is a long text' });
-      expect(result).toBe('This is a...');
+    it("should use truncate helper", () => {
+      const template = "{{truncate text 10}}";
+      const result = service.render(template, { text: "This is a long text" });
+      expect(result).toBe("This is a...");
     });
   });
 });
@@ -153,10 +153,10 @@ describe('HandlebarsService', () => {
 
 ```typescript
 // tests/api/prompt-render.test.ts
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createServer } from '../../src/server';
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { createServer } from "../../src/server";
 
-describe('POST /api/prompt/render', () => {
+describe("POST /api/prompt/render", () => {
   let server: any;
   let baseUrl: string;
 
@@ -169,32 +169,32 @@ describe('POST /api/prompt/render', () => {
     await server.close();
   });
 
-  it('should render a raw template', async () => {
+  it("should render a raw template", async () => {
     const response = await fetch(`${baseUrl}/api/prompt/render`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        template: 'Hello {{name}}',
-        data: { name: 'World' },
-        isRawTemplate: true
-      })
+        template: "Hello {{name}}",
+        data: { name: "World" },
+        isRawTemplate: true,
+      }),
     });
 
     expect(response.ok).toBe(true);
     const result = await response.json();
-    expect(result.rendered).toBe('Hello World');
+    expect(result.rendered).toBe("Hello World");
     expect(result.renderTimeMs).toBeDefined();
   });
 
-  it('should return 400 for invalid template', async () => {
+  it("should return 400 for invalid template", async () => {
     const response = await fetch(`${baseUrl}/api/prompt/render`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        template: 'Hello {{name}',
+        template: "Hello {{name}",
         data: {},
-        isRawTemplate: true
-      })
+        isRawTemplate: true,
+      }),
     });
 
     expect(response.status).toBe(400);
@@ -202,41 +202,41 @@ describe('POST /api/prompt/render', () => {
     expect(result.error).toBeDefined();
   });
 
-  it('should report missing fields as warnings', async () => {
+  it("should report missing fields as warnings", async () => {
     const response = await fetch(`${baseUrl}/api/prompt/render`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        template: '{{firstName}} {{lastName}}',
-        data: { firstName: 'John' },
-        isRawTemplate: true
-      })
+        template: "{{firstName}} {{lastName}}",
+        data: { firstName: "John" },
+        isRawTemplate: true,
+      }),
     });
 
     const result = await response.json();
-    expect(result.warnings).toContain('Missing field: lastName');
+    expect(result.warnings).toContain("Missing field: lastName");
   });
 });
 ```
 
 ## Coverage Targets
 
-| Area | Target | Rationale |
-|------|--------|-----------|
-| Handlebars Service | 90% | Core functionality, many edge cases |
-| Schema Extractor | 85% | Complex parsing logic |
-| Mock Generator | 80% | Type mapping coverage |
-| API Endpoints | 75% | Integration paths |
-| Helpers | 100% | Simple, deterministic functions |
+| Area               | Target | Rationale                           |
+| ------------------ | ------ | ----------------------------------- |
+| Handlebars Service | 90%    | Core functionality, many edge cases |
+| Schema Extractor   | 85%    | Complex parsing logic               |
+| Mock Generator     | 80%    | Type mapping coverage               |
+| API Endpoints      | 75%    | Integration paths                   |
+| Helpers            | 100%   | Simple, deterministic functions     |
 
 ## NFR Validation Tests
 
 ```typescript
 // tests/nfr/performance.test.ts
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vitest";
 
-describe('NFR Performance', () => {
-  it('NFR2: Server starts in under 3 seconds', async () => {
+describe("NFR Performance", () => {
+  it("NFR2: Server starts in under 3 seconds", async () => {
     const start = Date.now();
     const server = await createServer();
     const elapsed = Date.now() - start;
@@ -245,14 +245,14 @@ describe('NFR Performance', () => {
     await server.close();
   });
 
-  it('NFR3: Render completes in under 1 second', async () => {
-    const template = loadFixture('large-template.hbs'); // ~5KB
-    const data = loadFixture('large-data.json');
+  it("NFR3: Render completes in under 1 second", async () => {
+    const template = loadFixture("large-template.hbs"); // ~5KB
+    const data = loadFixture("large-data.json");
 
     const start = Date.now();
-    await fetch('/api/prompt/render', {
-      method: 'POST',
-      body: JSON.stringify({ template, data, isRawTemplate: true })
+    await fetch("/api/prompt/render", {
+      method: "POST",
+      body: JSON.stringify({ template, data, isRawTemplate: true }),
     });
     const elapsed = Date.now() - start;
 

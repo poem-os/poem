@@ -3,6 +3,7 @@
 This document outlines the complete architecture for **POEM** (Prompt Orchestration and Engineering Method), a Prompt Engineering Operating System designed to run on Claude Code.
 
 **POEM is NOT a traditional fullstack application.** It is a **hybrid system**:
+
 - **95% Document-Based Framework**: Agents (YAML + Markdown), workflows (YAML), templates (Handlebars), schemas (JSON), skills (Markdown) — similar to BMAD
 - **5% Runtime Tool**: `.poem-app/` Astro server providing Handlebars engine, API endpoints, and provider integrations
 
@@ -18,8 +19,8 @@ This unified architecture document covers both the document framework and the ru
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-12-08 | 0.1 | Initial architecture draft | Winston (Architect Agent) |
+| Date       | Version | Description                | Author                    |
+| ---------- | ------- | -------------------------- | ------------------------- |
+| 2025-12-08 | 0.1     | Initial architecture draft | Winston (Architect Agent) |
 
 ---

@@ -15,6 +15,7 @@ This is a **real-world example** of AI-powered incident reporting and analysis i
 **Use Case**: Enhance incident narratives, classify severity, extract timelines
 
 This demonstrates POEM's capabilities for:
+
 - Compliance-heavy industries
 - Structured data workflows
 - Template reusability (same prompt, different incidents)
@@ -66,10 +67,12 @@ supportsignal/
 ### Analysis Prompts (Additional)
 
 **Classification**:
+
 - `classify-incident-severity.hbs` - Risk assessment (low/medium/high/critical)
 - `sentiment-analysis.hbs` - Emotional tone detection
 
 **Extraction**:
+
 - `extract-key-events.hbs` - Timeline and critical moments
 - `extract-participants.hbs` - Who was involved
 
@@ -82,17 +85,20 @@ supportsignal/
 ### Data Source Types
 
 **`incident.single`** - Complete incident record
+
 - All 4 phases (before_event, event, after_event, immediate_action)
 - Full participant details
 - Complete location data
 - All related Q&A
 
 **`incident.collection`** - Multiple incidents
+
 - Used for comparison prompts
 - Example: "Which of these 5 incidents is riskiest?"
 - Requires format specification (JSON array? Markdown table?)
 
 **`incident.view`** - Partial data for specific workflow
+
 - Metadata + before_event only (for initial questions)
 - Useful for staged workflows where full data isn't available yet
 
@@ -111,18 +117,21 @@ supportsignal/
 ### Incident (Primary Entity)
 
 **Core Fields**:
+
 - `participantName` - Who was involved
 - `location` - Where it happened
 - `incidentDate` - When it occurred
 - `severity` - Risk level (calculated or manual)
 
 **Narrative Phases** (4 parts):
+
 1. `before_event` - What led up to the incident
 2. `event` - What happened during the incident
 3. `after_event` - What happened after
 4. `immediate_action` - Actions taken in response
 
 **Related Data**:
+
 - Questions/Answers (Q&A thread)
 - Attachments (photos, documents)
 - Staff notes
@@ -131,6 +140,7 @@ supportsignal/
 ### Participant
 
 **Fields**:
+
 - `firstName`, `lastName`
 - `ndisNumber` - NDIS participant ID
 - `supportLevel` - Level of support required
@@ -140,6 +150,7 @@ supportsignal/
 ### Company
 
 **Fields**:
+
 - `name` - Organization name
 - `abnNumber` - Australian Business Number
 - `address`
@@ -152,19 +163,18 @@ supportsignal/
 **Same Template, Different Use Cases**:
 
 **Sentiment Analysis Template**:
+
 ```handlebars
 Analyze the emotional tone of the following text:
 
 {{narrativeText}}
 
-Identify:
-1. Primary emotion
-2. Secondary emotions
-3. Overall sentiment (positive/neutral/negative)
+Identify: 1. Primary emotion 2. Secondary emotions 3. Overall sentiment (positive/neutral/negative)
 4. Concerning phrases (if any)
 ```
 
 **Can be applied to**:
+
 - `incident.single` → narrativeText = incident.event
 - `moment.single` → narrativeText = moment.observation
 - `shift_note.single` → narrativeText = shift_note.notes
@@ -178,11 +188,13 @@ This demonstrates **cross-entity template reusability** - one template, multiple
 **Critical Requirement**: NDIS data is highly sensitive (personal health information)
 
 **POEM's Solution**: Mock data generation
+
 - Generate realistic incident scenarios without real participant data
 - Test prompts thoroughly before production deployment
 - No production database access needed during prompt development
 
 **Example Mock Data**:
+
 ```json
 {
   "participantName": "John Smith",
@@ -199,16 +211,16 @@ This demonstrates **cross-entity template reusability** - one template, multiple
 
 ## Comparison: SupportSignal vs Storyline
 
-| Aspect | SupportSignal (This Folder) | Storyline |
-|--------|---------------------------|-----------|
-| **Domain** | Healthcare/Compliance | Creative/Content |
-| **Input** | Incident reports | Narrative transcript |
-| **Output** | Enhanced narratives, analysis | Visual production spec |
-| **Workflow** | Linear (Q&A → enhance) | Pipeline (extract → style → segment) |
-| **Prompts** | 8 workflow-specific | 4 transformation steps |
+| Aspect           | SupportSignal (This Folder)              | Storyline                                    |
+| ---------------- | ---------------------------------------- | -------------------------------------------- |
+| **Domain**       | Healthcare/Compliance                    | Creative/Content                             |
+| **Input**        | Incident reports                         | Narrative transcript                         |
+| **Output**       | Enhanced narratives, analysis            | Visual production spec                       |
+| **Workflow**     | Linear (Q&A → enhance)                   | Pipeline (extract → style → segment)         |
+| **Prompts**      | 8 workflow-specific                      | 4 transformation steps                       |
 | **Data Sources** | `incident.single`, `incident.collection` | `storyline.transcript`, `storyline.complete` |
-| **Complexity** | Single-step prompts | Multi-step orchestration |
-| **Use Case** | Improve compliance documentation | Generate production assets |
+| **Complexity**   | Single-step prompts                      | Multi-step orchestration                     |
+| **Use Case**     | Improve compliance documentation         | Generate production assets                   |
 
 ---
 

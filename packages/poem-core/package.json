@@ -1,0 +1,26 @@
+{
+  "name": "@poem-os/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "POEM Core - Agents, workflows, skills, and templates",
+  "exports": {
+    ".": "./core-config.yaml"
+  },
+  "files": [
+    "agents",
+    "workflows",
+    "skills",
+    "templates",
+    "data",
+    "core-config.yaml"
+  ],
+  "keywords": [
+    "poem",
+    "prompt-engineering",
+    "agents",
+    "workflows"
+  ],
+  "author": "AppyDave",
+  "license": "MIT"
+}

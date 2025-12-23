@@ -24,7 +24,7 @@ paths:
       summary: Health check endpoint
       description: Returns server status and version
       responses:
-        '200':
+        "200":
           description: Server is healthy
           content:
             application/json:
@@ -75,7 +75,7 @@ paths:
                   description: If true, template field contains raw Handlebars content
                   default: false
       responses:
-        '200':
+        "200":
           description: Template rendered successfully
           content:
             application/json:
@@ -96,9 +96,9 @@ paths:
                   templatePath:
                     type: string
                     description: Resolved template path
-        '400':
+        "400":
           description: Invalid request (missing template, syntax error)
-        '404':
+        "404":
           description: Template file not found
 
   /schema/extract:
@@ -123,7 +123,7 @@ paths:
                   type: boolean
                   default: false
       responses:
-        '200':
+        "200":
           description: Schema extracted successfully
           content:
             application/json:
@@ -162,7 +162,7 @@ paths:
                   type: object
                   description: Data to validate
       responses:
-        '200':
+        "200":
           description: Validation result
           content:
             application/json:
@@ -211,7 +211,7 @@ paths:
                   description: Include edge cases (empty, long, special chars)
                   default: false
       responses:
-        '200':
+        "200":
           description: Mock data generated
           content:
             application/json:
@@ -232,7 +232,7 @@ paths:
       summary: List registered Handlebars helpers
       description: Returns all available helpers with their descriptions
       responses:
-        '200':
+        "200":
           description: List of helpers
           content:
             application/json:
@@ -272,7 +272,7 @@ paths:
                   type: array
                   description: Arguments to pass to helper
       responses:
-        '200':
+        "200":
           description: Helper executed
           content:
             application/json:
@@ -296,7 +296,7 @@ paths:
             type: string
           description: Provider name (e.g., "supportsignal")
       responses:
-        '200':
+        "200":
           description: Connection test result
           content:
             application/json:
@@ -321,7 +321,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Data dictionary
           content:
             application/json:
@@ -357,7 +357,7 @@ paths:
                   type: string
                   description: Provider-specific deployment location
       responses:
-        '200':
+        "200":
           description: Publish result
           content:
             application/json:
@@ -375,17 +375,17 @@ paths:
 
 ## API Summary Table
 
-| Endpoint | Method | Purpose | NFR |
-|----------|--------|---------|-----|
-| `/api/health` | GET | Server status check | - |
-| `/api/prompt/render` | POST | Render template with data | < 1s (NFR3) |
-| `/api/schema/extract` | POST | Extract schema from template | - |
-| `/api/schema/validate` | POST | Validate data against schema | - |
-| `/api/mock/generate` | POST | Generate mock data from schema | - |
-| `/api/helpers` | GET | List available helpers | - |
-| `/api/helpers/test` | POST | Test a helper | - |
-| `/api/providers/{name}/test` | POST | Test provider connection | - |
-| `/api/providers/{name}/dictionary` | GET | Pull data dictionary | - |
-| `/api/providers/{name}/publish` | POST | Publish prompt to provider | - |
+| Endpoint                           | Method | Purpose                        | NFR         |
+| ---------------------------------- | ------ | ------------------------------ | ----------- |
+| `/api/health`                      | GET    | Server status check            | -           |
+| `/api/prompt/render`               | POST   | Render template with data      | < 1s (NFR3) |
+| `/api/schema/extract`              | POST   | Extract schema from template   | -           |
+| `/api/schema/validate`             | POST   | Validate data against schema   | -           |
+| `/api/mock/generate`               | POST   | Generate mock data from schema | -           |
+| `/api/helpers`                     | GET    | List available helpers         | -           |
+| `/api/helpers/test`                | POST   | Test a helper                  | -           |
+| `/api/providers/{name}/test`       | POST   | Test provider connection       | -           |
+| `/api/providers/{name}/dictionary` | GET    | Pull data dictionary           | -           |
+| `/api/providers/{name}/publish`    | POST   | Publish prompt to provider     | -           |
 
 ---

@@ -6,7 +6,7 @@
 
 **Acronym**: **POEM** = **P**rompt **O**rchestration and **E**ngineering **M**ethod (OS = Operating System)
 
-**Tagline**: *"Poetry in Prompt Engineering"*
+**Tagline**: _"Poetry in Prompt Engineering"_
 
 **Organization**: `poem-os` (GitHub organization and NPM scope)
 
@@ -19,6 +19,7 @@
 **Final Decision**: **POEM** - Prompt Orchestration and Engineering Method
 
 **Why This Works**:
+
 - ✅ Visually striking in capital letters (POEM)
 - ✅ Correctly spelled word (searchable, memorable, findable in videos/articles)
 - ✅ Short and punchy (4 letters)
@@ -26,6 +27,7 @@
 - ✅ NPM package `poem-os` is AVAILABLE
 
 **The Quirks**:
+
 - ⚠️ "Orchestration" before "Engineering" feels backward grammatically
   - "Prompt Engineering Orchestration Method" would read better
   - But PEOM doesn't spell a word
@@ -33,6 +35,7 @@
 - ⚠️ Word order prioritizes memorability over grammatical accuracy
 
 **Design Philosophy**: Sentence → Acronym (not Acronym → Sentence)
+
 - Built the concept: "Prompt Orchestration and Engineering Method"
 - Discovered it spelled POEM
 - Accepted the quirks for the visual/memorable payoff
@@ -40,11 +43,13 @@
 ### Comparison to BMAD
 
 **BMAD** = Breakthrough Method for Agile AI Driven Development
+
 - Acronym feels forced to fit "BMAD"
 - Harder to remember the full name
 - Not a correctly spelled word
 
 **POEM** = Prompt Orchestration and Engineering Method
+
 - Natural word
 - Easier to remember and reference
 - Visually distinctive
@@ -52,25 +57,30 @@
 ### Alternative Names Considered
 
 **Operating System Angle**:
+
 - **PEOS** - Prompt Engineering Operating System (accurate but generic)
 - **PEM** - Prompt Engineering Method (simple but loses OS concept)
 - **PROMPT** - Prompt Runtime for Orchestration, Mapping, and Production Testing (recursive/meta, but forced)
 
 **Mock Data + Testing Focus**:
+
 - **FORGE** - Framework for Orchestrating, Refining, and Generating Examples (strong verb, captures mock data generation)
 - **MINT** - Mock data Integration and Narrative Testing (clean but too simple)
 - **CAST** - Contextual Assembly and Simulation Tool (good for storytelling, too specific)
 
 **Workspace/Environment Angle**:
+
 - **STUDIO** - System for Testing, Understanding, and Deploying Intelligence Operations (too forced)
 - **BENCH** - Prompt Engineering Bench (not an acronym, but captures workspace feel)
 
 **Metaphorical Names**:
+
 - **TRELLIS** - Template Refinement Environment with Live Logic and Iteration Support (beautiful metaphor, too long)
 - **LOOM** - Logic Operations and Output Modeling (weaving metaphor, not clear)
 - **KILN** - Testing/firing/hardening before production (strong metaphor, requires explanation)
 
 **Variations on POEM**:
+
 - **POEM** - Prompt Operating Engineering Machine (feels wrong)
 - **POEM** - Prompt Operations Execution Method (loses orchestration concept)
 - **POEM** - Prompt Optimization and Engineering Methodology (too long)
@@ -84,6 +94,7 @@
 **NPM Available**: `poem-os` organization and package name available
 
 **Accepted Trade-offs**:
+
 - Grammatical word order (Orchestration before Engineering)
 - Poetry association (irrelevant but harmless)
 - Not 100% literal/descriptive
@@ -92,13 +103,15 @@
 
 ### Tagline
 
-**Primary**: *"Poetry in Prompt Engineering"*
+**Primary**: _"Poetry in Prompt Engineering"_
+
 - Embraces the POEM name fully
 - Suggests craft, artistry, refinement
 - Simple and memorable
 - Turns the poetry "quirk" into a feature
 
-**Secondary**: *"Compose. Test. Refine. Deploy."*
+**Secondary**: _"Compose. Test. Refine. Deploy."_
+
 - Workflow in 4 beats (like a stanza)
 - Actionable and clear
 - Maintains subtle poetry metaphor
@@ -111,6 +124,7 @@
 **What is POEM?** A Prompt Engineering Operating System that runs on Claude Code (like BMAD is a Software Development OS)
 
 **Key Decisions**:
+
 - **3-4 Agents**: Prompt Engineer, System Agent, Integration Agent (+ potential Data/Testing Agent)
 - **8 Skills**: Check My Template, Preview with Example Data, Generate Placeholder Schema, Find Fields in Data Dictionary, Validate Schema Against Dictionary, Suggest Mappings, Pull Data Dictionary, Publish Template
 - **Structure**: `.poem-core/` + `.poem-app/` + `/poem/`
@@ -121,6 +135,7 @@
 - **GitHub**: `poem-os/poem`
 
 **Quick Install** (future):
+
 ```bash
 npx poem-os install           # Everything
 npx poem-os install --core    # Just .poem-core/
@@ -140,12 +155,14 @@ npx poem-os install --app     # Just .poem-app/
 After studying BMAD v4 documentation from the second brain (`/Users/davidcruwys/dev/ad/brains/bmad-method/`), the analogy became clear:
 
 **Claude Code = Operating System**
+
 - Provides the runtime environment (AI models, file operations, tool execution)
 - Resource management (context windows, agent capabilities, skill execution)
 - API/System calls (Bash, Read, Write, Edit tools)
 - Process isolation (separate agent instances with context)
 
 **BMAD = Application Operating System**
+
 - Has its own "file system" (`.bmad-core/`)
 - Has "process management" (agent orchestration)
 - Has "system calls" (agent commands like `*draft`, `*impl`)
@@ -229,12 +246,14 @@ When BMAD has a "Developer Agent" - it doesn't mean "JavaScript developer" or "R
 It means: **"An agent whose GOAL is to implement solutions, regardless of the language/format/medium"**
 
 **Key insight**: Agents are polyglot
+
 - Can write Ruby, Python, JavaScript
 - Can write CSS, HTML, YAML, JSON
 - Can write domain-specific languages
 - Can write any artifact type
 
 **What defines an agent**:
+
 - A specific GOAL or RESPONSIBILITY
 - Different CAPABILITIES from other agents
 - Well-defined BOUNDARIES (you can't do certain actions unless you're in the right agent)
@@ -257,9 +276,11 @@ Similarly, our agents/skills aren't about a specific tech. They're **logic-based
 **Open Question**: How many true "agents" do we need vs skills/sub-agents/MCP?
 
 **David's observation**:
+
 > "You get 8 agents in BMAD and quite frankly they're a pain in the arse to switch between. You can't do certain actions unless you're in the right agent. There really is this well-defined responsibility between each of them and every agent you just listed for me all look like they could have been done by the one agent just with different skills. I haven't read it deep enough to know that my statement is 100% true and 1 is probably too little, but it's certainly not 6."
 
 **Key distinction**:
+
 - **BMAD couldn't use sub-agents/skills** - they didn't exist when BMAD was designed
 - **We have access to**: MCP, Agent, Sub-agent, Skill
 - **Need to understand**: Strengths of each type
@@ -270,6 +291,7 @@ Similarly, our agents/skills aren't about a specific tech. They're **logic-based
 ## What Gets "Built" in This System
 
 ### BMAD Builds (Software Artifacts):
+
 - Ruby classes
 - React components
 - CSS stylesheets
@@ -278,6 +300,7 @@ Similarly, our agents/skills aren't about a specific tech. They're **logic-based
 - Documentation
 
 ### Prompt Engineering OS Builds (Prompt Artifacts):
+
 - **Prompt templates** (.hbs files) - Handlebars templates
 - **Schemas** (JSON structure definitions)
 - **Data mappings** (field transformations)
@@ -295,11 +318,13 @@ All of these are just **different "languages"** or **artifact types** in the pro
 Astro isn't the application - it's just the **visualization layer** (like a GUI or dashboard).
 
 **Perfect analogy**:
+
 - In an operating system you access the file system using Finder (macOS) or Windows Explorer
 - That's what Astro is - accessing prompts/schemas/mappings in a visual fashion
 - We may build a couple of little buttons to automate things, but it's primarily a visualization layer
 
 **The real "application" is**:
+
 - The orchestration of skills
 - The workflows for prompt management
 - The automation of validation/testing/deployment
@@ -312,6 +337,7 @@ Astro is the "status dashboard" or "file browser" for the OS. It shows you what'
 ## The Claude Code Foundation (Hardware Layer)
 
 We're building on Claude Code, which gives us:
+
 - **MCP** (Model Context Protocol) - for integrations
 - **Sub-agents** - for specialized tasks
 - **Skills** - for automation
@@ -333,6 +359,7 @@ Just like BMAD has agent YAML templates, we need skill definitions.
 **Anthropic's preference**: Currently XML (models trained on lots of XML), but YAML works well for workflows/checklists because it's easy to read.
 
 **What we need**:
+
 - `/skills/backup-prompt.md` or `.yaml` or other format
 - `/skills/publish-to-convex.md`
 - `/skills/validate-schema.md`
@@ -346,6 +373,7 @@ Just like BMAD has agent YAML templates, we need skill definitions.
 How do skills work together?
 
 **Examples**:
+
 - "Create New Prompt" workflow
 - "Test Against Data" workflow
 - "Deploy to Production" workflow
@@ -359,6 +387,7 @@ How do skills work together?
 **What do we need?**
 
 **Critical distinction**:
+
 - `.bmad-core/` is the SOFTWARE DEVELOPMENT OS core
 - Most of what we initially listed is TARGET SYSTEM data:
   - `/data/prompts/` - TARGET (like application code)
@@ -366,6 +395,7 @@ How do skills work together?
   - `/data/mappings/` - TARGET (like config files)
 
 **The Prompt Engineering OS core needs**:
+
 - `/skills/` - Definitely core
 - `/workflows/` - Definitely core
 - `/templates/` - UNCLEAR - are these Handlebars templates (TARGET) or OS templates (CORE)?
@@ -377,6 +407,7 @@ How do skills work together?
 **David's insight**: "The integration layer is really just tools. Whether it be in the form of a skill or an MCP or some other idea that Claude comes up with in the future."
 
 **Examples**:
+
 - Convex API client (for publish/sync)
 - Data dictionary sync (from main app)
 - Schema validation engine
@@ -394,9 +425,11 @@ How do skills work together?
 **David's pushback**: "Are they really agents? I don't know."
 
 **Key observation**:
+
 > "Every agent you just listed for me all look like they could have been done by the one agent just with different skills. 1 is probably too little, but it's certainly not 6."
 
 **The BMAD lesson**:
+
 - 8-10 agents in BMAD
 - Switching between them is "a pain in the arse"
 - You can't do certain actions unless you're in the right agent
@@ -404,6 +437,7 @@ How do skills work together?
 - Well-defined responsibilities
 
 **For our Prompt Engineering OS**:
+
 - We DON'T need as many agents as BMAD
 - Many of the listed functions could be skills of a single agent
 - Need to identify what's truly FUNDAMENTALLY different
@@ -416,6 +450,7 @@ How do skills work together?
 BMAD is optimized for **software development workflows** (epics → stories → code → tests).
 
 But prompt engineering workflows are different:
+
 - Not building "features" with user stories
 - Artifacts are templates, not code
 - Testing is data-driven validation, not unit tests
@@ -428,9 +463,11 @@ But prompt engineering workflows are different:
 ## Automation vs Systematization
 
 **David's clarification on BMAD**:
+
 > "I wouldn't say it's highly automated. I'd say it's highly systematized in that you have to manually go to the scrum master and you have to manually draft a story. There's no automation there, there's systematization, but once you draft the story, yes, it does a lot of stuff powered by the underlying agent harness, which in our case is Claude Code."
 
 **Key distinction**:
+
 - **Systematization**: Clear processes, defined steps, structured workflows
 - **Automation**: Once you trigger the process, it does a lot automatically
 
@@ -441,20 +478,24 @@ But prompt engineering workflows are different:
 ## Core Workflows (2025-11-19)
 
 **Angela's typical usage patterns**:
+
 - **Most common**: Refining and testing existing prompts
 - **Second most common**: Creating new prompts from scratch
 - **Always ends with**: Deployment (all refined/created prompts get deployed)
 
 **Key insight**: Both linear AND non-linear workflows exist
+
 - **Linear progression** (like BMAD): Draft → Review → Implement → Test → Deploy
 - **Non-linear iteration**: Refine → Test → Refine → Test → Refine → Deploy
 
 ---
 
 ### Workflow 1: "New Prompt" Workflow
+
 **Purpose**: Create a brand new prompt from scratch
 
 **Steps**:
+
 1. Consult principles (`.poem-core/brain/`)
 2. Create template file in `/poem/prompts/`
 3. Generate placeholder schema
@@ -467,9 +508,11 @@ But prompt engineering workflows are different:
 ---
 
 ### Workflow 2: "Refine Prompt" Workflow
+
 **Purpose**: Improve an existing prompt (Angela's most common task)
 
 **Steps**:
+
 1. Load existing template
 2. Test against real data from dictionary
 3. Identify missing fields
@@ -484,9 +527,11 @@ But prompt engineering workflows are different:
 ---
 
 ### Workflow 3: "Deploy Prompt" Workflow
+
 **Purpose**: Push tested prompt to production (always happens at the end)
 
 **Steps**:
+
 1. Validate schema against data dictionary
 2. Test connection to provider
 3. Publish template
@@ -499,9 +544,11 @@ But prompt engineering workflows are different:
 ---
 
 ### Workflow 4: "Test Prompt" Workflow
+
 **Purpose**: Test how a prompt performs with real data
 
 **Steps**:
+
 1. Pull sample data from provider (or use example data)
 2. Render template with data
 3. Compare output to expected
@@ -513,9 +560,11 @@ But prompt engineering workflows are different:
 ---
 
 ### Workflow 5: "Add Helper" Workflow
+
 **Purpose**: Create a new Handlebars helper while working on a template
 
 **Steps**:
+
 1. Define helper requirements
 2. Generate helper code
 3. Register with Handlebars engine
@@ -530,10 +579,12 @@ But prompt engineering workflows are different:
 ### Workflow vs Commands
 
 **Important distinction**:
+
 - **Workflows** can span multiple agents (agent switching during workflow execution)
 - **Commands** are agent-specific (tied to specific agents)
 
 **Example** (from BMAD AppyDave workflow):
+
 ```
 Workflow: "Create Feature"
 ├─ Scrum Master Agent    → *draft (draft story command)
@@ -554,11 +605,13 @@ Each agent has specific commands, but the workflow orchestrates across them.
 **Core Problem**: Data sources represent **use case + scope + shape** of data feeding templates.
 
 **The Challenge**:
+
 - Same entity type (e.g., "incident") can have different data source contexts
 - This affects how we write templates, schemas, mappings, deployment, and testing
 - We don't fully understand the requirements until we use the system
 
 **Possible Data Source Types** (notation examples):
+
 - `incident.single` - Single complete incident (one entity)
 - `incident.collection` - Multiple incidents (list of same entity)
 - `incident.view` - Depends on what's being joined/aggregated:
@@ -569,6 +622,7 @@ Each agent has specific commands, but the workflow orchestrates across them.
 - `moment.single`, `shift_note.single`, etc. - Other entity types
 
 **The "view" concept**: Where is data coming from?
+
 1. One entity (single record)
 2. List of same entity (multiple records)
 3. List of joined entities (multiple tables, multiple records)
@@ -576,18 +630,21 @@ Each agent has specific commands, but the workflow orchestrates across them.
 5. List of aggregated values (multiple aggregates)
 
 **Examples from SupportSignal**:
+
 1. **Workflow prompts** - Use partial data (e.g., incident metadata + before_event only)
 2. **Analysis prompts** - Use complete data (e.g., full incident with all 4 phases + Q&A)
 3. **Comparison prompts** - Use collections (e.g., "which of these 5 incidents is riskiest?")
 4. **Cross-entity prompts** - Same template, different entities (e.g., sentiment analysis on incident vs moment)
 
 **What We Know**:
+
 - Data sources will impact template design
 - Different scopes need different presentations (single vs collection)
 - Collections might need format specifications (CSV? JSON? Markdown table?)
 - Cross-entity templates require generic placeholders + entity-specific mappings
 
 **What We Don't Know Yet**:
+
 - How to represent data sources in POEM (if explicit representation needed)
 - Where they live (config? schemas? separate files?)
 - Whether we need a simple DSL to describe them
@@ -596,6 +653,7 @@ Each agent has specific commands, but the workflow orchestrates across them.
 **Design Principle**: Don't over-engineer - wait for actual usage to reveal requirements
 
 **Impact Areas**:
+
 - Template writing (what placeholders available?)
 - Schema definitions (what shape is data?)
 - Mapping architecture (how to translate entity → template?)
@@ -607,6 +665,7 @@ Each agent has specific commands, but the workflow orchestrates across them.
 ---
 
 ### Machine-readable format choice
+
 - YAML (BMAD's choice for readability)
 - XML (Anthropic's preference for model training)
 - Markdown (documentation-friendly)
@@ -664,6 +723,7 @@ Each agent has specific commands, but the workflow orchestrates across them.
 ### Three-Part System
 
 **1. `.poem-core/`** - The Operating System (installed once)
+
 ```
 .poem-core/
 ├── agents/
@@ -686,6 +746,7 @@ Each agent has specific commands, but the workflow orchestrates across them.
 **Why "brain"**: Distinct from KDD (Knowledge Driven Development - a process). This is content/knowledge storage, following "second brain" pattern.
 
 **2. `.poem-app/`** - Astro Application Infrastructure
+
 ```
 .poem-app/
 ├── src/
@@ -711,6 +772,7 @@ Each agent has specific commands, but the workflow orchestrates across them.
 **Key insight**: Helpers are APPLICATION CODE (in `.poem-app/`), not workspace data (not in `/poem/`)
 
 **3. `/poem/`** - Angela's Workspace
+
 ```
 /poem/
 ├── prompts/                   # .hbs templates
@@ -730,6 +792,7 @@ Each agent has specific commands, but the workflow orchestrates across them.
 **Solution**: Persistent Astro server with APIs
 
 **Skills call Astro APIs explicitly** (not MCP's implicit context):
+
 ```typescript
 // Skill: render-template
 POST http://localhost:4321/api/handlebars/render
@@ -742,11 +805,12 @@ Response: {"result": "John"}
 ```
 
 **Configuration-driven endpoints**:
+
 ```yaml
 # .poem-core/config.yaml
 astro_server:
   host: "localhost"
-  port: 4321  # Configurable per project
+  port: 4321 # Configurable per project
   base_url: "http://localhost:4321"
 
 endpoints:
@@ -762,6 +826,7 @@ endpoints:
 ## On-Demand Helper Creation
 
 **Angela's workflow**:
+
 ```
 Angela (in System Agent): "I need a fullName helper that combines firstName + lastName"
 
@@ -785,6 +850,7 @@ Agent:
 **Problem**: SupportSignal/Convex is specific, need generic integration pattern
 
 **Solution**: Provider pattern via Astro APIs
+
 ```
 Astro API Endpoints:
 ├── /api/providers/supportsignal/read-dictionary
@@ -797,6 +863,7 @@ Future providers:
 ```
 
 **Skills invoke providers**:
+
 ```
 Skill: "publish-to-provider"
 Config: provider = "supportsignal"
@@ -812,6 +879,7 @@ Action: POST /api/providers/supportsignal/publish-template
 **Use v4 patterns for POEM** ✅
 
 **Why**:
+
 - **3x faster** workflows (5 min vs 15 min for simple tasks)
 - **Template-driven** (YAML workflows, single-step commands)
 - **Stable** (not alpha)
@@ -819,6 +887,7 @@ Action: POST /api/providers/supportsignal/publish-template
 - **Solo-optimized** (Angela works alone, no team coordination)
 
 **What we steal from v4**:
+
 - `.poem-core/` structure (like `.bmad-core/`)
 - YAML workflow templates
 - Single-step commands (like `*draft` → complete story)
@@ -826,6 +895,7 @@ Action: POST /api/providers/supportsignal/publish-template
 - File system as source of truth
 
 **v6 advantages don't apply**:
+
 - ❌ Team coordination - Angela is solo
 - ❌ Complex projects - Prompts are straightforward
 - ❌ Module system - POEM is single-purpose
@@ -840,12 +910,14 @@ Action: POST /api/providers/supportsignal/publish-template
 **NPM Package Availability** (checked 2025-11-19):
 
 **Status**:
+
 - ❌ `poem` - **TAKEN** (v0.0.1, abandoned ISC package)
 - ✅ `poem-os` - **AVAILABLE** ✨
 
 **Decision**: Use `poem-os` (like `bmad-method` pattern)
 
 **User installation**:
+
 ```bash
 npx poem-os install           # Installs everything (.poem-core/ + .poem-app/)
 npx poem-os install --core    # Just .poem-core/
@@ -855,6 +927,7 @@ npx poem-os install --app     # Just .poem-app/
 **Simple and clean** - matches BMAD's `npx bmad-method install` pattern
 
 **Repository structure** (monorepo):
+
 ```
 poem-os/poem/
 ├── packages/
@@ -869,11 +942,13 @@ poem-os/poem/
 ## Skills in POEM (Claude Code Reality)
 
 **Important**: In Claude Code, skills are **autonomous, single-responsibility entities** that:
+
 - Suggest when they would be useful (not tied to specific agents)
 - Claude decides which skill to use based on context
 - Skills don't "belong" to agents - agents invoke skills as needed
 
 **How This Works in Practice**:
+
 - All skills are available to all agents
 - Skills declare their purpose and when they're applicable
 - Claude chooses appropriate skills based on agent's current goal
@@ -881,25 +956,30 @@ poem-os/poem/
 **POEM Skills (8 Total)**:
 
 **Template & Schema Skills**:
+
 - **Check My Template** - Validate template structure and placeholders
 - **Generate Placeholder Schema** - Auto-create schema from template
 - **Preview with Example Data** - Render template with sample data
 
 **Data Dictionary Skills**:
+
 - **Find Fields in Data Dictionary** - Search available fields
 - **Validate Schema Against Dictionary** - Check schema correctness
 - **Pull Data Dictionary** - Sync field definitions from provider
 
 **Mapping & Deployment Skills**:
+
 - **Suggest Mappings** - Recommend field mappings based on dictionary
 - **Publish Template** - Deploy template to provider (SupportSignal/Convex)
 
 **Skill Usage by Agent (Typical Patterns)**:
+
 - **Prompt Engineer**: Frequently uses template/schema/dictionary skills
 - **System Agent**: Frequently uses helper creation/server management (not listed - different domain)
 - **Integration Agent**: Frequently uses dictionary/publish skills
 
 **Additional Skills** (not in the 8 core):
+
 - Helper creation, registration, testing (System Agent domain)
 - Server management, API endpoints (System Agent domain)
 - Visualization: Open Dashboard, View Prompt, List Templates (all agents)
@@ -915,6 +995,7 @@ poem-os/poem/
 ### The Problem This Solves
 
 **Angela's Pain Point**: Prompt engineering requires testing templates with data, but manually filling in test data is:
+
 - Time-consuming and tedious
 - Blocks rapid iteration
 - Requires access to real production data (privacy/security concerns)
@@ -924,10 +1005,12 @@ poem-os/poem/
 ### How Mock Data Generation Works
 
 **Prerequisites**:
+
 1. Data source definition (e.g., `incident.single`, `moment.collection`)
 2. Schema (field definitions, types, constraints)
 
 **Process**:
+
 ```
 1. Angela creates template: "Analyze incident for {{participantName}} at {{location}}"
 2. Template references data source: "incident.single"
@@ -941,14 +1024,17 @@ poem-os/poem/
 ### Three Data Flows in POEM
 
 **INBOUND** (Provider → POEM):
+
 - Pull Data Dictionary (field definitions, types, constraints)
 - Pull Data Source Definitions (what entities exist, relationships)
 - [Optional] Pull Sample Data (real data exports as JSON for reference)
 
 **OUTBOUND** (POEM → Provider):
+
 - Publish Templates (prompts ready for production use)
 
 **INTERNAL** (Within POEM):
+
 - Generate Mock Data (for local testing and iteration)
 - Apply Templates to Mock Data (test prompt rendering)
 - [Future] Generate Output Data (batch template execution for workflows)
@@ -956,17 +1042,20 @@ poem-os/poem/
 ### Why This Matters for POEM
 
 **Independence from Production**:
+
 - Prompt engineering becomes standalone activity
 - No need to access production database for testing
 - Privacy/security: no real user data needed in POEM
 
 **Rapid Iteration**:
+
 - Generate hundreds of test scenarios instantly
 - Test edge cases (empty fields, long text, special characters)
 - Validate templates before deployment
 
 **Data Source Connection**:
 This is **why data sources are critical to POEM**:
+
 - Data source defines **what** to generate (entity type, scope, shape)
 - Schema defines **how** to generate it (fields, types, constraints)
 - Mock data generator uses both to create realistic test data
@@ -974,6 +1063,7 @@ This is **why data sources are critical to POEM**:
 ### Output Data Generation (Future Consideration)
 
 **Beyond Mock Input**: POEM could also generate output data by:
+
 1. Taking input data (mock or real)
 2. Applying templates to generate outputs
 3. Producing structured data for downstream systems
@@ -981,6 +1071,7 @@ This is **why data sources are critical to POEM**:
 **Real-World Example** (Storyline App - Boy and the Baker):
 
 **INPUT**: Simple narrative transcript (3,250 characters):
+
 ```
 The Boy and the Baker by Vaz
 An elderly baker walking to his shop sees a boy being
@@ -989,6 +1080,7 @@ bullied and beaten by a gang of older children...
 ```
 
 **TEMPLATES APPLIED**: Series of prompt templates for:
+
 - Character extraction and profiling
 - Visual scene breakdown
 - Shot composition and camera angles
@@ -997,6 +1089,7 @@ bullied and beaten by a gang of older children...
 - Color palette and styling
 
 **OUTPUT**: Rich storyline JSON (21KB structured data):
+
 ```json
 {
   "metadata": {
@@ -1022,8 +1115,8 @@ bullied and beaten by a gang of older children...
   "beats": [
     {
       "id": 1,
-      "timing": {"start": "00:05.56", "end": "00:13.36"},
-      "narrative": {"text": "...", "speaker": "narrator"},
+      "timing": { "start": "00:05.56", "end": "00:13.36" },
+      "narrative": { "text": "...", "speaker": "narrator" },
       "visualConcepts": [
         {
           "conceptNumber": 1,
@@ -1042,6 +1135,7 @@ bullied and beaten by a gang of older children...
 ```
 
 **The Transformation**:
+
 - 631 words → 64 narrative beats with precise timing
 - Simple text → Complete visual production specification
 - Characters extracted with detailed visual profiles
@@ -1049,6 +1143,7 @@ bullied and beaten by a gang of older children...
 - Machine-readable format ready for animation pipeline
 
 **This is POEM's Power**: Templates as data transformation engine
+
 - Input: Unstructured narrative
 - Processing: Multiple specialized prompt templates
 - Output: Fully structured production-ready data
@@ -1060,6 +1155,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 **Status**: Under consideration - may need separate agent for data workflows
 
 **Possible Responsibilities**:
+
 - Generate mock data based on schemas
 - Validate data against schemas
 - Test template rendering with various data scenarios
@@ -1067,11 +1163,13 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 - Export/import data for testing
 
 **Name Options**:
+
 - **Data Engineer Agent** (focus: data generation and transformation)
 - **Testing Agent** (focus: template validation and testing)
 - **Data Workflow Agent** (focus: end-to-end data pipelines)
 
 **Distinction from Other Agents**:
+
 - **Prompt Engineer**: Creates/refines templates (content focus)
 - **System Agent**: Maintains infrastructure (Astro, Handlebars, APIs)
 - **Integration Agent**: Connects to external providers (publish/sync)
@@ -1086,9 +1184,11 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ## Three Agents Confirmed (Fourth Under Consideration)
 
 ### 1. **Prompt Engineer Agent**
+
 **Goal**: Create, refine, validate prompts using POEM principles
 
 **Skills**:
+
 - Check My Template
 - Preview with Example Data
 - Generate Placeholder Schema
@@ -1102,9 +1202,11 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ---
 
 ### 2. **System Agent** (NEW)
+
 **Goal**: Maintain systems like Astro and Handlebars
 
 **Skills**:
+
 - Create Helper (generates code in `.poem-app/src/services/handlebars/helpers/`)
 - Register Helper (calls Astro API to load it)
 - Test Template (renders with sample data)
@@ -1116,6 +1218,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 **Works with**: `.poem-app/` (Astro, Handlebars, APIs)
 
 **Why separate agent**:
+
 - Different domain (system maintenance vs content creation)
 - Different mindset for Angela ("maintaining the system" vs "creating prompts")
 - Clear boundary (System infrastructure vs prompt content)
@@ -1123,9 +1226,11 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ---
 
 ### 3. **Integration Agent**
+
 **Goal**: Integrate with external systems (SupportSignal, future providers)
 
 **Skills**:
+
 - Pull Data Dictionary (from provider)
 - Publish Template (to provider)
 - Test Connection (verify provider works)
@@ -1134,6 +1239,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 **Works with**: Astro Provider APIs (`/api/providers/[name]`)
 
 **Why separate**:
+
 - External boundaries (not POEM internals)
 - Could fail (network, auth, API changes)
 - Provider-specific logic
@@ -1143,6 +1249,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ## Visualization = Skill, Not Agent
 
 **Any agent can call**:
+
 - **Skill**: "Open Dashboard"
 - **Action**: Launches browser to configured Astro URL
 - **No separate agent needed** - it's a capability available to all
@@ -1152,16 +1259,19 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ## Skills vs MCP vs Astro API - Clarity
 
 **Research findings**:
+
 - **Skills**: Teach Claude HOW to do tasks (procedures, workflows, orchestration)
 - **MCP**: Connect Claude TO data sources (implicit, context-based)
 - **Astro API**: Persistent services with explicit HTTP calls
 
 **POEM architecture**:
+
 - ✅ **Skills** orchestrate workflows → Call Astro APIs explicitly
 - ✅ **Astro APIs** provide heavy lifting → Handlebars engine, Provider connectors
 - ❌ **No MCP needed** → Direct HTTP is simpler and explicit (as David intuited)
 
 **Why explicit > implicit**:
+
 - Skills call APIs with clear intent (`POST /api/handlebars/render`)
 - No "muddy waters" of MCP context magic
 - Testable (can `curl` the endpoints)
@@ -1195,17 +1305,20 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ### Current Leading Names
 
 **Agent 1: Prompt Engineer** ✅
+
 - **Status**: Confirmed
 - **Function**: Creates, refines, validates prompts
 - **Domain**: Content (prompts, schemas, mappings)
 
 **Agent 2: System Agent** (Leading candidate)
+
 - **Status**: Preferred name
 - **Function**: Maintains systems like Astro and Handlebars
 - **Domain**: System infrastructure (helpers, APIs, server management)
 - **Previous name**: "Handlebars Agent" (too technology-specific)
 
 **Agent 3: Integration Agent** (Leading candidate)
+
 - **Status**: Preferred name
 - **Function**: Integrates with external systems
 - **Domain**: External boundaries (providers, data dictionary, publishing)
@@ -1216,6 +1329,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ### Alternative Options Considered
 
 **For Agent 2 (System Maintenance)**:
+
 - ✅ **System Agent** - Maintains the systems (preferred)
 - Extension Agent - Extends the system
 - Workshop Agent - Builds tools
@@ -1223,6 +1337,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 - Infrastructure Agent - Manages infrastructure
 
 **For Agent 3 (External Integration)**:
+
 - ✅ **Integration Agent** - Integrates with external systems (preferred)
 - Bridge Agent - Bridges to external world
 - Connector Agent - Connects to providers
@@ -1234,6 +1349,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ### Capabilities by Agent
 
 **Prompt Engineer**:
+
 - Create/edit prompts
 - Generate schemas
 - Map fields
@@ -1242,6 +1358,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 - Preview/test with data
 
 **System Agent**:
+
 - Create Handlebars helpers
 - Test/register helpers
 - Manage Astro server
@@ -1250,6 +1367,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 - Configure infrastructure
 
 **Integration Agent**:
+
 - Connect to providers (SupportSignal/Convex, future)
 - Pull data dictionary from external systems
 - Publish templates to external systems

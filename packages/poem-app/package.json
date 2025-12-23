@@ -1,0 +1,32 @@
+{
+  "name": "@poem-os/app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "POEM App - Astro server with Handlebars engine and API endpoints",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "handlebars": "^4.7.8"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.0.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^4.0.0"
+  },
+  "keywords": [
+    "poem",
+    "astro",
+    "handlebars",
+    "api"
+  ],
+  "author": "AppyDave",
+  "license": "MIT"
+}

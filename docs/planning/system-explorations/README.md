@@ -9,11 +9,13 @@
 These files represent **our planning thinking** about how POEM (Prompt Orchestration and Engineering Method) could work.
 
 **This is NOT**:
+
 - ❌ Final architectural specifications
 - ❌ Implementation requirements
 - ❌ Decisions you must follow
 
 **This IS**:
+
 - ✅ Planning explorations
 - ✅ Reference context
 - ✅ Ideas to inform your decisions
@@ -25,18 +27,21 @@ These files represent **our planning thinking** about how POEM (Prompt Orchestra
 **Your job**: Design the BEST architecture for POEM's needs
 
 **How to use these files**:
+
 - Read for context and understanding
 - Question our assumptions
 - Design freely and brilliantly
 - We trust your expertise
 
 **We explored**:
+
 - Agent patterns (based on BMAD v4 structure)
 - Skill definitions (based on Anthropic patterns)
 - Workflow concepts (inspired by BMAD + Astro SSR)
 - File structure ideas (.poem-core/ inspired by .bmad-core/)
 
 **You decide**:
+
 - Actual architecture
 - Implementation approach
 - Technology choices
@@ -46,13 +51,13 @@ These files represent **our planning thinking** about how POEM (Prompt Orchestra
 
 ## Files in This Folder
 
-| File | Planning Ideas About | Key Insight |
-|------|---------------------|-------------|
-| `agents.md` | 3-4 agent roles | Prompt Engineer, System, Integration (+ potential 4th) |
-| `skills.md` | 8 Claude skills | Check prompts, generate schemas, publish to providers |
-| `workflows.md` | 5 core workflows | New prompt, refine, deploy, test, add helper |
-| `structure.md` | System architecture | .poem-core/, .poem-app/, /poem/ (3-part system) |
-| `mock-data.md` | Mock data generation | Killer feature - test without production data |
+| File           | Planning Ideas About | Key Insight                                            |
+| -------------- | -------------------- | ------------------------------------------------------ |
+| `agents.md`    | 3-4 agent roles      | Prompt Engineer, System, Integration (+ potential 4th) |
+| `skills.md`    | 8 Claude skills      | Check prompts, generate schemas, publish to providers  |
+| `workflows.md` | 5 core workflows     | New prompt, refine, deploy, test, add helper           |
+| `structure.md` | System architecture  | .poem-core/, .poem-app/, /poem/ (3-part system)        |
+| `mock-data.md` | Mock data generation | Killer feature - test without production data          |
 
 ---
 
@@ -61,16 +66,19 @@ These files represent **our planning thinking** about how POEM (Prompt Orchestra
 We based our explorations on:
 
 **BMAD v4 patterns**:
+
 - `.bmad-core/` folder structure → We explored `.poem-core/`
 - Template-driven workflows → Fast, solo-optimized
 - Single-step commands → Like `*draft` for instant story creation
 
 **Anthropic Skills patterns**:
+
 - Progressive disclosure (metadata → instructions → resources)
 - Filesystem-based directories
 - Autonomous, single-responsibility entities
 
 **Domain understanding**:
+
 - SupportSignal (NDIS compliance - precision critical)
 - Storyline (creative production - transformation pipelines)
 
@@ -79,12 +87,14 @@ We based our explorations on:
 ## Important Context
 
 **We are Business Analysts**, not architects:
+
 - Gathered requirements
 - Explored possibilities
 - Documented domain understanding
 - **NOT making final architectural decisions**
 
 **You are the Architect**:
+
 - Design the actual system
 - Make technology choices
 - Define implementation approach

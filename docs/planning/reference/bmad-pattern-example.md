@@ -15,13 +15,16 @@
 **What it is**: Step-by-step instructions for the Prompt Engineer Agent to follow
 
 **Example Content**:
+
 ```markdown
 # Create Prompt Task
 
 ## Purpose
+
 Guide Prompt Engineer through creating a new prompt from scratch
 
 ## Prerequisites
+
 - Angela has described what the prompt should do
 - Data source is known (incident, moment, etc.)
 
@@ -65,6 +68,7 @@ Guide Prompt Engineer through creating a new prompt from scratch
 **What it is**: YAML structure that guides the conversation to gather information
 
 **Example Content**:
+
 ```yaml
 template:
   id: prompt-definition-v1
@@ -156,17 +160,20 @@ sections:
 **What it is**: Validation criteria to ensure quality
 
 **Example Content**:
+
 ```markdown
 # Prompt Creation Checklist
 
 Use this checklist after creating a new prompt to ensure quality.
 
 ## File Structure
+
 - [ ] Prompt file created in `/poem/prompts/` with `.hbs` extension
 - [ ] File name uses kebab-case
 - [ ] Schema file created in `/poem/schemas/` with matching name
 
 ## Prompt Content Quality
+
 - [ ] System message establishes clear context and role
 - [ ] Instructions are specific and actionable
 - [ ] Examples provided (if complex task)
@@ -174,12 +181,14 @@ Use this checklist after creating a new prompt to ensure quality.
 - [ ] Output format clearly specified
 
 ## Placeholders
+
 - [ ] All placeholders use `{{placeholderName}}` syntax
 - [ ] Placeholder names are descriptive
 - [ ] No undefined placeholders (all in schema)
 - [ ] Required vs optional placeholders identified
 
 ## Schema Completeness
+
 - [ ] Schema file is valid JSON
 - [ ] All placeholders from prompt are defined in schema
 - [ ] Each placeholder has:
@@ -189,15 +198,18 @@ Use this checklist after creating a new prompt to ensure quality.
   - [ ] Required/optional marked
 
 ## Data Source
+
 - [ ] Data source identified (e.g., incident.single)
 - [ ] Placeholders match data source fields (if data dictionary available)
 
 ## Testing Readiness
+
 - [ ] Example data can be substituted
 - [ ] Prompt would make sense when rendered
 - [ ] No obvious syntax errors
 
 ## Documentation
+
 - [ ] Purpose documented in schema
 - [ ] Use case clear
 - [ ] Angela confirmed it matches expectations
@@ -236,18 +248,21 @@ Agent confirms with Angela: "Created severity-classifier prompt. Ready to test?"
 ## Key Distinctions
 
 ### TASK
+
 - **What**: Procedural instructions
 - **How**: LLM reads and follows steps
 - **When**: Agent executes a command
 - **Format**: Markdown with numbered steps
 
 ### TEMPLATE
+
 - **What**: Conversation guide
 - **How**: LLM uses to elicit information in structured way
 - **When**: Task references it for gathering information
 - **Format**: YAML with sections and elicitation instructions
 
 ### CHECKLIST
+
 - **What**: Validation criteria
 - **How**: LLM (or script) verifies quality
 - **When**: After creation/before completion
@@ -258,11 +273,13 @@ Agent confirms with Angela: "Created severity-classifier prompt. Ready to test?"
 ## Comparison to Skills
 
 **Skills** (deterministic execution):
+
 - Validate Handlebars syntax (run parser script)
 - Render prompt with data (run Handlebars engine)
 - Call Astro API (HTTP request)
 
 **Tasks/Templates/Checklists** (LLM-guided):
+
 - Create new prompt (conversation + file creation)
 - Generate schema (analyze + infer + structure)
 - Validate completeness (review against criteria)
@@ -274,6 +291,7 @@ Agent confirms with Angela: "Created severity-classifier prompt. Ready to test?"
 ### The Two Prompt Concepts
 
 **Prompt** (what Angela creates):
+
 - The `.hbs` file with placeholders
 - Lives in `/poem/prompts/`
 - Example: `enhance-narrative.hbs` with `{{participantName}}`, `{{location}}`
@@ -281,12 +299,14 @@ Agent confirms with Angela: "Created severity-classifier prompt. Ready to test?"
 - "I'm working on the incident-classifier prompt"
 
 **Rendered Prompt** (what gets sent to AI):
+
 - The final text after Handlebars processing
 - Placeholders filled with actual data
 - What Claude/GPT receives
 - "Let me preview the rendered prompt with example data"
 
 **Payload** (internal API concept - TBD if needed):
+
 - Data structure for Astro API calls
 - Contains: prompt reference, data, schema
 - Mostly implementation detail

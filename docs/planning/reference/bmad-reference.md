@@ -14,16 +14,16 @@ A methodology for managing AI agents to build software systematically through sp
 
 ## The 8 Specialized Agents
 
-| Agent | Role | Primary Functions |
-|-------|------|-------------------|
-| **Analyst** 📊 | Business Analyst | Project briefs, market research, brainstorming |
-| **PM** 📋 | Product Manager | PRDs, requirements management, story prioritization |
-| **UX Expert** 🎨 | UX/UI Designer | Frontend specifications, user research, design systems |
-| **Architect** 🏗️ | Solution Architect | Technical architecture, system design, technology decisions |
-| **Product Owner** 📝 | Product Owner (PO) | Backlog management, story validation, process stewardship |
-| **Dev** 💻 | Senior Developer | Implementation, code review, technical execution |
-| **QA** 🔍 | Quality Assurance | Testing, code review, quality validation |
-| **KDD** 📚 | Knowledge-Driven Development | Documentation updates, learning capture, knowledge management |
+| Agent                | Role                         | Primary Functions                                             |
+| -------------------- | ---------------------------- | ------------------------------------------------------------- |
+| **Analyst** 📊       | Business Analyst             | Project briefs, market research, brainstorming                |
+| **PM** 📋            | Product Manager              | PRDs, requirements management, story prioritization           |
+| **UX Expert** 🎨     | UX/UI Designer               | Frontend specifications, user research, design systems        |
+| **Architect** 🏗️     | Solution Architect           | Technical architecture, system design, technology decisions   |
+| **Product Owner** 📝 | Product Owner (PO)           | Backlog management, story validation, process stewardship     |
+| **Dev** 💻           | Senior Developer             | Implementation, code review, technical execution              |
+| **QA** 🔍            | Quality Assurance            | Testing, code review, quality validation                      |
+| **KDD** 📚           | Knowledge-Driven Development | Documentation updates, learning capture, knowledge management |
 
 ## Basic Usage
 
@@ -71,23 +71,28 @@ Every story should include a **Dev Notes** section that extracts all context the
 ## Dev Notes
 
 ### Previous Story Insights
+
 - What was delivered in the previous story
 - What's now available to use
 - What's still pending for future stories
 
 ### Tech Stack
+
 - Relevant technology decisions
 - [Source: architecture/tech-stack.md#Section]
 
 ### Project Structure
+
 - File/folder organization for this story
 - [Source: system-explorations/structure.md]
 
 ### Coding Standards
+
 - Critical rules that apply
 - [Source: architecture/coding-standards.md]
 
 ### Testing
+
 - Testing approach for this story
 - [Source: architecture/testing-strategy.md]
 ```
@@ -101,27 +106,33 @@ Every story should include a **Dev Notes** section that extracts all context the
 Create a separate SAT file for each story (e.g., `1.2.story-SAT.md`) with tests split into:
 
 **🧑 Human Tests** (Visual/Manual):
+
 - Browser checks
 - UI appearance
 - Visual behavior
 - Interactive features
 
 **🤖 Terminal Tests** (Scriptable):
+
 - Copy-paste commands
 - curl tests
 - Build verification
 - File structure checks
 
 **⏳ Not Testable Yet**:
+
 - Features requiring future stories
 - Integration dependencies
 
 **Example**:
-```markdown
+
+````markdown
 ## 🧑 Human Tests
 
 ### Test 1: Verify UI appearance
+
 **Steps**:
+
 1. Open browser to http://localhost:3000
 2. Check that header displays correctly
 
@@ -132,16 +143,21 @@ Create a separate SAT file for each story (e.g., `1.2.story-SAT.md`) with tests 
 ## 🤖 Terminal Tests
 
 ### Test A: Health check endpoint
+
 **Command**:
+
 ```bash
 curl -s http://localhost:3000/api/health
 ```
+````
 
 **Expected Output**:
+
 ```json
-{"status":"ok"}
+{ "status": "ok" }
 ```
-```
+
+````
 
 ### Post-Mortems
 
@@ -161,7 +177,7 @@ When a story is particularly challenging or goes wrong, create a post-mortem fil
 ## What to Do Differently Next Time
 - [Action 1]
 - [Action 2]
-```
+````
 
 **Why this matters**: Capture real mistakes honestly so you don't repeat them.
 
@@ -179,11 +195,13 @@ While this prompts application is simpler than the main app, BMAD principles sti
 ### BMAD Resources on Your Machine
 
 **Second Brain (Comprehensive Knowledge Base)**:
+
 - **Location**: `/Users/davidcruwys/dev/ad/brains/bmad-method/`
 - **Start here**: `INDEX.md` - Navigation hub with v4 vs v6 comparison
 - **Coverage**: v4 (stable) and v6-alpha with workflow comparisons, migration guides
 
 **BMAD SDK (Implementation Files)**:
+
 - **Location**: `/Users/davidcruwys/dev/ad/appydave-app-a-day/BMAD-METHOD/`
 - **Contents**: Agents, checklists, templates, personas, tasks
 - **Folder**: `bmad-agent/` contains all agent definitions and workflows
@@ -191,6 +209,7 @@ While this prompts application is simpler than the main app, BMAD principles sti
 ### SupportSignal App BMAD Implementation
 
 **Full BMAD Integration**: See the main SupportSignal app at:
+
 - `../app.supportsignal.com.au/docs/methodology/bmad-overview.md`
 - `../app.supportsignal.com.au/docs/methodology/bmad-context-engineering.md`
 - `../app.supportsignal.com.au/.bmad-core/` - Full agent system

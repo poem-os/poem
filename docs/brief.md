@@ -17,6 +17,7 @@
 **Current State**: Prompt engineering today is manual, slow, and requires constant access to production data. Engineers write prompts in isolation, copy-paste sample data from databases, manually test variations, and deploy without systematic validation. This creates several critical pain points:
 
 **Pain Points**:
+
 - **Slow iteration cycles**: Testing a prompt change requires pulling fresh production data, risking data privacy issues
 - **Limited test coverage**: Manual data creation means testing only 2-3 scenarios instead of hundreds of edge cases
 - **Production dependency**: Engineers need database access to test, creating security and compliance risks (especially in legal, medical, NDIS)
@@ -25,11 +26,13 @@
 - **Deployment risk**: No validation step between "it works on my machine" and production deployment
 
 **Impact** (Quantified):
+
 - **SupportSignal example**: Angela (prompt engineer) spends ~60% of time waiting for data exports and manually crafting test scenarios, when she could be iterating on prompt quality
 - **vOz Studios example**: Vasilios needs 15-20 manual test runs to refine a storyline transformation prompt, each requiring 5-10 minutes of setup
 - **Industry-wide**: Prompt engineering teams spend 40-60% of time on infrastructure (data access, setup, deployment) vs actual prompt refinement
 
 **Why Existing Solutions Fall Short**:
+
 - **Playground tools** (OpenAI Playground, Anthropic Console): No schema management, no mock data, no deployment pipeline
 - **General IDEs**: No prompt-specific workflows, no template engines, no AI-aware validation
 - **Custom internal tools**: Fragmented, one-off solutions that don't transfer between projects
@@ -48,6 +51,7 @@
 3. **`/poem/`** - Your workspace: Prompts (`.hbs` templates), schemas (JSON), mappings, mock data
 
 **How It Works**:
+
 ```
 User: "I need a prompt to analyze NDIS incidents"
 → Prompt Engineer Agent activates
@@ -59,6 +63,7 @@ User: "I need a prompt to analyze NDIS incidents"
 ```
 
 **Key Differentiators**:
+
 - **Agent-Guided Workflows**: Not just tools—AI agents (Prompt Engineer, System Agent, Integration Agent) that understand prompt engineering best practices and guide you through proven workflows
 - **Automatic Mock Data Generation** ⭐: The killer feature—schemas automatically generate realistic test data, eliminating production database dependency
 - **Handlebars Power**: Full templating engine with helpers, partials, and on-demand custom helper creation (System Agent writes JavaScript helpers as needed)
@@ -67,6 +72,7 @@ User: "I need a prompt to analyze NDIS incidents"
 - **BMAD-Style Workflows**: Proven template-driven approach (YAML workflows) adapted from successful software development methodology
 
 **Why This Succeeds Where Others Haven't**:
+
 - **Playground tools** lack workflows and deployment → POEM has end-to-end lifecycle
 - **Custom tools** are one-off solutions → POEM is reusable across projects
 - **Generic IDEs** have no prompt expertise → POEM agents know prompt engineering
@@ -81,12 +87,14 @@ User: "I need a prompt to analyze NDIS incidents"
 ### Primary User Segment: Prompt Engineers in High-Compliance Teams
 
 **Profile**:
+
 - **Role**: Prompt Engineer, AI Developer, or Technical Product Manager responsible for AI features
 - **Industry**: High-compliance sectors (healthcare/NDIS, legal, finance, government) where data privacy and systematic validation are critical
 - **Team Size**: Small to mid-size teams (2-10 engineers) building AI-powered applications
 - **Technical Level**: Comfortable with CLIs, JSON, and template syntax; may or may not be software developers
 
 **Current Behaviors**:
+
 - Writes prompts in Anthropic Console or OpenAI Playground during development
 - Copy-pastes prompts into application code (databases, config files, or hardcoded strings)
 - Manually requests data exports from engineering team for testing
@@ -94,6 +102,7 @@ User: "I need a prompt to analyze NDIS incidents"
 - Iterates slowly due to friction in testing/deployment cycle
 
 **Specific Needs**:
+
 - **Data privacy**: Cannot use production data freely due to compliance (HIPAA, NDIS, GDPR)
 - **Systematic testing**: Need to validate prompts against dozens of edge cases, not just happy path
 - **Version control**: Track prompt changes over time and collaborate with team
@@ -101,12 +110,14 @@ User: "I need a prompt to analyze NDIS incidents"
 - **Independence**: Stop blocking on engineers for data exports or deployment
 
 **Goals**:
+
 - Reduce time-to-production for new prompts from weeks to days
 - Increase test coverage from 2-3 scenarios to 50+ comprehensive cases
 - Enable non-blocking iteration without engineering dependencies
 - Maintain compliance while moving fast
 
 **Example Persona**: **Angela** (SupportSignal Prompt Engineer)
+
 - Builds AI features for NDIS incident reporting
 - Can't access production databases due to privacy regulations
 - Needs to test prompts for narrative enhancement, question generation, severity classification
@@ -116,30 +127,35 @@ User: "I need a prompt to analyze NDIS incidents"
 ### Secondary User Segment: Creative Production Studios
 
 **Profile**:
+
 - **Role**: Creative Director, Producer, or Technical Artist working with AI tools
 - **Industry**: Video production, advertising, content creation, game development
 - **Team Size**: Small studios or individual creators with technical capabilities
 - **Technical Level**: Varied—comfortable with creative tools, may need gentler learning curve
 
 **Current Behaviors**:
+
 - Uses AI for content transformation (text to storyboards, scripts to shot lists, narrative to visual concepts)
 - Tests prompts manually with sample projects
 - Builds one-off scripts or uses web UIs for prompt testing
 - Struggles with complex multi-step pipelines (e.g., character extraction → style guide → beat breakdown)
 
 **Specific Needs**:
+
 - **Multi-step workflows**: Chain prompts together (output of one becomes input to next)
 - **Rich output schemas**: Not just text—structured JSON with nested data (characters, visual concepts, timelines)
 - **Repeatability**: Apply same prompt pipeline to multiple projects
 - **Visual validation**: Preview outputs in human-readable formats (not just JSON dumps)
 
 **Goals**:
+
 - Systematize creative workflows that currently rely on manual prompt chaining
 - Build reusable prompt pipelines for recurring project types
 - Reduce time spent on repetitive AI-assisted tasks
 - Maintain creative control while leveraging AI acceleration
 
 **Example Persona**: **Vasilios** (vOz Studios Creative Director)
+
 - Transforms narrative scripts into detailed visual production specs
 - Manually runs 4-step prompt pipeline: characters → style → beats → visuals
 - Each iteration requires copy-pasting between tools and checking for consistency
@@ -219,6 +235,7 @@ User: "I need a prompt to analyze NDIS incidents"
 ### MVP Success Criteria
 
 **MVP is successful if**:
+
 1. Angela (SupportSignal) can create, test with mock NDIS data, and deploy a prompt to production in under 2 hours
 2. Mock data generation works for 80%+ of schema types without manual intervention
 3. Integration Agent successfully publishes to SupportSignal/Convex without errors
@@ -245,18 +262,21 @@ User: "I need a prompt to analyze NDIS incidents"
 **1-2 year horizon**:
 
 **Become the Standard for Prompt Engineering**:
+
 - POEM installed in hundreds of AI-powered application projects
 - Active community contributing helpers, workflows, and provider integrations
 - Conference talks, tutorials, and course content teaching POEM methodology
 - "POEM-compatible" becomes a feature in prompt engineering job postings
 
 **Platform Ecosystem**:
+
 - **Provider Marketplace**: Pre-built integrations for common platforms (OpenAI Functions, LangChain, Pinecone, etc.)
 - **Helper Registry**: Community-contributed Handlebars helpers for domain-specific needs
 - **Workflow Library**: Reusable workflow templates for common use cases (Q&A generation, content transformation, classification)
 - **Schema Repository**: Shared schemas for common domains (healthcare, legal, e-commerce)
 
 **Advanced Capabilities**:
+
 - **Prompt Versioning & Diffing**: Track changes over time, compare versions, roll back
 - **A/B Testing Framework**: Deploy multiple prompt variations, measure performance
 - **Analytics Dashboard**: Track prompt usage, performance metrics, cost optimization
@@ -281,6 +301,7 @@ User: "I need a prompt to analyze NDIS incidents"
 ### System Classification
 
 POEM is a **Framework/Operating System** (like BMAD), not a traditional web application:
+
 - **95% of system**: Document-based (agents, workflows, templates, skills, schemas)
 - **5% of system**: Runtime tool (`.poem-app/` Astro server)
 
@@ -293,12 +314,14 @@ POEM is a **Framework/Operating System** (like BMAD), not a traditional web appl
 ### Architecture: Three-Part System
 
 **1. `.poem-core/` - The Framework Kernel**
+
 - **Content**: Agents (AI personas), workflows, templates, knowledge base
 - **Format**: YAML configs, markdown prompts, JSON schemas
 - **Installation**: Copied to user's project via `npx poem-os install`
 - **Update-Safe**: Lives in user's project, updates don't overwrite customizations
 
 **2. `.poem-app/` - The Runtime Tool**
+
 - **Technology**: Astro 4.x server with TypeScript
 - **Purpose**: Local web service (internal tool, NOT public-facing)
 - **Features**:
@@ -309,6 +332,7 @@ POEM is a **Framework/Operating System** (like BMAD), not a traditional web appl
 - **Multi-Project Support**: Each POEM installation = separate Astro instance
 
 **3. `/poem/` - User Workspace**
+
 - **Content**: User-created prompts (`.hbs`), schemas (JSON), mappings, mock data
 - **Managed By**: User via agents and skills
 - **Version Control**: User's responsibility (part of their project)
@@ -316,6 +340,7 @@ POEM is a **Framework/Operating System** (like BMAD), not a traditional web appl
 ### Installation & Deployment Model
 
 **Development Structure** (monorepo):
+
 ```
 poem-os/poem/
 ├── packages/
@@ -325,6 +350,7 @@ poem-os/poem/
 ```
 
 **User Installation** (following BMAD pattern):
+
 ```bash
 npx poem-os install           # Full installation
 npx poem-os install --core    # Framework only
@@ -332,6 +358,7 @@ npx poem-os install --app     # Runtime only
 ```
 
 **Result in User's Project**:
+
 ```
 my-project/
 ├── .poem-core/     (copied from packages/poem-core/)
@@ -342,6 +369,7 @@ my-project/
 ### Technology Stack
 
 **Framework Layer** (Document-Based):
+
 - **Agents**: Markdown prompts + YAML configuration
 - **Workflows**: YAML-driven step-by-step processes
 - **Templates**: Handlebars (`.hbs` files)
@@ -349,6 +377,7 @@ my-project/
 - **Skills**: Markdown instructions for autonomous Claude actions
 
 **Runtime Layer** (`.poem-app/` only):
+
 - **Server**: Astro 4.x (Node.js/TypeScript)
 - **Templating**: Handlebars.js with custom helpers (System Agent can generate helpers on-demand)
 - **Styling**: Tailwind CSS for web UI
@@ -358,6 +387,7 @@ my-project/
 ### Integration Patterns
 
 **Provider System** (Abstract Interfaces):
+
 - **Pattern**: Each external system needs a custom provider
 - **Location**: `.poem-app/src/providers/{name}/`
 - **Examples**:
@@ -367,6 +397,7 @@ my-project/
 - **MVP Scope**: Provider creation workflow only - no implementations
 
 **Claude Code Integration**:
+
 - **Agent Activation**: Slash commands (future feature, not MVP)
 - **Skills**: Autonomous Claude capabilities
 - **HTTP Calls**: Skills call `.poem-app/` API endpoints (not MCP)
@@ -374,17 +405,20 @@ my-project/
 ### Astro Server Details
 
 **Boot Sequence**:
+
 - Server startup: < 3 seconds
 - Handlebars compilation: Load helpers, compile templates, register partials
 - Configuration: Read port from config, validate environment
 
 **API Endpoints**:
+
 - `/api/prompt/render` - Render Handlebars template with data
 - `/api/schema/generate` - Extract schema from template
 - `/api/mock/generate` - Generate mock data from schema
 - `/api/provider/{name}/*` - Provider-specific endpoints
 
 **Performance Targets**:
+
 - Server response: < 1 second for template rendering
 - Handlebars boot cycle: Optimized for reasonable startup time
 - Mock data generation: Performance details TBD in implementation stories
@@ -393,16 +427,17 @@ my-project/
 
 **Key Distinction**: Most POEM development involves writing documents (prompts/workflows/schemas), NOT traditional software code.
 
-| Component | Primary Activity | Format |
-|-----------|------------------|--------|
-| Agents | Document authoring | YAML + Markdown |
-| Workflows | Process definition | YAML templates |
-| Skills | Instruction writing | Markdown |
-| Templates | Template authoring | Handlebars |
-| Schemas | Schema definition | JSON Schema |
+| Component    | Primary Activity     | Format           |
+| ------------ | -------------------- | ---------------- |
+| Agents       | Document authoring   | YAML + Markdown  |
+| Workflows    | Process definition   | YAML templates   |
+| Skills       | Instruction writing  | Markdown         |
+| Templates    | Template authoring   | Handlebars       |
+| Schemas      | Schema definition    | JSON Schema      |
 | `.poem-app/` | Software development | TypeScript/Astro |
 
 **Implication for Implementation**:
+
 - Most Epics/Stories = creating documents via POEM's own agents/workflows
 - Only `.poem-app/` infrastructure requires traditional coding
 
@@ -535,10 +570,12 @@ my-project/
 - **Mock data libraries**: Explore domain-specific options if/when Level 2 becomes priority
 
 **Research to validate during story execution**:
+
 - Include research tasks in relevant stories (e.g., "Research data dictionary formats" as story subtask)
 - Use validation checkpoints to gather info just-in-time vs big upfront research phase
 
 **Not prioritized for research**:
+
 - Competitive landscape deep-dive (awareness of PromptLayer noted, but not blocking)
 - Claude Code extensibility limits (discover through usage)
 - User workflow shadowing (Angela/Vasilios available for ad-hoc feedback)
@@ -546,12 +583,14 @@ my-project/
 ### Project Context & Philosophy
 
 **This is a learning and education project**:
+
 - Primary goal: David's learning and knowledge sharing
 - Secondary goal: Community building via Skool platform
 - Market validation: Nice-to-have, not critical success metric
 - Open source: Enables community contribution and educational value
 
 **Success metrics redefined**:
+
 - Learning outcomes and educational content created
 - Community engagement and knowledge sharing
 - Real-world usage by SupportSignal/vOz (validation, not revenue)
@@ -575,12 +614,14 @@ The POEM project underwent comprehensive planning documented in `docs/planning/`
 - **Two example domains**: SupportSignal (NDIS/compliance) and Storyline (creative production) validate different workflow patterns
 
 **Key Planning Documents**:
+
 - `docs/planning/POEM.md` - Complete requirements and vision ⭐
 - `docs/planning/system-explorations/` - Agent, skill, workflow, architecture planning
 - `docs/planning/reference/examples.md` - Complete domain examples with real data
 - `docs/planning/reference/bmad-reference.md` - BMAD v4 methodology patterns
 
 **Second Brain References**:
+
 - Claude Skills documentation: `/Users/davidcruwys/dev/ad/brains/anthropic-claude/skills/`
 - BMAD Method v4 patterns: `/Users/davidcruwys/dev/ad/brains/bmad-method/`
 - Example implementations: `/Users/davidcruwys/dev/js_3rd/anthropic-skills/`
@@ -588,18 +629,21 @@ The POEM project underwent comprehensive planning documented in `docs/planning/`
 ### B. Stakeholder Input
 
 **Angela (SupportSignal Prompt Engineer)**:
+
 - Primary pain point: Waiting for data exports to test prompts (hours/days delay)
 - Compliance constraint: Cannot access production database due to NDIS regulations
 - Testing bottleneck: Manually creates 2-3 test scenarios when she needs 50+
 - Validation: Mock data generation solves her #1 problem
 
 **Vasilios (vOz Studios Creative Director)**:
+
 - Use case: 4-step pipeline (characters → style → beats → visuals) for video production
 - Current workflow: Manual copy-paste between tools, 15-20 iterations to refine
 - Need: Multi-step orchestration (post-MVP requirement)
 - Validation: Template-based approach appeals for repeatability across projects
 
 **David (Project Lead)**:
+
 - Learning goal: Deep dive into prompt engineering as systematic discipline
 - Education goal: Create content and community around POEM methodology
 - Strategic goal: Foundation for AppyDave Skool community and education platform
@@ -608,12 +652,14 @@ The POEM project underwent comprehensive planning documented in `docs/planning/`
 ### C. References
 
 **BMAD Method**:
+
 - Official site: https://bmadmethod.com
 - Discord: https://discord.gg/gk8jAdXWmj
 - GitHub: https://github.com/bmadcode/bmad-method
 - YouTube: https://www.youtube.com/@BMadCode
 
 **Technology Documentation**:
+
 - Astro: https://docs.astro.build
 - Handlebars: https://handlebarsjs.com
 - Faker.js: https://fakerjs.dev
@@ -621,6 +667,7 @@ The POEM project underwent comprehensive planning documented in `docs/planning/`
 - Convex: https://www.convex.dev (SupportSignal backend)
 
 **Related POEM Documentation**:
+
 - Planning folder: `docs/planning/` (preserved as-is, shows thinking evolution)
 - Example data: `data/supportsignal/`, `data/storyline/`
 - BMAD configuration: `.bmad-core/`

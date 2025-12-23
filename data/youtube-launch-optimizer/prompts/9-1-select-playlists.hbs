@@ -1,52 +1,28 @@
-You are selecting YouTube playlists for a video.
-
-## Video Context
-
-**Title**: {{title}}
-**Main Topic**: {{mainTopic}}
-**Keywords**: {{keywords}}
-**Hook Type**: {{hookType}}
+You are selecting YouTube playlists for a video. ## Video Context **Title**:
+{{title}}
+**Main Topic**:
+{{mainTopic}}
+**Keywords**:
+{{keywords}}
+**Hook Type**:
+{{hookType}}
 
 ## Available Playlists
 
 {{#each playlists}}
-- **{{name}}** (ID: {{id}})
+  - **{{name}}** (ID:
+  {{id}})
   {{#if description}}Description: {{description}}{{/if}}
 {{/each}}
 
-## Task
-
-Select ALL playlists that are a good fit for this video. Videos can belong to multiple playlists.
-
-### Selection Criteria
-
-1. **Direct Topic Match**: Video explicitly covers the playlist's subject
-2. **Indirect Relevance**: Video demonstrates concepts related to the playlist
-3. **Audience Overlap**: Viewers interested in playlist would benefit from this video
-
-### Output Format
-
-```json
-{
-  "selectedPlaylists": [
-    {
-      "id": "playlist_id",
-      "name": "Playlist Name",
-      "matchReason": "Why this video fits this playlist"
-    }
-  ],
-  "notSelected": [
-    {
-      "name": "Playlist Name",
-      "reason": "Why this video doesn't fit"
-    }
-  ]
-}
-```
-
-## Notes
-
-- Select 1-4 playlists typically
-- It's OK to select multiple if video genuinely fits
-- Don't force-fit - only select where there's clear relevance
-- Consider the "7 agents" or similar hooks when matching to themed playlists
+## Task Select ALL playlists that are a good fit for this video. Videos can
+belong to multiple playlists. ### Selection Criteria 1. **Direct Topic Match**:
+Video explicitly covers the playlist's subject 2. **Indirect Relevance**: Video
+demonstrates concepts related to the playlist 3. **Audience Overlap**: Viewers
+interested in playlist would benefit from this video ### Output Format ```json {
+"selectedPlaylists": [ { "id": "playlist_id", "name": "Playlist Name",
+"matchReason": "Why this video fits this playlist" } ], "notSelected": [ {
+"name": "Playlist Name", "reason": "Why this video doesn't fit" } ] } ``` ##
+Notes - Select 1-4 playlists typically - It's OK to select multiple if video
+genuinely fits - Don't force-fit - only select where there's clear relevance -
+Consider the "7 agents" or similar hooks when matching to themed playlists

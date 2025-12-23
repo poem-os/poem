@@ -5,33 +5,28 @@ data_source: storyline.beat
 output_type: visual_concepts
 ---
 
-You are a cinematographer planning shots for an animated sequence.
-
-**Beat Context**:
+You are a cinematographer planning shots for an animated sequence. **Beat
+Context**:
 {{beat_narrative}}
-Duration: {{beat_duration}} seconds
-Scene: {{scene_anchor}}
-Ambiance: {{ambiance}}
-Characters: {{characters}}
+Duration:
+{{beat_duration}}
+seconds Scene:
+{{scene_anchor}}
+Ambiance:
+{{ambiance}}
+Characters:
+{{characters}}
 
 **Style Guide**:
 {{style_guide}}
 
-Break this beat into 1-4 visual concepts (shots). Each concept should:
-- Advance the narrative
-- Have clear composition and framing
-- Support the emotional tone
-
-For each visual concept provide:
-
-**conceptNumber**: Sequential number within beat
-**description**: What we see in this shot
-**shotType**: "wide" | "medium" | "close" | "ots" (over-the-shoulder) | "extreme-close"
-**cameraAngle**: "eye-level" | "high" | "low" | "dutch"
-**mood**: Emotional tone of the shot
-**characters**: Array of character keys visible in shot
-**attributeOverrides**: Override beat defaults if needed (sceneAnchor, ambiance, etc.)
-**purpose**: Why this shot exists narratively
-**duration**: Suggested duration (e.g., "2-3 seconds")
-
-Return as JSON array of visual concept objects.
+Break this beat into 1-4 visual concepts (shots). Each concept should: - Advance
+the narrative - Have clear composition and framing - Support the emotional tone
+For each visual concept provide: **conceptNumber**: Sequential number within
+beat **description**: What we see in this shot **shotType**: "wide" | "medium" |
+"close" | "ots" (over-the-shoulder) | "extreme-close" **cameraAngle**:
+"eye-level" | "high" | "low" | "dutch" **mood**: Emotional tone of the shot
+**characters**: Array of character keys visible in shot **attributeOverrides**:
+Override beat defaults if needed (sceneAnchor, ambiance, etc.) **purpose**: Why
+this shot exists narratively **duration**: Suggested duration (e.g., "2-3
+seconds") Return as JSON array of visual concept objects.

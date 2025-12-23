@@ -11,6 +11,7 @@
 ## The Problem This Solves
 
 **Angela's Pain Point**: Prompt engineering requires testing prompts with data, but manually filling in test data is:
+
 - Time-consuming and tedious
 - Blocks rapid iteration
 - Requires access to real production data (privacy/security concerns)
@@ -22,10 +23,12 @@
 ## How Mock Data Generation Works
 
 **Prerequisites**:
+
 1. Data source definition (e.g., `incident.single`, `moment.collection`)
 2. Schema (field definitions, types, constraints)
 
 **Process (Level 1 - Simple)**:
+
 ```
 1. Angela creates prompt: "Analyze incident for {{participantName}} at {{location}}"
 2. Prompt references data source: "incident.single"
@@ -36,7 +39,8 @@
 7. When satisfied, publishes prompt to provider
 ```
 
-**Process (Level 2 - Persistent Scenarios)**: *(See "Advanced Mock Data" section below)*
+**Process (Level 2 - Persistent Scenarios)**: _(See "Advanced Mock Data" section below)_
+
 ```
 1. Angela creates prompt
 2. POEM uses persistent mock entities (5 participants with backstories, recurring scenarios)
@@ -54,14 +58,17 @@
 ## Three Data Flows in POEM
 
 ### INBOUND (Provider → POEM)
+
 - Pull Data Dictionary (field definitions, types, constraints)
 - Pull Data Source Definitions (what entities exist, relationships)
 - [Optional] Pull Sample Data (real data exports as JSON for reference)
 
 ### OUTBOUND (POEM → Provider)
+
 - Publish Prompts (prompts ready for production use)
 
 ### INTERNAL (Within POEM)
+
 - Generate Mock Data (for local testing and iteration)
 - Apply Prompts to Mock Data (test prompt rendering)
 - [Future] Generate Output Data (batch prompt execution for workflows)
@@ -71,17 +78,20 @@
 ## Why This Matters for POEM
 
 **Independence from Production**:
+
 - Prompt engineering becomes standalone activity
 - No need to access production database for testing
 - Privacy/security: no real user data needed in POEM
 
 **Rapid Iteration**:
+
 - Generate hundreds of test scenarios instantly
 - Test edge cases (empty fields, long text, special characters)
 - Validate prompts before deployment
 
 **Data Source Connection**:
 This is **why data sources are critical to POEM**:
+
 - Data source defines **what** to generate (entity type, scope, shape)
 - Schema defines **how** to generate it (fields, types, constraints)
 - Mock data generator uses both to create realistic test data
@@ -91,6 +101,7 @@ This is **why data sources are critical to POEM**:
 ## Output Data Generation (Future Consideration)
 
 **Beyond Mock Input**: POEM could also generate output data by:
+
 1. Taking input data (mock or real)
 2. Applying prompts to generate outputs
 3. Producing structured data for downstream systems
@@ -98,7 +109,9 @@ This is **why data sources are critical to POEM**:
 **Real-World Example** (Storyline App - Boy and the Baker):
 
 ### INPUT
+
 Simple narrative transcript (3,250 characters):
+
 ```
 The Boy and the Baker by Vaz
 An elderly baker walking to his shop sees a boy being
@@ -107,7 +120,9 @@ bullied and beaten by a gang of older children...
 ```
 
 ### PROMPTS APPLIED
+
 Series of prompts for:
+
 - Character extraction and profiling
 - Visual scene breakdown
 - Shot composition and camera angles
@@ -116,7 +131,9 @@ Series of prompts for:
 - Color palette and styling
 
 ### OUTPUT
+
 Rich storyline JSON (21KB structured data):
+
 ```json
 {
   "metadata": {
@@ -142,8 +159,8 @@ Rich storyline JSON (21KB structured data):
   "beats": [
     {
       "id": 1,
-      "timing": {"start": "00:05.56", "end": "00:13.36"},
-      "narrative": {"text": "...", "speaker": "narrator"},
+      "timing": { "start": "00:05.56", "end": "00:13.36" },
+      "narrative": { "text": "...", "speaker": "narrator" },
       "visualConcepts": [
         {
           "conceptNumber": 1,
@@ -166,6 +183,7 @@ Rich storyline JSON (21KB structured data):
 ## The Transformation
 
 **What Happened**:
+
 - 631 words → 64 narrative beats with precise timing
 - Simple text → Complete visual production specification
 - Characters extracted with detailed visual profiles
@@ -173,6 +191,7 @@ Rich storyline JSON (21KB structured data):
 - Machine-readable format ready for animation pipeline
 
 **This is POEM's Power**: Prompts as data transformation engine
+
 - Input: Unstructured narrative
 - Processing: Multiple specialized prompts
 - Output: Fully structured production-ready data
@@ -186,6 +205,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 **Status**: Under consideration - may need separate agent for data workflows
 
 **Possible Responsibilities**:
+
 - Generate mock data based on schemas
 - Validate data against schemas
 - Test prompt rendering with various data scenarios
@@ -193,11 +213,13 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 - Export/import data for testing
 
 **Name Options**:
+
 - **Data Engineer Agent** (focus: data generation and transformation)
 - **Testing Agent** (focus: prompt validation and testing)
 - **Data Workflow Agent** (focus: end-to-end data pipelines)
 
 **Distinction from Other Agents**:
+
 - **Prompt Engineer**: Creates/refines prompts (content focus)
 - **System Agent**: Maintains infrastructure (Astro, Handlebars, APIs)
 - **Integration Agent**: Connects to external providers (publish/sync)
@@ -216,9 +238,11 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ### Three Sources of Mock Data
 
 #### 1. Hand-Crafted Scenarios
+
 **What**: Curated, realistic test data with backstories
 
 **SupportSignal Example**:
+
 ```json
 {
   "mockParticipants": [
@@ -251,6 +275,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ```
 
 **Benefits**:
+
 - Realistic, consistent characters across tests
 - Meaningful scenarios that reflect real-world patterns
 - Test edge cases (rare scenarios, complex interactions)
@@ -261,9 +286,11 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ---
 
 #### 2. Anonymized Production Data
+
 **What**: Real data from production system, de-identified and privacy-safe
 
 **Process**:
+
 ```
 1. Export production data via provider API
 2. Anonymize:
@@ -276,6 +303,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ```
 
 **Example** (SupportSignal incident):
+
 ```json
 {
   "original": {
@@ -285,15 +313,16 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
     "eventDateTime": "2025-11-08 14:30"
   },
   "anonymized": {
-    "participantName": "Alex Chen",  // From mock library
-    "dob": "1997-05-22",             // Randomized but preserves age range
-    "address": "[REDACTED]",         // Privacy-sensitive
-    "eventDateTime": "2025-11-12 09:15"  // Recent, random time
+    "participantName": "Alex Chen", // From mock library
+    "dob": "1997-05-22", // Randomized but preserves age range
+    "address": "[REDACTED]", // Privacy-sensitive
+    "eventDateTime": "2025-11-12 09:15" // Recent, random time
   }
 }
 ```
 
 **Benefits**:
+
 - Test with realistic data patterns
 - Discover edge cases from production
 - No privacy/security concerns
@@ -302,9 +331,11 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ---
 
 #### 3. AI-Generated from Schemas
+
 **What**: Automated generation based on schema + data source + constraints
 
 **Current Approach** (Level 1):
+
 ```javascript
 // Simple field-level generation
 {
@@ -315,6 +346,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ```
 
 **Advanced Approach** (Level 2):
+
 ```javascript
 // Entity-aware generation with relationships
 {
@@ -329,6 +361,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 ```
 
 **Benefits**:
+
 - Scale to hundreds of scenarios
 - Maintain entity consistency
 - Relationship-aware (reporter knows participant)
@@ -341,6 +374,7 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 **Concept**: Mock data organized by entity type, with persistent identities
 
 **Structure**:
+
 ```
 /poem/mock-data/
 ├── participants.json         # 5-10 mock participants with full profiles
@@ -358,11 +392,12 @@ This transforms POEM from "prompt tester" to **"data transformation pipeline"** 
 **Key Principle**: **Entities are persistent, scenarios are composed**
 
 Example workflow:
+
 1. **Prompt**: "Classify incident severity"
 2. **Mock Data**: Use `p1-sensory-overload.json` (Alex Chen in kitchen, auditory trigger)
 3. **Output**: Severity classification + rationale
 4. **Next Prompt**: "Generate action plan for moderate severity incident"
-5. **Mock Data**: Use *output from previous prompt* as input to next
+5. **Mock Data**: Use _output from previous prompt_ as input to next
 6. **Output**: Action plan (becomes part of workflow scenario)
 
 ---
@@ -392,6 +427,7 @@ Example workflow:
 ```
 
 **Storage**:
+
 ```
 /poem/mock-data/workflows/incident-pipeline-1/
 ├── 1-raw-incident.json           # Initial mock data
@@ -402,6 +438,7 @@ Example workflow:
 ```
 
 **Benefits**:
+
 - Test entire workflow, not just individual prompts
 - Validate data flows between prompts
 - Catch integration issues early
@@ -412,6 +449,7 @@ Example workflow:
 ### Mock Data Library Management
 
 **Operations**:
+
 - **Create Scenario**: Hand-craft or generate new mock scenario
 - **Import from Production**: Anonymize real data
 - **Version Scenarios**: Track changes to mock data over time
@@ -420,6 +458,7 @@ Example workflow:
 - **Export Scenarios**: Share mock data across team
 
 **Agent Responsibility** (Data/Testing Agent):
+
 - Manage mock data library
 - Generate new scenarios on demand
 - Anonymize production data
@@ -431,10 +470,12 @@ Example workflow:
 ### Why This Matters
 
 **Level 1 Mock Data**: Good for basic prompt testing
+
 - "Does this prompt work with any data?"
 - Generate fields, test syntax
 
 **Level 2 Mock Data**: Essential for production-ready prompts
+
 - "Does this prompt work with realistic scenarios?"
 - Test edge cases, workflows, data quality
 - Build regression test suite
@@ -442,12 +483,14 @@ Example workflow:
 - Support compliance/audit requirements
 
 **For SupportSignal**: Can't just test with "John Smith in Kitchen"
+
 - Need realistic participant profiles
 - Need scenario variety (behavioral, medical, environmental)
 - Need workflow testing (incident → classification → action → report)
 - Need compliance validation (all required fields, proper categorization)
 
 **For Storyline**: Can't just test with "generic character"
+
 - Need consistent character profiles across beats
 - Need visual continuity (color signature, build, mood)
 - Need scene-to-scene transitions
@@ -456,6 +499,7 @@ Example workflow:
 ---
 
 **See also**:
+
 - [agents.md](./agents.md) - Agent definitions (includes Data/Testing consideration)
 - [workflows.md](./workflows.md) - How data flows through workflows
 - [skills.md](./skills.md) - Skills for data generation and testing

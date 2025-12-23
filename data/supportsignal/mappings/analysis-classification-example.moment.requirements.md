@@ -11,10 +11,12 @@
 I want to use the `analysis-classification-example` template with moment data, but the data structure requires transformation.
 
 ### Template Placeholders (what the prompt expects):
+
 - `categories` (string) - Comma-separated list of valid categories
 - `input` (text) - The text to be classified
 
 ### Source Data (what moments provide):
+
 - `moment_type` (enum/code)
 - `observation_notes` (text)
 - `impact_rating` (number 1-5)
@@ -30,6 +32,7 @@ I want to use the `analysis-classification-example` template with moment data, b
 ## Implementation Notes
 
 Developer would create `MomentToClassificationMapper` class in main app with logic to:
+
 - Combine first_name + last_name
 - Format the input string with rating
 - Provide fixed categories list

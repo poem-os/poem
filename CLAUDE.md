@@ -15,6 +15,7 @@ This project uses **BMAD Method v4.44.3** - a comprehensive AI-assisted developm
 ### Core BMAD Concepts
 
 **BMAD Agents** are AI personas with specific roles:
+
 - **SM (Bob)** - Scrum Master: Creates detailed user stories from epics
 - **Dev (James)** - Developer: Implements stories with tests
 - **QA (Quinn)** - Test Architect: Reviews code quality, creates quality gates
@@ -53,6 +54,7 @@ Access BMAD agents and tasks via Claude Code slash commands:
 3. **Quality Gates**: QA provides PASS/CONCERNS/FAIL decisions (advisory, not blocking)
 
 **Critical Files**:
+
 - `.bmad-core/core-config.yaml` - BMAD project configuration
 - `.bmad-core/agents/*.md` - Agent definitions (10 agents)
 - `.bmad-core/tasks/*.md` - Executable task workflows (23 tasks)
@@ -138,11 +140,13 @@ poem/
 The project has completed PRD and Architecture phases. Documents are organized by purpose:
 
 **Implementation Specs** (use these for development):
+
 - `docs/prd.md` - Product requirements (consolidated)
 - `docs/architecture.md` - Technical architecture (consolidated)
 - `docs/architecture/` - Sharded architecture docs (coding standards, tech stack, etc.)
 
 **Historical/Context** (reference only):
+
 - `docs/planning/` - Pre-BMAD brainstorming and exploration
 - `docs/brief.md` - Original project brief
 
@@ -150,21 +154,22 @@ The project has completed PRD and Architecture phases. Documents are organized b
 
 ### Key Documentation
 
-| Document | Purpose | When to Read |
-|----------|---------|--------------|
-| `docs/prd.md` | Complete product requirements | ⭐ START HERE for requirements |
-| `docs/architecture.md` | Complete technical architecture | ⭐ START HERE for technical design |
-| `docs/architecture/coding-standards.md` | Code style and conventions | Before writing code |
-| `docs/architecture/tech-stack.md` | Technology choices | Understanding stack |
-| `.bmad-core/user-guide.md` | BMAD methodology guide | Understanding workflow |
-| `.bmad-core/enhanced-ide-development-workflow.md` | Step-by-step dev process | During implementation |
-| `docs/planning/POEM.md` | Original requirements exploration | Historical context |
+| Document                                          | Purpose                           | When to Read                       |
+| ------------------------------------------------- | --------------------------------- | ---------------------------------- |
+| `docs/prd.md`                                     | Complete product requirements     | ⭐ START HERE for requirements     |
+| `docs/architecture.md`                            | Complete technical architecture   | ⭐ START HERE for technical design |
+| `docs/architecture/coding-standards.md`           | Code style and conventions        | Before writing code                |
+| `docs/architecture/tech-stack.md`                 | Technology choices                | Understanding stack                |
+| `.bmad-core/user-guide.md`                        | BMAD methodology guide            | Understanding workflow             |
+| `.bmad-core/enhanced-ide-development-workflow.md` | Step-by-step dev process          | During implementation              |
+| `docs/planning/POEM.md`                           | Original requirements exploration | Historical context                 |
 
 ## Development Commands
 
 ### BMAD Agent Usage (Primary Development Method)
 
 **Story Creation**:
+
 ```bash
 # Use Scrum Master to draft next story
 /BMad/agents/sm
@@ -175,6 +180,7 @@ The project has completed PRD and Architecture phases. Documents are organized b
 ```
 
 **Implementation**:
+
 ```bash
 # Use Developer agent to implement story
 /BMad/agents/dev
@@ -188,6 +194,7 @@ The project has completed PRD and Architecture phases. Documents are organized b
 ```
 
 **Quality Review**:
+
 ```bash
 # Risk assessment (before development)
 /BMad/agents/qa
@@ -212,6 +219,7 @@ The project has completed PRD and Architecture phases. Documents are organized b
 ### When NOT to Use BMAD Agents
 
 For simple tasks outside the formal workflow:
+
 - Reading documentation
 - Exploring codebase structure
 - Quick file modifications
@@ -224,12 +232,14 @@ Use your native Claude Code capabilities for these.
 ### Core Configuration
 
 `.bmad-core/core-config.yaml` defines:
+
 - Documentation locations (PRD, Architecture, Stories)
 - QA assessment paths
 - Files developers should always load
 - Sharding configuration
 
 **Critical for Dev agent**:
+
 ```yaml
 devLoadAlwaysFiles:
   - docs/architecture/coding-standards.md
@@ -244,6 +254,7 @@ These files are automatically loaded for developers and contain implementation s
 Quinn (QA agent) provides comprehensive quality assurance:
 
 **Command Aliases** (short forms work):
+
 - `*risk` → `*risk-profile`
 - `*design` → `*test-design`
 - `*nfr` → `*nfr-assess`
@@ -258,12 +269,14 @@ Quinn (QA agent) provides comprehensive quality assurance:
 | Post-review fixes | `*gate` | As needed |
 
 **Quality Gate Statuses**:
+
 - **PASS**: All critical requirements met
 - **CONCERNS**: Non-critical issues (team should review)
 - **FAIL**: Critical issues (should address)
 - **WAIVED**: Issues acknowledged and accepted
 
 **Output Locations**:
+
 ```
 docs/qa/assessments/    # Risk, design, trace, NFR reports
 docs/qa/gates/          # Quality gate decisions (.yml)
@@ -272,15 +285,18 @@ docs/qa/gates/          # Quality gate decisions (.yml)
 ### Story Files and Agent Permissions
 
 **Dev Agent** can ONLY update:
+
 - Task/Subtask checkboxes
 - Dev Agent Record section (Debug Log, Completion Notes, Change Log)
 - File List
 - Status (to "Ready for Review")
 
 **QA Agent** can ONLY update:
+
 - QA Results section
 
 **DO NOT** modify:
+
 - Story description
 - Acceptance Criteria
 - Testing sections
@@ -291,6 +307,7 @@ docs/qa/gates/          # Quality gate decisions (.yml)
 ### What is POEM?
 
 POEM (Prompt Orchestration and Engineering Method) is a system for:
+
 1. Creating AI prompts with JSON schemas
 2. Managing prompt templates (Handlebars-based)
 3. Generating mock data for testing
@@ -300,17 +317,20 @@ POEM (Prompt Orchestration and Engineering Method) is a system for:
 ### Example Use Cases (in `data/`)
 
 **SupportSignal** (`data/supportsignal/`):
+
 - Narrative enhancement prompts with schemas
 - Question generation for shift notes
 - Analysis predicates and classifications
 - Mapping from analysis to shift notes
 
 **Storyline** (`data/storyline/`):
+
 - Character schema definitions
 - Transcript-to-storyline transformations
 - Output format schemas
 
 **YouTube Launch Optimizer** (`data/youtube-launch-optimizer/`):
+
 - Comprehensive workflow with 54 prompt templates
 - Multi-phase video publishing pipeline (chapters, titles, descriptions, thumbnails)
 - Brand configuration system
@@ -319,6 +339,7 @@ POEM (Prompt Orchestration and Engineering Method) is a system for:
 ### POEM's Value Proposition
 
 **Key Features** (from planning):
+
 1. **Mock Data Generation** - Killer feature for testing prompts
 2. **Schema-Driven Prompts** - Type-safe AI interactions
 3. **Template Management** - Handlebars-based reusability
@@ -392,11 +413,13 @@ POEM (Prompt Orchestration and Engineering Method) is a system for:
 This project uses **BMAD Method v4.44.3** installed for Claude Code.
 
 **Installation manifest**: `.bmad-core/install-manifest.yaml`
+
 - Installed: 2025-11-22
 - IDE: claude-code
 - Version: 4.44.3
 
 **To refresh BMAD**:
+
 ```bash
 npx bmad-method install -f -i claude-code
 ```
@@ -432,16 +455,19 @@ npx bmad-method install -f -i claude-code
 ## Getting Help
 
 **BMAD Methodology**:
+
 - `.bmad-core/user-guide.md` - Complete guide
 - `.bmad-core/enhanced-ide-development-workflow.md` - Step-by-step workflow
 - `.bmad-core/working-in-the-brownfield.md` - Brownfield patterns
 
 **BMAD Community**:
+
 - Discord: https://discord.gg/gk8jAdXWmj
 - GitHub: https://github.com/bmadcode/bmad-method
 - YouTube: https://www.youtube.com/@BMadCode
 
 **POEM Project**:
+
 - Product requirements: `docs/prd.md`
 - Technical architecture: `docs/architecture.md`
 - Example data: `data/supportsignal/`, `data/storyline/`, `data/youtube-launch-optimizer/`
@@ -450,6 +476,7 @@ npx bmad-method install -f -i claude-code
 ## Quick Reference
 
 **BMAD Agents** (via `/BMad/agents/`):
+
 - `sm` (Bob) - Story creation
 - `dev` (James) - Implementation
 - `qa` (Quinn) - Quality review
@@ -458,6 +485,7 @@ npx bmad-method install -f -i claude-code
 - `po` - Alignment validation
 
 **QA Commands** (via QA agent):
+
 - `*risk` - Risk assessment
 - `*design` - Test strategy
 - `*trace` - Coverage verification
@@ -466,6 +494,7 @@ npx bmad-method install -f -i claude-code
 - `*gate` - Gate decision
 
 **Document Locations**:
+
 - PRD: `docs/prd.md` (consolidated) or `docs/prd/` (sharded)
 - Architecture: `docs/architecture.md` (consolidated) or `docs/architecture/` (sharded)
 - Stories: `docs/stories/`

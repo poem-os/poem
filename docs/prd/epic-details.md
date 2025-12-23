@@ -13,6 +13,7 @@ I want a monorepo structure with poem-core and poem-app packages,
 so that the codebase is organized for coordinated development and releases.
 
 **Acceptance Criteria**:
+
 1. Root `package.json` configured for monorepo (workspaces or similar)
 2. `packages/poem-core/` directory created with basic structure
 3. `packages/poem-app/` directory created with basic structure
@@ -30,6 +31,7 @@ I want the poem-core package structured for agents, workflows, and skills,
 so that the framework components have a clear home.
 
 **Acceptance Criteria**:
+
 1. `packages/poem-core/` follows BMAD-style structure
 2. Directory structure includes: `agents/`, `workflows/`, `skills/`, `templates/`, `data/`
 3. `core-config.yaml` created with basic configuration schema
@@ -47,6 +49,7 @@ I want the poem-app package structured as an Astro project,
 so that the runtime server has proper scaffolding.
 
 **Acceptance Criteria**:
+
 1. `packages/poem-app/` initialized as Astro project (latest version)
 2. TypeScript configured for Astro
 3. Directory structure includes: `src/pages/api/`, `src/services/`, `src/config/`
@@ -64,6 +67,7 @@ I want to install POEM via `npx poem-os install`,
 so that I can add POEM to my project with a single command.
 
 **Acceptance Criteria**:
+
 1. `npx poem-os install` copies `.poem-core/` to user's project root
 2. `npx poem-os install` copies `.poem-app/` to user's project root
 3. `npx poem-os install` creates `/poem/` workspace directory with subdirs: `prompts/`, `schemas/`, `config/`
@@ -82,6 +86,7 @@ I want slash commands to activate POEM agents,
 so that I can access POEM workflows from Claude Code.
 
 **Acceptance Criteria**:
+
 1. `.claude/commands/poem/` directory structure created during install
 2. Slash command wrapper for Prompt Engineer agent: `/poem/agents/prompt-engineer`
 3. Slash command files follow BMAD pattern (load agent definition)
@@ -104,6 +109,7 @@ I want a configured Astro server that starts reliably,
 so that API endpoints are available for POEM operations.
 
 **Acceptance Criteria**:
+
 1. Astro server starts with `npm run dev` in `.poem-app/`
 2. Server port configurable via environment variable or config file
 3. Server startup time under 3 seconds (NFR2)
@@ -121,6 +127,7 @@ I want a Handlebars service that compiles and renders templates,
 so that API endpoints can process `.hbs` files.
 
 **Acceptance Criteria**:
+
 1. Handlebars service initializes on server start
 2. Service loads helpers from `src/services/handlebars/helpers/` directory
 3. Eager loading of all helpers during initialization
@@ -138,6 +145,7 @@ I want basic formatting helpers available,
 so that templates can transform data without custom code.
 
 **Acceptance Criteria**:
+
 1. `titleCase` helper: `{{titleCase "hello world"}}` → "Hello World"
 2. `upperCase` helper: `{{upperCase "hello"}}` → "HELLO"
 3. `lowerCase` helper: `{{lowerCase "HELLO"}}` → "hello"
@@ -155,6 +163,7 @@ I want helpers to hot-reload when modified,
 so that I can develop helpers without restarting the server.
 
 **Acceptance Criteria**:
+
 1. File watcher monitors `src/services/handlebars/helpers/` directory
 2. New helper files automatically loaded and registered
 3. Modified helper files reloaded without server restart
@@ -172,6 +181,7 @@ I want an API endpoint to render templates with data,
 so that prompts can be processed programmatically.
 
 **Acceptance Criteria**:
+
 1. `POST /api/prompt/render` accepts template path and data
 2. Endpoint loads template from `/poem/prompts/` or provided content
 3. Template rendered with Handlebars service
@@ -189,6 +199,7 @@ I want an API endpoint to extract schemas from templates,
 so that required data fields are automatically identified.
 
 **Acceptance Criteria**:
+
 1. `POST /api/schema/generate` accepts template path or content
 2. Endpoint parses Handlebars placeholders and blocks
 3. Returns JSON schema with field names and inferred types
@@ -212,6 +223,7 @@ I want a Prompt Engineer agent that guides prompt development,
 so that I have systematic assistance creating quality prompts.
 
 **Acceptance Criteria**:
+
 1. Agent definition in `.poem-core/agents/prompt-engineer.md`
 2. Agent follows BMAD agent structure (YAML config + persona + commands)
 3. Persona defined: name, role, style, core principles
@@ -229,6 +241,7 @@ I want a guided workflow to create new prompts,
 so that prompts follow POEM best practices from the start.
 
 **Acceptance Criteria**:
+
 1. Workflow defined in `.poem-core/workflows/new-prompt.yaml`
 2. Workflow gathers: prompt purpose, target output, required inputs
 3. Creates `.hbs` template file in `/poem/prompts/`
@@ -246,6 +259,7 @@ I want a workflow to iteratively improve existing prompts,
 so that I can rapidly test and update prompts.
 
 **Acceptance Criteria**:
+
 1. Workflow defined in `.poem-core/workflows/refine-prompt.yaml`
 2. Workflow loads existing prompt from path
 3. Displays current template content and schema
@@ -263,6 +277,7 @@ I want a workflow to test prompts with various data,
 so that I can validate prompt behavior across scenarios.
 
 **Acceptance Criteria**:
+
 1. Workflow defined in `.poem-core/workflows/test-prompt.yaml`
 2. Workflow accepts prompt path and data source (mock, file, or inline)
 3. Calls render API endpoint and displays output
@@ -280,6 +295,7 @@ I want a workflow to validate prompt structure and quality,
 so that I catch issues before deployment.
 
 **Acceptance Criteria**:
+
 1. Workflow defined in `.poem-core/workflows/validate-prompt.yaml`
 2. Validates Handlebars syntax (no parse errors)
 3. Validates all placeholders have corresponding schema fields
@@ -297,6 +313,7 @@ I want autonomous skills that assist with common tasks,
 so that I can work efficiently without always invoking full workflows.
 
 **Acceptance Criteria**:
+
 1. `check-my-prompt.md` skill validates current prompt in context
 2. `preview-with-data.md` skill renders prompt with provided/mock data
 3. `generate-schema.md` skill extracts schema from template
@@ -320,6 +337,7 @@ I want to import the 53 YouTube Launch Optimizer templates into POEM,
 so that I have a real-world prompt collection to validate the system.
 
 **Acceptance Criteria**:
+
 1. All 53 `.hbs` templates are copied to `/poem/prompts/youtube-launch-optimizer/`
 2. Templates maintain their section-based naming convention (e.g., `1-1-configure.hbs`, `5-1-generate-title-v1.hbs`)
 3. `brand-config.json` is imported to `/poem/config/` with CTAs, affiliates, and social links
@@ -336,6 +354,7 @@ I want to automatically extract JSON schemas from template placeholders,
 so that I know what data each prompt requires without manual inspection.
 
 **Acceptance Criteria**:
+
 1. Schema extraction parses Handlebars placeholders from `.hbs` files
 2. Simple placeholders extracted: `{{fieldName}}` → `{fieldName: string}`
 3. Nested placeholders extracted: `{{object.field}}` → `{object: {field: string}}`
@@ -355,6 +374,7 @@ I want to generate mock data matching the workflow-data schema,
 so that I can test each prompt independently without real transcripts.
 
 **Acceptance Criteria**:
+
 1. Mock data generated for all 37 workflow-data fields defined in spec
 2. String fields generate realistic YouTube-appropriate content (titles, descriptions)
 3. Array fields generate appropriate item counts (e.g., 5-10 chapter titles, 3-5 title candidates)
@@ -373,6 +393,7 @@ I want the Handlebars helpers needed by YouTube Launch Optimizer templates,
 so that templates render correctly with formatting and logic.
 
 **Acceptance Criteria**:
+
 1. `gt` helper implemented: `{{#if (gt chapters.length 20)}}` for greater-than comparison
 2. `truncate` helper implemented: `{{truncate title 49}}` with character limit
 3. `join` helper implemented: `{{join keywords ", "}}` for array-to-string
@@ -390,6 +411,7 @@ I want to render a single template with mock data and see the output,
 so that I can validate individual prompts work correctly.
 
 **Acceptance Criteria**:
+
 1. API endpoint accepts template path and data source (mock or provided)
 2. Template renders with Handlebars engine including custom helpers
 3. Rendered output returned in response
@@ -407,6 +429,7 @@ I want to run a chain of prompts where outputs feed into subsequent prompts,
 so that I can validate template chaining and progressive data accumulation.
 
 **Acceptance Criteria**:
+
 1. Chain definition specifies prompt sequence and data flow
 2. Output from prompt A stored in workflow-data under specified key
 3. Subsequent prompts access accumulated workflow-data
@@ -424,6 +447,7 @@ I want to pause a workflow for human curation before continuing,
 so that creative decisions like title selection involve human judgment.
 
 **Acceptance Criteria**:
+
 1. Workflow can define "checkpoint" steps requiring human input
 2. Checkpoint presents options to user (e.g., generated title candidates)
 3. User selection stored in workflow-data (e.g., `selectedTitles`)
@@ -441,6 +465,7 @@ I want prompts to validate platform-specific constraints,
 so that generated content meets YouTube requirements.
 
 **Acceptance Criteria**:
+
 1. Constraint definitions loaded from config (character limits, format rules)
 2. YouTube constraints implemented: title (50 chars), thumbnail text (20 chars), chapter title (49 chars), description visible (150 chars), description max (5000 chars)
 3. Validation runs on prompt output, not input
@@ -464,6 +489,7 @@ I want a System Agent that manages POEM infrastructure,
 so that I can extend capabilities without leaving Claude Code.
 
 **Acceptance Criteria**:
+
 1. Agent definition in `.poem-core/agents/system-agent.md`
 2. Agent follows BMAD agent structure
 3. Persona defined: infrastructure-focused, code-generating
@@ -480,6 +506,7 @@ I want to request new Handlebars helpers by describing what I need,
 so that custom formatting is available without manual JavaScript coding.
 
 **Acceptance Criteria**:
+
 1. Workflow defined in `.poem-core/workflows/add-helper.yaml`
 2. User describes helper need in natural language
 3. System Agent generates JavaScript helper code
@@ -497,6 +524,7 @@ I want workflows to manage the Astro server,
 so that I can start, stop, and troubleshoot without leaving Claude Code.
 
 **Acceptance Criteria**:
+
 1. `*server-start` command starts Astro server in background
 2. `*server-stop` command gracefully stops running server
 3. `*server-status` command reports: running/stopped, port, uptime
@@ -513,6 +541,7 @@ I want a provider interface pattern established,
 so that Integration Agent can work with any external system.
 
 **Acceptance Criteria**:
+
 1. Provider interface documented in `.poem-app/src/providers/README.md`
 2. Interface defines required methods: `connect()`, `pullDictionary()`, `publishPrompt()`, `testConnection()`
 3. Base provider class/type created for extension
@@ -529,6 +558,7 @@ I want to create new provider implementations via System Agent,
 so that external integrations are scaffolded correctly.
 
 **Acceptance Criteria**:
+
 1. Workflow defined in `.poem-core/workflows/create-provider.yaml`
 2. User provides: provider name, connection details, API patterns
 3. System Agent generates provider implementation files
@@ -552,6 +582,7 @@ I want an Integration Agent that manages external system connections,
 so that I can sync data and publish prompts to production.
 
 **Acceptance Criteria**:
+
 1. Agent definition in `.poem-core/agents/integration-agent.md`
 2. Agent follows BMAD agent structure
 3. Persona defined: integration-focused, connection-aware
@@ -568,6 +599,7 @@ I want to pull data dictionaries from external systems,
 so that I know what fields are available for my prompts.
 
 **Acceptance Criteria**:
+
 1. Workflow defined in `.poem-core/workflows/pull-dictionary.yaml`
 2. User selects provider to pull from
 3. Workflow calls provider's `pullDictionary()` method
@@ -585,6 +617,7 @@ I want to publish prompts to external systems,
 so that tested prompts reach production.
 
 **Acceptance Criteria**:
+
 1. Workflow defined in `.poem-core/workflows/publish-prompt.yaml`
 2. User selects prompt(s) and target provider
 3. Validation runs before publish (syntax, schema, constraints)
@@ -602,6 +635,7 @@ I want to test provider connections,
 so that I know integrations are working before attempting operations.
 
 **Acceptance Criteria**:
+
 1. Workflow defined in `.poem-core/workflows/test-connection.yaml`
 2. User selects provider to test
 3. Workflow calls provider's `testConnection()` method
@@ -619,6 +653,7 @@ I want skills that help me work with data dictionaries,
 so that I can find fields and validate schemas efficiently.
 
 **Acceptance Criteria**:
+
 1. `find-fields.md` skill searches dictionaries for matching fields
 2. `validate-schema.md` skill checks schema fields exist in dictionary
 3. `suggest-mappings.md` skill recommends field mappings based on names/types
@@ -641,6 +676,7 @@ I want a Mock/Test Data Agent that generates realistic test data,
 so that I can test prompts with production-like scenarios.
 
 **Acceptance Criteria**:
+
 1. Agent definition in `.poem-core/agents/mock-data-agent.md`
 2. Agent follows BMAD agent structure
 3. Persona defined: data-focused, testing-oriented
@@ -657,6 +693,7 @@ I want to generate basic mock data from schemas,
 so that I can test prompts without external dependencies.
 
 **Acceptance Criteria**:
+
 1. Workflow uses faker.js for data generation
 2. String fields generate appropriate content based on field name hints
 3. Number fields generate within reasonable ranges
@@ -674,6 +711,7 @@ I want realistic mock data based on provider dictionaries,
 so that test data matches production patterns.
 
 **Acceptance Criteria**:
+
 1. Workflow reads field metadata from provider dictionaries
 2. Field constraints (min/max, enum values, patterns) respected
 3. Related fields maintain consistency (e.g., dates in sequence)
@@ -691,6 +729,7 @@ I want to create and curate test scenario libraries,
 so that edge cases and specific patterns are available for testing.
 
 **Acceptance Criteria**:
+
 1. Workflow defined in `.poem-core/workflows/create-scenario.yaml`
 2. User describes scenario (e.g., "long title that exceeds limit")
 3. Agent generates mock data matching scenario description
@@ -708,6 +747,7 @@ I want to generate multiple mock data variations at once,
 so that I can test prompts across many scenarios efficiently.
 
 **Acceptance Criteria**:
+
 1. Batch generation creates N variations from single schema
 2. Variations include edge cases: empty strings, long text, special characters
 3. Batch results saved as array or individual files

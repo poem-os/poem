@@ -17,7 +17,7 @@ Orchestrate the complete end-to-end story lifecycle from creation through QA rev
    - Extract key configurations:
      - `devStoryLocation` (where story files are stored)
      - `prdShardedLocation` (where epic PRD files are stored)
-     - `epicFilePattern` (pattern for epic files, e.g., "epic-{n}*.md")
+     - `epicFilePattern` (pattern for epic files, e.g., "epic-{n}\*.md")
 
 2. List all story files in `{devStoryLocation}` matching pattern `{epic}.{story}.story.md`
 
@@ -53,6 +53,7 @@ Orchestrate the complete end-to-end story lifecycle from creation through QA rev
      3. Specify a different story number
      ```
    - If suggesting story from epic PRD that has no file yet:
+
      ```
      📋 Story {nextStory} found in Epic {epic} PRD but not yet created.
      Epic {epic} Progress: {completedCount}/{totalCount} stories completed
@@ -72,6 +73,7 @@ Orchestrate the complete end-to-end story lifecycle from creation through QA rev
 **Objective**: Create comprehensive story draft with all requirements and context
 
 **Actions**:
+
 1. Execute the `create-next-story.md` task for story `{storyNum}`
 2. Verify output file exists: `{devStoryLocation}/{storyNum}.story.md`
 3. Verify story status is set to: `Draft`
@@ -80,6 +82,7 @@ Orchestrate the complete end-to-end story lifecycle from creation through QA rev
 **Output**: Story file created with Status: Draft
 
 **HALT POINT**:
+
 ```
 ✅ Story {storyNum} created successfully!
 📄 File: {devStoryLocation}/{storyNum}.story.md
@@ -94,6 +97,7 @@ Type 'go' to proceed to validation, or 'skip' to go directly to development.
 ```
 
 **User Response Options**:
+
 - `go` → Proceed to Step 2 (Validation)
 - `skip` → Skip to Step 3 (Mark Ready)
 - `exit` → Exit workflow
@@ -107,6 +111,7 @@ Type 'go' to proceed to validation, or 'skip' to go directly to development.
 **Objective**: Validate story draft meets quality standards before development
 
 **Actions**:
+
 1. Execute the `validate-next-story.md` task for story `{storyNum}`
 2. Run 10-step validation process:
    - Template completeness
@@ -119,6 +124,7 @@ Type 'go' to proceed to validation, or 'skip' to go directly to development.
 **Output**: Validation report with GO/NO-GO decision
 
 **HALT POINT**:
+
 ```
 ✅ Validation complete for Story {storyNum}
 
@@ -140,6 +146,7 @@ Type 'go' to proceed to status change.
 ```
 
 **User Response Options**:
+
 - If GO: `go` → Proceed to Step 3
 - If NO-GO: `exit` → Fix issues, re-run workflow from Step 1
 
@@ -152,11 +159,13 @@ Type 'go' to proceed to status change.
 **Objective**: Ensure human approval before development begins
 
 **Actions**:
+
 1. Inform user of required manual action
 2. Provide clickable file path link
 3. Wait for user confirmation
 
 **HALT POINT**:
+
 ```
 ⚠️  HUMAN ACTION REQUIRED
 
@@ -171,10 +180,12 @@ Type 'verify' to check if status has been changed.
 ```
 
 **User Response Options**:
+
 - `verify` → Check if status is "Ready" (re-read file, confirm or prompt again)
 - `go` → Proceed to Step 4 (assumes status changed)
 
 **Verification** (if user types 'verify'):
+
 - Read story file
 - Check if Status field = "Ready"
 - If YES: "✅ Status confirmed as Ready. Type 'go' to proceed."
@@ -189,10 +200,12 @@ Type 'verify' to check if status has been changed.
 **Objective**: Implement story requirements with code, tests, and documentation
 
 **Pre-Check**:
+
 1. Read story file and verify Status = "Ready"
 2. If NOT ready: HALT with error "Story status is not 'Ready'. Cannot proceed to development."
 
 **Actions**:
+
 1. Execute implementation workflow for story `{storyNum}`
 2. Follow all tasks and subtasks defined in story
 3. Write code, tests, and documentation
@@ -202,6 +215,7 @@ Type 'verify' to check if status has been changed.
 **Output**: Working code with tests, Status changed to Review
 
 **HALT POINT**:
+
 ```
 ✅ Development complete for Story {storyNum}!
 
@@ -216,6 +230,7 @@ Type 'go' to proceed to acceptance testing.
 ```
 
 **User Response Options**:
+
 - `go` → Proceed to Step 5 (SAT)
 
 ---
@@ -227,6 +242,7 @@ Type 'go' to proceed to acceptance testing.
 **Objective**: Create comprehensive acceptance test guide and prepare for manual testing
 
 **Actions**:
+
 1. Execute the `create-sat.md` task for story `{storyNum}`
 2. Read story file (acceptance criteria) AND actual implementation code
 3. Create test guide: `{devStoryLocation}/{storyNum}.story-SAT.md`
@@ -240,6 +256,7 @@ Type 'go' to proceed to acceptance testing.
 **Output**: SAT test guide file created
 
 **HALT POINT**:
+
 ```
 ✅ Story Acceptance Test guide created!
 
@@ -257,6 +274,7 @@ When all tests are complete and results documented, type 'go' for QA review.
 ```
 
 **User Response Options**:
+
 - `go` → Proceed to Step 6 (QA Review)
 
 ---
@@ -268,6 +286,7 @@ When all tests are complete and results documented, type 'go' for QA review.
 **Objective**: Final quality assurance review including code, tests, and SAT results
 
 **Actions**:
+
 1. Execute the `review-story.md` task for story `{storyNum}`
 2. Review:
    - Code quality and standards compliance
@@ -287,6 +306,7 @@ When all tests are complete and results documented, type 'go' for QA review.
 **Output**: QA review report with final decision + automated story closure (if PASS)
 
 **HALT POINT (If PASS)**:
+
 ```
 ✅ QA Review PASSED for Story {storyNum}!
 
@@ -311,6 +331,7 @@ Would you like to:
 ```
 
 **HALT POINT (If FAIL)**:
+
 ```
 ❌ QA Review FAILED for Story {storyNum}
 
@@ -323,6 +344,7 @@ Please address these issues. Options:
 ```
 
 **User Response Options**:
+
 - If PASS: `next` → Loop back to Step 1 for next story
 - If PASS: `exit` → Exit workflow
 - If FAIL: `dev` → Return to Step 4 (Development)
@@ -342,15 +364,18 @@ Step 1  Step 3     Step 4       Step 4   Step 6
 ## Error Handling
 
 **If user types unexpected input**:
+
 - Show valid options for current step
 - Re-display HALT POINT message
 
 **If file operations fail**:
+
 - Display clear error message
 - Suggest corrective action
 - Allow user to retry or exit
 
 **If agent context loading fails**:
+
 - HALT workflow
 - Inform user which agent failed to load
 - Suggest checking `.bmad-core/agents/` directory
@@ -366,6 +391,7 @@ Step 1  Step 3     Step 4       Step 4   Step 6
 ## Usage
 
 **Via BMad Master Agent**:
+
 ```
 BMad Master: *execute-task execute-appydave-workflow
 [User prompted for story number]
@@ -373,6 +399,7 @@ BMad Master: *execute-task execute-appydave-workflow
 ```
 
 **Via BMad Orchestrator**:
+
 ```
 BMad Orchestrator: *execute-task execute-appydave-workflow
 [User prompted for story number]

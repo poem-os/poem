@@ -10,6 +10,7 @@
 ## Why This Matters
 
 Angela needs to know:
+
 - What data sources exist (incident, shift_note, moment, etc.)
 - What fields each data source has
 - Field types and whether they're required
@@ -17,6 +18,7 @@ Angela needs to know:
 - Example values
 
 This enables her to:
+
 - Create simple JSON mapping files herself
 - Write requirements for complex mappers
 - Understand what's possible with each data source
@@ -24,10 +26,12 @@ This enables her to:
 ## Data Sources (To Be Documented)
 
 ### Incident
+
 **Status**: ✅ Documented in template schemas
 **Fields**: See `data/schemas/enhance-narrative-*.json` for current incident fields
 
 Common incident fields:
+
 - `participantName` (string)
 - `eventDateTime` (datetime)
 - `location` (string)
@@ -36,10 +40,12 @@ Common incident fields:
 - `beforeEventQA`, `duringEventQA`, `endEventQA`, `postEventQA` (array)
 
 ### Shift Note
+
 **Status**: ⏳ Needs documentation
 **Fields**: To be documented
 
 Expected fields (based on mapping examples):
+
 - `resident.full_name`
 - `note_category`
 - `priority_level`
@@ -48,10 +54,12 @@ Expected fields (based on mapping examples):
 - `narrative.summary`
 
 ### Moment
+
 **Status**: ⏳ Needs documentation
 **Fields**: To be documented
 
 Expected fields (based on mapping examples):
+
 - `person.first_name`
 - `person.last_name`
 - `person.preferred_name`
@@ -64,6 +72,7 @@ Expected fields (based on mapping examples):
 - `observation_notes`
 
 ### Other Data Sources
+
 **Status**: ⏳ To be identified
 
 ## Ideal Format (Future)
@@ -117,15 +126,15 @@ relationships:
 export const generateDataDictionary = query({
   args: {
     sessionToken: v.string(),
-    dataSources: v.optional(v.array(v.string())) // Optional filter
+    dataSources: v.optional(v.array(v.string())), // Optional filter
   },
   handler: async (ctx, args) => {
     // 1. Verify system admin privileges
     // 2. Read schema.ts definitions
     // 3. Transform to data dictionary format
     // 4. Return structured field definitions
-  }
-})
+  },
+});
 ```
 
 ### Output Format Required
@@ -161,10 +170,12 @@ export const generateDataDictionary = query({
             "question": "string",
             "answer": "string"
           },
-          "example": [{
-            "question": "How did they seem?",
-            "answer": "Tired"
-          }],
+          "example": [
+            {
+              "question": "How did they seem?",
+              "answer": "Tired"
+            }
+          ],
           "path": "beforeEventQA"
         }
       },
@@ -188,6 +199,7 @@ export const generateDataDictionary = query({
 ### Field Information Needed
 
 For each field, export:
+
 1. **type**: `string`, `text`, `number`, `datetime`, `boolean`, `array`, `object`
 2. **required**: Is the field required?
 3. **description**: Human-readable explanation
@@ -211,15 +223,15 @@ For each field, export:
 
 ### Type Mapping (Convex → Data Dictionary)
 
-| Convex Type | Dictionary Type |
-|-------------|-----------------|
-| `v.string()` | `"string"` |
-| `v.number()` | `"number"` |
-| `v.boolean()` | `"boolean"` |
-| `v.array()` | `"array"` |
-| `v.object()` | `"object"` |
-| Custom datetime | `"datetime"` |
-| Long text fields | `"text"` |
+| Convex Type      | Dictionary Type |
+| ---------------- | --------------- |
+| `v.string()`     | `"string"`      |
+| `v.number()`     | `"number"`      |
+| `v.boolean()`    | `"boolean"`     |
+| `v.array()`      | `"array"`       |
+| `v.object()`     | `"object"`      |
+| Custom datetime  | `"datetime"`    |
+| Long text fields | `"text"`        |
 
 ### API Endpoint (Optional)
 
@@ -237,11 +249,13 @@ curl https://app.supportsignal.com.au/api/data-dictionary \
 ### Data Sources to Include
 
 **Required** (current):
+
 - `incident` - NDIS incident reports
 - `shift_note` - Daily shift observations
 - `moment` - Voice recording transcripts
 
 **Optional** (future):
+
 - Any other tables that might be used as prompt data sources
 
 ### Acceptance Criteria
@@ -260,16 +274,19 @@ curl https://app.supportsignal.com.au/api/data-dictionary \
 Once implemented, the Prompts App will use Claude skill "Pull Data Dictionary":
 
 1. **Pull data dictionary**
+
    ```bash
    bunx convex run dataDictionary:generate '{"sessionToken": "xxx"}'
    ```
 
 2. **Save to file**
+
    ```
    Save response to: data/data-dictionary.json
    ```
 
 3. **Git commit**
+
    ```bash
    git add data/data-dictionary.json
    git commit -m "Update data dictionary - 2025-11-18"
@@ -285,6 +302,7 @@ Once implemented, the Prompts App will use Claude skill "Pull Data Dictionary":
 ## Priority
 
 **HIGH** - This is a blocker for:
+
 - Validating schemas in Prompts App
 - Creating accurate mappings
 - Angela understanding available fields

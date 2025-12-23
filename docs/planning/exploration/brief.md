@@ -64,6 +64,7 @@ data/
 ### Claude Agents
 
 Custom agents for prompt management:
+
 - Create new prompts
 - Modify existing templates
 - Update placeholder schemas
@@ -72,11 +73,12 @@ Custom agents for prompt management:
 ### Claude Skills
 
 **Archive Skill**: "Create new version of [prompt]"
+
 - Archives current version to `/archive` folder
 - Makes current version available for editing
 
 **Integration Skill**: "Update main app with [template]"
+
 - Reads template file and schemas
 - Makes API call to main app's Convex endpoint
 - Sends template definition (not execution results)
-

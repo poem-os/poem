@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+.astro/
+
+# Package lock
+package-lock.json
+
+# Handlebars templates with non-HTML placeholders
+# These use <placeholder> syntax that Prettier incorrectly parses as HTML
+data/**/*.hbs

@@ -17,7 +17,7 @@ POEM (Prompt Orchestration and Engineering Method) solves this by providing a Pr
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-11-22 | 0.1 | Initial PRD draft from Project Brief | John (PM Agent) |
-| 2025-12-08 | 1.0 | Complete PRD with 7 Epics, 40 Stories, PM Checklist passed | John (PM Agent) |
+| Date       | Version | Description                                                | Author          |
+| ---------- | ------- | ---------------------------------------------------------- | --------------- |
+| 2025-11-22 | 0.1     | Initial PRD draft from Project Brief                       | John (PM Agent) |
+| 2025-12-08 | 1.0     | Complete PRD with 7 Epics, 40 Stories, PM Checklist passed | John (PM Agent) |

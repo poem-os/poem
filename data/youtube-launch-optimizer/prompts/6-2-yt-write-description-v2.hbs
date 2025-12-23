@@ -1,73 +1,51 @@
-Assemble a complete YouTube video description from pre-generated components.
-
-## Purpose
-
-This is a PURE ASSEMBLY task. All content has already been generated. Arrange the pieces into a well-formatted YouTube description that's ready to paste.
-
-## Output Format: YouTube-Native
-
-YouTube supports limited formatting:
-- `*text*` = bold (single asterisk, NOT double)
-- `# Heading` = large heading
-- `## Heading` = medium heading
-- `- item` = bullet point
-- Raw URLs auto-link
-- Timestamps like `0:00` auto-link to chapters
-
-Output must be ready to paste directly into YouTube. No markdown conversion needed.
-
-## Section Structure
-
-```
-1. First Line (SEO hook + Skool CTA) - already complete
-2. Simple Description - already complete
-3. 👉 Primary CTA (short, punchy)
-4. 🎥 Related Videos
-5. 🔗 Tools & Affiliate Links
-6. 🌐 Connect
-7. ⏱️ Chapters (move to position 7 if >20 chapters)
-8. #Hashtags
-9. Legal disclaimer
-```
-
-**Note**: If chapters exceed 20 lines, place them just above hashtags to keep CTAs visible.
-
-## Formatting Guidelines
-
-- Use emoji headers for scannability
-- Keep CTA format short: `👉 Label: URL`
-- Group all affiliate links under one heading
-- One blank line between sections
-- No horizontal rules or decorative elements
-
-## Inputs
-
-**First Line** (paste at top, already complete):
+Assemble a complete YouTube video description from pre-generated components. ##
+Purpose This is a PURE ASSEMBLY task. All content has already been generated.
+Arrange the pieces into a well-formatted YouTube description that's ready to
+paste. ## Output Format: YouTube-Native YouTube supports limited formatting: -
+`*text*` = bold (single asterisk, NOT double) - `# Heading` = large heading -
+`## Heading` = medium heading - `- item` = bullet point - Raw URLs auto-link -
+Timestamps like `0:00` auto-link to chapters Output must be ready to paste
+directly into YouTube. No markdown conversion needed. ## Section Structure ```
+1. First Line (SEO hook + Skool CTA) - already complete 2. Simple Description -
+already complete 3. 👉 Primary CTA (short, punchy) 4. 🎥 Related Videos 5. 🔗
+Tools & Affiliate Links 6. 🌐 Connect 7. ⏱️ Chapters (move to position 7 if >20
+chapters) 8. #Hashtags 9. Legal disclaimer ``` **Note**: If chapters exceed 20
+lines, place them just above hashtags to keep CTAs visible. ## Formatting
+Guidelines - Use emoji headers for scannability - Keep CTA format short: `👉
+Label: URL` - Group all affiliate links under one heading - One blank line
+between sections - No horizontal rules or decorative elements ## Inputs **First
+Line** (paste at top, already complete):
 {{videoDescriptionFirstLine}}
 
 **Simple Description** (paste after first line):
 {{videoSimpleDescription}}
 
-**Primary CTA**:
-👉 {{brandConfig.ctas.primaryCta.label}}: {{brandConfig.ctas.primaryCta.url}}
+**Primary CTA**: 👉
+{{brandConfig.ctas.primaryCta.label}}:
+{{brandConfig.ctas.primaryCta.url}}
 
 **Related Videos**:
 {{#each relatedVideos}}
-{{title}}: {{url}}
+  {{title}}:
+  {{url}}
 {{/each}}
 
 **Affiliate Links**:
 {{#each brandConfig.affiliates}}
-{{#if active}}
-{{name}}: {{url}}
-{{/if}}
+  {{#if active}}
+    {{name}}:
+    {{url}}
+  {{/if}}
 {{/each}}
 
-**Social Links**:
-Website: {{brandConfig.socialLinks.website}}
-Twitter: {{brandConfig.socialLinks.twitter}}
-YouTube: {{brandConfig.socialLinks.youtubeMain}}
-Community: {{brandConfig.socialLinks.skool}}
+**Social Links**: Website:
+{{brandConfig.socialLinks.website}}
+Twitter:
+{{brandConfig.socialLinks.twitter}}
+YouTube:
+{{brandConfig.socialLinks.youtubeMain}}
+Community:
+{{brandConfig.socialLinks.skool}}
 
 **Chapters**:
 {{createChapters}}
@@ -78,6 +56,5 @@ Community: {{brandConfig.socialLinks.skool}}
 **Legal Disclaimer**:
 {{brandConfig.descriptionTemplate.legalDisclosure}}
 
-## Output
-
-Return the complete YouTube description as plain text with YouTube-native formatting. Ready to paste directly into YouTube.
+## Output Return the complete YouTube description as plain text with
+YouTube-native formatting. Ready to paste directly into YouTube.

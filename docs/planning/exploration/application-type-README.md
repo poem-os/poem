@@ -7,9 +7,11 @@
 ## Quick Navigation
 
 ### 🎯 Current Thinking (Start Here)
+
 **[current-thinking-prompt-os.md](./current-thinking-prompt-os.md)** - We're building a **Prompt Engineering Operating System** that runs on Claude Code
 
 **Key insights**:
+
 - Not a web app, not a CLI tool, not a traditional application
 - Similar to how BMAD is a "Software Development OS" on Claude Code
 - Orchestrates agents/skills to build, test, validate, and deploy prompts
@@ -22,6 +24,7 @@
 ## Documents
 
 ### Current Thinking (2025-11-18) - **START HERE**
+
 **[current-thinking-prompt-os.md](./current-thinking-prompt-os.md)**
 
 Breakthrough session exploring OS/kernel analogies and BMAD parallels.
@@ -29,6 +32,7 @@ Breakthrough session exploring OS/kernel analogies and BMAD parallels.
 **What changed**: Realized we're building an OPERATING SYSTEM for prompt engineering, not a traditional application.
 
 **Key concepts**:
+
 - Claude Code = OS (platform layer)
 - BMAD = Application OS (orchestration framework)
 - Our system = Prompt Engineering OS (domain-specific orchestration)
@@ -39,6 +43,7 @@ Breakthrough session exploring OS/kernel analogies and BMAD parallels.
 ---
 
 ### Earlier Exploration (2025-11-18) - Historical
+
 **[exploration-conventional-types.md](./exploration-conventional-types.md)**
 
 Early exploration analyzing conventional application architectures (Web, Mobile, CLI, Agent Orchestration).
@@ -48,12 +53,14 @@ Early exploration analyzing conventional application architectures (Web, Mobile,
 **Useful as background**, but current thinking has moved beyond this.
 
 **What we learned**:
+
 - Not Type A (Web app) - no backend, no database, no CRUD
 - Not Type B (Mobile) - no mobile components
 - Not Type C (CLI) - has Astro visualization
 - Partially Type D (Agent Orchestration) - but not complete understanding
 
 **Content in this document**:
+
 - Three feature-based interpretations (Template Library, Engineering Workbench, Transformation Pipeline)
 - Initial BMAD similarity observations
 - Hybrid nature analysis (60% orchestration, 30% web, 10% integration)
@@ -75,6 +82,7 @@ Early exploration analyzing conventional application architectures (Web, Mobile,
 ## Open Questions (For Next Session)
 
 See the "Open Questions" section in current-thinking-prompt-os.md for current unknowns:
+
 - File system structure (core vs target)
 - Number of actual agents vs skills/sub-agents
 - Core workflows
@@ -88,6 +96,7 @@ See the "Open Questions" section in current-thinking-prompt-os.md for current un
 When you open a fresh Claude conversation and ask "what were we working on related to the new prompt operating system?", read **current-thinking-prompt-os.md** first. It contains everything from the breakthrough session.
 
 The key is understanding:
+
 1. **The analogy**: Claude Code (OS) → BMAD (Application OS) → Our system (Prompt Engineering OS)
 2. **The parallel**: Just like BMAD orchestrates agents to build software, we orchestrate to build prompts
 3. **The distinction**: Core (the OS itself) vs Target (the prompts/schemas we manage)

@@ -12,6 +12,7 @@
 The YouTube Launch Optimizer is a multi-prompt workflow that transforms a raw video transcript into complete YouTube launch assets: titles, descriptions, chapters, thumbnails, tags, and social posts.
 
 **Key characteristics that make this ideal for POEM validation:**
+
 - 50+ Handlebars prompt templates
 - 11 logical sections with dependencies
 - Progressive data accumulation (37 workflow-data fields)
@@ -25,19 +26,19 @@ The YouTube Launch Optimizer is a multi-prompt workflow that transforms a raw vi
 
 ### Section Overview
 
-| Section | Name | Prompts | Purpose |
-|---------|------|---------|---------|
-| 1 | Initial Processing | 7 | Configure, titles, summary, abridge, QA |
-| 2 | Chapters | 3 | Identify, refine, create chapters with timestamps |
-| 3 | Design Briefs | 4 | Editor instructions (deprecated - skipped) |
-| 4 | Content Analysis | 3 | Extract essence, audience insights, competitor CTAs |
-| 5 | Titles & Thumbnails | 5 | Generate titles, human curation, thumbnail text |
-| 6 | Description | 4 | Simple description, full assembly, formatting |
-| 7 | Social | 3 | Tweet, LinkedIn, video list |
-| 8 | Shorts | 4 | Context, title, description, tweet for shorts |
-| 9 | YouTube Defaults | 3 | Playlists, tags, related videos |
-| 10 | Segment Extract | 4 | Extract intro, outro, CTAs, breakouts |
-| 11 | Segment Analysis | 4 | Analyze extracted segments |
+| Section | Name                | Prompts | Purpose                                             |
+| ------- | ------------------- | ------- | --------------------------------------------------- |
+| 1       | Initial Processing  | 7       | Configure, titles, summary, abridge, QA             |
+| 2       | Chapters            | 3       | Identify, refine, create chapters with timestamps   |
+| 3       | Design Briefs       | 4       | Editor instructions (deprecated - skipped)          |
+| 4       | Content Analysis    | 3       | Extract essence, audience insights, competitor CTAs |
+| 5       | Titles & Thumbnails | 5       | Generate titles, human curation, thumbnail text     |
+| 6       | Description         | 4       | Simple description, full assembly, formatting       |
+| 7       | Social              | 3       | Tweet, LinkedIn, video list                         |
+| 8       | Shorts              | 4       | Context, title, description, tweet for shorts       |
+| 9       | YouTube Defaults    | 3       | Playlists, tags, related videos                     |
+| 10      | Segment Extract     | 4       | Extract intro, outro, CTAs, breakouts               |
+| 11      | Segment Analysis    | 4       | Analyze extracted segments                          |
 
 ### Data Flow Diagram
 
@@ -141,9 +142,11 @@ prompts/
 Based on scouting this workflow, here's what the POEM system needs to handle:
 
 ### 1. Template Chaining
+
 Output from Prompt A becomes input for Prompt B.
 
 **Example chain:**
+
 ```
 1-4-abridge.hbs → transcriptAbridgement
                         ↓
@@ -157,9 +160,11 @@ Output from Prompt A becomes input for Prompt B.
 ```
 
 ### 2. Schema Extraction from Templates
+
 Each `.hbs` file has Handlebars placeholders that define required inputs.
 
 **Example from 6-1-yt-simple-description-v2.hbs:**
+
 ```handlebars
 {{selectedTitles.[0]}}
 {{foldCta.label}}: {{foldCta.url}}
@@ -172,51 +177,56 @@ Each `.hbs` file has Handlebars placeholders that define required inputs.
 POEM should extract these as a schema and validate data availability.
 
 ### 3. Mock Data Generation
+
 Each prompt should be testable independently without real transcripts.
 
 **Use case:** Test 5-1-generate-title.hbs with mock `transcriptAbridgement` and `analyzeContentEssence` data to validate title generation quality.
 
 ### 4. Progressive Data Accumulation
+
 workflow-data.json grows as prompts execute:
 
-| After Section | Fields Added |
-|---------------|--------------|
-| 1 | projectCode, shortTitle, titleIdeas, transcriptSummary, transcriptAbridgement |
-| 2 | identifyChapters, refineChapters, createChapters |
-| 4 | analyzeContentEssence, analyzeAudienceEngagement, analyzeCtaCompetitors |
-| 5 | generate_title_v1/v2, selectedTitles, thumbnailText |
-| 6 | videoSimpleDescription, videoDescriptionFirstLine, videoFullDescription |
-| 10-11 | videoIntroExtract, videoOutroExtract, videoCta/BreakoutExtract, *Analysis |
+| After Section | Fields Added                                                                  |
+| ------------- | ----------------------------------------------------------------------------- |
+| 1             | projectCode, shortTitle, titleIdeas, transcriptSummary, transcriptAbridgement |
+| 2             | identifyChapters, refineChapters, createChapters                              |
+| 4             | analyzeContentEssence, analyzeAudienceEngagement, analyzeCtaCompetitors       |
+| 5             | generate_title_v1/v2, selectedTitles, thumbnailText                           |
+| 6             | videoSimpleDescription, videoDescriptionFirstLine, videoFullDescription       |
+| 10-11         | videoIntroExtract, videoOutroExtract, videoCta/BreakoutExtract, \*Analysis    |
 
 ### 5. Handlebars Helpers Needed
+
 Real formatting needs discovered:
 
-| Helper | Purpose | Example |
-|--------|---------|---------|
-| `gt` | Greater than comparison | `{{#if (gt chapters.length 20)}}` |
-| `formatTimestamp` | MM:SS format | `{{formatTimestamp seconds}}` |
-| `truncate` | Character limit | `{{truncate title 49}}` |
-| `join` | Array to string | `{{join keywords ", "}}` |
+| Helper            | Purpose                 | Example                           |
+| ----------------- | ----------------------- | --------------------------------- |
+| `gt`              | Greater than comparison | `{{#if (gt chapters.length 20)}}` |
+| `formatTimestamp` | MM:SS format            | `{{formatTimestamp seconds}}`     |
+| `truncate`        | Character limit         | `{{truncate title 49}}`           |
+| `join`            | Array to string         | `{{join keywords ", "}}`          |
 
 ### 6. Human-in-the-Loop Patterns
+
 Several prompts require human curation, not automation:
 
-| Prompt | Pattern | Why |
-|--------|---------|-----|
-| 5-2-select-title-shortlist | Flexible Selection | Creative decision needs human taste |
-| 1-2-title-shortlist | Review & Approve | Initial titles need validation |
-| 2-2-refine-chapters | Correction/Refinement | AI gets ~44% timestamp accuracy |
+| Prompt                     | Pattern               | Why                                 |
+| -------------------------- | --------------------- | ----------------------------------- |
+| 5-2-select-title-shortlist | Flexible Selection    | Creative decision needs human taste |
+| 1-2-title-shortlist        | Review & Approve      | Initial titles need validation      |
+| 2-2-refine-chapters        | Correction/Refinement | AI gets ~44% timestamp accuracy     |
 
 ### 7. Platform-Specific Constraints
+
 YouTube has specific rules that prompts encode:
 
-| Constraint | Value | Prompt |
-|------------|-------|--------|
-| Chapter title max | 49 chars | 2-2-refine-chapters |
-| Title optimal | 40-50 chars | 5-1-generate-title |
-| Thumbnail text | ≤20 chars | 5-3-generate-thumbnail-text |
-| Description visible | ~150 chars | 6-1 (above fold) |
-| Description max | 5000 chars | 6-2 |
+| Constraint          | Value       | Prompt                      |
+| ------------------- | ----------- | --------------------------- |
+| Chapter title max   | 49 chars    | 2-2-refine-chapters         |
+| Title optimal       | 40-50 chars | 5-1-generate-title          |
+| Thumbnail text      | ≤20 chars   | 5-3-generate-thumbnail-text |
+| Description visible | ~150 chars  | 6-1 (above fold)            |
+| Description max     | 5000 chars  | 6-2                         |
 
 ---
 
@@ -244,14 +254,14 @@ YouTube has specific rules that prompts encode:
 
 ### Prompt Types Identified
 
-| Type | Purpose | Data Shape |
-|------|---------|------------|
-| Predicate | Yes/no check | Boolean |
-| Extraction | Pull specific value | String, number |
-| List | Extract multiple items | Array, CSV |
-| Categorization | Group by type | Keyed object |
-| Observation | Note patterns | Prose |
-| Transformation | Convert format | Varies |
+| Type           | Purpose                | Data Shape     |
+| -------------- | ---------------------- | -------------- |
+| Predicate      | Yes/no check           | Boolean        |
+| Extraction     | Pull specific value    | String, number |
+| List           | Extract multiple items | Array, CSV     |
+| Categorization | Group by type          | Keyed object   |
+| Observation    | Note patterns          | Prose          |
+| Transformation | Convert format         | Varies         |
 
 ### Software Architecture Principles Applied
 
@@ -321,6 +331,7 @@ YouTube has specific rules that prompts encode:
 ## Files Reference
 
 ### In POEM Repository
+
 ```
 /Users/davidcruwys/dev/ad/poem-os/poem/data/youtube-launch-optimizer/
 ├── prompts/           # 53 Handlebars templates
@@ -330,6 +341,7 @@ YouTube has specific rules that prompts encode:
 ```
 
 ### Scouting Analysis (b64 video)
+
 ```
 /Users/davidcruwys/dev/video-projects/v-appydave/b64-bmad-claude-sdk/launch-optimizer/
 ├── workflow-data.json      # All 37 output fields
@@ -378,6 +390,7 @@ Using this as Epic 4's validation target ensures POEM is tested against non-triv
 ---
 
 **Related Documents:**
+
 - `tips-for-paige.md` - Full prompt engineering knowledge base (27 principles)
 - `scout-agent.md` - Scout agent definition with pattern checklist
 - Individual section analysis files (`1-1-configure.md`, etc.)

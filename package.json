@@ -1,0 +1,36 @@
+{
+  "name": "poem-os",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "POEM - Prompt Orchestration and Engineering Method",
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "dev": "npm run dev --workspace=@poem-os/app"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "eslint": "^9.0.0",
+    "prettier": "^3.7.0",
+    "typescript": "^5.9.0",
+    "typescript-eslint": "^8.50.1"
+  },
+  "keywords": [
+    "prompt-engineering",
+    "ai",
+    "llm",
+    "handlebars",
+    "mock-data"
+  ],
+  "author": "AppyDave",
+  "license": "MIT"
+}

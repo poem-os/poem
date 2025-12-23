@@ -58,6 +58,7 @@ STATIC DEFINITION                    DYNAMIC EXECUTION
 | description | string | Human-readable purpose | "Optimizes video launch..." |
 
 **Relationships:**
+
 - Has many sections (1:N)
 - Has many attributes (1:N)
 - Has many prompts (1:N)
@@ -65,6 +66,7 @@ STATIC DEFINITION                    DYNAMIC EXECUTION
 - Has many workflow_runs (1:N)
 
 **Example Workflows:**
+
 - YouTube Video Script
 - YouTube Title Creator
 - YouTube Transcription to Medium Article
@@ -87,11 +89,13 @@ STATIC DEFINITION                    DYNAMIC EXECUTION
 | order | integer | Execution order | 1 |
 
 **Relationships:**
+
 - Belongs to workflow (N:1)
 - Has many steps (1:N)
 - Has many section_runs (1:N)
 
 **Example Sections (Launch Optimizer):**
+
 1. Video Preparation (6 steps)
 2. Build Chapters (3 steps)
 3. B-Roll Suggestions (4 steps)
@@ -119,12 +123,14 @@ STATIC DEFINITION                    DYNAMIC EXECUTION
 | prompt | string | Template string for prompt | [transcript] |
 
 **Relationships:**
+
 - Belongs to section (N:1)
 - Has many input_attributes (1:N)
 - Has many output_attributes (1:N)
 - Has many step_runs (1:N)
 
 **Example Steps (Video Preparation section):**
+
 1. Configure - Initial setup
 2. Script Summary - Condense transcript
 3. Script Abridgement - Further condensation
@@ -149,12 +155,14 @@ STATIC DEFINITION                    DYNAMIC EXECUTION
 | description | string | Purpose | "Condensed transcript" |
 
 **Relationships:**
+
 - Belongs to workflow (N:1)
 - Has many input_attributes (1:N) - maps to steps
 - Has many output_attributes (1:N) - maps to steps
 - Has many attribute_values (1:N) - runtime instances
 
 **Example Attributes (Launch Optimizer):**
+
 - `transcript` - Full video transcript (string)
 - `transcript_summary` - Condensed version (string)
 - `title_ideas` - Potential titles (array)
@@ -162,6 +170,7 @@ STATIC DEFINITION                    DYNAMIC EXECUTION
 - `chapters` - Timestamp markers (string)
 
 **Key Concept:**
+
 - Attributes are **definitions** (no value)
 - Attribute Values are **runtime data** (with values)
 
@@ -187,10 +196,12 @@ STATIC DEFINITION                    DYNAMIC EXECUTION
 | attribute_id | integer | Foreign key to attribute |
 
 **Relationships:**
+
 - Belongs to step (N:1)
 - Belongs to attribute (N:1)
 
 **Example Flow:**
+
 ```
 Step: Script Summary
   Input: transcript (required)
@@ -220,22 +231,26 @@ Step: Script Abridgement
 | description | string | Purpose | "Condense transcript" |
 
 **Relationships:**
+
 - Belongs to workflow (N:1)
 - Referenced by steps (1:N)
 
 **Storage Strategies:**
 
 **Strategy A: External Files**
+
 ```
 prompts/youtube/launch_optimizer/
 ├── 1-1-short-title.txt
 ├── 1-1-summarize-video.txt
 └── 5-1-generate-title.txt
 ```
+
 - Pro: Version control, easy editing
 - Con: File management complexity
 
 **Strategy B: Embedded**
+
 ```json
 {
   "prompts": {
@@ -246,10 +261,12 @@ prompts/youtube/launch_optimizer/
   }
 }
 ```
+
 - Pro: Self-contained, portable
 - Con: Harder to edit, duplication
 
 **Strategy C: Database**
+
 ```sql
 CREATE TABLE prompts (
   id INTEGER,
@@ -257,6 +274,7 @@ CREATE TABLE prompts (
   content TEXT
 );
 ```
+
 - Pro: Reusable across workflows, queryable
 - Con: Requires database, more setup
 
@@ -278,9 +296,11 @@ CREATE TABLE prompts (
 | description | string | Purpose | "Default language model" |
 
 **Relationships:**
+
 - Belongs to workflow (N:1)
 
 **Example Settings:**
+
 ```yaml
 settings:
   prompt_path: "/path/to/prompts/youtube/launch_optimizer"
@@ -306,15 +326,18 @@ settings:
 | status | string | Running/completed/failed | completed |
 
 **Relationships:**
+
 - Belongs to workflow (N:1)
 - Has many section_runs (1:N)
 
 **Purpose:**
+
 - Track multiple executions of same workflow
 - Enable parallel runs
 - Historical record
 
 **Example:**
+
 ```
 Workflow: youtube_launch_optimizer
   Run #42: b62-remotion-overview (completed)
@@ -338,6 +361,7 @@ Workflow: youtube_launch_optimizer
 | status | string | Running/completed/failed |
 
 **Relationships:**
+
 - Belongs to workflow_run (N:1)
 - Belongs to section (N:1)
 - Has many step_runs (1:N)
@@ -360,11 +384,13 @@ Workflow: youtube_launch_optimizer
 | completed_at | datetime | End time |
 
 **Relationships:**
+
 - Belongs to section_run (N:1)
 - Belongs to step (N:1)
 - Has many attribute_values (1:N)
 
 **Branch Number Concept:**
+
 ```
 Step: Generate Titles
   Branch 1: Temperature 0.7 → ["Title A1", "Title A2"]
@@ -389,10 +415,12 @@ Allows A/B testing, experimentation, multiple attempts.
 | value | text | Actual runtime value | "This is a transcript..." |
 
 **Relationships:**
+
 - Belongs to attribute (N:1)
 - Belongs to step_run (N:1)
 
 **Example Values:**
+
 ```json
 {
   "attribute": "transcript",
@@ -457,6 +485,7 @@ Section 2: Build Chapters
 ### Strategy A: Embedded (JSON Export)
 
 **Format:**
+
 ```json
 {
   "workflow": "youtube_launch_optimizer",
@@ -469,17 +498,20 @@ Section 2: Build Chapters
 ```
 
 **Use Cases:**
+
 - Version control
 - Sharing workflows
 - Portability
 - Static website generation
 
 **Benefits:**
+
 - Self-contained
 - Easy to distribute
 - No database required
 
 **Drawbacks:**
+
 - Duplication if prompts reused
 - Harder to query
 - Large file sizes
@@ -489,6 +521,7 @@ Section 2: Build Chapters
 ### Strategy B: Normalized (Database)
 
 **Format:**
+
 ```sql
 workflows table
 sections table (FK: workflow_id)
@@ -500,18 +533,21 @@ settings table (FK: workflow_id)
 ```
 
 **Use Cases:**
+
 - Complex queries
 - Multiple workflows
 - Reusable components
 - Execution tracking
 
 **Benefits:**
+
 - No duplication
 - Relational integrity
 - Efficient queries
 - Scalable
 
 **Drawbacks:**
+
 - Requires database
 - Setup complexity
 - Not as portable
@@ -521,6 +557,7 @@ settings table (FK: workflow_id)
 ### Strategy C: Hybrid (AWB Approach)
 
 **Format:**
+
 1. Define workflow in Ruby DSL
 2. Load prompts from external .txt files
 3. Export to JSON (embedded)
@@ -528,11 +565,13 @@ settings table (FK: workflow_id)
 5. Generate HTML from either
 
 **Benefits:**
+
 - Best of both worlds
 - Flexible storage
 - Multiple export formats
 
 **Drawbacks:**
+
 - More complex
 - Multiple sources of truth
 - Sync challenges
@@ -544,16 +583,19 @@ settings table (FK: workflow_id)
 ### Issue 1: Prompts & Settings Tables Undocumented
 
 **Problem:**
+
 - `create_schema.rb` defines `prompts` and `settings` tables
 - `requirements.md` does NOT document these
 - Created gap between code and documentation
 
 **Impact:**
+
 - Developers don't know these tables exist
 - May not use them correctly
 - Inconsistent with embedded strategy
 
 **Resolution:**
+
 - Document in requirements.md
 - Clarify when to use tables vs embedded
 - Update ERD diagram
@@ -563,16 +605,18 @@ settings table (FK: workflow_id)
 ### Issue 2: Attribute Value Conflation
 
 **Problem:**
+
 ```typescript
 // types.ts - INCORRECT
 interface Attribute {
   name: string;
   type: string;
-  value: string | null;  // ← Mixes definition with runtime
+  value: string | null; // ← Mixes definition with runtime
 }
 ```
 
 **Correct Approach:**
+
 ```typescript
 // Separate definition from runtime
 interface Attribute {
@@ -589,11 +633,13 @@ interface AttributeValue {
 ```
 
 **Impact:**
+
 - Frontend may try to store values in wrong place
 - Confusion about where data lives
 - Can't track multiple values for same attribute
 
 **Resolution:**
+
 - Remove `value` from Attribute interface
 - Add AttributeValue interface
 - Update UI to use correct model
@@ -603,6 +649,7 @@ interface AttributeValue {
 ### Issue 3: Missing Runtime Interfaces (types.ts)
 
 **Problem:**
+
 - `types.ts` has no interfaces for:
   - WorkflowRun
   - SectionRun
@@ -610,11 +657,13 @@ interface AttributeValue {
   - AttributeValue
 
 **Impact:**
+
 - Frontend can't track execution state
 - No way to display progress
 - Can't implement resume functionality
 
 **Resolution:**
+
 - Add runtime interfaces to types.ts
 - Or clarify types.ts is static-only
 - Document scope limitation

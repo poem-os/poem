@@ -9,9 +9,11 @@
 ## Three Agents Confirmed (Fourth Under Consideration)
 
 ### 1. **Prompt Engineer Agent**
+
 **Goal**: Create, refine, validate prompts using POEM principles
 
 **Skills**:
+
 - Check My Prompt
 - Preview with Example Data
 - Generate Placeholder Schema
@@ -25,9 +27,11 @@
 ---
 
 ### 2. **System Agent**
+
 **Goal**: Maintain systems like Astro and Handlebars
 
 **Skills**:
+
 - Create Helper (generates code in `.poem-app/src/services/handlebars/helpers/`)
 - Register Helper (calls Astro API to load it)
 - Test Prompt (renders with sample data)
@@ -39,6 +43,7 @@
 **Works with**: `.poem-app/` (Astro, Handlebars, APIs)
 
 **Why separate agent**:
+
 - Different domain (system maintenance vs content creation)
 - Different mindset for Angela ("maintaining the system" vs "creating prompts")
 - Clear boundary (System infrastructure vs prompt content)
@@ -46,9 +51,11 @@
 ---
 
 ### 3. **Integration Agent**
+
 **Goal**: Integrate with external systems (SupportSignal, future providers)
 
 **Skills**:
+
 - Pull Data Dictionary (from provider)
 - Publish Prompt (to provider)
 - Test Connection (verify provider works)
@@ -57,6 +64,7 @@
 **Works with**: Astro Provider APIs (`/api/providers/[name]`)
 
 **Why separate**:
+
 - External boundaries (not POEM internals)
 - Could fail (network, auth, API changes)
 - Provider-specific logic
@@ -70,12 +78,14 @@
 ### Current Names
 
 **Agent 1: Prompt Engineer** ✅
+
 - **Status**: Confirmed
 - **Function**: Creates, refines, validates prompts
 - **Domain**: Content (prompts, schemas, mappings)
 - **Why this name**: Clear function focus, describes what Angela does most
 
 **Agent 2: System Agent** ✅
+
 - **Status**: Confirmed
 - **Function**: Maintains systems like Astro and Handlebars
 - **Domain**: System infrastructure (helpers, APIs, server management)
@@ -87,6 +97,7 @@
   - Infrastructure Agent - Manages infrastructure
 
 **Agent 3: Integration Agent** ✅
+
 - **Status**: Confirmed
 - **Function**: Integrates with external systems
 - **Domain**: External boundaries (providers, data dictionary, publishing)
@@ -102,6 +113,7 @@
 ### Capabilities by Agent
 
 **Prompt Engineer**:
+
 - Create/edit prompts
 - Generate schemas
 - Map fields
@@ -110,6 +122,7 @@
 - Preview/test with data
 
 **System Agent**:
+
 - Create Handlebars helpers
 - Test/register helpers
 - Manage Astro server
@@ -118,6 +131,7 @@
 - Configure infrastructure
 
 **Integration Agent**:
+
 - Connect to providers (SupportSignal/Convex, future)
 - Pull data dictionary from external systems
 - Publish prompts to external systems
@@ -133,12 +147,14 @@
 **Answer**: Visualization is a **skill**, not an agent role.
 
 **Reasoning**:
+
 - Any agent can view the Astro dashboard when needed
 - Opening a browser to `localhost:4321` is a simple action, not a complex role
 - All agents might need to see prompt lists, schemas, or validation results
 - No orchestration or decision-making required - just "show me the data"
 
 **How it works**:
+
 - **Skill**: "Open Dashboard" or "View Prompt List"
 - **Action**: Launch browser to configured Astro URL
 - **Available to**: All agents (no ownership)
@@ -164,11 +180,13 @@
 **Potential: Data/Testing Agent**
 
 ### Purpose
+
 Generate mock data, validate schemas, test workflows, manage mock data ecosystem
 
 ### Current Thinking (Updated with Level 2 Mock Data Insights)
 
 **Why it's LIKELY needed** (stronger case now):
+
 - **Mock data is complex**: Not just "generate random name" but manage entire ecosystem
   - Hand-crafted scenarios with backstories
   - Anonymize production data (export → anonymize → store)
@@ -180,6 +198,7 @@ Generate mock data, validate schemas, test workflows, manage mock data ecosystem
 - **Substantial orchestration**: This is significant work beyond simple skills
 
 ### Responsibilities (if created)
+
 - **Mock Data Generation**: Hand-craft, anonymize, AI-generate scenarios
 - **Entity Management**: Maintain persistent mock participants, staff, locations
 - **Workflow Testing**: Test multi-prompt pipelines with realistic data
@@ -188,6 +207,7 @@ Generate mock data, validate schemas, test workflows, manage mock data ecosystem
 - **Validation**: Ensure mock data meets schema requirements
 
 ### Implementation Considerations
+
 - **Anonymization**: Use libraries (Faker.js) + coded logic (not LLM-heavy)
   - Could be Astro API endpoint: `/api/mock-data/anonymize`
   - Or Claude Skill (if not too complex)
@@ -198,6 +218,7 @@ Generate mock data, validate schemas, test workflows, manage mock data ecosystem
   - Create realistic mock data repositories
 
 ### Decision
+
 **Status**: TBD - but Level 2 mock data vision makes this agent much more likely
 
 **See**: [mock-data.md](./mock-data.md) for complete Level 2 mock data architecture
@@ -214,6 +235,7 @@ When Angela (or any user) works with POEM:
 4. **Agents are personas/contexts**, not hard boundaries
 
 **Example workflow**:
+
 ```
 User: "I want to create a new prompt for incident classification"
 → Claude suggests: Prompt Engineer Agent
@@ -231,6 +253,7 @@ User: "Publish this to SupportSignal"
 ---
 
 **See also**:
+
 - [skills.md](./skills.md) - Detailed skill specifications
 - [workflows.md](./workflows.md) - How agents work together in workflows
 - [structure.md](./structure.md) - System architecture and folder structure

@@ -1,46 +1,19 @@
-You are extracting all calls to action (CTAs) from a video transcript.
-
-## Transcript
+You are extracting all calls to action (CTAs) from a video transcript. ##
+Transcript
 
 <transcript>
-{{transcript}}
+  {{transcript}}
 </transcript>
 
-## What is a CTA?
-
-A call to action is any request or prompt for the viewer to do something:
-- Subscribe, like, comment
-- Visit a link (community, repository, website)
-- Watch another video
-- Join a community
-- Check the description
-
-## Output Format
-
-```json
-{
-  "items": [
-    { "text": "...", "position": "intro" },
-    { "text": "...", "position": "early" },
-    { "text": "...", "position": "middle" },
-    { "text": "...", "position": "late" },
-    { "text": "...", "position": "outro" }
-  ]
-}
-```
-
-## Position Guide
-
-| Position | Where in Video |
-|----------|---------------|
-| intro | In the opening section before main content |
-| early | First third of main content |
-| middle | Middle third of main content |
-| late | Final third of main content |
-| outro | In the closing section |
-
-## Notes
-
-- Extract the actual text, not a paraphrase
-- Include ALL CTAs regardless of position
-- Do not classify the CTA type (community/video/subscribe) - that's for later analysis
+## What is a CTA? A call to action is any request or prompt for the viewer to do
+something: - Subscribe, like, comment - Visit a link (community, repository,
+website) - Watch another video - Join a community - Check the description ##
+Output Format ```json { "items": [ { "text": "...", "position": "intro" }, {
+"text": "...", "position": "early" }, { "text": "...", "position": "middle" }, {
+"text": "...", "position": "late" }, { "text": "...", "position": "outro" } ] }
+``` ## Position Guide | Position | Where in Video | |----------|---------------|
+| intro | In the opening section before main content | | early | First third of
+main content | | middle | Middle third of main content | | late | Final third of
+main content | | outro | In the closing section | ## Notes - Extract the actual
+text, not a paraphrase - Include ALL CTAs regardless of position - Do not
+classify the CTA type (community/video/subscribe) - that's for later analysis

@@ -1,6 +1,6 @@
 # POEM - Prompt Orchestration and Engineering Method
 
-> *Poetry in Prompt Engineering*
+> _Poetry in Prompt Engineering_
 
 **POEM** is a Prompt Engineering Operating System designed for systematic creation, testing, and deployment of AI prompts with schemas, templates, and mock data generation.
 
@@ -28,6 +28,38 @@ POEM provides a structured framework for:
 - **Prompt Engineers** building systematic AI workflows
 - **Teams** developing AI-powered applications
 - **Anyone** needing reproducible prompt development and deployment
+
+## Development Setup
+
+```bash
+# Clone and install
+git clone https://github.com/poem-os/poem.git
+cd poem
+npm install
+
+# Start development server
+npm run dev
+
+# Run tests
+npm test
+
+# Lint and format
+npm run lint
+npm run format
+```
+
+## Project Structure
+
+```
+poem-os/
+├── packages/
+│   ├── poem-core/          # Framework (agents, workflows, skills)
+│   └── poem-app/           # Runtime (Astro server, APIs)
+├── docs/                   # Documentation
+├── data/                   # Example data
+├── package.json            # Monorepo root
+└── tsconfig.json           # Shared TypeScript config
+```
 
 ## Architecture
 
@@ -68,4 +100,4 @@ MIT License - see [LICENSE](LICENSE) for details
 
 ---
 
-**Tagline**: *Compose. Test. Refine. Deploy.*
+**Tagline**: _Compose. Test. Refine. Deploy._

@@ -36,6 +36,7 @@ This is a **companion application** to the main SupportSignal app:
 **Why Separate?**
 
 Prompt management was slowing down main app development and isn't a core customer requirement. By separating it:
+
 - Main app team focuses on customer-facing features
 - Prompt engineering happens independently
 - We might bring pieces back to main app later

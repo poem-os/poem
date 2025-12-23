@@ -7,6 +7,7 @@ POEM's data models are primarily **file-based documents**, not database entities
 **Purpose:** Handlebars template file containing an AI prompt with data placeholders.
 
 **Key Attributes:**
+
 - `path`: string - File path relative to `/poem/prompts/`
 - `content`: string - Handlebars template content
 - `placeholders`: string[] - Extracted placeholder names
@@ -36,7 +37,7 @@ interface PlaceholderInfo {
   path: string;
 
   /** Inferred type from usage */
-  inferredType: 'string' | 'number' | 'boolean' | 'array' | 'object';
+  inferredType: "string" | "number" | "boolean" | "array" | "object";
 
   /** Is inside #each block */
   isArrayItem: boolean;
@@ -47,6 +48,7 @@ interface PlaceholderInfo {
 ```
 
 **Relationships:**
+
 - Has one optional Schema (validation)
 - May reference many Helpers
 - May be part of a Workflow chain
@@ -58,6 +60,7 @@ interface PlaceholderInfo {
 **Purpose:** JSON document defining the data structure required by a prompt template.
 
 **Key Attributes:**
+
 - `path`: string - File path relative to `/poem/schemas/`
 - `fields`: Field[] - Schema field definitions
 - `version`: string - Schema version for evolution
@@ -82,7 +85,7 @@ interface SchemaField {
   name: string;
 
   /** Field type */
-  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
+  type: "string" | "number" | "boolean" | "array" | "object";
 
   /** Is field required */
   required: boolean;
@@ -121,6 +124,7 @@ interface FieldConstraints {
 ```
 
 **Relationships:**
+
 - Belongs to one or more PromptTemplates
 - Used by MockDataGenerator
 - May reference a DataDictionary for validation
@@ -132,6 +136,7 @@ interface FieldConstraints {
 **Purpose:** Runtime state that accumulates as prompts execute in a chain.
 
 **Key Attributes:**
+
 - `id`: string - Workflow execution identifier
 - `templateChain`: string[] - Ordered list of executed templates
 - `data`: Record - Accumulated field values
@@ -177,7 +182,7 @@ interface CheckpointInfo {
   templatePath: string;
 
   /** Type of input needed */
-  inputType: 'selection' | 'freeform' | 'approval';
+  inputType: "selection" | "freeform" | "approval";
 
   /** Options for selection type */
   options?: string[];
@@ -188,6 +193,7 @@ interface CheckpointInfo {
 ```
 
 **Relationships:**
+
 - References multiple PromptTemplates (chain)
 - Persisted to `/poem/workflow-data/` during execution
 
@@ -198,6 +204,7 @@ interface CheckpointInfo {
 **Purpose:** Configuration for external system integration.
 
 **Key Attributes:**
+
 - `name`: string - Provider identifier
 - `type`: string - Provider type (e.g., 'convex', 'supabase')
 - `endpoints`: Record - API endpoint configuration
@@ -208,7 +215,7 @@ interface ProviderConfig {
   name: string;
 
   /** Provider type */
-  type: 'convex' | 'supabase' | 'custom';
+  type: "convex" | "supabase" | "custom";
 
   /** Base URL for API calls */
   baseUrl: string;
@@ -225,7 +232,7 @@ interface ProviderConfig {
 
 interface ProviderAuth {
   /** Auth type */
-  type: 'bearer' | 'api-key' | 'basic' | 'none';
+  type: "bearer" | "api-key" | "basic" | "none";
 
   /** Environment variable containing credential */
   envVar?: string;
@@ -247,6 +254,7 @@ interface ProviderEndpoints {
 ```
 
 **Relationships:**
+
 - Used by Integration Agent
 - Stored in `/poem/config/providers/`
 
@@ -293,6 +301,7 @@ interface DictionaryField {
 ```
 
 **Relationships:**
+
 - Pulled from Provider
 - Used for schema validation
 - Stored in `/poem/schemas/dictionaries/`
