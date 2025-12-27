@@ -28,5 +28,14 @@ export default tseslint.config(
         process: "readonly",
       },
     },
+  },
+  {
+    files: ["bin/**/*.js"],
+    languageOptions: {
+      globals: {
+        process: "readonly",
+        console: "readonly",
+      },
+    },
   }
 );
