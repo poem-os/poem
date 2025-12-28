@@ -12,6 +12,9 @@ yarn-error.log*
 dist/
 build/
 
+# Astro
+.astro/
+
 # IDE
 .vscode/
 .idea/
