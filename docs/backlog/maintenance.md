@@ -32,6 +32,7 @@
 
 - [ ] Fix unused `_context` param warning in `packages/poem-app/src/pages/api/health.ts`
 - [ ] Production build fails - needs Astro adapter (discovered Story 2.1, deferred)
+- [ ] NFR2 test flaky - server startup sometimes exceeds 3s under load (increase threshold or add retry)
 
 ### Documentation
 
