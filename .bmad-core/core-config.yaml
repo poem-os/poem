@@ -20,3 +20,12 @@ devLoadAlwaysFiles:
 devDebugLog: .ai/debug-log.md
 devStoryLocation: docs/stories
 slashPrefix: BMad
+# Lightweight maintenance tracking (chores, infrastructure, tech debt)
+# Items here don't require full BMAD ceremony
+maintenance:
+  backlogFile: docs/backlog/maintenance.md
+  categories:
+    - infrastructure
+    - tech-debt
+    - documentation
+    - bugs

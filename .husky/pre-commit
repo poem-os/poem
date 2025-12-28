@@ -1,0 +1,5 @@
+# Check for secrets before committing
+gitleaks protect --staged --verbose
+
+# Run tests
+npm test
