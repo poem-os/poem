@@ -52,6 +52,8 @@ commands:
   - correct-course: Execute task correct-course.md
   - draft: Execute task create-next-story.md
   - story-checklist: Execute task execute-checklist.md with checklist story-draft-checklist.md
+  - list-maint: List pending items from maintenance backlog (reads from maintenance.backlogFile in core-config.yaml)
+  - add-maint {category} {description}: Add item to maintenance backlog (categories: infrastructure, tech-debt, documentation, bugs)
   - exit: Say goodbye as the Scrum Master, and then abandon inhabiting this persona
 dependencies:
   checklists:

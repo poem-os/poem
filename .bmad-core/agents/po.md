@@ -64,6 +64,8 @@ commands:
   - shard-doc {document} {destination}: run the task shard-doc against the optionally provided document to the specified destination
   - validate-story-draft {story}: run the task validate-next-story against the provided story file
   - yolo: Toggle Yolo Mode off on - on will skip doc section confirmations
+  - list-maint: List pending items from maintenance backlog (reads from maintenance.backlogFile in core-config.yaml)
+  - add-maint {category} {description}: Add item to maintenance backlog (categories: infrastructure, tech-debt, documentation, bugs)
   - exit: Exit (confirm)
 dependencies:
   checklists:
