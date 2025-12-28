@@ -8,6 +8,9 @@ import { config } from '../../config/index.js';
 // Server start timestamp (set when module loads)
 const serverStartTime = Date.now();
 
+// Helpers loaded count (set by Handlebars service initialization)
+let helpersLoadedCount = 0;
+
 /**
  * Get server uptime in seconds
  */
@@ -24,11 +27,19 @@ export function getEnvironment(): 'development' | 'production' {
 
 /**
  * Get count of registered Handlebars helpers
- * Returns 0 until Handlebars service is implemented in future stories
+ * @returns Number of helpers loaded during initialization
  */
 export function getHelpersLoadedCount(): number {
-  // TODO: Integrate with Handlebars service in Epic 2.2
-  return 0;
+  return helpersLoadedCount;
+}
+
+/**
+ * Set the count of registered Handlebars helpers
+ * Called by poem-server integration after loading helpers
+ * @param count - Number of helpers loaded
+ */
+export function setHelpersLoadedCount(count: number): void {
+  helpersLoadedCount = count;
 }
 
 /**

@@ -1,5 +1,7 @@
 import type { AstroIntegration } from 'astro';
-import { logStartup, setupShutdownHandlers, logPortConflict } from '../services/server/index.js';
+import { logStartup, setupShutdownHandlers, logPortConflict, setHelpersLoadedCount } from '../services/server/index.js';
+import { initHandlebarsService } from '../services/handlebars/index.js';
+import { loadHelpers } from '../services/handlebars/loader.js';
 
 /**
  * POEM Server Integration
@@ -11,8 +13,15 @@ export function poemServer(): AstroIntegration {
   return {
     name: 'poem-server',
     hooks: {
-      'astro:config:setup': () => {
+      'astro:config:setup': async () => {
         startTime = Date.now();
+
+        // Initialize Handlebars service and load helpers
+        const handlebarsService = initHandlebarsService();
+        const result = await loadHelpers(handlebarsService);
+
+        // Update server state with helper count
+        setHelpersLoadedCount(result.total);
       },
       'astro:server:setup': ({ server }) => {
         // Setup graceful shutdown handlers
