@@ -61,8 +61,10 @@ import { something } from '../../../poem-core/...'; // Wrong
 
 ## Handlebars Helper Standards
 
+> **Note:** Helpers use ESM (`export default`) for Vite compatibility. The loader uses `import.meta.glob` which requires ESM modules. Each `.js` helper requires a corresponding `.d.ts` file for TypeScript support.
+
 ```javascript
-// ✅ DO: Include JSDoc with example
+// ✅ DO: Include JSDoc with example and use ESM exports
 /**
  * Truncates a string to specified length with ellipsis
  * @param {string} str - String to truncate
@@ -70,23 +72,29 @@ import { something } from '../../../poem-core/...'; // Wrong
  * @returns {string} Truncated string
  * @example {{truncate title 50}} → "First 50 characters..."
  */
-module.exports = function (str, length) {
+function truncate(str, length) {
   if (typeof str !== "string") return "";
   if (str.length <= length) return str;
   return str.slice(0, length - 3) + "...";
-};
+}
+
+// ✅ DO: Export metadata for API listing
+truncate.description = "Truncates a string to specified length with ellipsis";
+truncate.example = '{{truncate title 50}} → "First 50 characters..."';
+
+export default truncate;
 
 // ❌ DON'T: Throw errors that crash rendering
-module.exports = function (str, length) {
+function badHelper(str, length) {
   if (!str) throw new Error("str required"); // Crashes template
-};
+}
 
 // ✅ DO: Handle edge cases gracefully
-module.exports = function (str, length) {
+function goodHelper(str, length) {
   if (!str) return "";
   if (typeof length !== "number") return str;
   // ...
-};
+}
 ```
 
 ## API Endpoint Standards
