@@ -4,6 +4,7 @@
  */
 
 import { config } from '../../config/index.js';
+import { resetHelperWatcher } from '../handlebars/watcher.js';
 
 // Server start timestamp (set when module loads)
 const serverStartTime = Date.now();
@@ -86,7 +87,10 @@ export function logPortConflict(port: number): void {
  * Setup graceful shutdown handlers
  */
 export function setupShutdownHandlers(): void {
-  const shutdown = (signal: string) => {
+  const shutdown = async (signal: string) => {
+    // Stop the helper watcher before shutdown
+    await resetHelperWatcher();
+
     logShutdown(signal);
     process.exit(0);
   };

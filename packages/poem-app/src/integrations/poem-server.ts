@@ -2,6 +2,7 @@ import type { AstroIntegration } from 'astro';
 import { logStartup, setupShutdownHandlers, logPortConflict, setHelpersLoadedCount } from '../services/server/index.js';
 import { initHandlebarsService } from '../services/handlebars/index.js';
 import { loadHelpers } from '../services/handlebars/loader.js';
+import { getHelperWatcher } from '../services/handlebars/watcher.js';
 
 /**
  * POEM Server Integration
@@ -22,6 +23,10 @@ export function poemServer(): AstroIntegration {
 
         // Update server state with helper count
         setHelpersLoadedCount(result.total);
+
+        // Start helper watcher for hot-reload (after initial load completes)
+        const watcher = getHelperWatcher(handlebarsService);
+        await watcher.start();
       },
       'astro:server:setup': ({ server }) => {
         // Setup graceful shutdown handlers
