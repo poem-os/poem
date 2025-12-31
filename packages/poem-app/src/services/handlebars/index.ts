@@ -324,18 +324,20 @@ export class HandlebarsService {
   }
 }
 
-// Singleton instance for shared use across the application
-let serviceInstance: HandlebarsService | null = null;
+// Use globalThis for singleton to survive Vite/Astro module reloading
+// This ensures the same instance is shared across SSR and API contexts
+const GLOBAL_KEY = '__POEM_HANDLEBARS_SERVICE__';
 
 /**
  * Get the shared HandlebarsService instance
  * @returns HandlebarsService singleton
  */
 export function getHandlebarsService(): HandlebarsService {
-  if (!serviceInstance) {
-    serviceInstance = new HandlebarsService();
+  const globalObj = globalThis as Record<string, unknown>;
+  if (!globalObj[GLOBAL_KEY]) {
+    globalObj[GLOBAL_KEY] = new HandlebarsService();
   }
-  return serviceInstance;
+  return globalObj[GLOBAL_KEY] as HandlebarsService;
 }
 
 /**
@@ -347,13 +349,15 @@ export function getHandlebarsService(): HandlebarsService {
 export function initHandlebarsService(
   options: HandlebarsServiceOptions = {}
 ): HandlebarsService {
-  serviceInstance = new HandlebarsService(options);
-  return serviceInstance;
+  const globalObj = globalThis as Record<string, unknown>;
+  globalObj[GLOBAL_KEY] = new HandlebarsService(options);
+  return globalObj[GLOBAL_KEY] as HandlebarsService;
 }
 
 /**
  * Reset the service instance (useful for testing)
  */
 export function resetHandlebarsService(): void {
-  serviceInstance = null;
+  const globalObj = globalThis as Record<string, unknown>;
+  delete globalObj[GLOBAL_KEY];
 }

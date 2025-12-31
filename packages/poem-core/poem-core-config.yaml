@@ -1,0 +1,47 @@
+# POEM Core Configuration
+# Workspace path configuration for prompt templates, schemas, and data
+#
+# This file is separate from .bmad-core/core-config.yaml which handles
+# BMAD agent/story configuration. This file handles POEM-specific paths.
+#
+# Path Resolution:
+# - Development (POEM_DEV=true): Paths relative to monorepo root (poem-os/poem/)
+# - Production: Paths relative to user's project root
+
+# Workspace directories
+# In development, these are at the monorepo root level
+# In production, these are prefixed with poem/ (created by installer)
+workspace:
+  # Handlebars prompt templates (.hbs files)
+  prompts: prompts
+  # JSON schema definitions for prompts
+  schemas: schemas
+  # Generated mock data for testing
+  mockData: mock-data
+  # User configuration files (providers, settings)
+  config: config
+  # Persisted workflow execution state
+  workflowData: workflow-data
+
+# Production workspace paths (used when POEM_DEV is not set)
+# These are relative to the user's project root after installation
+# Note: The config service applies 'poem/' prefix automatically in production mode
+# when using fallback defaults. This section is for documentation purposes.
+# productionWorkspace:
+#   prompts: poem/prompts
+#   schemas: poem/schemas
+#   mockData: poem/mock-data
+#   config: poem/config
+#   workflowData: poem/workflow-data
+
+# Logging configuration
+logging:
+  # Log level: debug | info | warn | error
+  level: info
+
+# Feature flags
+features:
+  # Enable hot-reload for Handlebars helpers during development
+  hotReload: true
+  # Enable mock data generation capabilities
+  mockDataGeneration: true

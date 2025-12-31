@@ -1,0 +1,41 @@
+{
+  "description": "BMAD Workflow Audit Trail - Full logging with zero context impact",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /Users/davidcruwys/dev/ad/poem-os/poem/.claude/hooks/log-workflow.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|Bash|Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /Users/davidcruwys/dev/ad/poem-os/poem/.claude/hooks/log-workflow.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /Users/davidcruwys/dev/ad/poem-os/poem/.claude/hooks/log-workflow.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  }
+}

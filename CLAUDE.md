@@ -424,6 +424,68 @@ This project uses **BMAD Method v4.44.3** installed for Claude Code.
 npx bmad-method install -f -i claude-code
 ```
 
+## POEM Development Setup
+
+POEM operates in two modes: **Development** and **Production**. Path resolution is automatic based on environment.
+
+### Quick Setup
+
+```bash
+# Run the setup script
+./scripts/dev-setup.sh
+```
+
+This will:
+1. Verify Node.js version (20.x+ required)
+2. Create `.env` with `POEM_DEV=true`
+3. Install all dependencies
+
+### Manual Setup
+
+```bash
+# 1. Set environment variable
+echo "POEM_DEV=true" >> packages/poem-app/.env
+
+# 2. Install dependencies
+npm install
+cd packages/poem-app && npm install
+```
+
+### Two Operating Modes
+
+| Mode | Detection | Framework Location | User Workspace |
+|------|-----------|-------------------|----------------|
+| **Development** | `POEM_DEV=true` | `packages/poem-core/` | `prompts/`, `schemas/` at root |
+| **Production** | `POEM_DEV` unset | `.poem-core/` | `poem/prompts/`, `poem/schemas/` |
+
+### Path Resolution
+
+POEM uses a hybrid path resolution approach:
+
+1. **API Endpoints**: Read from `poem-core-config.yaml`, fallback to defaults
+2. **Slash Commands**: Detect `packages/poem-core/` (dev) vs `.poem-core/` (prod)
+3. **Fallback**: If primary path not found, try alternate path
+
+### Starting the Development Server
+
+```bash
+cd packages/poem-app
+npm run dev
+# Server starts at http://localhost:4321
+```
+
+### Testing POEM Agents
+
+```bash
+# Activate the Prompt Engineer agent
+/poem/agents/prompt-engineer
+
+# The agent will:
+# 1. Detect development mode
+# 2. Load from packages/poem-core/
+# 3. Display available commands
+```
+
 ## Important Notes
 
 ### DO NOT

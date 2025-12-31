@@ -1,0 +1,345 @@
+/**
+ * Schema Extractor Service
+ * Extracts JSON schemas from Handlebars templates by parsing placeholders and blocks
+ */
+
+/**
+ * Represents a field in the extracted schema
+ */
+export interface SchemaField {
+  /** Field name */
+  name: string;
+  /** Inferred type from template usage */
+  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
+  /** Whether the field is required (always true for extracted fields) */
+  required: boolean;
+  /** Human-readable description */
+  description?: string;
+  /** For arrays, the item type */
+  items?: SchemaField;
+  /** For objects, nested field definitions */
+  properties?: SchemaField[];
+}
+
+/**
+ * Result of schema extraction
+ */
+export interface ExtractionResult {
+  /** Extracted schema fields */
+  fields: SchemaField[];
+  /** Helper names used in the template */
+  requiredHelpers: string[];
+}
+
+/**
+ * Known Handlebars built-in helpers (not custom helpers)
+ */
+const BUILTIN_HELPERS = new Set([
+  'if',
+  'unless',
+  'each',
+  'with',
+  'lookup',
+  'log',
+]);
+
+/**
+ * SchemaExtractor class
+ * Parses Handlebars templates and extracts schema information
+ */
+export class SchemaExtractor {
+  /**
+   * Extract schema from a Handlebars template
+   * @param template - Handlebars template string
+   * @returns ExtractionResult with fields and required helpers
+   */
+  extract(template: string): ExtractionResult {
+    const fieldMap = new Map<string, SchemaField>();
+    const helpers = new Set<string>();
+
+    // Extract #each blocks (arrays)
+    this.extractEachBlocks(template, fieldMap);
+
+    // Extract #if blocks (booleans)
+    this.extractIfBlocks(template, fieldMap, helpers);
+
+    // Extract simple and nested placeholders
+    this.extractPlaceholders(template, fieldMap, helpers);
+
+    // Convert map to array, merging nested properties
+    const fields = this.buildFieldArray(fieldMap);
+
+    return {
+      fields,
+      requiredHelpers: Array.from(helpers).sort(),
+    };
+  }
+
+  /**
+   * Extract #each blocks and mark fields as arrays
+   * Pattern: {{#each fieldName}}...{{/each}}
+   */
+  private extractEachBlocks(
+    template: string,
+    fieldMap: Map<string, SchemaField>
+  ): void {
+    const eachRegex = /\{\{#each\s+([^\s}]+)\s*\}\}/g;
+    let match;
+
+    while ((match = eachRegex.exec(template)) !== null) {
+      const fieldPath = match[1].trim();
+      // Handle dot notation - only take the root field as the array
+      const rootField = fieldPath.split('.')[0];
+
+      if (!fieldMap.has(rootField)) {
+        fieldMap.set(rootField, {
+          name: rootField,
+          type: 'array',
+          required: true,
+        });
+      } else {
+        // Update existing field to be an array
+        const existing = fieldMap.get(rootField)!;
+        existing.type = 'array';
+      }
+    }
+  }
+
+  /**
+   * Extract #if blocks and mark fields as booleans (unless already typed)
+   * Also extracts helper calls like {{#if (gt length 20)}}
+   */
+  private extractIfBlocks(
+    template: string,
+    fieldMap: Map<string, SchemaField>,
+    helpers: Set<string>
+  ): void {
+    // Match {{#if condition}} and {{#if (helper args)}}
+    const ifRegex = /\{\{#if\s+(.+?)\s*\}\}/g;
+    let match;
+
+    while ((match = ifRegex.exec(template)) !== null) {
+      const condition = match[1].trim();
+
+      // Check for subexpression: (helperName arg1 arg2...)
+      if (condition.startsWith('(')) {
+        const subExprMatch = condition.match(/^\((\w+)\s+(.+)\)$/);
+        if (subExprMatch) {
+          const helperName = subExprMatch[1];
+          const args = subExprMatch[2];
+
+          // Add helper if not built-in
+          if (!BUILTIN_HELPERS.has(helperName)) {
+            helpers.add(helperName);
+          }
+
+          // Extract field names from arguments
+          this.extractFieldsFromArgs(args, fieldMap);
+        }
+      } else {
+        // Simple condition - treat as boolean field
+        const fieldPath = condition;
+        const rootField = fieldPath.split('.')[0];
+
+        if (!fieldMap.has(rootField)) {
+          fieldMap.set(rootField, {
+            name: rootField,
+            type: 'boolean',
+            required: true,
+          });
+        }
+      }
+    }
+  }
+
+  /**
+   * Extract simple placeholders and nested object paths
+   * Also identifies helper calls
+   */
+  private extractPlaceholders(
+    template: string,
+    fieldMap: Map<string, SchemaField>,
+    helpers: Set<string>
+  ): void {
+    // Match {{placeholder}} but not {{#block}}, {{/block}}, {{!comment}}, {{>partial}}
+    const placeholderRegex = /\{\{(?!#|\/|!|>|else)([^{}]+)\}\}/g;
+    let match;
+
+    while ((match = placeholderRegex.exec(template)) !== null) {
+      const content = match[1].trim();
+
+      // Skip empty or whitespace only
+      if (!content) continue;
+
+      const parts = content.split(/\s+/);
+      const firstPart = parts[0];
+
+      // Check if first part is a helper call
+      if (parts.length > 1 && this.looksLikeHelper(firstPart)) {
+        // Helper call: {{helperName arg1 arg2}}
+        if (!BUILTIN_HELPERS.has(firstPart)) {
+          helpers.add(firstPart);
+        }
+
+        // Extract fields from arguments (skip string literals and numbers)
+        for (let i = 1; i < parts.length; i++) {
+          const arg = parts[i];
+          if (this.isFieldReference(arg)) {
+            this.addFieldPath(arg, fieldMap);
+          }
+        }
+      } else {
+        // Simple placeholder or nested path - only add if it's a valid field reference
+        if (this.isFieldReference(firstPart)) {
+          this.addFieldPath(firstPart, fieldMap);
+        }
+      }
+    }
+  }
+
+  /**
+   * Extract field references from argument string
+   */
+  private extractFieldsFromArgs(
+    args: string,
+    fieldMap: Map<string, SchemaField>
+  ): void {
+    // Split by whitespace, filtering out literals
+    const parts = args.split(/\s+/);
+    for (const part of parts) {
+      if (this.isFieldReference(part)) {
+        this.addFieldPath(part, fieldMap);
+      }
+    }
+  }
+
+  /**
+   * Check if a string looks like a helper name (starts with lowercase, no dots)
+   */
+  private looksLikeHelper(str: string): boolean {
+    return /^[a-z][a-zA-Z0-9]*$/.test(str) && !str.includes('.');
+  }
+
+  /**
+   * Check if a string is a field reference (not a literal)
+   */
+  private isFieldReference(str: string): boolean {
+    // Skip string literals
+    if (str.startsWith('"') || str.startsWith("'")) return false;
+    // Skip numbers
+    if (/^\d+$/.test(str)) return false;
+    // Skip boolean literals
+    if (str === 'true' || str === 'false') return false;
+    // Skip @index, @first, @last (each block variables)
+    if (str.startsWith('@')) return false;
+    // Skip this and this.* inside each blocks
+    if (str === 'this' || str.startsWith('this.')) return false;
+
+    return true;
+  }
+
+  /**
+   * Add a field path to the field map
+   * Handles dot notation for nested objects and array access
+   */
+  private addFieldPath(
+    fieldPath: string,
+    fieldMap: Map<string, SchemaField>
+  ): void {
+    // Handle array index access: items.[0] or items.0
+    const cleanPath = fieldPath.replace(/\.\[\d+\]/g, '').replace(/\.\d+/g, '');
+
+    // Check if original path had array access
+    const hasArrayAccess =
+      fieldPath.includes('.[') || /\.\d+/.test(fieldPath);
+
+    const parts = cleanPath.split('.');
+    const rootField = parts[0];
+
+    // Skip empty root fields
+    if (!rootField) return;
+
+    if (hasArrayAccess) {
+      // Root is an array
+      if (!fieldMap.has(rootField)) {
+        fieldMap.set(rootField, {
+          name: rootField,
+          type: 'array',
+          required: true,
+        });
+      } else {
+        fieldMap.get(rootField)!.type = 'array';
+      }
+    } else if (parts.length === 1) {
+      // Simple field
+      if (!fieldMap.has(rootField)) {
+        fieldMap.set(rootField, {
+          name: rootField,
+          type: 'string',
+          required: true,
+        });
+      }
+    } else {
+      // Nested object path
+      if (!fieldMap.has(rootField)) {
+        fieldMap.set(rootField, {
+          name: rootField,
+          type: 'object',
+          required: true,
+          properties: [],
+        });
+      } else {
+        const existing = fieldMap.get(rootField)!;
+        if (existing.type !== 'array') {
+          existing.type = 'object';
+          if (!existing.properties) {
+            existing.properties = [];
+          }
+        }
+      }
+
+      // Add nested property
+      const nestedPath = parts.slice(1).join('.');
+      this.addNestedProperty(fieldMap.get(rootField)!, nestedPath);
+    }
+  }
+
+  /**
+   * Add a nested property to an object field
+   */
+  private addNestedProperty(field: SchemaField, path: string): void {
+    if (!field.properties) {
+      field.properties = [];
+    }
+
+    const parts = path.split('.');
+    const propName = parts[0];
+
+    // Find or create the property
+    let prop = field.properties.find((p) => p.name === propName);
+
+    if (!prop) {
+      prop = {
+        name: propName,
+        type: parts.length > 1 ? 'object' : 'string',
+        required: true,
+      };
+      field.properties.push(prop);
+    }
+
+    // Recurse for deeper nesting
+    if (parts.length > 1) {
+      prop.type = 'object';
+      this.addNestedProperty(prop, parts.slice(1).join('.'));
+    }
+  }
+
+  /**
+   * Build the final field array from the map
+   */
+  private buildFieldArray(fieldMap: Map<string, SchemaField>): SchemaField[] {
+    return Array.from(fieldMap.values()).sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }
+}
