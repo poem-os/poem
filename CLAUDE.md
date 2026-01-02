@@ -438,7 +438,8 @@ POEM operates in two modes: **Development** and **Production**. Path resolution 
 This will:
 1. Verify Node.js version (20.x+ required)
 2. Create `.env` with `POEM_DEV=true`
-3. Install all dependencies
+3. Create `dev-workspace/` directory for development testing (gitignored)
+4. Install all dependencies
 
 ### Manual Setup
 
@@ -455,16 +456,50 @@ cd packages/poem-app && npm install
 
 | Mode | Detection | Framework Location | User Workspace |
 |------|-----------|-------------------|----------------|
-| **Development** | `POEM_DEV=true` | `packages/poem-core/` | `prompts/`, `schemas/` at root |
+| **Development** | `POEM_DEV=true` | `packages/poem-core/` | `dev-workspace/prompts/`, `dev-workspace/schemas/` |
 | **Production** | `POEM_DEV` unset | `.poem-core/` | `poem/prompts/`, `poem/schemas/` |
+
+### Dev Workspace
+
+In development mode, user-generated content (prompts, schemas, mock-data) is stored in `dev-workspace/` to avoid polluting the POEM source code. This directory is gitignored.
+
+```
+dev-workspace/
+├── prompts/       # User-created prompt templates
+├── schemas/       # JSON schemas for prompts
+├── mock-data/     # Generated mock data for testing
+├── config/        # User configuration files
+└── workflow-data/ # Workflow execution state
+```
+
+**Created by**: `./scripts/dev-setup.sh`
+
+### Config Source-of-Truth
+
+The config service (`packages/poem-app/src/services/config/poem-config.ts`) is the **single source of truth** for workspace paths. Workflows should NOT duplicate path definitions - they inherit from config.
+
+**Key files**:
+- `packages/poem-core/poem-core-config.yaml` - Defines workspace paths
+- `packages/poem-core/workflows/README.md` - Documents the pattern for workflows
+
+**Pattern for workflows**:
+```yaml
+# CORRECT - Reference config for paths
+pathResolution: config
+
+# WRONG - Never duplicate paths in workflows
+paths:
+  development:
+    prompts: dev-workspace/prompts  # DON'T DO THIS
+```
 
 ### Path Resolution
 
 POEM uses a hybrid path resolution approach:
 
-1. **API Endpoints**: Read from `poem-core-config.yaml`, fallback to defaults
+1. **Config Service**: Single source of truth, reads from `poem-core-config.yaml`
 2. **Slash Commands**: Detect `packages/poem-core/` (dev) vs `.poem-core/` (prod)
-3. **Fallback**: If primary path not found, try alternate path
+3. **Fallback**: If config file not found, use hardcoded defaults
 
 ### Starting the Development Server
 
@@ -567,4 +602,4 @@ npm run dev
 
 ---
 
-**Last Updated**: 2025-12-21
+**Last Updated**: 2026-01-01

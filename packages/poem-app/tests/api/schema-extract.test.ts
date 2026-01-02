@@ -7,6 +7,8 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { spawn, type ChildProcess } from 'child_process';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 
 const TEST_PORT = 4398;
 const BASE_URL = `http://localhost:${TEST_PORT}`;
@@ -17,7 +19,17 @@ const SKIP_INTEGRATION = !process.env.INTEGRATION_TEST;
 describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
   let serverProcess: ChildProcess | null = null;
 
+  // Fixture paths
+  const fixtureSource = path.resolve(__dirname, '../fixtures/prompts/hello.hbs');
+  const projectRoot = path.resolve(__dirname, '../../../..');
+  const devWorkspacePrompts = path.join(projectRoot, 'dev-workspace/prompts');
+  const testFixtureDest = path.join(devWorkspacePrompts, 'test/hello.hbs');
+
   beforeAll(async () => {
+    // Copy test fixture to dev-workspace for file-based template tests
+    await fs.mkdir(path.dirname(testFixtureDest), { recursive: true });
+    await fs.copyFile(fixtureSource, testFixtureDest);
+
     // Start the server on a unique port for testing
     serverProcess = spawn('npm', ['run', 'dev'], {
       cwd: process.cwd(),
@@ -29,9 +41,16 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
     await waitForServer(BASE_URL, 10000);
   }, 15000);
 
-  afterAll(() => {
+  afterAll(async () => {
     if (serverProcess) {
       serverProcess.kill('SIGTERM');
+    }
+    // Clean up test fixture from dev-workspace
+    try {
+      await fs.unlink(testFixtureDest);
+      await fs.rmdir(path.dirname(testFixtureDest));
+    } catch {
+      // Ignore cleanup errors
     }
   });
 

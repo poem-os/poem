@@ -55,6 +55,14 @@ fi
 
 echo ""
 
+# Create dev-workspace directory structure
+echo "📁 Setting up dev-workspace for development testing..."
+mkdir -p "$PROJECT_ROOT/dev-workspace"/{prompts,schemas,mock-data,config,workflow-data}
+echo "✅ Created dev-workspace/ for development testing."
+echo "   User-generated prompts, schemas, and mock-data go here (gitignored)."
+
+echo ""
+
 # Install dependencies
 echo "📦 Installing dependencies..."
 npm install

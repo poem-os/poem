@@ -1,33 +1,37 @@
 # POEM Core Configuration
-# Workspace path configuration for prompt templates, schemas, and data
 #
-# This file is separate from .bmad-core/core-config.yaml which handles
-# BMAD agent/story configuration. This file handles POEM-specific paths.
+# ============================================================================
+# SINGLE SOURCE OF TRUTH FOR WORKSPACE PATHS
+# ============================================================================
 #
-# Path Resolution:
-# - Development (POEM_DEV=true): Paths relative to monorepo root (poem-os/poem/)
-# - Production: Paths relative to user's project root
+# This configuration file defines where user-generated content is stored.
+# Workflows should NOT duplicate these paths - they inherit from here.
+#
+# Path Resolution Modes:
+# - Development (POEM_DEV=true): Uses dev-workspace/ at monorepo root
+# - Production (POEM_DEV not set): Uses poem/ in user's project root
+#
+# The config service (packages/poem-app/src/services/config/poem-config.ts)
+# reads these paths and provides the resolvePath() API for all components.
+# ============================================================================
 
-# Workspace directories
-# In development, these are at the monorepo root level
-# In production, these are prefixed with poem/ (created by installer)
+# Workspace directories - SINGLE SOURCE OF TRUTH
+# These paths are read by the config service.
+# Workflows should NOT duplicate these - they inherit from config.
 workspace:
   # Handlebars prompt templates (.hbs files)
-  prompts: prompts
+  prompts: dev-workspace/prompts
   # JSON schema definitions for prompts
-  schemas: schemas
+  schemas: dev-workspace/schemas
   # Generated mock data for testing
-  mockData: mock-data
+  mockData: dev-workspace/mock-data
   # User configuration files (providers, settings)
-  config: config
+  config: dev-workspace/config
   # Persisted workflow execution state
-  workflowData: workflow-data
+  workflowData: dev-workspace/workflow-data
 
-# Production workspace paths (used when POEM_DEV is not set)
-# These are relative to the user's project root after installation
-# Note: The config service applies 'poem/' prefix automatically in production mode
-# when using fallback defaults. This section is for documentation purposes.
-# productionWorkspace:
+# Production workspace paths (for reference - applied by config service)
+# When POEM_DEV is not set, the config service uses these defaults:
 #   prompts: poem/prompts
 #   schemas: poem/schemas
 #   mockData: poem/mock-data

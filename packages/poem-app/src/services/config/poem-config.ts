@@ -1,6 +1,10 @@
 /**
  * POEM Configuration Service
- * Handles path resolution for both development and production modes
+ *
+ * This service is the SINGLE SOURCE OF TRUTH for workspace paths.
+ * Workflows should NOT duplicate path definitions - they inherit from here.
+ *
+ * Handles path resolution for both development and production modes.
  */
 
 import { promises as fs } from 'node:fs';
@@ -35,13 +39,16 @@ export type WorkspacePathType = keyof WorkspacePaths;
 /**
  * Development mode fallback defaults
  * Used when config file not found in development
+ *
+ * User-generated content goes to dev-workspace/ (gitignored)
+ * to avoid polluting the POEM source code.
  */
 const DEV_DEFAULTS: WorkspacePaths = {
-  prompts: 'prompts',
-  schemas: 'schemas',
-  mockData: 'mock-data',
-  config: 'config',
-  workflowData: 'workflow-data',
+  prompts: 'dev-workspace/prompts',
+  schemas: 'dev-workspace/schemas',
+  mockData: 'dev-workspace/mock-data',
+  config: 'dev-workspace/config',
+  workflowData: 'dev-workspace/workflow-data',
 };
 
 /**

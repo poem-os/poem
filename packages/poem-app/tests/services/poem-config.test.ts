@@ -251,6 +251,48 @@ describe('POEM Configuration Service', () => {
     });
   });
 
+  describe('Dev Workspace Path Resolution', () => {
+    it('should resolve to dev-workspace paths in dev mode', async () => {
+      process.env.POEM_DEV = 'true';
+      const config = await loadPoemConfig();
+
+      // Dev mode uses dev-workspace/ for user-generated content (gitignored)
+      expect(config.workspace.prompts).toBe('dev-workspace/prompts');
+      expect(config.workspace.schemas).toBe('dev-workspace/schemas');
+      expect(config.workspace.mockData).toBe('dev-workspace/mock-data');
+      expect(config.workspace.config).toBe('dev-workspace/config');
+      expect(config.workspace.workflowData).toBe('dev-workspace/workflow-data');
+    });
+
+    it('should resolve to poem/ paths in prod mode', async () => {
+      delete process.env.POEM_DEV;
+
+      // Suppress warning for missing config
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      const config = await loadPoemConfig();
+
+      // Prod mode uses poem/ for user workspace
+      expect(config.workspace.prompts).toBe('poem/prompts');
+      expect(config.workspace.schemas).toBe('poem/schemas');
+      expect(config.workspace.mockData).toBe('poem/mock-data');
+      expect(config.workspace.config).toBe('poem/config');
+      expect(config.workspace.workflowData).toBe('poem/workflow-data');
+
+      warnSpy.mockRestore();
+    });
+
+    it('should resolve full paths with dev-workspace in dev mode', async () => {
+      process.env.POEM_DEV = 'true';
+      await loadPoemConfig();
+
+      const promptsPath = resolvePath('prompts', 'my-prompt.hbs');
+
+      expect(promptsPath).toContain('dev-workspace/prompts');
+      expect(promptsPath).toContain('my-prompt.hbs');
+    });
+  });
+
   describe('resetConfig()', () => {
     it('should clear cached config', async () => {
       process.env.POEM_DEV = 'true';
