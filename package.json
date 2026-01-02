@@ -13,6 +13,7 @@
   "scripts": {
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces --if-present",
+    "test:unit": "npm run test:unit --workspaces --if-present",
     "lint": "eslint .",
     "format": "prettier --write .",
     "dev": "npm run dev --workspace=@poem-os/app",

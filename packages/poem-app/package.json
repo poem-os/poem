@@ -9,6 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "test": "vitest run",
+    "test:unit": "vitest run --exclude '**/health.test.ts' --exclude '**/watcher.test.ts' --exclude '**/prompt-render.test.ts' --exclude '**/schema-extract.test.ts'",
     "test:watch": "vitest"
   },
   "dependencies": {

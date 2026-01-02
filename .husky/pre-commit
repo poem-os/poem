@@ -1,5 +1,6 @@
 # Check for secrets before committing
 gitleaks protect --staged --verbose
 
-# Run tests
-npm test
+# Run unit tests only (fast, no servers)
+# Use `npm test` for full suite including integration tests
+npm run test:unit
