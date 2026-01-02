@@ -1,113 +1,403 @@
 # New Prompt Workflow
-# Creates a new prompt template with corresponding schema
+# Creates a new prompt template with corresponding schema and optional mock data
+#
+# Executed by: Prompt Engineer agent (Penny) via *new command
+# Execution model: Agent-interpreted (steps guide agent behavior, not automated)
+#
+# Path resolution: Inherited from poem-core-config.yaml
+# DO NOT add a paths: section - config service is the source of truth
+# See: packages/poem-core/workflows/README.md for the pattern
 
 id: new-prompt
 name: Create New Prompt
+version: "1.1.0"
+author: POEM Framework
+lastUpdated: "2026-01-01"
+
+# Path resolution mode - indicates this workflow uses config for paths
+pathResolution: config
+
 description: |
-  Guides users through creating a new Handlebars prompt template
-  with corresponding JSON schema and optional mock data generation.
+  Guides users through creating a new Handlebars prompt template with:
+  - Structured prompt purpose and requirements gathering
+  - Input field definitions with types and descriptions
+  - Auto-generated JSON schema from template
+  - Optional mock data generation for testing
+  - Live preview of rendered template
+
+  Follows BMAD elicitation patterns for user interaction.
+
+  **Path Resolution:**
+  Workspace paths are inherited from poem-core-config.yaml (loaded by config service).
+  - Development (POEM_DEV=true): dev-workspace/prompts/, dev-workspace/schemas/, etc.
+  - Production: poem/prompts/, poem/schemas/, etc.
+  The agent detects mode by checking for packages/poem-core/ (dev) vs .poem-core/ (prod).
+
+# Error handling defaults
+fallback:
+  onMissingInput: prompt-again
+  onApiError: show-error-and-retry
+  onFileConflict: warn-and-confirm
 
 steps:
+  # ============================================================================
+  # STEP 1: Gather Prompt Purpose (Elicitation)
+  # ============================================================================
   - id: gather-purpose
     name: Gather Prompt Purpose
     type: elicit
     elicit: true
     prompt: |
       What is the purpose of this prompt? Please describe:
-      1. What the prompt should accomplish
-      2. What output format you expect (text, list, JSON, etc.)
-      3. Any specific requirements or constraints
 
+      1. **Primary Goal**: What should this prompt accomplish?
+         Example: "Generate product descriptions", "Summarize meeting notes"
+
+      2. **Target Model** (optional): Which AI model will use this?
+         Examples: Claude, GPT-4, any model
+
+      3. **Output Format**: What format should the response be in?
+         - `text` - Free-form prose
+         - `json` - Structured JSON data
+         - `list` - Bullet points or numbered list
+         - `markdown` - Formatted document with headers
+
+      4. **Constraints** (optional): Any limits or requirements?
+         Examples: "Under 500 words", "Professional tone", "Include citations"
+
+      ---
+      **Example Response:**
+      "Generate engaging product descriptions for an e-commerce site.
+      Output should be markdown with a headline, 2-3 paragraphs describing
+      features and benefits, and bullet points for key specs.
+      Keep under 300 words. Professional but friendly tone."
+    validation:
+      required: true
+      minLength: 20
+    stores: promptPurpose
+    instruction: |
+      Wait for user to describe their prompt's purpose.
+      Parse response to identify: goal, target model, output format, constraints.
+      Store the complete response for template generation.
+
+  # ============================================================================
+  # STEP 2: Gather Input Requirements (Elicitation)
+  # ============================================================================
   - id: gather-inputs
-    name: Gather Input Data
+    name: Gather Input Data Requirements
     type: elicit
     elicit: true
     prompt: |
-      What input data will this prompt use? List the fields:
-      - Field name
-      - Type (string, number, array, object)
-      - Brief description
+      What input data will this prompt use? List each field with:
 
-      Example: "userName (string) - The user's display name"
+      - **Field name** (use camelCase, e.g., `productName`, `userEmail`)
+      - **Type**: `string`, `number`, `boolean`, `array`, or `object`
+      - **Required/Optional**: Is this field mandatory?
+      - **Description**: Brief explanation of the field
 
+      ---
+      **Format:**
+      ```
+      fieldName (type, required/optional) - Description
+      ```
+
+      **Example:**
+      ```
+      productName (string, required) - The name of the product
+      productFeatures (array, required) - List of key features
+      targetAudience (string, optional) - Who the product is for
+      pricePoint (number, optional) - Product price for context
+      ```
+
+      ---
+      List your input fields:
+    validation:
+      required: true
+      minFields: 1
+    stores: inputFields
+    instruction: |
+      Wait for user to list their input fields.
+      Parse each field to extract: name, type, required/optional, description.
+      Validate at least one field is provided.
+      Store as structured data for schema generation.
+
+  # ============================================================================
+  # STEP 3: Choose Prompt Name (Elicitation)
+  # ============================================================================
   - id: gather-name
     name: Choose Prompt Name
     type: elicit
     elicit: true
     prompt: |
       What should we name this prompt?
-      Use kebab-case (e.g., generate-titles, enhance-narrative)
 
+      **Requirements:**
+      - Use `kebab-case` (lowercase with hyphens)
+      - Be descriptive but concise
+      - Avoid special characters
+
+      **Examples:**
+      - `generate-product-description`
+      - `summarize-meeting-notes`
+      - `enhance-narrative`
+      - `create-email-response`
+
+      ---
+      Enter prompt name (or type 'suggest' for a suggestion based on purpose):
+    validation:
+      required: true
+      pattern: "^[a-z][a-z0-9-]*[a-z0-9]$"
+      patternDescription: "kebab-case (e.g., my-prompt-name)"
+    stores: promptName
+    instruction: |
+      Wait for user to provide prompt name.
+      If user types 'suggest', generate a name from the prompt purpose.
+      Validate name follows kebab-case convention.
+      Check if a prompt with this name already exists in the workspace.
+      If conflict, warn user and ask for confirmation or new name.
+      Store the final validated name.
+
+  # ============================================================================
+  # STEP 4: Create Template File (Action)
+  # ============================================================================
   - id: create-template
     name: Create Template File
     type: action
     action: create-file
+    stores: createdTemplatePath
     instruction: |
-      Create the Handlebars template file at:
-      /poem/prompts/{{promptName}}.hbs
+      Generate a Handlebars template based on gathered information:
 
-      Include the gathered requirements as a well-structured prompt
-      with appropriate Handlebars placeholders.
+      1. **Resolve workspace path from config:**
+         - If `packages/poem-core/` exists → Development mode → use `dev-workspace/prompts/`
+         - Otherwise → Production mode → use `poem/prompts/`
+         - Paths are defined in poem-core-config.yaml (single source of truth)
 
+      2. **Generate template content** following POEM best practices:
+         ```handlebars
+         {{!
+           Prompt: {{promptName}}
+           Purpose: {{promptPurpose summary}}
+           Generated by: POEM new-prompt workflow
+         }}
+
+         ## Context
+
+         You are an expert assistant. {{constraints from purpose}}
+
+         ## Input
+
+         {{#each inputFields}}
+         **{{fieldName}}**: {{{{fieldName}}}}
+         {{/each}}
+
+         ## Task
+
+         {{task derived from purpose}}
+
+         ## Expected Output
+
+         {{output format requirements}}
+         ```
+
+      3. **Create file** at `{workspace}/{{promptName}}.hbs`
+
+      4. **Confirm creation** to user with file path.
+
+  # ============================================================================
+  # STEP 5: Generate Schema (Action)
+  # ============================================================================
   - id: generate-schema
     name: Generate Schema
     type: action
-    action: invoke-skill
-    skill: generate-schema.md
+    action: api-call
+    endpoint: POST /api/schema/extract
+    request:
+      template: "{{createdTemplateContent}}"
+      isRawTemplate: true
+    stores: extractedSchema
     instruction: |
-      Extract schema from the created template.
-      Save to /poem/schemas/{{promptName}}.json
+      Generate JSON schema for the created template:
 
+      1. **Call schema extraction API** with the template content.
+         - Endpoint: POST /api/schema/extract
+         - Request: { template: <template content>, isRawTemplate: true }
+
+      2. **Enhance extracted schema** with user-provided metadata:
+         - Add `description` for each field from user input
+         - Add `required` array listing mandatory fields
+         - Add `type` information from user input
+
+      3. **Schema structure:**
+         ```json
+         {
+           "$schema": "http://json-schema.org/draft-07/schema#",
+           "title": "{{promptName}}",
+           "description": "Schema for {{promptName}} prompt",
+           "type": "object",
+           "properties": {
+             // Fields extracted from template + user metadata
+           },
+           "required": ["field1", "field2"]
+         }
+         ```
+
+      4. **Save schema** to `{schemasPath}/{{promptName}}.json`
+
+      5. **Display schema structure** to user for review.
+
+  # ============================================================================
+  # STEP 6: Offer Mock Data Generation (Elicitation)
+  # ============================================================================
   - id: offer-mock-data
     name: Offer Mock Data Generation
     type: elicit
     elicit: true
     prompt: |
-      Would you like to generate mock data for testing?
-      1. Yes - Generate mock data now
-      2. No - Skip for now
+      Would you like to generate mock data for testing this prompt?
 
+      Mock data helps you:
+      - Test your template immediately
+      - Verify placeholders render correctly
+      - See a realistic preview
+
+      ---
+      **Options:**
+      1. **Yes** - Generate sample data matching your schema
+      2. **No** - Skip for now (you can generate later with `*test`)
+    stores: mockDataChoice
+    instruction: |
+      Wait for user to choose yes or no.
+      Store response to control next step execution.
+
+  # ============================================================================
+  # STEP 7: Generate Mock Data (Conditional Action)
+  # ============================================================================
   - id: generate-mock
     name: Generate Mock Data
     type: action
-    action: api-call
-    endpoint: POST /api/mock/generate
-    condition: user-selected-yes
+    action: create-file
+    condition:
+      check: mockDataChoice
+      matches: "yes|1|y"
+    stores: mockDataPath
     instruction: |
-      Generate mock data from schema.
-      Save to /poem/mock-data/{{promptName}}.json
+      Generate mock data based on schema field types:
 
+      **Type Mapping:**
+      - `string` → Realistic sample text based on field name
+        - `name` → "Jane Smith"
+        - `email` → "user@example.com"
+        - `description` → "Sample description text..."
+        - Default → "Sample {{fieldName}}"
+      - `number` → Contextual number
+        - `price` → 29.99
+        - `count` → 5
+        - `age` → 30
+        - Default → 42
+      - `boolean` → true
+      - `array` → 2-3 sample items of appropriate type
+      - `object` → Recursively generate nested structure
+
+      **Save to:** `{mockDataPath}/{{promptName}}.json`
+
+      **Note:** When Epic 7 is implemented, this step can use
+      POST /api/mock/generate for more sophisticated generation.
+
+  # ============================================================================
+  # STEP 8: Preview Rendered Template (Action)
+  # ============================================================================
   - id: preview
     name: Preview Rendered Prompt
     type: action
     action: api-call
     endpoint: POST /api/prompt/render
+    request:
+      template: "{{createdTemplatePath}}"
+      data: "{{mockData or generatedExampleData}}"
+      isRawTemplate: false
+    stores: renderedPreview
     instruction: |
-      Render the template with mock or example data.
-      Display the output for user review.
+      Render the template with data to show user a preview:
 
+      1. **Prepare data:**
+         - If mock data was generated, use it
+         - Otherwise, create minimal example data inline
+
+      2. **Call render API:**
+         - Endpoint: POST /api/prompt/render
+         - Request: { template: <path>, data: <data>, isRawTemplate: false }
+
+      3. **Display rendered output** in a formatted block:
+         ```
+         ## Preview
+
+         {{rendered output}}
+
+         ---
+         Render time: {{renderTimeMs}}ms
+         Warnings: {{warnings if any}}
+         ```
+
+      4. **Offer refinement:**
+         - "Does this look correct?"
+         - "Would you like to modify the template?"
+         - If user wants changes, guide them to use `*refine`
+
+  # ============================================================================
+  # STEP 9: Workflow Complete (Output)
+  # ============================================================================
   - id: complete
     name: Workflow Complete
     type: output
     instruction: |
-      Summarize what was created:
-      - Template: /poem/prompts/{{promptName}}.hbs
-      - Schema: /poem/schemas/{{promptName}}.json
-      - Mock data: /poem/mock-data/{{promptName}}.json (if generated)
+      Summarize what was created and suggest next steps:
 
-      Suggest next steps:
-      - Use *test to run additional test scenarios
-      - Use *refine to iterate on the template
-      - Use *validate to check for issues
+      ```
+      ## Prompt Created Successfully!
 
+      ### Created Artifacts
+
+      | Artifact | Path |
+      |----------|------|
+      | Template | `{{promptsPath}}/{{promptName}}.hbs` |
+      | Schema | `{{schemasPath}}/{{promptName}}.json` |
+      {{#if mockDataGenerated}}
+      | Mock Data | `{{mockDataPath}}/{{promptName}}.json` |
+      {{/if}}
+
+      ### Preview Summary
+
+      Your prompt is ready to use. Here's what it does:
+      - **Purpose**: {{promptPurpose summary}}
+      - **Inputs**: {{inputFields count}} fields defined
+      - **Output Format**: {{outputFormat}}
+
+      ### Next Steps
+
+      - `*test` - Run additional test scenarios with different data
+      - `*refine` - Iterate on the template to improve output
+      - `*validate` - Check for issues and best practice compliance
+
+      ### Usage
+
+      To use this prompt in your application:
+      1. Call POST /api/prompt/render with template path and data
+      2. Or use the Prompt Engineer agent: `*test {{promptName}}`
+      ```
+
+# Output artifacts produced by this workflow
 outputs:
   - name: template
-    path: /poem/prompts/{{promptName}}.hbs
+    path: "{{promptsPath}}/{{promptName}}.hbs"
     format: hbs
+    description: Handlebars template file
   - name: schema
-    path: /poem/schemas/{{promptName}}.json
+    path: "{{schemasPath}}/{{promptName}}.json"
     format: json
+    description: JSON schema defining input structure
   - name: mockData
-    path: /poem/mock-data/{{promptName}}.json
+    path: "{{mockDataPath}}/{{promptName}}.json"
     format: json
+    description: Sample data for testing
     optional: true
