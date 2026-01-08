@@ -547,9 +547,41 @@ so that I can work efficiently without always invoking full workflows.
 
 ---
 
+#### Story 3.7: Implement Workflow Orchestration System
+
+As a developer,
+I want a workflow execution engine that can run multi-step prompt chains,
+so that complex prompt pipelines can be orchestrated systematically.
+
+**Acceptance Criteria**:
+
+1. Workflow YAML format defined as per `docs/architecture.md` § Workflow Definition Structure:
+   - Required fields: `name`, `description`, `steps`
+   - Optional fields: `sections`
+   - Steps have: `name`, `prompt`, `inputs`, `outputs`, optional `checkpoint`
+2. Workflow loader parses YAML files from `/poem/workflows/`
+3. Data bus (workflow-data) implemented as key-value store for attribute accumulation
+4. Step execution engine:
+   - Loads prompt template from `prompt` path
+   - Fetches input data from data bus using `inputs` array
+   - Renders template with Handlebars service
+   - Stores output in data bus using `outputs` array
+5. Sequential execution: steps run in order, each step can access all prior outputs
+6. Workflow-data persisted to `/poem/workflow-data/{workflow-name}.json` for pause/resume
+7. API endpoint `POST /api/workflow/execute` accepts workflow path and initial data
+8. Workflow execution logs each step: inputs used, outputs generated, render time
+9. Data bus schema auto-derived from union of all step inputs + outputs (validation available)
+10. Checkpoint steps pause execution and wait for human input before continuing
+
+**Note**: This story provides the foundation for Epic 4's YouTube workflow validation. Simple workflows (like Epic 3's single-prompt workflows) can use this system or call template render directly.
+
+---
+
 ### Epic 4: YouTube Automation Workflow (System Validation)
 
 **Goal**: Validate POEM's core capabilities through the YouTube Launch Optimizer workflow—a real-world, non-trivial multi-prompt pipeline. This epic tests schema extraction, template chaining, mock data generation, Handlebars helpers, progressive data accumulation, and human-in-the-loop patterns using 53 production templates across 11 workflow sections.
+
+**Workflow Architecture**: This epic implements the POEM workflow system as defined in `docs/architecture.md` § Workflow Definition Structure. Workflows are YAML files with sequential steps, where each step declares inputs/outputs and references a prompt template. The data bus (workflow attributes) is auto-derived from the union of all step inputs and outputs, enabling progressive data accumulation across the prompt chain.
 
 ---
 
@@ -585,8 +617,10 @@ so that I know what data each prompt requires without manual inspection.
 5. Each blocks extracted: `{{#each items}}` → `{items: array}`
 6. Conditional blocks extracted: `{{#if condition}}` → `{condition: boolean}`
 7. Helper calls identified: `{{truncate title 49}}` → notes `truncate` helper required
-8. Generated schemas saved to `/poem/schemas/youtube-launch-optimizer/` mirroring prompt structure
+8. Generated **prompt-specific schemas** saved to `/poem/schemas/youtube-launch-optimizer/{prompt-name}.schema.json` (one per template)
 9. Extraction handles the 7 specific patterns from workflow spec
+
+**Note on Workflow Schema**: The workflow-level data bus schema is NOT extracted here—it's auto-derived from workflow step I/O declarations (union of all `inputs` + `outputs` arrays). Prompt schemas tell us what each template expects; workflow schemas tell us what the overall pipeline accumulates.
 
 ---
 
@@ -653,13 +687,16 @@ so that I can validate template chaining and progressive data accumulation.
 
 **Acceptance Criteria**:
 
-1. Chain definition specifies prompt sequence and data flow
-2. Output from prompt A stored in workflow-data under specified key
-3. Subsequent prompts access accumulated workflow-data
-4. Chain tested: `1-4-abridge` → `4-1-analyze-content-essence` → `5-1-generate-title`
-5. Each step logs: prompt name, input fields used, output fields added
-6. Chain can be paused and resumed (workflow-data persisted)
-7. Final workflow-data contains all accumulated fields from chain
+1. Workflow defined in `/poem/workflows/youtube-test-chain.yaml` with formalized structure:
+   - `name`, `description` fields
+   - `steps` array with `name`, `prompt`, `inputs`, `outputs` for each step
+2. Chain tested: `1-4-abridge` → `4-1-analyze-content-essence` → `5-1-generate-title`
+3. Each step declares inputs (e.g., `[transcript]`) and outputs (e.g., `[transcriptAbridgement]`)
+4. Output from step A stored in workflow-data bus under declared output key
+5. Subsequent steps access workflow-data bus for declared input keys
+6. Each step logs: prompt name, input fields used, output fields added
+7. Chain can be paused and resumed (workflow-data persisted to `/poem/workflow-data/`)
+8. Final workflow-data contains all accumulated attributes from chain (auto-derived from union of all step I/O)
 
 ---
 

@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "summarize-video",
+  "description": "Schema for summarize-video prompt - condenses YouTube video transcriptions",
+  "type": "object",
+  "properties": {
+    "transcript": {
+      "type": "string",
+      "description": "Full video transcript text to be summarized",
+      "minLength": 1
+    }
+  },
+  "required": ["transcript"]
+}

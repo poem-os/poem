@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "generate-title",
+  "description": "Schema for generate-title prompt - generates YouTube video titles optimized for CTR",
+  "type": "object",
+  "properties": {
+    "transcript": {
+      "type": "string",
+      "description": "Full video transcript text to analyze for title generation",
+      "minLength": 1
+    },
+    "shortTitle": {
+      "type": "string",
+      "description": "Optional base/working title to build upon"
+    }
+  },
+  "required": ["transcript"]
+}

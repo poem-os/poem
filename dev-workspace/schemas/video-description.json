@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "video-description",
+  "description": "Schema for video-description prompt - generates YouTube video descriptions optimized for SEO",
+  "type": "object",
+  "properties": {
+    "transcript": {
+      "type": "string",
+      "description": "Full video transcript text to analyze for description generation",
+      "minLength": 1
+    },
+    "videoTitle": {
+      "type": "string",
+      "description": "Optional video title to reference in the description"
+    }
+  },
+  "required": ["transcript"]
+}

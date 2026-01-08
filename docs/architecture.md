@@ -424,6 +424,435 @@ interface CheckpointInfo {
 
 ---
 
+## Workflow Definition Structure
+
+Workflows in POEM define multi-step prompt execution sequences where outputs from one prompt become inputs to subsequent prompts. They enable progressive data accumulation, human-in-the-loop checkpoints, and orchestration of complex prompt pipelines.
+
+**Key Characteristics:**
+- **Sequential execution** - Steps run in order (parallel execution is future enhancement)
+- **Data accumulation** - Each step reads from and writes to a shared data bus
+- **Auto-derived schema** - Workflow attributes are automatically derived from step inputs/outputs
+- **Optional organization** - Sections provide hierarchical grouping for complex workflows
+
+---
+
+### Basic Workflow Format
+
+A minimal workflow consists of a name, description, and a list of steps:
+
+```yaml
+name: video-summarization
+description: Summarizes and abridges video transcripts for content analysis
+
+steps:
+  - name: Summarize Transcript
+    prompt: prompts/summarize-video.hbs
+    inputs:
+      - transcript
+    outputs:
+      - transcriptSummary
+
+  - name: Abridge Summary
+    prompt: prompts/abridge-video.hbs
+    inputs:
+      - transcript
+      - transcriptSummary
+    outputs:
+      - transcriptAbridgement
+```
+
+**Location:** `/poem/workflows/video-summarization.yaml`
+
+---
+
+### Workflow with Sections
+
+For larger workflows, sections provide organizational grouping of related steps. Sections represent standard operating procedures (SOPs) within the overall workflow:
+
+```yaml
+name: youtube-launch-optimizer
+description: Complete YouTube video publishing workflow with 11 sections and 53 prompts
+
+sections:
+  - name: Video Preparation
+    description: Initial transcript processing and content analysis
+    steps:
+      - name: Configure Workflow
+        prompt: prompts/youtube-launch-optimizer/1-1-configure.hbs
+        inputs:
+          - rawTranscript
+          - projectCode
+        outputs:
+          - transcript
+          - shortTitle
+
+      - name: Summarize Video
+        prompt: prompts/youtube-launch-optimizer/1-3-summarize-video.hbs
+        inputs:
+          - transcript
+        outputs:
+          - transcriptSummary
+
+      - name: Abridge Transcript
+        prompt: prompts/youtube-launch-optimizer/1-4-abridge-v2.hbs
+        inputs:
+          - transcript
+          - transcriptSummary
+        outputs:
+          - transcriptAbridgement
+
+  - name: Content Analysis
+    description: Analyze video content for keywords, topics, and themes
+    steps:
+      - name: Analyze Content Essence
+        prompt: prompts/youtube-launch-optimizer/4-1-analyze-content-essence.hbs
+        inputs:
+          - transcriptAbridgement
+        outputs:
+          - analyzeContentEssence
+
+      - name: Analyze CTAs and Competitors
+        prompt: prompts/youtube-launch-optimizer/4-2-analyze-cta-competitors.hbs
+        inputs:
+          - transcriptAbridgement
+        outputs:
+          - analyzeCtaCompetitors
+
+  - name: Title Generation
+    description: Generate and select video titles
+    steps:
+      - name: Generate Title Ideas
+        prompt: prompts/youtube-launch-optimizer/5-1-generate-title-v2.hbs
+        inputs:
+          - transcriptAbridgement
+          - analyzeContentEssence
+        outputs:
+          - titleCandidates
+
+      - name: Select Title Shortlist
+        prompt: prompts/youtube-launch-optimizer/5-2-select-title-shortlist.hbs
+        inputs:
+          - titleCandidates
+        outputs:
+          - selectedTitles
+        checkpoint: true  # Requires human input
+```
+
+**Note:** Sections are optional. Simple workflows can use flat step lists. Complex workflows benefit from sectional organization.
+
+---
+
+### Step Structure
+
+Each step defines a single prompt execution with its input and output requirements:
+
+#### Required Fields
+
+| Field | Type | Description | Example |
+|-------|------|-------------|---------|
+| `name` | string | Human-readable step identifier | "Summarize Transcript" |
+| `prompt` | string | Path to Handlebars template (relative to `/poem/prompts/`) | "prompts/summarize-video.hbs" |
+| `inputs` | array | List of fields to read from workflow-data | `["transcript", "projectCode"]` |
+| `outputs` | array | List of fields to write to workflow-data | `["transcriptSummary"]` |
+
+#### Optional Fields
+
+| Field | Type | Description | Example |
+|-------|------|-------------|---------|
+| `description` | string | Detailed explanation of step purpose | "Condenses transcript to 500-1000 words" |
+| `checkpoint` | boolean | If true, pauses for human input | `true` |
+| `conditional` | string | Condition to execute step (future) | `"if: titleCandidates.length > 0"` |
+
+#### Input/Output Rules
+
+**Inputs:**
+- Must reference fields that exist in workflow-data (from previous step outputs or initial data)
+- Missing inputs cause validation warnings (not errors)
+- Steps can access any accumulated workflow-data field
+
+**Outputs:**
+- Define what the prompt produces
+- Overwriting existing fields is allowed but discouraged
+- Arrays and nested objects supported (e.g., `titleCandidates`, `analyzeContentEssence.mainTopic`)
+
+---
+
+### Data Bus (Workflow Schema)
+
+The workflow data bus is a shared key-value store that accumulates data as steps execute. The workflow schema (list of attributes) is **automatically derived** from step inputs and outputs.
+
+#### Automatic Schema Derivation
+
+**Rule:** Union of all step inputs + outputs = workflow attributes
+
+**Example:**
+
+```yaml
+steps:
+  - name: Step A
+    inputs: [transcript]
+    outputs: [transcriptSummary]
+
+  - name: Step B
+    inputs: [transcript, transcriptSummary]
+    outputs: [transcriptAbridgement]
+
+  - name: Step C
+    inputs: [transcriptAbridgement]
+    outputs: [titleCandidates, selectedTitles]
+```
+
+**Derived Schema:**
+```
+Workflow Attributes:
+- transcript
+- transcriptSummary
+- transcriptAbridgement
+- titleCandidates
+- selectedTitles
+```
+
+#### Schema File Format
+
+For documentation and validation, the derived schema can be exported to JSON:
+
+```json
+{
+  "name": "video-summarization",
+  "version": "1.0.0",
+  "description": "Auto-generated from workflow steps",
+  "attributes": {
+    "transcript": { "type": "string", "required": true },
+    "transcriptSummary": { "type": "string", "required": false },
+    "transcriptAbridgement": { "type": "string", "required": false },
+    "titleCandidates": { "type": "array", "items": { "type": "string" } },
+    "selectedTitles": { "type": "array", "items": { "type": "string" } }
+  }
+}
+```
+
+**Location:** `/poem/schemas/workflows/video-summarization.json`
+
+**Note:** This file is generated, not hand-written. It serves as documentation and validation reference.
+
+#### Future: Explicit Attributes Block
+
+While attributes are currently auto-derived from step I/O, a future enhancement will support explicit attribute declarations for:
+- **Transient attributes** - Temporary values not tied to any specific step
+- **Computed attributes** - Values calculated from other attributes
+- **External attributes** - Data injected from sources outside step execution
+
+This explicit declaration is not needed in Epic 4 but will be added when use cases emerge that require it.
+
+---
+
+### Execution Model
+
+#### Sequential Execution
+
+Workflows execute steps in the order defined:
+
+1. **Initialize workflow-data** with provided inputs (e.g., `rawTranscript`)
+2. **For each step:**
+   - Read required inputs from workflow-data
+   - Render prompt template with input data
+   - Execute prompt (send to LLM or mock)
+   - Parse output and extract declared output fields
+   - Write outputs back to workflow-data
+3. **Persist workflow-data** to `/poem/workflow-data/{workflow-id}.json`
+
+#### Data Accumulation Example
+
+```yaml
+# Initial state
+workflow-data: { rawTranscript: "..." }
+
+# After Step 1 (Summarize)
+workflow-data: {
+  rawTranscript: "...",
+  transcriptSummary: "..."
+}
+
+# After Step 2 (Abridge)
+workflow-data: {
+  rawTranscript: "...",
+  transcriptSummary: "...",
+  transcriptAbridgement: "..."
+}
+
+# After Step 3 (Generate Titles)
+workflow-data: {
+  rawTranscript: "...",
+  transcriptSummary: "...",
+  transcriptAbridgement: "...",
+  titleCandidates: ["Title 1", "Title 2", "Title 3"]
+}
+```
+
+#### Checkpoint Pattern (Human-in-the-Loop)
+
+Steps marked with `checkpoint: true` pause execution for human input:
+
+```yaml
+- name: Select Title Shortlist
+  prompt: prompts/select-title-shortlist.hbs
+  inputs: [titleCandidates]
+  outputs: [selectedTitles]
+  checkpoint: true
+```
+
+**Execution:**
+1. Prompt renders with `titleCandidates`
+2. Agent presents options to user (e.g., "Select 2-3 titles from this list")
+3. User makes selection
+4. `selectedTitles` written to workflow-data
+5. Workflow resumes with next step
+
+**See:** Epic 4 Story 4.7 for checkpoint implementation details
+
+---
+
+### Future Enhancements
+
+#### Parallel Execution
+
+**Purpose:** Execute multiple independent steps concurrently when they don't depend on each other's outputs.
+
+**Use Case:** When 5 prompts all use only `transcript` as input and produce different outputs (keywords, sentiment, topics, themes, entities), they can run in parallel rather than sequentially.
+
+```yaml
+steps:
+  - name: Parallel Analysis
+    parallel: true
+    substeps:
+      - name: Analyze Keywords
+        prompt: prompts/analyze-keywords.hbs
+        inputs: [transcript]
+        outputs: [keywords]
+
+      - name: Analyze Sentiment
+        prompt: prompts/analyze-sentiment.hbs
+        inputs: [transcript]
+        outputs: [sentiment]
+
+      - name: Analyze Topics
+        prompt: prompts/analyze-topics.hbs
+        inputs: [transcript]
+        outputs: [topics]
+```
+
+**Benefits:** Reduces total execution time when steps have no inter-dependencies.
+
+**Status:** Not in Epic 4. Potentially Epic 6 when performance optimization becomes critical.
+
+#### Conditional Execution
+
+```yaml
+steps:
+  - name: Generate Advanced Title
+    prompt: prompts/generate-advanced-title.hbs
+    inputs: [transcriptAbridgement, analyzeContentEssence]
+    outputs: [advancedTitle]
+    condition: "analyzeContentEssence.complexity > 7"
+```
+
+**Status:** Not in Epic 4. Potentially Epic 6.
+
+#### DTO Mapping (Parameter Translation)
+
+**Purpose:** Enable prompt reusability by decoupling workflow attribute names from prompt parameter names.
+
+**Problem:** Without DTO mapping, prompts must use workflow-specific attribute names, limiting reusability. A generic `summarize.hbs` prompt expecting `content` input cannot be used in a workflow that has `transcript` as the attribute name.
+
+**Solution:** Map workflow attributes to prompt parameters at the step level:
+
+```yaml
+steps:
+  - name: Generic Summarize
+    prompt: prompts/generic/summarize.hbs  # Expects 'content' input
+    inputs:
+      - transcript
+    outputs:
+      - summary
+    mapping:
+      inputs:
+        content: transcript          # Map workflow 'transcript' to prompt 'content'
+      outputs:
+        summary: transcriptSummary   # Map prompt 'summary' to workflow 'transcriptSummary'
+```
+
+**When Needed:**
+- Prompts become truly single-responsibility and generic
+- Building a library of reusable prompts across multiple workflows
+- Different workflows use different naming conventions
+
+**Status:** Future implementation, undefined format. Not in Epic 4. Needed when POEM has a substantial library of generic/reusable prompts. Potentially Epic 5.
+
+**Current Approach:** Prompts reference workflow attributes directly (tight coupling), which is acceptable for workflow-specific prompts like the YouTube Launch Optimizer templates.
+
+#### Workflow Composition (Nested Workflows)
+
+```yaml
+name: complete-video-pipeline
+description: Full pipeline from raw recording to published video
+
+sections:
+  - name: Content Creation
+    workflow: workflows/video-production.yaml  # Reference to another workflow
+
+  - name: Publishing
+    workflow: workflows/youtube-launch-optimizer.yaml
+```
+
+**Status:** Design pattern identified but not yet needed. Potentially Epic 7+.
+
+---
+
+### Implementation Status
+
+| Feature | Epic | Story | Status |
+|---------|------|-------|--------|
+| Basic workflow execution | 4 | 4.6 | In PRD |
+| Checkpoint pattern | 4 | 4.7 | In PRD |
+| Workflow schema derivation | 4 | 4.2 (modified) | Needs update |
+| Sequential step execution | 4 | 4.6 | In PRD |
+| Section support | 4 | 4.1, 4.6 | Implied, needs formalization |
+| Workflow YAML parsing | 4 | 4.6 | Needs implementation |
+| Workflow-data persistence | 4 | 4.6 | In PRD (AC6) |
+| Parallel execution | 6+ | TBD | Future |
+| Conditional execution | 6+ | TBD | Future |
+| DTO mapping | 5+ | TBD | Future |
+| Explicit attributes block | 5+ | TBD | Future |
+| Workflow composition | 7+ | TBD | Future |
+
+---
+
+### Examples from YouTube Launch Optimizer
+
+The YouTube Launch Optimizer workflow demonstrates all key concepts:
+
+- **11 sections** (Video Preparation, Title Generation, Description, Thumbnail, etc.)
+- **53 prompts** organized by section
+- **37 workflow attributes** (transcript, titleCandidates, selectedTitles, etc.)
+- **Sequential execution** through all sections
+- **Human checkpoints** (title selection, thumbnail selection)
+- **Progressive data accumulation** (each section builds on previous outputs)
+
+**Full workflow:** `/poem/workflows/youtube-launch-optimizer.yaml` (Story 4.1)
+**Schema:** `/poem/schemas/workflows/youtube-launch-optimizer.json` (derived from workflow)
+
+---
+
+### See Also
+
+- **PRD Epic 4:** YouTube Automation Workflow (System Validation)
+- **Story 4.6:** Run Prompt Chain (Section 1 → Section 5)
+- **Story 4.7:** Human-in-the-Loop Checkpoint
+- **Data Models:** WorkflowData interface (this document)
+- **API Specification:** /api/workflow/* endpoints (this document)
+
+---
+
 ### Provider Configuration
 
 **Purpose:** Configuration for external system integration.
