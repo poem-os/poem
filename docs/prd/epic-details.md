@@ -341,7 +341,7 @@ so that I have a real-world prompt collection to validate the system.
 1. All 53 `.hbs` templates are copied to `/poem/prompts/youtube-launch-optimizer/`
 2. Templates maintain their section-based naming convention (e.g., `1-1-configure.hbs`, `5-1-generate-title-v1.hbs`)
 3. `brand-config.json` is imported to `/poem/config/` with CTAs, affiliates, and social links
-4. `workflow-attributes.json` schema is imported to `/poem/schemas/`
+4. `workflow-attributes.json` **reference example** is copied to `/poem/schemas/examples/youtube-launch-optimizer/` as validation baseline for auto-derived schema
 5. Import process validates Handlebars syntax for each template
 6. Import summary reports: total templates, sections covered, any syntax errors
 
@@ -437,6 +437,34 @@ so that I can validate template chaining and progressive data accumulation.
 5. Each step logs: prompt name, input fields used, output fields added
 6. Chain can be paused and resumed (workflow-data persisted)
 7. Final workflow-data contains all accumulated fields from chain
+
+---
+
+### Story 4.6.5: Auto-Generate Workflow Schema from YAML
+
+As a workflow execution engine,
+I want to automatically derive the workflow schema from step inputs/outputs,
+so that the workflow YAML is the single source of truth.
+
+**Acceptance Criteria**:
+
+1. Workflow parser extracts all step `inputs:` and `outputs:` declarations from YAML
+2. Schema generator computes union of all declared attributes
+3. Generated schema includes type inference (string, array, object) based on usage
+4. Schema file is written to `poem/schemas/workflows/{workflow-name}.json` for debugging
+5. Generated schema matches `data/youtube-launch-optimizer/schemas/workflow-attributes.json` reference example (80+ attributes)
+6. Schema generation is automatic - no manual creation required
+7. API endpoint `/api/workflow/{name}/schema` returns auto-derived schema for validation
+
+**Technical Notes**:
+
+- Use workflow YAML step I/O as source of truth
+- Reference example: `data/youtube-launch-optimizer/schemas/workflow-attributes.json` shows expected output
+- Type inference rules:
+  - Simple attributes default to `string`
+  - Attributes accessed with `#each` are `array`
+  - Attributes with dot notation are `object` with nested properties
+  - Explicit type annotations in workflow YAML override inference
 
 ---
 

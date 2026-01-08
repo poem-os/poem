@@ -1,0 +1,116 @@
+name: youtube-launch-optimizer
+description: Multi-phase YouTube video optimization pipeline
+version: 1.0.0
+
+# This is a REFERENCE EXAMPLE showing how workflow YAML declares steps with I/O.
+# When Epic 4 is implemented, this pattern demonstrates auto-derivation of workflow schemas.
+#
+# Key Pattern: Workflow schema = Union of all step inputs + outputs
+# Example: If Step A outputs [summary] and Step B inputs [summary], both are in workflow schema
+
+sections:
+  - name: Video Preparation
+    description: Initial processing of transcript and project setup
+    steps:
+      - id: configure
+        name: Configure Project
+        description: Set up project metadata and initial titles
+        prompt: prompts/1-1-configure.hbs
+        inputs: [projectFolder, transcript]
+        outputs: [projectCode, shortTitle]
+
+      - id: summarize
+        name: Summarize Video
+        description: Create condensed summary of full transcript
+        prompt: prompts/1-3-summarize-video.hbs
+        inputs: [transcript]
+        outputs: [transcriptSummary]
+
+      - id: abridge
+        name: Abridge Transcript
+        description: Create abridged version with key points
+        prompt: prompts/1-4-abridge-v2.hbs
+        inputs: [transcript, transcriptSummary]
+        outputs: [transcriptAbridgement]
+
+      - id: qa-abridge
+        name: QA Abridgement
+        description: Quality check abridgement against original transcript
+        prompt: prompts/1-5-abridge-qa-v2.hbs
+        inputs: [transcript, transcriptAbridgement]
+        outputs: [transcriptAbridgementDescrepencies]
+
+      - id: separate-intro-outro
+        name: Separate Intro/Outro
+        description: Extract introduction and conclusion sections
+        prompt: prompts/1-6-separate-intro-outro-v2.hbs
+        inputs: [transcript]
+        outputs: [transcriptIntro, transcriptOutro]
+
+  - name: Build Chapters
+    description: Identify and refine chapter structure
+    steps:
+      - id: identify-chapters
+        name: Identify Chapters
+        description: Detect natural chapter boundaries in transcript
+        prompt: prompts/2-1-identify-chapters.hbs
+        inputs: [transcript]
+        outputs: [identifyChapters]
+
+      - id: refine-chapters
+        name: Refine Chapters
+        description: Improve chapter titles and boundaries
+        prompt: prompts/2-2-refine-chapters-v2.hbs
+        inputs: [identifyChapters, transcript]
+        outputs: [chapters]
+
+# AUTO-DERIVED WORKFLOW SCHEMA (Generated at Runtime)
+#
+# When this workflow is executed, the system automatically generates the workflow schema
+# by computing the union of all step inputs and outputs:
+#
+# {
+#   "$schema": "http://json-schema.org/draft-07/schema#",
+#   "title": "YouTube Launch Optimizer Workflow Attributes",
+#   "type": "object",
+#   "properties": {
+#     # Initial inputs
+#     "projectFolder": { "type": "string", "description": "Path to project folder" },
+#     "transcript": { "type": "string", "description": "Full video transcript text" },
+#
+#     # Outputs from Configure step
+#     "projectCode": { "type": "string", "description": "Unique project identifier" },
+#     "shortTitle": { "type": "string", "description": "Brief working title" },
+#
+#     # Outputs from Summarize step
+#     "transcriptSummary": { "type": "string", "description": "Condensed summary" },
+#
+#     # Outputs from Abridge step
+#     "transcriptAbridgement": { "type": "string", "description": "Abridged version" },
+#
+#     # Outputs from QA Abridge step
+#     "transcriptAbridgementDescrepencies": {
+#       "type": "array",
+#       "items": { "type": "string" },
+#       "description": "List of discrepancies found"
+#     },
+#
+#     # Outputs from Separate Intro/Outro step
+#     "transcriptIntro": { "type": "string", "description": "Introduction section" },
+#     "transcriptOutro": { "type": "string", "description": "Conclusion section" },
+#
+#     # Outputs from Identify Chapters step
+#     "identifyChapters": { "type": "string", "description": "Initial chapter identification" },
+#
+#     # Outputs from Refine Chapters step
+#     "chapters": { "type": "string", "description": "Final refined chapters" }
+#   },
+#   "required": ["transcript"]
+# }
+#
+# This is exactly what `schemas/workflow-attributes.json` documents (but with 80+ attributes
+# for the complete 53-step workflow). The reference schema was created manually by analyzing
+# all prompts to validate the auto-derivation approach would work correctly.
+#
+# Verification: When Epic 4 is complete, the auto-generated schema should match the
+# reference example in schemas/workflow-attributes.json.

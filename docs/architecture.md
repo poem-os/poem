@@ -644,6 +644,27 @@ While attributes are currently auto-derived from step I/O, a future enhancement 
 
 This explicit declaration is not needed in Epic 4 but will be added when use cases emerge that require it.
 
+#### Reference Example Schemas
+
+Reference examples of workflow schemas can be found in `data/*/schemas/workflow-*.json`. **These are DOCUMENTATION ARTIFACTS created during planning to validate the design.**
+
+**Important**: These files are hand-written for planning purposes. In production:
+
+- Workflow schemas are auto-generated from workflow YAML step I/O declarations
+- No manual schema creation is required
+- Generated schemas can be exported for validation/debugging purposes
+
+**Example**: `data/youtube-launch-optimizer/schemas/workflow-attributes.json` documents what the YouTube workflow schema will contain when auto-derived from the workflow YAML. This file was created manually by analyzing all 53 prompts to validate that the auto-derivation approach would produce the expected 80+ attributes.
+
+**Verification**: When Epic 4 is complete, the auto-generated schema for `youtube-launch-optimizer.yaml` should match the reference example in `data/`.
+
+**How to Use Reference Examples**:
+
+1. **During Planning**: Create reference schema by manually documenting expected attributes
+2. **During Implementation**: Build auto-derivation engine that generates schemas from YAML
+3. **Verification**: Compare auto-generated schema to reference example to validate correctness
+4. **Production**: Only use auto-generated schemas; reference examples remain in `data/` for documentation
+
 ---
 
 ### Execution Model
