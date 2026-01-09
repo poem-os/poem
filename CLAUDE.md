@@ -160,6 +160,8 @@ The project has completed PRD and Architecture phases. Documents are organized b
 | `docs/architecture.md`                            | Complete technical architecture   | ⭐ START HERE for technical design |
 | `docs/architecture/coding-standards.md`           | Code style and conventions        | Before writing code                |
 | `docs/architecture/tech-stack.md`                 | Technology choices                | Understanding stack                |
+| `docs/guides/workflow-validation-guide.md`        | Victor agent (Capability Progression Validation) | Using workflow validator |
+| `docs/future-enhancements.md`                     | Future work and Epic 8 tracking   | Planning ahead                     |
 | `.bmad-core/user-guide.md`                        | BMAD methodology guide            | Understanding workflow             |
 | `.bmad-core/enhanced-ide-development-workflow.md` | Step-by-step dev process          | During implementation              |
 | `docs/planning/POEM.md`                           | Original requirements exploration | Historical context                 |
@@ -301,6 +303,68 @@ docs/qa/gates/          # Quality gate decisions (.yml)
 - Acceptance Criteria
 - Testing sections
 - Other agents' sections
+
+## Capability Progression Validation (Victor Agent)
+
+### NEW: Product-Level QA System
+
+**POEM has a specialized workflow validator** called **Victor** that validates capabilities across stories:
+
+**Name**: Capability Progression Validation
+**Agent**: `/poem/agents/victor`
+**Guide**: `docs/guides/workflow-validation-guide.md`
+
+### What is Capability Progression Validation?
+
+**Traditional BMAD validates stories in isolation**. Victor adds **product-level QA** that:
+1. Validates story N **in context** of stories 1..N-1
+2. Tests against **B72 YouTube workflow** (real-world validation)
+3. Tracks **cumulative progress** toward automation goals (10% → 40% → 80%)
+4. Generates **strategic feedback** for future story planning
+
+### When to Use Victor
+
+**After each story completion**:
+1. Dev completes SAT ✅
+2. QA reviews story ✅
+3. **Victor validates in context** (60-90 min)
+4. Victor generates feedback for next story
+
+### Victor's Commands
+
+```bash
+# Activate Victor
+/poem/agents/victor
+
+# Full validation cycle (60-90 min)
+*validate
+
+# Quick regression check (10-15 min)
+*regression
+
+# Epic progress summary (5-10 min)
+*progress-report
+```
+
+### Validation Artifacts
+
+Victor maintains (in `dev-workspace/`, transient):
+- **Cumulative test reports** - Epic progress tracking
+- **B72 workflow snapshots** - Time-travel debugging, regression comparison
+- **Integration matrix** - Capability integration status
+- **Feedback log** - Strategic feedback for BMAD story planning
+
+**All documentation** is permanent in `docs/guides/` and `docs/planning/bmad-integration/`.
+
+### Future: BMAD Integration (Epic 8)
+
+Victor's pattern will be generalized for BMAD v5.0 as "Capability Validator" agent.
+
+**Requirements**: `docs/planning/bmad-integration/capability-validation-requirements.md`
+**Target**: BMAD v5.0.0 (Q2 2026)
+**Tracking**: `docs/prd/epic-list.md` (Epic 8), `docs/future-enhancements.md`
+
+---
 
 ## POEM-Specific Context
 

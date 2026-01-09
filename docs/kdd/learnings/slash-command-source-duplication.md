@@ -12,14 +12,14 @@ After Story 3.1 and 3.1.5 were marked complete, testing revealed the Prompt Engi
 
 | File | Purpose | Content |
 |------|---------|---------|
-| `.claude/commands/poem/agents/prompt-engineer.md` | Development (Claude Code reads directly) | Had "Penny" + hybrid paths |
+| `.claude/commands/poem/agents/penny.md` | Development (Claude Code reads directly) | Had "Penny" + hybrid paths |
 | `packages/poem-core/commands/agents/prompt-engineer.md` | Installer source (copied to user's project) | Had "Petra" + old paths |
 
 Story 3.1.5 updated the development file but didn't know about the installer source file.
 
 ## Why It Happened
 
-1. Story 3.1 created `.claude/commands/poem/agents/prompt-engineer.md` during development
+1. Story 3.1 created `.claude/commands/poem/agents/penny.md` during development
 2. The file was edited directly rather than editing the installer source
 3. `packages/poem-core/commands/` was a pre-existing directory that the installer was configured to use
 4. Nobody realized there were two separate files that needed to stay in sync
@@ -41,7 +41,7 @@ Story 3.1.5 updated the development file but didn't know about the installer sou
 
 1. Edit: `packages/poem-core/commands/agents/prompt-engineer.md`
 2. Sync: `./scripts/sync-commands.sh` (or use `--watch`)
-3. Test: `/poem/agents/prompt-engineer`
+3. Test: `/poem/agents/penny`
 
 ## Lesson Learned
 

@@ -13,7 +13,7 @@ sequenceDiagram
     participant API as Astro API
     participant FS as File System
 
-    U->>CC: /poem/agents/prompt-engineer
+    U->>CC: /poem/agents/penny
     CC->>PE: Activate agent
     PE->>U: Greet, show commands
 

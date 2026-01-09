@@ -61,7 +61,7 @@ tests/
 ```
 Manual Test Scenarios:
 ├── Agent Activation
-│   ├── /poem/agents/prompt-engineer activates correctly
+│   ├── /poem/agents/penny activates correctly
 │   ├── Agent displays help on activation
 │   └── Agent responds to commands (*new, *refine, etc.)
 │

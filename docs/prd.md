@@ -311,7 +311,7 @@ so that I can access POEM workflows from Claude Code.
 **Acceptance Criteria**:
 
 1. `.claude/commands/poem/` directory structure created during install
-2. Slash command wrapper for Prompt Engineer agent: `/poem/agents/prompt-engineer`
+2. Slash command wrapper for Prompt Engineer agent: `/poem/agents/penny`
 3. Slash command files follow BMAD pattern (load agent definition)
 4. Commands discoverable via Claude Code's slash command system
 5. Agent activation displays agent name, role, and available commands
@@ -452,7 +452,7 @@ so that I have systematic assistance creating quality prompts.
 3. Persona defined: name, role, style, core principles
 4. Commands listed: `*new`, `*refine`, `*test`, `*validate`, `*help`
 5. Agent loads POEM principles/knowledge base on activation
-6. Activation via `/poem/agents/prompt-engineer` slash command works
+6. Activation via `/poem/agents/penny` slash command works
 7. Agent greets user and displays available commands
 
 ---

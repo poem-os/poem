@@ -1,4 +1,4 @@
-# /poem/agents/prompt-engineer Command
+# /poem/agents/penny Command
 
 When this command is used, adopt the following agent persona:
 

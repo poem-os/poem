@@ -29,3 +29,28 @@ Create the Integration Agent with abstract provider contract, workflows for pull
 Build the fourth agent with workflows for realistic mock data generation based on provider data dictionaries, entity relationships, and domain-specific scenarios.
 
 ---
+
+## Epic 8: BMAD Integration - Capability Validation Pattern (Future)
+
+**Status**: 📋 Requirements Complete, Awaiting BMAD v5.0 Integration
+
+Extract the Workflow Validator (Victor) pattern from POEM and generalize it for BMAD core as a reusable "Capability Validation Pattern" for framework/tooling/DSL projects. This pattern enables product-level QA that validates capabilities across stories, tests against reference workflows, tracks cumulative progress, and generates strategic feedback.
+
+**Requirements Document**: `dev-workspace/GENERALIZED-CAPABILITY-VALIDATION-REQUIREMENTS.md`
+
+**Why**: Traditional BMAD validates stories in isolation. For framework/tooling projects that build cumulative capabilities, we need product-level validation that maintains context across stories and ensures trajectory toward automation goals.
+
+**Key Deliverables**:
+- `capability-validator` agent for BMAD core
+- Reference workflow definition format
+- Snapshot management and regression detection
+- Integration matrix tracking
+- Strategic feedback loop
+
+**Target BMAD Version**: v5.0.0 (Q2 2026)
+
+**Dependencies**: Complete POEM Epic 3-4 validation to prove pattern effectiveness
+
+**Note**: POEM-specific implementation (Victor agent) complete and functional. See `dev-workspace/WORKFLOW-VALIDATION-GUIDE.md` for usage.
+
+---

@@ -42,4 +42,5 @@ Thumbs.db
 data/                   # Example data (may contain proprietary info)
 tmp/                    # Temporary/scratch files
 .claude/commands/poem/
-dev-workspace/          # Developer testing workspace (prompts, schemas, mock-data)
+dev-workspace/          # Developer testing workspace (prompts, schemas, mock-data, validation data)
+validation-backups/     # Validation data backups (local only)

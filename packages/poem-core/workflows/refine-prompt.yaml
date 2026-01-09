@@ -1,0 +1,522 @@
+# Refine Prompt Workflow
+# Updates existing prompt template with iterative refinement
+#
+# Executed by: Prompt Engineer agent (Penny) via *refine command
+# Execution model: Agent-interpreted (steps guide agent behavior, not automated)
+#
+# Path resolution: Inherited from poem-core-config.yaml
+# DO NOT add a paths: section - config service is the source of truth
+# See: packages/poem-core/workflows/README.md for the pattern
+
+id: refine-prompt
+name: Refine Existing Prompt
+version: "1.0.0"
+author: POEM Framework
+lastUpdated: "2026-01-09"
+
+# Path resolution mode - indicates this workflow uses config for paths
+pathResolution: config
+
+description: |
+  Guides users through iteratively improving existing Handlebars prompt templates with:
+  - Load existing prompt and schema from workspace
+  - Render with available mock data or user-provided data
+  - Modify template inline or via file editor
+  - Re-render and compare before/after output
+  - Save changes with optional iteration history
+  - Loop for multiple refinement iterations
+
+  Follows BMAD elicitation patterns for user interaction.
+
+  **Path Resolution:**
+  Workspace paths are inherited from poem-core-config.yaml (loaded by config service).
+  - Development (POEM_DEV=true): dev-workspace/prompts/, dev-workspace/schemas/, etc.
+  - Production: poem/prompts/, poem/schemas/, etc.
+  The agent detects mode by checking for packages/poem-core/ (dev) vs .poem-core/ (prod).
+
+# Error handling defaults
+fallback:
+  onMissingInput: prompt-again
+  onApiError: show-error-and-retry
+  onFileConflict: warn-and-confirm
+
+steps:
+  # ============================================================================
+  # STEP 1: Select Existing Prompt (Elicitation)
+  # ============================================================================
+  - id: select-prompt
+    name: Select Existing Prompt
+    type: elicit
+    elicit: true
+    prompt: |
+      Which prompt would you like to refine?
+
+      **Options:**
+      1. Enter the prompt name (e.g., `generate-titles`)
+      2. Enter the full path to the template file
+
+      **Note:** The prompt should exist in your workspace:
+      - Development mode: `dev-workspace/prompts/`
+      - Production mode: `poem/prompts/`
+
+      ---
+      Enter prompt name or path:
+    validation:
+      required: true
+      minLength: 1
+    stores: promptName
+    instruction: |
+      Wait for user to provide prompt name or path.
+
+      1. **Parse input:**
+         - If input contains `.hbs` extension, treat as full path
+         - Otherwise, treat as prompt name (e.g., "generate-titles")
+
+      2. **Detect workspace mode:**
+         - Check if `packages/poem-core/` exists → Development mode
+         - Otherwise → Production mode
+
+      3. **Build file path:**
+         - Development: `dev-workspace/prompts/{promptName}.hbs`
+         - Production: `poem/prompts/{promptName}.hbs`
+         - If full path provided, use as-is
+
+      4. **Validate file exists:**
+         - Read file to verify it exists
+         - If not found, display error with expected path and prompt again
+
+      5. **Store results:**
+         - `promptPath`: Full path to template file
+         - `promptName`: Base name without extension
+         - `workspaceMode`: "development" or "production"
+
+  # ============================================================================
+  # STEP 2: Load and Display Current Template (Action)
+  # ============================================================================
+  - id: load-template
+    name: Load and Display Current Template
+    type: action
+    action: file-read
+    stores: templateContent
+    instruction: |
+      Load the existing template and optionally its schema:
+
+      1. **Read template file:**
+         - Load content from `promptPath`
+         - Store in `templateContent`
+
+      2. **Display template:**
+         ```
+         ## Current Template
+
+         **File:** {promptPath}
+
+         ```handlebars
+         {templateContent}
+         ```
+
+         ---
+         **Size:** {character count} characters, {line count} lines
+         ```
+
+      3. **Check for schema file:**
+         - Build schema path: Replace `.hbs` with `.json` in `schemas/` directory
+         - Development: `dev-workspace/schemas/{promptName}.json`
+         - Production: `poem/schemas/{promptName}.json`
+
+      4. **If schema exists:**
+         - Load schema content
+         - Store in `schemaContent`
+         - Display schema structure:
+           ```
+           ## Current Schema
+
+           **File:** {schemaPath}
+
+           ```json
+           {schemaContent}
+           ```
+           ```
+
+      5. **If schema not found:**
+         - Set `schemaContent` to null
+         - Display: "No schema file found (optional)"
+
+  # ============================================================================
+  # STEP 3: Render with Available Data (Action)
+  # ============================================================================
+  - id: render-current
+    name: Render with Available Data
+    type: action
+    action: api-call
+    endpoint: POST /api/prompt/render
+    stores: renderedOutput
+    instruction: |
+      Render the current template to show baseline output:
+
+      1. **Check for mock data:**
+         - Build mock data path:
+           - Development: `dev-workspace/mock-data/{promptName}.json`
+           - Production: `poem/mock-data/{promptName}.json`
+         - If file exists, load and use as data
+
+      2. **If no mock data, prompt user:**
+         ```
+         No mock data file found for this prompt.
+
+         **Options:**
+         1. Enter JSON data inline (paste below)
+         2. Skip rendering for now
+
+         Enter your choice (1 or 2):
+         ```
+         - If user chooses 1, wait for JSON input and parse
+         - If user chooses 2, skip rendering and continue
+
+      3. **Call render API:**
+         - Endpoint: `POST /api/prompt/render`
+         - Request body:
+           ```json
+           {
+             "template": "{promptPath}",
+             "data": {mockData or userProvidedData},
+             "isRawTemplate": false
+           }
+           ```
+
+      4. **Display rendered output:**
+         ```
+         ## Current Rendered Output
+
+         {rendered content}
+
+         ---
+         **Render Time:** {renderTimeMs}ms
+         {{#if warnings}}
+         **Warnings:** {warnings list}
+         {{/if}}
+         ```
+
+      5. **Store output:**
+         - `renderedOutput`: The rendered text
+         - `renderData`: The data used for rendering
+         - `renderTime`: Render time in milliseconds
+
+  # ============================================================================
+  # STEP 4: Offer Modification Options (Elicitation)
+  # ============================================================================
+  - id: modification-method
+    name: Offer Modification Options
+    type: elicit
+    elicit: true
+    prompt: |
+      How would you like to modify the template?
+
+      **Options:**
+      1. **Edit inline** - Paste updated template content here
+      2. **Edit in file editor** - Modify the file directly, then continue
+      3. **Skip modifications** - Continue without changes
+
+      ---
+      Enter your choice (1, 2, or 3):
+    validation:
+      required: true
+      pattern: "^[123]$"
+      patternDescription: "1, 2, or 3"
+    stores: modificationChoice
+    instruction: |
+      Wait for user to choose modification method.
+
+      - Store choice as: "inline", "file-editor", or "skip"
+      - This controls the next step's behavior
+
+  # ============================================================================
+  # STEP 5: Apply Template Modifications (Conditional Action)
+  # ============================================================================
+  - id: apply-modifications
+    name: Apply Template Modifications
+    type: action
+    action: conditional
+    condition:
+      check: modificationChoice
+      matches: "inline|file-editor"
+    stores: updatedTemplateContent
+    instruction: |
+      Apply modifications based on user's chosen method:
+
+      **If modificationChoice = "inline":**
+      1. Prompt user:
+         ```
+         Paste your updated template content below.
+         (Type 'END' on a new line when finished)
+
+         ---
+         ```
+      2. Wait for user to paste template content (multi-line)
+      3. Store in `updatedTemplateContent`
+      4. Display confirmation: "Template updated (inline edit)"
+
+      **If modificationChoice = "file-editor":**
+      1. Display instruction:
+         ```
+         Please edit the template file now:
+
+         **File:** {promptPath}
+
+         When you're done editing and have saved the file, type 'done' to continue.
+         ```
+      2. Wait for user to type "done"
+      3. Re-read template file from `promptPath`
+      4. Store in `updatedTemplateContent`
+      5. Display confirmation: "Template reloaded from file"
+
+      **If modificationChoice = "skip":**
+      - Copy `templateContent` to `updatedTemplateContent` (no changes)
+      - Skip to continue-refining step
+
+  # ============================================================================
+  # STEP 6: Re-render and Compare (Action)
+  # ============================================================================
+  - id: re-render
+    name: Re-render and Compare
+    type: action
+    action: api-call
+    endpoint: POST /api/prompt/render
+    stores: newRenderedOutput
+    instruction: |
+      Render updated template and compare with original:
+
+      1. **Call render API with updated template:**
+         - Endpoint: `POST /api/prompt/render`
+         - Request body:
+           ```json
+           {
+             "template": "{updatedTemplateContent}",
+             "data": {renderData},
+             "isRawTemplate": true
+           }
+           ```
+
+      2. **Display new rendered output:**
+         ```
+         ## New Rendered Output
+
+         {new rendered content}
+
+         ---
+         **Render Time:** {renderTimeMs}ms
+         ```
+
+      3. **Show comparison:**
+         ```
+         ## Before vs After Comparison
+
+         **Before:**
+         - Characters: {original character count}
+         - Lines: {original line count}
+         - Render time: {original render time}ms
+
+         **After:**
+         - Characters: {new character count}
+         - Lines: {new line count}
+         - Render time: {new render time}ms
+
+         **Changes:**
+         - Character delta: {difference with +/- sign}
+         - Line delta: {difference with +/- sign}
+         - Time delta: {difference with +/- sign}ms
+         ```
+
+      4. **Store results:**
+         - `newRenderedOutput`: New rendered text
+         - `newRenderTime`: New render time
+
+  # ============================================================================
+  # STEP 7: Save Changes (Elicitation)
+  # ============================================================================
+  - id: confirm-save
+    name: Save Changes
+    type: elicit
+    elicit: true
+    prompt: |
+      Would you like to save these changes to the template file?
+
+      **Options:**
+      1. **Yes** - Save updated template to file
+      2. **No** - Discard changes (keep original)
+
+      ---
+      Enter your choice (yes/no or 1/2):
+    validation:
+      required: true
+      pattern: "^(yes|no|y|n|1|2)$"
+      patternDescription: "yes, no, y, n, 1, or 2"
+    stores: saveChoice
+    instruction: |
+      Wait for user decision on saving:
+
+      **If user chooses YES (yes/y/1):**
+      1. Write `updatedTemplateContent` to `promptPath`
+      2. Display confirmation:
+         ```
+         ✅ Template saved successfully!
+
+         **File:** {promptPath}
+         **Size:** {character count} characters, {line count} lines
+         ```
+      3. Set `changesSaved` = true
+
+      **If user chooses NO (no/n/2):**
+      1. Display message:
+         ```
+         Changes discarded. Original template unchanged.
+         ```
+      2. Set `changesSaved` = false
+
+  # ============================================================================
+  # STEP 8: Track Iteration History (Optional Action)
+  # ============================================================================
+  - id: track-iteration
+    name: Track Iteration History
+    type: action
+    action: optional
+    condition:
+      check: changesSaved
+      matches: "true"
+    stores: backupPath
+    instruction: |
+      **OPTIONAL ENHANCEMENT** (AC 7): Track iteration history
+
+      This step is optional. If time allows, implement backup tracking:
+
+      1. **Create backup directory if needed:**
+         - Development: `dev-workspace/prompts/backups/`
+         - Production: `poem/prompts/backups/`
+
+      2. **Generate timestamp:** YYYYMMDD-HHmmss format
+
+      3. **Create backup file:**
+         - Filename: `{promptName}.{timestamp}.bak`
+         - Content: Original `templateContent` (before changes)
+         - Store backup file path in `backupPath`
+
+      4. **Log iteration (optional):**
+         - File: `{workspace}/refine-history.json`
+         - Append entry:
+           ```json
+           {
+             "promptName": "{promptName}",
+             "timestamp": "{ISO timestamp}",
+             "backupFile": "{backupPath}",
+             "charsBefore": {original character count},
+             "charsAfter": {new character count}
+           }
+           ```
+
+      5. **Display confirmation:**
+         ```
+         📁 Backup created: {backupPath}
+         ```
+
+      **If not implementing:**
+      - Skip this step silently
+      - Note in completion summary: "Iteration history tracking: Not implemented (future enhancement)"
+
+  # ============================================================================
+  # STEP 9: Offer Additional Refinement (Elicitation)
+  # ============================================================================
+  - id: continue-refining
+    name: Offer Additional Refinement
+    type: elicit
+    elicit: true
+    prompt: |
+      Would you like to refine this prompt again?
+
+      **Options:**
+      1. **Yes** - Make another round of modifications
+      2. **No** - Complete refinement session
+
+      ---
+      Enter your choice (yes/no or 1/2):
+    validation:
+      required: true
+      pattern: "^(yes|no|y|n|1|2)$"
+      patternDescription: "yes, no, y, n, 1, or 2"
+    stores: continueChoice
+    instruction: |
+      Wait for user decision:
+
+      **If user chooses YES (yes/y/1):**
+      - Increment iteration counter
+      - Loop back to `render-current` step (Step 3)
+      - Reload template content if saved (use updated version)
+
+      **If user chooses NO (no/n/2):**
+      - Proceed to completion step
+      - Prepare summary of refinement session
+
+  # ============================================================================
+  # STEP 10: Workflow Complete (Output)
+  # ============================================================================
+  - id: complete
+    name: Workflow Complete
+    type: output
+    instruction: |
+      Summarize refinement session and suggest next steps:
+
+      ```
+      ## Refinement Session Complete!
+
+      ### Summary
+
+      **Prompt:** {promptName}
+      **File:** {promptPath}
+      **Iterations:** {iteration count}
+      **Final Status:** {changesSaved ? "Saved" : "No changes saved"}
+
+      ### Artifacts
+
+      | Artifact | Path | Status |
+      |----------|------|--------|
+      | Template | `{promptPath}` | {changesSaved ? "✅ Updated" : "Unchanged"} |
+      {{#if schemaContent}}
+      | Schema | `{schemaPath}` | Unchanged |
+      {{/if}}
+      {{#if backupPath}}
+      | Backup | `{backupPath}` | ✅ Created |
+      {{/if}}
+
+      ### Changes
+
+      {{#if changesSaved}}
+      - Character count: {original} → {new} ({delta with +/- sign})
+      - Line count: {original lines} → {new lines} ({delta with +/- sign})
+      {{else}}
+      No changes saved
+      {{/if}}
+
+      ### Next Steps
+
+      - `*test` - Test the refined prompt with various data scenarios
+      - `*validate` - Check for issues and best practice compliance
+      - `*refine` - Refine again if needed
+
+      ### Usage
+
+      To use this prompt in your application:
+      1. Call POST /api/prompt/render with template path and data
+      2. Or use the Prompt Engineer agent: `*test {promptName}`
+      ```
+
+# Output artifacts produced by this workflow
+outputs:
+  - name: template
+    path: "{{promptPath}}"
+    format: hbs
+    description: Updated Handlebars template file (if saved)
+    optional: false
+  - name: backup
+    path: "{{backupPath}}"
+    format: hbs
+    description: Backup of original template (optional)
+    optional: true

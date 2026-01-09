@@ -1737,7 +1737,7 @@ sequenceDiagram
     participant API as Astro API
     participant FS as File System
 
-    U->>CC: /poem/agents/prompt-engineer
+    U->>CC: /poem/agents/penny
     CC->>PE: Activate agent
     PE->>U: Greet, show commands
 
@@ -2291,7 +2291,7 @@ code packages/poem-core/agents/prompt-engineer.md
 npm run installer:test -- --target ../test-project
 
 # 3. In the test project, activate Claude Code and test agent
-#    /poem/agents/prompt-engineer
+#    /poem/agents/penny
 
 # 4. Iterate on files and re-run installer:test
 ```
@@ -2433,7 +2433,7 @@ tests/
 ```
 Manual Test Scenarios:
 ├── Agent Activation
-│   ├── /poem/agents/prompt-engineer activates correctly
+│   ├── /poem/agents/penny activates correctly
 │   ├── Agent displays help on activation
 │   └── Agent responds to commands (*new, *refine, etc.)
 │
