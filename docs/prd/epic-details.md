@@ -245,7 +245,7 @@ so that prompts follow POEM best practices from the start.
 1. Workflow defined in `.poem-core/workflows/new-prompt.yaml`
 2. Workflow gathers: prompt purpose, target output, required inputs
 3. Creates `.hbs` template file in `/poem/prompts/`
-4. Generates initial schema in `/poem/schemas/`
+4. Generates initial input schema and prompts for output schema definition in `/poem/schemas/`
 5. Offers to generate mock data for testing
 6. Provides preview of rendered template with example data
 7. Workflow follows BMAD elicitation patterns for user interaction
@@ -262,7 +262,7 @@ so that I can rapidly test and update prompts.
 
 1. Workflow defined in `.poem-core/workflows/refine-prompt.yaml`
 2. Workflow loads existing prompt from path
-3. Displays current template content and schema
+3. Displays current template content, input schema, and output schema
 4. Renders with available data (mock or provided)
 5. User can modify template inline or via file
 6. Changes saved and re-rendered for comparison
@@ -280,7 +280,7 @@ so that I can validate prompt behavior across scenarios.
 
 1. Workflow defined in `.poem-core/workflows/test-prompt.yaml`
 2. Workflow accepts prompt path and data source (mock, file, or inline)
-3. Calls render API endpoint and displays output
+3. Calls render API endpoint, displays output, and validates against output schema if present
 4. Reports missing fields, helper errors, warnings
 5. Can run multiple test scenarios in sequence
 6. Displays render time and output length
@@ -298,7 +298,7 @@ so that I catch issues before deployment.
 
 1. Workflow defined in `.poem-core/workflows/validate-prompt.yaml`
 2. Validates Handlebars syntax (no parse errors)
-3. Validates all placeholders have corresponding schema fields
+3. Validates all input placeholders have corresponding input schema fields and output structure matches output schema
 4. Validates required helpers are registered
 5. Checks for POEM best practices (configurable rules)
 6. Reports issues with severity (error, warning, info)
@@ -316,11 +316,38 @@ so that I can work efficiently without always invoking full workflows.
 
 1. `check-my-prompt.md` skill validates current prompt in context
 2. `preview-with-data.md` skill renders prompt with provided/mock data
-3. `generate-schema.md` skill extracts schema from template
+3. `generate-schema.md` skill extracts input AND output schemas from template
 4. Skills follow POEM skill format (markdown with instructions)
 5. Skills are self-describing (suggest when they're useful)
 6. Skills call API endpoints via HTTP for heavy operations
 7. Skills documented in `.poem-core/skills/README.md`
+8. Enhance `*list` command with formatted table, metadata (size, date modified), filtering
+9. Enhance `*view` command with rich formatting, schema details, template statistics
+
+**Note**: Basic `*list` and `*view` commands added to Prompt Engineer agent after Story 3.3 for immediate usability. This story enhances them with proper formatting, error handling, and metadata display.
+
+---
+
+### Story 3.7: Define and Validate Output Schemas
+
+As a prompt engineer,
+I want to define output schemas for my prompts,
+so that I can validate AI responses and enable type-safe workflow chaining.
+
+**Acceptance Criteria**:
+
+1. Output schema stored alongside input schema (e.g., `generate-title-output.json`)
+2. Schema defines expected AI response structure (fields, types, format)
+3. Output schema extraction from prompt "Expected Output" section (optional automation)
+4. API endpoint validates rendered output against output schema
+5. Validation reports missing fields, type mismatches, format errors
+6. Output schemas support both structured (JSON) and unstructured (text) outputs
+7. Prompt Engineer agent workflows handle dual schemas (input + output)
+8. Output schemas optional (prompts can omit if outputs are purely informational)
+
+**NFR Considerations**:
+- Schema validation completes in <100ms (NFR2)
+- Clear error messages for schema mismatches (NFR6)
 
 ---
 
@@ -364,6 +391,9 @@ so that I know what data each prompt requires without manual inspection.
 7. Helper calls identified: `{{truncate title 49}}` → notes `truncate` helper required
 8. Generated schemas saved to `/poem/schemas/youtube-launch-optimizer/` mirroring prompt structure
 9. Extraction handles the 7 specific patterns from workflow spec
+10. Output structure extracted from "Expected Output" or "Output Format" sections
+11. Output schemas saved to `/poem/schemas/{name}-output.json`
+12. Extraction reports prompts with no output schema defined
 
 ---
 
@@ -419,6 +449,8 @@ so that I can validate individual prompts work correctly.
 5. Helper errors reported with template location and context
 6. Response includes metadata: template name, data source, render time
 7. Test with `6-1-yt-simple-description-v2.hbs` using mock workflow data
+8. Validates rendered output against output schema (if present)
+9. Reports schema validation failures with field-level details
 
 ---
 
@@ -432,11 +464,12 @@ so that I can validate template chaining and progressive data accumulation.
 
 1. Chain definition specifies prompt sequence and data flow
 2. Output from prompt A stored in workflow-data under specified key
-3. Subsequent prompts access accumulated workflow-data
+3. Subsequent prompts access accumulated workflow-data with optional field mappings between prompt I/O and workflow attributes
 4. Chain tested: `1-4-abridge` → `4-1-analyze-content-essence` → `5-1-generate-title`
 5. Each step logs: prompt name, input fields used, output fields added
 6. Chain can be paused and resumed (workflow-data persisted)
 7. Final workflow-data contains all accumulated fields from chain
+8. Supports optional mapper objects for translating prompt field names to workflow attribute names
 
 ---
 
@@ -483,6 +516,8 @@ so that creative decisions like title selection involve human judgment.
 5. Test with `5-2-select-title-shortlist.hbs` pattern (Flexible Selection)
 6. Checkpoint can accept multiple selections or free-form input
 7. Skipping checkpoint uses first/default option (for automated testing)
+8. Checkpoints can capture transient values (human input) into workflow attribute store
+9. Transient values visible to downstream prompts via workflow-data
 
 ---
 

@@ -57,14 +57,15 @@ POEM is a **Framework/Operating System** (like BMAD), not a traditional web appl
 
 **Schema Format**:
 
-- **Initial Approach**: Simple JSON documents describing field names, types, and constraints
+- **Initial Approach**: Simple JSON documents describing field names, types, and constraints (applies to both input and output schemas)
 - **Evolution Path**: May adopt formal JSON Schema spec or validation libraries as needs emerge
 - **Rationale**: Start simple, add complexity only when required by actual use cases
 
 **File Structure Conventions**:
 
 - Prompts: `/poem/prompts/*.hbs`
-- Schemas: `/poem/schemas/*.json`
+- Input Schemas: `/poem/schemas/{prompt-name}.json`
+- Output Schemas: `/poem/schemas/{prompt-name}-output.json`
 - Mappings: `/poem/mappings/*.json` (if needed)
 - Custom Helpers: `.poem-app/src/services/handlebars/helpers/*.js`
 - Provider Implementations: `.poem-app/src/pages/api/providers/{name}/`

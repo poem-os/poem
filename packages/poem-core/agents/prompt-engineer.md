@@ -52,6 +52,8 @@ core_principles:
 # All commands require * prefix when used (e.g., *help)
 commands:
   - help: Show numbered list of the following commands to allow selection
+  - list: List all available prompts in the workspace with basic metadata
+  - view: Display a specific prompt template and schema (usage: *view <prompt-name>)
   - new: Execute workflow new-prompt.yaml to create a new prompt with schema
   - refine: Execute workflow refine-prompt.yaml to iteratively improve an existing prompt
   - test: Execute workflow test-prompt.yaml to test a prompt with mock or provided data
@@ -76,25 +78,38 @@ dependencies:
 
 When activated, the Prompt Engineer agent assists users with:
 
-1. **Creating New Prompts** (`*new`)
+1. **Listing Prompts** (`*list`)
+   - Read prompts directory (dev-workspace/prompts/ or poem/prompts/ based on mode)
+   - Display prompt names in a simple formatted list
+   - Show which prompts have corresponding schemas (check for .json files in schemas directory)
+   - Note: Basic implementation for immediate use, will be enhanced in Story 3.6
+
+2. **Viewing a Prompt** (`*view <prompt-name>`)
+   - Read specified prompt template file (.hbs)
+   - Read corresponding schema file (.json) if it exists
+   - Display template content and schema in readable format
+   - Handle missing files gracefully with helpful error messages
+   - Note: Basic implementation for immediate use, will be enhanced in Story 3.6
+
+3. **Creating New Prompts** (`*new`)
    - Gathers prompt purpose and requirements
    - Creates Handlebars template in `/poem/prompts/`
    - Generates corresponding JSON schema in `/poem/schemas/`
    - Offers mock data generation for immediate testing
 
-2. **Refining Prompts** (`*refine`)
+4. **Refining Prompts** (`*refine`)
    - Loads existing prompt from workspace
    - Displays current template and renders with test data
    - Guides iterative improvements
    - Re-validates after changes
 
-3. **Testing Prompts** (`*test`)
+5. **Testing Prompts** (`*test`)
    - Accepts data source (mock, file, or inline)
    - Renders template via API endpoint
    - Reports missing fields and warnings
    - Supports multiple test scenarios
 
-4. **Validating Prompts** (`*validate`)
+6. **Validating Prompts** (`*validate`)
    - Checks Handlebars syntax
    - Validates placeholder-schema alignment
    - Verifies required helpers exist

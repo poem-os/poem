@@ -12,7 +12,8 @@ POEM's data models are primarily **file-based documents**, not database entities
 - `content`: string - Handlebars template content
 - `placeholders`: string[] - Extracted placeholder names
 - `helpers`: string[] - Required Handlebars helpers
-- `schemaPath`: string - Associated schema file path
+- `inputSchemaPath`: string - Associated input schema file path
+- `outputSchemaPath`: string - Associated output schema file path
 
 ```typescript
 interface PromptTemplate {
@@ -28,8 +29,11 @@ interface PromptTemplate {
   /** Required helper names */
   requiredHelpers: string[];
 
-  /** Associated schema path (if exists) */
-  schemaPath?: string;
+  /** Associated input schema path (if exists) */
+  inputSchemaPath?: string;
+
+  /** Associated output schema path (if exists) */
+  outputSchemaPath?: string;
 }
 
 interface PlaceholderInfo {
@@ -49,7 +53,8 @@ interface PlaceholderInfo {
 
 **Relationships:**
 
-- Has one optional Schema (validation)
+- Has zero or one optional Input Schema (defines input data structure)
+- Has zero or one optional Output Schema (defines output data structure)
 - May reference many Helpers
 - May be part of a Workflow chain
 
@@ -57,7 +62,7 @@ interface PlaceholderInfo {
 
 ## Schema
 
-**Purpose:** JSON document defining the data structure required by a prompt template.
+**Purpose:** JSON document defining the data structure for EITHER the input data required by a prompt template OR the output data produced by a prompt template. A single schema file describes one direction (input or output), and prompts may have both an input schema and an output schema.
 
 **Key Attributes:**
 

@@ -58,34 +58,37 @@ Every title should trigger at least ONE of:
 
 Analyze the transcript to identify:
 1. Main topic and key concepts
-2. Numbers, statistics, or quantifiable results mentioned
+2. Multiple hooks: numbers, unique features, benefits, problems solved
 3. Target audience (beginner, intermediate, expert)
-4. Unique angle or hook
 
 Then create 10 YouTube titles optimized for CTR.
 
+**Variety requirement:** Each title should use a DIFFERENT primary hook. Do not repeat the same angle more than twice.
+
 ## Output Format
 
-For each title provide:
-1. Which emotion it triggers (CURIOSITY/DESIRE/FEAR)
-2. Character count
-3. The title itself
+Provide 10 titles in a clean table format:
 
-**Format:**
-```
-1. [CURIOSITY] (47 chars) "Title here..."
-2. [DESIRE] (52 chars) "Title here..."
-3. [FEAR] (45 chars) "Title here..."
-...
-10. [CURIOSITY] (49 chars) "Title here..."
-```
+| # | Emotion | Chars | Mobile | Keywords | Title |
+|---|---------|-------|--------|----------|-------|
+| 1 | CURIOSITY | 47 | ✓ | AI, coding, demo | "Title here..." |
+| 2 | DESIRE | 52 | ✗ | tutorial, build, fast | "Title here..." |
+| 3 | FEAR | 45 | ✓ | warning, mistake, avoid | "Title here..." |
+
+**Column Details:**
+- **Emotion**: CURIOSITY, DESIRE, or FEAR
+- **Chars**: Exact character count of the title
+- **Mobile**: ✓ if under 50 chars (mobile-safe), ✗ if 50+ chars
+- **Keywords**: 2-4 primary keywords from the title (comma-separated)
+- **Title**: The complete YouTube title in quotes
 
 ## Expected Output
 
-10 title options that:
+A markdown table with 10 title options that:
 - Trigger at least one emotion (Curiosity/Desire/Fear)
-- Are 40-50 characters when possible
+- Are 40-50 characters when possible (mobile-optimized)
 - Front-load important keywords
 - Use power words strategically
 - Accurately reflect video content
+- Include 2-4 relevant keywords per title
 - Are ready to use on YouTube

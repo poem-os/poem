@@ -4,13 +4,13 @@
 
 ### Group 1: Agent-Guided Workflows (15 FRs)
 
-**FR-PE-1**: Users shall be able to create new prompts by activating the Prompt Engineer Agent via slash command, which guides them through a systematic workflow that consults POEM principles, creates prompt (.hbs) and schema (JSON) files in /poem/ workspace, and provides preview of rendered output with example data
+**FR-PE-1**: Users shall be able to create new prompts by activating the Prompt Engineer Agent via slash command, which guides them through a systematic workflow that consults POEM principles, creates prompt (.hbs), input schema (JSON), and output schema (JSON) files in /poem/ workspace, and provides preview of rendered output with example data
 
-**FR-PE-2**: Users shall be able to refine existing prompts iteratively through Prompt Engineer Agent workflows that enable rapid test-update cycles, including loading existing prompts, testing with mock or example data, identifying issues, and updating prompt/schema files without leaving their IDE
+**FR-PE-2**: Users shall be able to refine existing prompts iteratively through Prompt Engineer Agent workflows that enable rapid test-update cycles, including loading existing prompts, testing with mock or example data, identifying issues, and updating prompt/input schema/output schema files without leaving their IDE
 
 **FR-PE-3**: Users shall be able to test prompts with data through workflows that render Handlebars templates and display output in the conversation stream for validation and debugging
 
-**FR-PE-4**: Users shall be able to validate prompt structure through workflows that check template syntax, placeholder consistency with schemas, and adherence to POEM best practices
+**FR-PE-4**: Users shall be able to validate prompt structure through workflows that check template syntax, input placeholder consistency with input schemas, output structure consistency with output schemas, and adherence to POEM best practices
 
 **FR-SA-1**: System Agent shall be able to create custom Handlebars helpers on-demand by generating JavaScript code files in .poem-app/src/services/handlebars/helpers/ when users request new formatting or transformation capabilities
 
@@ -42,7 +42,7 @@
 
 **FR-FI-3**: POEM shall provide YAML-based workflow templates for approximately 15-20 common tasks across all agents (e.g., New Prompt, Refine Prompt, Deploy Prompt, Test Prompt, Add Helper, Create Provider)
 
-**FR-FI-4**: POEM shall include 8 skills that provide autonomous capabilities: Check My Prompt, Preview with Example Data, Generate Placeholder Schema, Find Fields in Data Dictionary, Validate Schema Against Dictionary, Suggest Mappings, Pull Data Dictionary, Publish Prompt
+**FR-FI-4**: POEM shall include 8 skills that provide autonomous capabilities: Check My Prompt, Preview with Example Data, Generate Input/Output Schemas, Find Fields in Data Dictionary, Validate Schema Against Dictionary, Suggest Mappings, Pull Data Dictionary, Publish Prompt
 
 **FR-RI-1**: POEM shall run a persistent Astro server on configurable port for template rendering API endpoints and provider integration
 
