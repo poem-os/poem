@@ -9,6 +9,8 @@ This folder contains decision documentation for POEM's technology choices and ar
 | Decision                  | Status                           | File                               | Final Choice                                          | Date       | Notes                                                                                 |
 | ------------------------- | -------------------------------- | ---------------------------------- | ----------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------- |
 | **Handlebars Templating** | ✅ **Decided**                   | `handlebars-templating.md`         | Use Handlebars (.hbs extension)                       | 2025-11-20 | All prompts use .hbs, strong rationale documented                                     |
+| **Workflow Definition Format** | ✅ **Decided**              | `workflow-definition-format.md`    | YAML format for content workflows (Epic 4)            | 2026-01-07 | Sequential execution, auto-derived data bus                                           |
+| **Agent Workflows vs BMAD** | ⚠️ **Divergent**               | `agent-workflows-vs-bmad-tasks.md` | Custom YAML (Epic 3), future alignment needed         | 2026-01-11 | Tracks divergence from BMAD v4 tasks, Epic 9 for resolution                          |
 | **Schema Format**         | 📋 **Leaning**                   | `schema-format-alternatives.md`    | Custom JSON (open to Architect ideas)                 | -          | Simple approach preferred, but Architect can choose alternative                       |
 | **Fourth Agent**          | 📋 **Decided Need, Details TBD** | `../system-explorations/agents.md` | Will have 4th agent (Data/Testing), specifics pending | -          | Mock data complexity suggests need, but implementation details require more discovery |
 | **Mapping Architecture**  | 📋 **Deferred (YAGNI)**          | `mapping-architecture-concepts.md` | Build when needed                                     | 2025-11-20 | Don't over-engineer, implement if use cases emerge                                    |
@@ -22,6 +24,13 @@ This folder contains decision documentation for POEM's technology choices and ar
 Choices that have been made and documented:
 
 - **Handlebars Templating**: Using Handlebars for template engine
+- **Workflow Definition Format**: YAML for content workflows (Epic 4)
+
+### ⚠️ Divergent / Tracked for Alignment
+
+Decisions that diverge from framework standards, tracked for future resolution:
+
+- **Agent Workflows vs BMAD**: Custom YAML format (Epic 3) diverges from BMAD v4 markdown tasks - tracked in Epic 9
 
 ### 📋 Leaning / Pending
 

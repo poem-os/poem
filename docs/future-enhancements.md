@@ -61,9 +61,92 @@
 
 ---
 
+### 2. Agent Task Format Alignment with BMAD
+
+**Status**: ⚠️ Divergent (Tracked for Future Resolution)
+**Target**: POEM v1.1 - v2.0 (Q2-Q3 2026)
+**Epic**: Future Epic 9
+
+**What**: Address format divergence between POEM agent tasks (YAML) and BMAD tasks (markdown)
+
+**Why**: POEM Epic 3 created custom YAML-based "agent workflows" that guide AI agents through prompt engineering operations (new-prompt, refine-prompt, test-prompt, validate-prompt). These are conceptually identical to BMAD tasks but use a different format.
+
+**Current State**:
+- POEM agent tasks: Custom YAML with structured elicitation steps, data storage, validation
+- BMAD tasks: Markdown with numbered sections and plain text instructions
+- Both solve same problem (guide single agent through steps)
+- Different formats create fragmentation and maintenance burden
+
+**The Divergence**:
+```yaml
+# POEM Agent Task (YAML)
+id: validate-prompt
+steps:
+  - id: select-prompt
+    type: elicit
+    prompt: "Which prompt?"
+    stores: promptName
+    validation:
+      required: true
+```
+
+vs
+
+```markdown
+# BMAD Task (Markdown)
+
+## 1. Select Story
+- Ask user for story number
+- Validate story exists
+- Store story path
+```
+
+**Decision Document**: `docs/planning/decisions/agent-workflows-vs-bmad-tasks.md`
+
+**Alignment Options**:
+1. **Migrate to BMAD markdown format** (lose structured advantages)
+2. **Keep YAML, document as domain-specific** (permanent divergence)
+3. **Propose YAML task RFC to BMAD v5.0** (contribute improvement)
+4. **Hybrid approach** (support both formats)
+
+**Recommended Path**:
+- ✅ **Short-term**: Keep YAML agent tasks (Epic 3 complete, works well)
+- 📋 **Medium-term**: Propose structured task format RFC to BMAD community
+- 🔮 **Long-term**: Align with BMAD v5.0 decision
+
+**Key Deliverables**:
+1. Architecture documentation: `docs/architecture/agent-tasks.md`
+2. RFC for BMAD community (structured task format)
+3. Decision on migration vs maintenance based on BMAD v5.0 direction
+4. Refactor if community adopts YAML (or maintain custom format)
+
+**Dependencies**:
+- BMAD v5.0 roadmap announcement
+- Community feedback on structured task format
+- POEM Epic 3 completion (validates pattern effectiveness)
+
+**Effort Estimate**:
+- Documentation: 6-8 hours
+- RFC creation: 8-12 hours
+- Migration (if needed): 16-24 hours
+
+**Tracking**:
+- Decision: `docs/planning/decisions/agent-workflows-vs-bmad-tasks.md`
+- POEM Agent Tasks: `packages/poem-core/workflows/*.yaml` (Epic 3)
+- BMAD Tasks: `.bmad-core/tasks/*.md`
+
+**Next Steps**:
+1. ✅ Document divergence (agent-workflows-vs-bmad-tasks.md) - DONE
+2. 📝 Create agent-tasks.md architecture doc
+3. 📋 Propose RFC to BMAD Discord (Q2 2026)
+4. 🔄 Gather community feedback
+5. 🎯 Decide on alignment strategy based on BMAD v5.0
+
+---
+
 ## 🔮 Medium Priority
 
-### 2. Automated Regression Testing
+### 3. Automated Regression Testing
 
 **Status**: 💡 Idea
 **Target**: POEM v2.0 or Epic 5-6
@@ -82,7 +165,7 @@
 
 ---
 
-### 3. Visual Progress Dashboards
+### 4. Visual Progress Dashboards
 
 **Status**: 💡 Idea
 **Target**: POEM v2.0
@@ -101,7 +184,7 @@
 
 ---
 
-### 4. Multi-Dataset Validation
+### 5. Multi-Dataset Validation
 
 **Status**: 💡 Idea
 **Target**: After POEM Epic 4
@@ -120,7 +203,7 @@
 
 ---
 
-### 5. AI-Powered Failure Analysis
+### 6. AI-Powered Failure Analysis
 
 **Status**: 💡 Idea
 **Target**: POEM v2.0 or v3.0
@@ -139,7 +222,7 @@
 
 ---
 
-### 6. Prompt Version Comparison & Quality Evolution Tracking
+### 7. Prompt Version Comparison & Quality Evolution Tracking
 
 **Status**: 💡 Idea (from Victor validation insights)
 **Target**: POEM v1.1 or Epic 5
@@ -223,7 +306,7 @@ versions:
 
 ## 🌟 Low Priority / Nice to Have
 
-### 7. Predictive Capability Risk Scoring
+### 8. Predictive Capability Risk Scoring
 
 **Status**: 💡 Idea
 **Target**: POEM v3.0
@@ -234,7 +317,7 @@ versions:
 
 ---
 
-### 8. Cross-Project Pattern Detection
+### 9. Cross-Project Pattern Detection
 
 **Status**: 💡 Idea
 **Target**: BMAD v5.0+
@@ -245,7 +328,7 @@ versions:
 
 ---
 
-### 9. Integration with GitHub Projects/Issues
+### 10. Integration with GitHub Projects/Issues
 
 **Status**: 💡 Idea
 **Target**: POEM v2.0
