@@ -1,7 +1,7 @@
 # POEM Future Enhancements
 
 **Purpose**: High-visibility tracking for future enhancements that extend beyond current epic scope
-**Last Updated**: 2026-01-09
+**Last Updated**: 2026-01-11
 
 ---
 
@@ -139,9 +139,91 @@
 
 ---
 
+### 6. Prompt Version Comparison & Quality Evolution Tracking
+
+**Status**: 💡 Idea (from Victor validation insights)
+**Target**: POEM v1.1 or Epic 5
+**Suggested By**: User testing B72 prompts (2026-01-11)
+
+**What**: Track prompt quality improvements across refinement iterations with version history and quality metrics.
+
+**Why**: Users refine prompts iteratively (e.g., generate-title v1.0 → v1.1 → v1.2). Currently no system to:
+- Compare quality scores between versions
+- Track what changed and why
+- Prove refinements actually improved output
+- Understand which refinement strategies work
+
+**Example Use Case**:
+1. User runs `test-prompt` on generate-title v1.0 with B72 data → Quality: 70/100
+2. User runs `refine-prompt` (adds time-based hooks, front-loads keywords)
+3. User runs `test-prompt` on generate-title v1.1 with same B72 data → Quality: 85/100
+4. User asks: "Did my refinement improve output quality? What changed?"
+5. System shows: "+15 points due to time-based hooks, better mobile optimization"
+
+**Current State**:
+- Manual tracking in `B72-VIDEO-TESTING-GUIDE.md` (testing results template)
+- No automated version comparison
+- Quality assessment is subjective and not tracked over time
+
+**Proposed Solution**:
+- Add `compare-prompt-versions` workflow (after Story 3.5)
+- Store test results with version metadata (version, date, refinements made)
+- Generate before/after comparison reports
+- Track refinement → improvement correlation
+- Support both quantitative metrics (char counts, schema validation) and qualitative metrics (relevance, clarity)
+
+**Key Features**:
+- Version history for each prompt (v1.0, v1.1, v1.2, etc.)
+- Side-by-side output comparison (diff view)
+- Quality score tracking over time (line chart)
+- Refinement notes with each version (what changed and why)
+- A/B testing support (compare two refinement strategies)
+- Rollback capability (revert to previous version if quality drops)
+
+**Data Structure**:
+```yaml
+prompt: generate-title
+versions:
+  - version: 1.0
+    date: 2026-01-07
+    created_by: new-prompt workflow
+    test_results:
+      - scenario: B72
+        quality_score: 70/100
+        output_length: 450 chars
+        issues: ["Titles too generic", "Missing time hooks"]
+
+  - version: 1.1
+    date: 2026-01-11
+    created_by: refine-prompt workflow
+    refinements:
+      - "Added time-based hooks (20 minutes, 3 minutes)"
+      - "Front-loaded keywords in titles"
+      - "Emphasized model name (Opus 4.5)"
+    test_results:
+      - scenario: B72
+        quality_score: 85/100
+        output_length: 480 chars
+        improvements: ["Better CTR potential", "9/10 mobile-optimized"]
+```
+
+**Dependencies**:
+- Story 3.5 complete (`validate-prompt` for quality scoring)
+- Epic 4 complete (runtime execution + result storage)
+- Test result persistence (database or file-based)
+- Version control for prompt templates (git-like tracking)
+
+**Effort Estimate**: 12-20 hours (1.5-2.5 days)
+
+**Tracking**:
+- Related to Epic 3 workflows (new-prompt, refine-prompt, test-prompt, validate-prompt)
+- Could become Story 3.6 or part of Epic 5
+
+---
+
 ## 🌟 Low Priority / Nice to Have
 
-### 6. Predictive Capability Risk Scoring
+### 7. Predictive Capability Risk Scoring
 
 **Status**: 💡 Idea
 **Target**: POEM v3.0
@@ -152,7 +234,7 @@
 
 ---
 
-### 7. Cross-Project Pattern Detection
+### 8. Cross-Project Pattern Detection
 
 **Status**: 💡 Idea
 **Target**: BMAD v5.0+
@@ -163,7 +245,7 @@
 
 ---
 
-### 8. Integration with GitHub Projects/Issues
+### 9. Integration with GitHub Projects/Issues
 
 **Status**: 💡 Idea
 **Target**: POEM v2.0
@@ -225,6 +307,6 @@ To propose new enhancements or discuss existing ones:
 ---
 
 **Document Created**: 2026-01-09
-**Last Updated**: 2026-01-09
+**Last Updated**: 2026-01-11
 **Maintained By**: POEM Product Team
 **Next Review**: After POEM Epic 3 completion
