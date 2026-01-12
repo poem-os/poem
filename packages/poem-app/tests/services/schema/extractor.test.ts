@@ -3,7 +3,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { SchemaExtractor, type SchemaField } from '../../../src/services/schema/extractor.js';
+import { SchemaExtractor } from '../../../src/services/schema/extractor.js';
+import type { SchemaField } from '../../../src/services/schema/types.js';
 
 describe('SchemaExtractor', () => {
   const extractor = new SchemaExtractor();
@@ -275,6 +276,233 @@ describe('SchemaExtractor', () => {
 
       expect(result.fields).toHaveLength(1);
       expect(result.fields[0].name).toBe('field');
+    });
+  });
+
+  describe('Output Schema Extraction', () => {
+    describe('extractOutputSchema from HTML comments', () => {
+      it('should extract output schema from HTML comment with JSON structure', () => {
+        const template = `
+{{transcriptAbridgement}}
+<!-- Expected Output: { "title": "string", "description": "string" } -->
+`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).not.toBeNull();
+        expect(outputSchema).toHaveLength(2);
+        expect(outputSchema![0]).toEqual({
+          name: 'title',
+          type: 'string',
+          required: true,
+        });
+        expect(outputSchema![1]).toEqual({
+          name: 'description',
+          type: 'string',
+          required: true,
+        });
+      });
+
+      it('should extract output schema with number type', () => {
+        const template = `<!-- Expected Output: { "title": "string", "views": number } -->`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).not.toBeNull();
+        expect(outputSchema![1]).toEqual({
+          name: 'views',
+          type: 'number',
+          required: true,
+        });
+      });
+
+      it('should handle "Output Format" keyword', () => {
+        const template = `<!-- Output Format: { "result": "boolean" } -->`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).not.toBeNull();
+        expect(outputSchema![0]).toEqual({
+          name: 'result',
+          type: 'boolean',
+          required: true,
+        });
+      });
+
+      it('should handle case-insensitive pattern matching', () => {
+        const template = `<!-- expected output: { "value": "string" } -->`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).not.toBeNull();
+        expect(outputSchema).toHaveLength(1);
+      });
+    });
+
+    describe('extractOutputSchema from Handlebars comments', () => {
+      it('should extract output schema from Handlebars comment', () => {
+        const template = `
+{{transcriptAbridgement}}
+{{! Expected Output: { "category": "string", "confidence": number } }}
+`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).not.toBeNull();
+        expect(outputSchema).toHaveLength(2);
+        expect(outputSchema![0].name).toBe('category');
+        expect(outputSchema![1].name).toBe('confidence');
+        expect(outputSchema![1].type).toBe('number');
+      });
+
+      it('should handle "Output Format" in Handlebars comment', () => {
+        const template = `{{! Output Format: { "success": boolean } }}`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).not.toBeNull();
+        expect(outputSchema![0].type).toBe('boolean');
+      });
+    });
+
+    describe('infer from natural language description', () => {
+      it('should infer array schema from "array of" description', () => {
+        const template = `<!-- Expected Output: Array of 5 title strings, each under 60 characters -->`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).not.toBeNull();
+        expect(outputSchema![0]).toEqual({
+          name: 'title',
+          type: 'array',
+          required: true,
+          items: {
+            name: 'title',
+            type: 'string',
+            required: true,
+          },
+        });
+      });
+
+      it('should infer array of numbers', () => {
+        const template = `<!-- Expected Output: List of integers -->`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).not.toBeNull();
+        expect(outputSchema![0].type).toBe('array');
+        expect(outputSchema![0].items?.type).toBe('number');
+      });
+
+      it('should infer single string field from description', () => {
+        const template = `<!-- Expected Output: A formatted title string -->`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).not.toBeNull();
+        expect(outputSchema![0]).toEqual({
+          name: 'output',
+          type: 'string',
+          required: true,
+        });
+      });
+
+      it('should infer number field from description', () => {
+        const template = `<!-- Expected Output: Count of matching items -->`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).not.toBeNull();
+        expect(outputSchema![0].type).toBe('number');
+      });
+
+      it('should infer boolean field from description', () => {
+        const template = `<!-- Expected Output: Boolean indicating success -->`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).not.toBeNull();
+        expect(outputSchema![0].type).toBe('boolean');
+      });
+    });
+
+    describe('return null when no output section found', () => {
+      it('should return null when no HTML comment exists', () => {
+        const template = `{{transcriptAbridgement}}`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).toBeNull();
+      });
+
+      it('should return null when HTML comment does not match pattern', () => {
+        const template = `<!-- This is a regular comment -->`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).toBeNull();
+      });
+
+      it('should return null when no Handlebars comment matches', () => {
+        const template = `{{! This is a regular comment }}`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).toBeNull();
+      });
+    });
+
+    describe('handle malformed output sections gracefully', () => {
+      it('should handle empty output description', () => {
+        const template = `<!-- Expected Output: -->`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        // Should still extract, but might have default field
+        expect(outputSchema).not.toBeNull();
+      });
+
+      it('should handle malformed JSON structure', () => {
+        const template = `<!-- Expected Output: { broken json -->`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        // Should not crash, should try to infer from description
+        expect(outputSchema).not.toBeNull();
+      });
+
+      it('should handle unexpected type strings', () => {
+        const template = `<!-- Expected Output: { "field": unknownType } -->`;
+        const outputSchema = extractor.extractOutputSchema(template);
+
+        expect(outputSchema).not.toBeNull();
+        // Should default to string
+        expect(outputSchema![0].type).toBe('string');
+      });
+    });
+
+    describe('extractDualSchema', () => {
+      it('should extract both input and output schemas', () => {
+        const template = `
+{{transcriptAbridgement}}
+{{contentAnalysis}}
+<!-- Expected Output: { "titles": "array" } -->
+`;
+        const result = extractor.extractDualSchema(template);
+
+        expect(result.inputSchema).toHaveLength(2);
+        expect(result.inputSchema[0].name).toBe('contentAnalysis');
+        expect(result.inputSchema[1].name).toBe('transcriptAbridgement');
+
+        expect(result.outputSchema).not.toBeNull();
+        expect(result.outputSchema).toHaveLength(1);
+        expect(result.outputSchema![0].name).toBe('titles');
+      });
+
+      it('should return null output schema when no output section exists', () => {
+        const template = `{{field1}} {{field2}}`;
+        const result = extractor.extractDualSchema(template);
+
+        expect(result.inputSchema).toHaveLength(2);
+        expect(result.outputSchema).toBeNull();
+      });
+
+      it('should include required helpers in dual extraction', () => {
+        const template = `
+{{truncate title 50}}
+{{formatTimestamp timestamp}}
+<!-- Expected Output: { "result": "string" } -->
+`;
+        const result = extractor.extractDualSchema(template);
+
+        expect(result.requiredHelpers).toContain('truncate');
+        expect(result.requiredHelpers).toContain('formatTimestamp');
+        expect(result.outputSchema).not.toBeNull();
+      });
     });
   });
 });

@@ -64,9 +64,16 @@ interface PlaceholderInfo {
 
 **Purpose:** JSON document defining the data structure for EITHER the input data required by a prompt template OR the output data produced by a prompt template. A single schema file describes one direction (input or output), and prompts may have both an input schema and an output schema.
 
+**File Naming Convention:**
+
+- **Input schema:** `{prompt-name}.json` (e.g., `generate-titles.json`)
+- **Output schema:** `{prompt-name}-output.json` (e.g., `generate-titles-output.json`)
+- Both stored in `/poem/schemas/` directory
+
 **Key Attributes:**
 
 - `path`: string - File path relative to `/poem/schemas/`
+- `schemaType`: "input" | "output" | "both" - Distinguishes schema purpose (optional, defaults to "input")
 - `fields`: Field[] - Schema field definitions
 - `version`: string - Schema version for evolution
 
@@ -80,6 +87,9 @@ interface Schema {
 
   /** Human-readable description */
   description?: string;
+
+  /** Schema type: input (data into prompt), output (data from prompt), or both */
+  schemaType?: "input" | "output" | "both";
 
   /** Field definitions */
   fields: SchemaField[];

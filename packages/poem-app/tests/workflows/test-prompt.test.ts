@@ -159,13 +159,13 @@ describe("test-prompt workflow", () => {
       expect(step.stores).toBe("testData");
     });
 
-    it("should have load-schema step (AC 3)", () => {
+    it("should have load-output-schema step (AC 3)", () => {
       const step = workflow.steps.find(
-        (s: any) => s.id === "load-schema"
+        (s: any) => s.id === "load-output-schema"
       );
       expect(step).toBeDefined();
       expect(step.type).toBe("action");
-      expect(step.stores).toBe("schemaContent");
+      expect(step.stores).toBe("outputSchemaContent");
     });
 
     it("should have render-template step (AC 3, 4, 6)", () => {

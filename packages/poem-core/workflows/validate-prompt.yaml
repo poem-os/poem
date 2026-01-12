@@ -262,7 +262,47 @@ steps:
       - Set inputSchemaIssues = []
 
   # ============================================================================
-  # STEP 7: Validate Helpers are Registered (Action)
+  # STEP 7: Validate Output Schema Against Template (Action)
+  # ============================================================================
+  - id: validate-output-schema
+    name: Validate Output Schema Alignment
+    type: action
+    instruction: |
+      Verify output schema matches "Expected Output" section in template.
+
+      **Only execute if hasOutputSchema is true. Otherwise skip.**
+
+      1. **Extract output definition from template:**
+         - Search for HTML comments: <!-- Expected Output: ... -->
+         - Search for Handlebars comments: {{! Output Format: ... }}
+         - Extract structure definition from comment content
+
+      2. **Compare output schema fields with template definition:**
+         - Parse field names from outputSchemaContent
+         - Parse field names from template's Expected Output section
+         - Check for mismatches:
+           - Fields in schema but not in template definition
+           - Fields in template definition but not in schema
+
+      3. **Generate validation results:**
+         - If schema and template match: Add to validations "✓ Output schema matches template"
+         - If mismatches found: Add warnings for each mismatch
+           - "Output schema field '{field}' not mentioned in Expected Output section"
+           - "Template specifies '{field}' but not in output schema"
+
+      4. **Display results:**
+         - If no issues: "✓ Output schema validation passed"
+         - If issues: "⚠ Output schema issues detected:" → list warnings
+
+      5. **Store results:**
+         - `outputSchemaIssues`: array of {field, message, severity: "warning", suggestion}
+
+      **If outputSchemaContent is null:**
+      - Display: "ℹ Output schema validation skipped (no output schema file - optional)"
+      - Set outputSchemaIssues = []
+
+  # ============================================================================
+  # STEP 8: Validate Helpers are Registered (Action)
   # ============================================================================
   - id: validate-helpers
     name: Validate Helper Registration

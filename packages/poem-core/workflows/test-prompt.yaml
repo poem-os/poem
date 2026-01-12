@@ -200,34 +200,38 @@ steps:
       "Test data loaded successfully ({dataSize} bytes)"
 
   # ============================================================================
-  # STEP 4: Load Schema (Optional) (Action)
+  # STEP 4: Load Output Schema (Optional) (Action)
   # ============================================================================
-  - id: load-schema
-    name: Load Output Schema (Optional)
+  - id: load-output-schema
+    name: Load Output Schema for Validation (Optional)
     type: action
     action: load-file
-    stores: schemaContent
+    stores: outputSchemaContent
     instruction: |
-      Check for corresponding schema file for validation.
+      Check for output schema file for validating AI responses.
 
-      1. **Build schema path:**
-         - {workspace}/schemas/{promptName}.json
+      1. **Build output schema path:**
+         - {workspace}/schemas/{promptName}-output.json
 
-      2. **Check if schema exists:**
-         - Try to read schema file
+      2. **Check if output schema exists:**
+         - Try to read output schema file
          - If found:
            * Parse JSON schema
-           * Store as schemaContent
-           * Display: "Schema loaded: {schemaPath}"
-                      "Output validation will be performed"
+           * Store as outputSchemaContent
+           * Display: "Output schema loaded: {schemaPath}"
+                      "AI response validation will be performed"
          - If not found:
-           * Store schemaContent = null
-           * Display: "No schema found (validation will be skipped)"
+           * Store outputSchemaContent = null
+           * Display: "No output schema found (validation will be skipped)"
+                      "Note: Output schemas are optional. To add one, include <!-- Expected Output: ... --> in template."
 
-      3. **If schema parse error:**
-         - Display: "Schema file contains invalid JSON: {error}"
-         - Store schemaContent = null
+      3. **If output schema parse error:**
+         - Display: "Output schema file contains invalid JSON: {error}"
+         - Store outputSchemaContent = null
          - Continue without validation
+
+      **Note:** We load the OUTPUT schema (not input schema) because this workflow
+      validates the rendered AI response, not the input data going into the template.
 
   # ============================================================================
   # STEP 5: Render Template with Data (Action)
@@ -294,27 +298,28 @@ steps:
          - warnings: array
 
   # ============================================================================
-  # STEP 6: Validate Against Schema (Conditional Action)
+  # STEP 6: Validate Against Output Schema (Conditional Action)
   # ============================================================================
   - id: validate-output
-    name: Validate Output Against Schema
+    name: Validate AI Response Against Output Schema
     type: action
     action: conditional-validation
     stores: validationResult
     instruction: |
-      If schema exists, validate rendered output against it.
+      If output schema exists, validate rendered AI response against it.
 
-      **If schemaContent is null:**
-      - Display: "Schema validation skipped (no schema file found)"
+      **If outputSchemaContent is null:**
+      - Display: "Output schema validation skipped (no output schema file found)"
+      - Display: "Output schemas are optional but enable AI response validation"
       - Store validationResult = {skipped: true}
       - Continue to next step
 
-      **If schemaContent exists:**
+      **If outputSchemaContent exists:**
       1. **Prepare validation request:**
          ```json
          POST /api/schema/validate
          {
-           "schema": {schemaContent},
+           "schema": {outputSchemaContent},
            "data": {parse rendered as JSON if possible}
          }
          ```

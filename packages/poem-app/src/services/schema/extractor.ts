@@ -3,33 +3,7 @@
  * Extracts JSON schemas from Handlebars templates by parsing placeholders and blocks
  */
 
-/**
- * Represents a field in the extracted schema
- */
-export interface SchemaField {
-  /** Field name */
-  name: string;
-  /** Inferred type from template usage */
-  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
-  /** Whether the field is required (always true for extracted fields) */
-  required: boolean;
-  /** Human-readable description */
-  description?: string;
-  /** For arrays, the item type */
-  items?: SchemaField;
-  /** For objects, nested field definitions */
-  properties?: SchemaField[];
-}
-
-/**
- * Result of schema extraction
- */
-export interface ExtractionResult {
-  /** Extracted schema fields */
-  fields: SchemaField[];
-  /** Helper names used in the template */
-  requiredHelpers: string[];
-}
+import type { SchemaField, ExtractionResult, DualExtractionResult } from './types.js';
 
 /**
  * Known Handlebars built-in helpers (not custom helpers)
@@ -341,5 +315,185 @@ export class SchemaExtractor {
     return Array.from(fieldMap.values()).sort((a, b) =>
       a.name.localeCompare(b.name)
     );
+  }
+
+  /**
+   * Extract both input and output schemas from a Handlebars template
+   * @param template - Handlebars template string
+   * @returns DualExtractionResult with input schema, output schema (or null), and helpers
+   */
+  extractDualSchema(template: string): DualExtractionResult {
+    const inputResult = this.extract(template);
+    const outputSchema = this.extractOutputSchema(template);
+
+    return {
+      inputSchema: inputResult.fields,
+      outputSchema,
+      requiredHelpers: inputResult.requiredHelpers,
+    };
+  }
+
+  /**
+   * Extract output schema from template comments
+   * Parses HTML and Handlebars comments for "Expected Output" or "Output Format" sections
+   * @param template - Handlebars template string
+   * @returns Array of schema fields or null if no output section found
+   */
+  extractOutputSchema(template: string): SchemaField[] | null {
+    // Try to extract from HTML comments
+    const htmlOutput = this.extractFromHTMLComments(template);
+    if (htmlOutput) return htmlOutput;
+
+    // Try to extract from Handlebars comments
+    const hbsOutput = this.extractFromHandlebarsComments(template);
+    if (hbsOutput) return hbsOutput;
+
+    // No output section found
+    return null;
+  }
+
+  /**
+   * Extract output schema from HTML comments
+   * Pattern: <!-- Expected Output: ... --> or <!-- Output Format: ... -->
+   */
+  private extractFromHTMLComments(template: string): SchemaField[] | null {
+    const htmlCommentRegex = /<!--\s*(?:Expected Output|Output Format)\s*:\s*(.+?)\s*-->/is;
+    const match = template.match(htmlCommentRegex);
+
+    if (!match) return null;
+
+    const outputDescription = match[1].trim();
+    return this.parseOutputDescription(outputDescription);
+  }
+
+  /**
+   * Extract output schema from Handlebars comments
+   * Pattern: {{! Expected Output: ... }} or {{! Output Format: ... }}
+   */
+  private extractFromHandlebarsComments(template: string): SchemaField[] | null {
+    const hbsCommentRegex = /\{\{!\s*(?:Expected Output|Output Format)\s*:\s*(.+?)\s*\}\}/is;
+    const match = template.match(hbsCommentRegex);
+
+    if (!match) return null;
+
+    const outputDescription = match[1].trim();
+    return this.parseOutputDescription(outputDescription);
+  }
+
+  /**
+   * Parse output description and infer schema fields
+   * Handles JSON structures and natural language descriptions
+   */
+  private parseOutputDescription(description: string): SchemaField[] {
+    // Try to parse as JSON structure
+    const jsonFields = this.parseJSONStructure(description);
+    if (jsonFields.length > 0) return jsonFields;
+
+    // Try to infer from natural language description
+    return this.inferFromDescription(description);
+  }
+
+  /**
+   * Parse JSON structure from output description
+   * Example: { "title": "string", "views": number }
+   */
+  private parseJSONStructure(description: string): SchemaField[] {
+    const fields: SchemaField[] = [];
+
+    // Match JSON object patterns: "fieldName": type or "fieldName": "type"
+    const jsonFieldRegex = /"(\w+)":\s*(?:"([^"]+)"|(\w+))/g;
+    let match;
+
+    while ((match = jsonFieldRegex.exec(description)) !== null) {
+      const fieldName = match[1];
+      const typeString = match[2] || match[3];
+      const inferredType = this.inferTypeFromString(typeString);
+
+      fields.push({
+        name: fieldName,
+        type: inferredType,
+        required: true,
+      });
+    }
+
+    return fields;
+  }
+
+  /**
+   * Infer schema from natural language description
+   * Example: "Array of 5 title strings, each under 60 characters"
+   */
+  private inferFromDescription(description: string): SchemaField[] {
+    const fields: SchemaField[] = [];
+    const lowerDesc = description.toLowerCase();
+
+    // Check for array patterns
+    if (lowerDesc.includes('array of') || lowerDesc.includes('list of')) {
+      // Extract what type the array contains
+      let itemType: SchemaField['type'] = 'string';
+
+      if (lowerDesc.includes('number') || lowerDesc.includes('integer')) {
+        itemType = 'number';
+      } else if (lowerDesc.includes('boolean') || lowerDesc.includes('true/false')) {
+        itemType = 'boolean';
+      } else if (lowerDesc.includes('object')) {
+        itemType = 'object';
+      }
+
+      // Extract field name if mentioned (e.g., "array of titles")
+      // Skip numbers (e.g., "array of 5 title strings" should extract "title")
+      const arrayFieldMatch = lowerDesc.match(/array of (?:\d+\s+)?([a-z]+)/);
+      const fieldName = arrayFieldMatch ? arrayFieldMatch[1] : 'items';
+
+      fields.push({
+        name: fieldName,
+        type: 'array',
+        required: true,
+        items: {
+          name: fieldName.endsWith('s') ? fieldName.slice(0, -1) : fieldName,
+          type: itemType,
+          required: true,
+        },
+      });
+    } else {
+      // Single field - infer type from keywords
+      let fieldType: SchemaField['type'] = 'string';
+
+      if (lowerDesc.includes('number') || lowerDesc.includes('count') || lowerDesc.includes('integer')) {
+        fieldType = 'number';
+      } else if (lowerDesc.includes('boolean') || lowerDesc.includes('true/false')) {
+        fieldType = 'boolean';
+      } else if (lowerDesc.includes('object') || lowerDesc.includes('structure')) {
+        fieldType = 'object';
+      }
+
+      fields.push({
+        name: 'output',
+        type: fieldType,
+        required: true,
+      });
+    }
+
+    return fields;
+  }
+
+  /**
+   * Infer field type from type string
+   */
+  private inferTypeFromString(typeString: string): SchemaField['type'] {
+    const lower = typeString.toLowerCase();
+
+    if (lower === 'number' || lower === 'integer' || lower === 'int' || lower === 'float') {
+      return 'number';
+    } else if (lower === 'boolean' || lower === 'bool') {
+      return 'boolean';
+    } else if (lower === 'array' || lower.includes('[]')) {
+      return 'array';
+    } else if (lower === 'object') {
+      return 'object';
+    }
+
+    // Default to string
+    return 'string';
   }
 }

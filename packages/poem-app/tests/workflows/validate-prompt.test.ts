@@ -56,9 +56,9 @@ describe("validate-prompt workflow", () => {
       expect(workflow.steps.length).toBeGreaterThan(0);
     });
 
-    it("should have exactly 12 steps", () => {
-      // Validate-prompt workflow has 12 defined steps
-      expect(workflow.steps.length).toBe(12);
+    it("should have exactly 13 steps", () => {
+      // Validate-prompt workflow has 13 defined steps (added output schema validation in Story 3.7)
+      expect(workflow.steps.length).toBe(13);
     });
 
     it("should NOT have a paths section", () => {

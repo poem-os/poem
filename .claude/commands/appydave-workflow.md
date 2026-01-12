@@ -4,7 +4,17 @@ description: Execute AppyDave's full BMAD v4 story workflow with human-in-loop g
 
 # AppyDave Workflow Command
 
-You are orchestrating AppyDave's complete BMAD v4 story lifecycle workflow. This command guides a story from creation through QA review with human approval gates at critical decision points.
+You are FOLLOWING AppyDave's complete BMAD v4 story lifecycle workflow. The USER orchestrates; you execute step-by-step with explicit human approval gates.
+
+## Agent Handoff Chain
+
+```
+Bob (SM) → Sarah (PO) → James (Dev) → Taylor (SAT) → Quinn (QA)
+  Creates     Validates    Implements    Tests         Reviews
+  Story       Story        Code          Manual        Quality
+```
+
+This workflow guides a story from creation through QA review with human approval gates at critical decision points.
 
 ## CRITICAL INSTRUCTIONS
 
@@ -191,87 +201,96 @@ Options:
 
 ### Step 4: Development
 
-**Agent**: Load Dev agent
+**Agent Handoff**: Sarah (PO) → **James (Dev)** → Taylor (SAT)
+
+**Load Agent**: `/BMad/agents/dev` with argument `*develop-story {story-number}`
 
 **Pre-check**: Verify story status is "Ready" (read file and check)
-
 - If not Ready: HALT with error "Story status is not 'Ready'. Cannot proceed."
 
-**Action**: Run `*develop-story {story-number}` command
+**What James Does**:
+1. Implements all story tasks sequentially
+2. Writes comprehensive tests
+3. Runs Definition of Done checklist
+4. Updates story status to "Review"
+5. **Hands off to Taylor (SAT)** - displays exact message:
+   ```
+   ✅ Development complete for Story {number}!
+   Ready for Taylor (SAT agent) to create acceptance tests.
+   Type 'go' to proceed.
+   ```
 
-**After development completes**:
+**James is RESTRICTED from**:
+- Mentioning Quinn or QA
+- Suggesting any agent beyond Taylor
+- Jumping ahead in the workflow
 
-- Show summary (files created, tests added)
-- Confirm status changed to "Review"
-
-**STOP and display**:
-
-```
-✅ Development complete for Story {number}!
-
-📊 Implementation Summary:
-- Status: Review
-- Story file: docs/stories/{number}.story.md
-
-Type 'go' to proceed to acceptance testing.
-```
-
-**Wait for user input**: `go`
+**STOP and wait for user input**: `go`
 
 ---
 
 ### Step 5: Acceptance Testing (SAT)
 
-**Agent**: Load Story Acceptance Test (SAT) agent
+**Agent Handoff**: James (Dev) → **Taylor (SAT)** → Quinn (QA)
 
-**Action**: Run `*create-sat {story-number}` command
+**Load Agent**: `/BMad/agents/sat` with argument `*create-sat {story-number}`
 
-**After SAT guide is created**:
+**What Taylor Does**:
+1. Creates human-friendly acceptance test guide
+2. Separates Human Tests (browser/visual) from Terminal Tests (commands)
+3. Maps every test to an acceptance criterion
+4. **Hands off to Quinn (QA)** - displays exact message:
+   ```
+   ✅ SAT guide complete for Story {number}!
+   Ready for Quinn (QA agent) for final review.
+   Type 'go' to proceed.
+   ```
 
-- Display SAT file path (make it clickable)
-- Explain that human must execute tests manually
+**Taylor is RESTRICTED from**:
+- Mentioning development or implementation (that's done)
+- Suggesting any agent beyond Quinn
+- Jumping ahead in the workflow
 
-**STOP and display**:
+**SAT Output**:
+- File created: `docs/stories/{number}.story-SAT.md`
 
-```
-✅ Story Acceptance Test guide created!
-
-📄 Test Guide: docs/stories/{number}.story-SAT.md
-
-⚠️  HUMAN TESTING REQUIRED
-
-Please execute the tests manually:
+**⚠️  HUMAN TESTING REQUIRED**:
+User must manually execute tests:
 1. Open the SAT guide file
 2. Run all Human Tests (visual verification in browser)
 3. Run all Terminal Tests (curl commands, scripts)
 4. Document PASS/FAIL results in the SAT file
 
-When all tests are executed and results documented, type 'go' for QA review.
-```
-
-**Wait for user input**: `go`
+**STOP and wait for user input**: `go` (after human testing complete)
 
 ---
 
 ### Step 6: QA Review (Final Gate)
 
-**Agent**: Load QA agent (Quinn from `.bmad-core/agents/qa.md`)
+**Agent Handoff**: Taylor (SAT) → **Quinn (QA)** → [WORKFLOW END]
 
-**Action**: Run `*review {story-number}` command
+**Load Agent**: `/BMad/agents/qa` with argument `*review {story-number}`
 
-**CRITICAL - What the QA agent does**:
-
+**What Quinn Does**:
 1. Reads and follows `.bmad-core/tasks/review-story.md` task
 2. Reviews the story file (`docs/stories/{story-number}.story.md`)
 3. Updates ONLY the "QA Results" section in the story file
 4. Creates a gate file at `docs/qa/gates/{epic}.{story}-{slug}.yml`
 5. Gate file contains PASS/CONCERNS/FAIL/WAIVED decision with score
+6. **Workflow ends** - displays exact message:
+   ```
+   ✅ QA review complete for Story {number}.
+   Story workflow finished.
+   ```
 
-**DO NOT**:
+**Quinn is RESTRICTED from**:
+- Mentioning next agents or next steps
+- **Quinn is the FINAL agent** - no handoff beyond this point
 
+**Quinn MUST NOT**:
 - Create a separate QA markdown document
-- Simulate the QA agent with general-purpose agent
-- Modify any other sections of the story file
+- Modify any story sections other than "QA Results"
+- Simulate with general-purpose agent
 
 **After QA review completes**:
 
