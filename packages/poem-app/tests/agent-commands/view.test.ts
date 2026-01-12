@@ -56,7 +56,8 @@ describe('prompt-engineer agent *view command', () => {
 
       if (viewBehaviorMatch) {
         const section = viewBehaviorMatch[0];
-        expect(section).toMatch(/Read.*template file.*\.hbs.*workspace/i);
+        // Updated for Story 3.8: workflow-aware behavior
+        expect(section).toMatch(/Read.*template file.*\.hbs.*(workspace|workflow directory)/i);
       }
     });
 

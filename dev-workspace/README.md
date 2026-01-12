@@ -18,11 +18,22 @@ This directory is the **development testing workspace** for POEM framework devel
 
 ```
 dev-workspace/
-├── prompts/        # Test prompt templates (.hbs files)
-├── schemas/        # Test JSON schemas
-├── mock-data/      # Test mock data files
+├── prompts/        # Test prompt templates (.hbs files) [LEGACY - pre-Story 3.8]
+├── schemas/        # Test JSON schemas [LEGACY - pre-Story 3.8]
+├── mock-data/      # Test mock data files [LEGACY - pre-Story 3.8]
 ├── config/         # Test configuration files
 ├── workflow-data/  # Workflow state and output
+│
+├── workflows/      # Multi-workflow structure (Story 3.8+)
+│   ├── youtube-launch-optimizer/
+│   │   ├── prompts/   # YouTube workflow prompts
+│   │   ├── schemas/   # YouTube workflow schemas
+│   │   └── mock-data/ # YouTube workflow mock data
+│   ├── nano-banana/
+│   │   ├── prompts/   # NanoBanana workflow prompts
+│   │   ├── schemas/   # NanoBanana workflow schemas
+│   │   └── mock-data/ # NanoBanana workflow mock data
+│   └── [other-workflows]/
 │
 ├── test-reports/   # Validation reports (Victor agent)
 ├── test-runs/      # Workflow snapshots for regression testing

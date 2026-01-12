@@ -10,9 +10,42 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import yaml from 'js-yaml';
+import { loadWorkflowState, saveWorkflowState } from './workflow-persistence.js';
 
 /**
- * Workspace path configuration
+ * Reference material configuration (Story 3.8)
+ * Defines paths to reference materials for workflows
+ */
+export interface ReferenceConfig {
+  /** Path to reference materials (relative for 'local', absolute for 'second-brain') */
+  path: string;
+  /** Type of reference source */
+  type: 'local' | 'second-brain' | 'external' | 'git-repo';
+  /** Optional description of this reference source */
+  description?: string;
+  /** Priority for conflict resolution (higher wins, default: 10) */
+  priority?: number;
+}
+
+/**
+ * Workflow-specific configuration (Story 3.8)
+ * Each workflow has its own prompts, schemas, mock data, workflow execution state, and reference materials
+ */
+export interface WorkflowConfig {
+  /** Path to workflow-specific prompts directory */
+  prompts: string;
+  /** Path to workflow-specific schemas directory */
+  schemas: string;
+  /** Path to workflow-specific mock data directory */
+  mockData: string;
+  /** Path to workflow-specific execution state directory */
+  workflowData: string;
+  /** Reference material sources (array) */
+  reference?: ReferenceConfig[];
+}
+
+/**
+ * Workspace path configuration (flat structure for backward compatibility)
  */
 export interface WorkspacePaths {
   prompts: string;
@@ -29,6 +62,10 @@ export interface PoemConfig {
   isDevelopment: boolean;
   projectRoot: string;
   workspace: WorkspacePaths;
+  /** Active workflow name (Story 3.8) */
+  currentWorkflow?: string;
+  /** Workflow definitions (Story 3.8) */
+  workflows?: Record<string, WorkflowConfig>;
 }
 
 /**
@@ -117,22 +154,55 @@ export async function loadPoemConfig(): Promise<PoemConfig> {
     const configContent = await fs.readFile(configPath, 'utf-8');
     const rawConfig = yaml.load(configContent) as Record<string, unknown>;
 
-    // Extract workspace paths from config
-    const workspaceConfig = (rawConfig.workspace || {}) as Partial<WorkspacePaths>;
+    // Extract workspace configuration
+    const workspaceConfig = (rawConfig.workspace || {}) as Record<string, unknown>;
     const defaults = isDev ? DEV_DEFAULTS : PROD_DEFAULTS;
 
+    // Extract flat workspace paths (backward compatibility)
     const workspace: WorkspacePaths = {
-      prompts: workspaceConfig.prompts || defaults.prompts,
-      schemas: workspaceConfig.schemas || defaults.schemas,
-      mockData: workspaceConfig.mockData || defaults.mockData,
-      config: workspaceConfig.config || defaults.config,
-      workflowData: workspaceConfig.workflowData || defaults.workflowData,
+      prompts: (workspaceConfig.prompts as string) || defaults.prompts,
+      schemas: (workspaceConfig.schemas as string) || defaults.schemas,
+      mockData: (workspaceConfig.mockData as string) || defaults.mockData,
+      config: (workspaceConfig.config as string) || defaults.config,
+      workflowData: (workspaceConfig.workflowData as string) || defaults.workflowData,
     };
+
+    // Extract multi-workflow configuration (Story 3.8)
+    let currentWorkflow = workspaceConfig.currentWorkflow as string | undefined;
+    const workflows = workspaceConfig.workflows as Record<string, WorkflowConfig> | undefined;
+
+    // Load persisted workflow state if no currentWorkflow in config (Story 3.8)
+    if (!currentWorkflow && workflows) {
+      const persistedState = await loadWorkflowState();
+      if (persistedState?.currentWorkflow) {
+        // Use persisted workflow if it exists in workflows map
+        if (workflows[persistedState.currentWorkflow]) {
+          currentWorkflow = persistedState.currentWorkflow;
+        } else {
+          console.warn(
+            `[POEM] Persisted workflow "${persistedState.currentWorkflow}" not found in config, ignoring`
+          );
+        }
+      }
+    }
+
+    // Validate currentWorkflow exists in workflows map
+    if (currentWorkflow && workflows && !workflows[currentWorkflow]) {
+      console.warn(`[POEM] currentWorkflow "${currentWorkflow}" not found in workflows, falling back to flat structure`);
+      configInstance = {
+        isDevelopment: isDev,
+        projectRoot,
+        workspace,
+      };
+      return configInstance;
+    }
 
     configInstance = {
       isDevelopment: isDev,
       projectRoot,
       workspace,
+      currentWorkflow,
+      workflows,
     };
 
     return configInstance;
@@ -217,6 +287,127 @@ export async function resolvePathAsync(type: WorkspacePathType, relativePath: st
   }
 
   return basePath;
+}
+
+// ============================================================================
+// Multi-Workflow Support (Story 3.8)
+// ============================================================================
+
+/**
+ * Get the currently active workflow name
+ * @returns Current workflow name, or null if using flat structure
+ */
+export function getCurrentWorkflow(): string | null {
+  const config = getPoemConfigSync();
+  return config.currentWorkflow || null;
+}
+
+/**
+ * Get all defined workflow names
+ * @returns Array of workflow names
+ */
+export function listWorkflows(): string[] {
+  const config = getPoemConfigSync();
+  if (!config.workflows) {
+    return [];
+  }
+  return Object.keys(config.workflows);
+}
+
+/**
+ * Get workflow-scoped path for a resource type
+ *
+ * Path Resolution Logic:
+ * 1. If currentWorkflow is set AND workflows are defined:
+ *    - Return workflow-scoped path: workflows/{workflow}/{resourceType}
+ * 2. Otherwise:
+ *    - Fall back to flat structure path
+ *
+ * @param resourceType - The resource type (prompts, schemas, mockData, workflowData)
+ * @param relativePath - Optional relative path within the resource directory
+ * @returns Absolute path to the resolved location
+ */
+export function getWorkflowPath(
+  resourceType: 'prompts' | 'schemas' | 'mockData' | 'workflowData',
+  relativePath: string = ''
+): string {
+  const config = getPoemConfigSync();
+
+  // Check if workflow-scoped paths should be used
+  if (config.currentWorkflow && config.workflows) {
+    const workflow = config.workflows[config.currentWorkflow];
+    if (workflow && workflow[resourceType]) {
+      const basePath = path.join(config.projectRoot, workflow[resourceType]);
+      return relativePath ? path.join(basePath, relativePath) : basePath;
+    }
+  }
+
+  // Fall back to flat structure
+  return resolvePath(resourceType, relativePath);
+}
+
+/**
+ * Get reference paths for the current workflow
+ * @returns Array of reference configurations, or empty array if none defined
+ */
+export function getReferencePaths(): ReferenceConfig[] {
+  const config = getPoemConfigSync();
+
+  if (config.currentWorkflow && config.workflows) {
+    const workflow = config.workflows[config.currentWorkflow];
+    if (workflow && workflow.reference) {
+      return workflow.reference;
+    }
+  }
+
+  return [];
+}
+
+/**
+ * Set the current workflow
+ * Validates that the workflow exists before setting
+ * Persists the selection to disk for future sessions
+ *
+ * @param workflowName - Name of the workflow to activate
+ * @throws Error if workflow doesn't exist
+ */
+export async function setCurrentWorkflowAsync(workflowName: string): Promise<void> {
+  const config = getPoemConfigSync();
+
+  if (!config.workflows || !config.workflows[workflowName]) {
+    const available = config.workflows ? Object.keys(config.workflows).join(', ') : 'none';
+    throw new Error(
+      `[POEM] Workflow "${workflowName}" not found. Available workflows: ${available}`
+    );
+  }
+
+  // Update the in-memory config
+  config.currentWorkflow = workflowName;
+
+  // Persist to disk (Story 3.8)
+  await saveWorkflowState(workflowName);
+}
+
+/**
+ * Set the current workflow (synchronous version for backward compatibility)
+ * Note: This version does NOT persist to disk. Use setCurrentWorkflowAsync() for persistence.
+ *
+ * @param workflowName - Name of the workflow to activate
+ * @throws Error if workflow doesn't exist
+ * @deprecated Use setCurrentWorkflowAsync() for persistence support
+ */
+export function setCurrentWorkflow(workflowName: string): void {
+  const config = getPoemConfigSync();
+
+  if (!config.workflows || !config.workflows[workflowName]) {
+    const available = config.workflows ? Object.keys(config.workflows).join(', ') : 'none';
+    throw new Error(
+      `[POEM] Workflow "${workflowName}" not found. Available workflows: ${available}`
+    );
+  }
+
+  // Update the in-memory config (no persistence)
+  config.currentWorkflow = workflowName;
 }
 
 /**

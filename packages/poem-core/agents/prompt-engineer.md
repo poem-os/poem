@@ -86,9 +86,10 @@ dependencies:
 When activated, the Prompt Engineer agent assists users with:
 
 1. **Listing Prompts** (`*list`)
-   - Read prompts directory (dev-workspace/prompts/ or poem/prompts/ based on mode)
+   - WORKFLOW-AWARE: Use config service getWorkflowPath('prompts') to get current workflow's prompts directory
+   - Display workflow context in header: "Prompts in workflow: {workflowName}" or "Prompts in workspace (flat mode)" if no workflow active
    - Get file statistics for each .hbs file (size in KB, last modified date)
-   - Check for corresponding unified schema file in schemas directory (.json with matching name)
+   - Check for corresponding unified schema file in workflow's schemas directory using getWorkflowPath('schemas')
    - Format output as Markdown table with columns:
      - **Name**: Prompt filename (without .hbs extension)
      - **Size**: File size in KB (e.g., "1.2 KB")
@@ -98,11 +99,15 @@ When activated, the Prompt Engineer agent assists users with:
      - By name pattern: `*list search-term` (case-insensitive match)
      - With schema only: `*list --with-schema`
      - Without schema: `*list --no-schema`
-   - Handle empty directory gracefully: Display "No prompts found in workspace. Use `*new` to create your first prompt."
-   - Display total count at bottom: "Total: X prompts"
+     - From shared prompts: `*list --shared` (Story 4.9 - future enhancement)
+   - Handle empty directory gracefully: Display "No prompts found in {workflowName}. Use `*new` to create your first prompt."
+   - Display total count at bottom: "Total: X prompts in {workflowName}"
+   - ISOLATION: Only prompts from current workflow are visible (AC 9)
 
 2. **Viewing a Prompt** (`*view <prompt-name>`)
-   - Read specified prompt template file (.hbs) from workspace
+   - WORKFLOW-AWARE: Search in current workflow's prompts directory using getWorkflowPath('prompts')
+   - Display workflow context: "Prompt: {name} (Workflow: {workflowName})" in header
+   - Read specified prompt template file (.hbs) from workflow directory
    - Get template file metadata:
      - **Size**: File size in KB (e.g., "2.4 KB")
      - **Modified**: Last modified date (e.g., "2026-01-10")
@@ -113,26 +118,34 @@ When activated, the Prompt Engineer agent assists users with:
      - **Helper Usage**: List of Handlebars helpers used (e.g., truncate, titleCase)
      - **Conditional Blocks**: Count of {{#if}}, {{#unless}} blocks
      - **Loop Blocks**: Count of {{#each}} blocks
-   - Read corresponding unified schema file (.json) if it exists and display:
+   - Read corresponding unified schema file (.json) from workflow's schemas directory using getWorkflowPath('schemas')
+   - If schema exists, display:
      - **Schema File**: Filename (e.g., "generate-title.json")
      - **Input Fields**: Number of input fields and list of required field names
      - **Output Fields**: Number of output fields (or "Not defined" if no output section)
      - **Field Types**: Summary of types used in both sections (e.g., "Input: 3 strings, 1 number | Output: 2 arrays")
    - Handle missing files gracefully:
-     - If template not found: "Prompt '{name}' not found. Available prompts: {list}. Use `*list` to see all prompts."
-     - If schema not found: Display note "No schema file found. Use `generate-schema` skill to create one."
+     - If template not found in workflow: "Prompt '{name}' not found in {workflowName}. Use `*list` to see available prompts in this workflow."
+     - If not found, optionally check shared/ directory (Story 4.9 - future enhancement)
+     - If schema not found: Display note "No schema file found in {workflowName}. Use `generate-schema` skill to create one."
    - Display in formatted sections:
-     1. Template Metadata (size, modified, lines)
+     1. Template Metadata (size, modified, lines, workflow)
      2. Template Content (code block)
      3. Template Statistics (placeholders, helpers, conditionals, loops)
      4. Schema Details (if exists)
+   - ISOLATION: Only prompts from current workflow are accessible (AC 9)
 
 3. **Creating New Prompts** (`*new`)
+   - WORKFLOW-AWARE: Creates prompts in current workflow's directory using getWorkflowPath('prompts')
    - Gathers prompt purpose and requirements
-   - Creates Handlebars template in `/poem/prompts/`
-   - Generates unified schema in `/poem/schemas/` with input section (required)
+   - Creates Handlebars template in workflow-scoped prompts directory
+   - Generates unified schema in workflow-scoped schemas directory using getWorkflowPath('schemas')
+   - Schema includes input section (required)
    - Adds output section to unified schema if output format defined (optional)
+   - Mock data saved in workflow-scoped mock-data directory using getWorkflowPath('mockData')
    - Offers mock data generation for immediate testing
+   - Display confirmation: "Prompt '{name}' created in {workflowName}"
+   - ISOLATION: Prompts created in one workflow don't appear in others (AC 9)
 
 4. **Refining Prompts** (`*refine`)
    - Loads existing prompt from workspace

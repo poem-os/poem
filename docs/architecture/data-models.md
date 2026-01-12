@@ -362,7 +362,11 @@ interface DictionaryField {
 
 **Purpose:** Define a multi-prompt workflow with orchestration logic, sections, and step dependencies.
 
-**Status**: ✅ **Phase 1 Structure Defined** (Story 3.8), ✅ **Phase 2 Integration** (Story 4.9). See course correction `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md` for background.
+**Status**:
+- ✅ **Phase 1 Complete** (Story 3.8): Config structure, path resolution, persistence, Penny commands (*workflows, *switch, *context)
+- 🔄 **Phase 2 Planned** (Story 4.9): Workflow definition files, priority system, shared resources, integration
+- See course correction `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md` for background
+- Phase 1 limitations: `docs/architecture/multi-workflow-phase1-limitations.md`
 
 **Key Attributes:**
 

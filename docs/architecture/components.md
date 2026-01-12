@@ -29,27 +29,38 @@ POEM's components are organized into three installation targets: the framework (
 | Integration Agent | `agents/integration-agent.md` | `*connect`, `*pull-dictionary`, `*publish`              |
 | Mock Data Agent   | `agents/mock-data-agent.md`   | `*generate-mock`, `*create-scenario`, `*curate-library` |
 
-**Workflow Context Awareness** (✅ Stories 3.8, 4.9):
+**Workflow Context Awareness** (✅ Phase 1: Story 3.8, 🔄 Phase 2: Story 4.9):
 
 Agents support **workflow-scoped context**, enabling operation across multiple independent workflows within one workspace.
 
-**Capabilities**:
-- **Workflow Switching**: Penny has `*workflows`, `*switch <workflow>`, `*context` commands
-- **Scoped Operations**: All commands operate in current workflow context
-- **Reference Integration**: Access to workflow-specific reference materials from multiple sources (Story 4.9)
-- **Shared Resources**: Detection and management of cross-workflow prompts/schemas (Story 4.9)
+**Phase 1 Capabilities** (✅ Story 3.8 - Complete):
+- **Workflow Management**: Penny has `*workflows`, `*switch <workflow>`, `*context` commands
+- **Scoped Operations**: Commands (`*list`, `*new`, `*view`) operate in current workflow context
+- **Path Resolution**: Config service provides `getWorkflowPath()` for workflow-scoped directories
+- **Persistence**: Active workflow persists across sessions via `.poem-state.json`
+- **Isolation**: Prompts in workflow A don't appear when switched to workflow B
+- **Reference Configuration**: Reference paths configured as arrays (not yet integrated)
+- **Skills**: `list-workflows.md`, `switch-workflow.md`, `show-workflow-context.md`
+
+**Phase 2 Enhancements** (🔄 Story 4.9 - Planned):
+- **Reference Integration**: Load context from workflow-specific reference materials
+- **Priority System**: Conflict resolution when same file exists in multiple reference sources
+- **Shared Resources**: Detection and management of cross-workflow prompts/schemas
+- **Workflow Files**: `.workflow.yaml` definition files for complete workflow orchestration
+- **Advanced Commands**: `*workflows --verbose`, `*context --reference`, `*list --shared`
 
 **Example**:
 ```
-*workflows                    # List all workflows
+*workflows                    # List all workflows (shows youtube-launch-optimizer, nano-banana)
 *switch nano-banana           # Change to NanoBanana workflow
-*context                      # Show current workflow info
-*list                         # Lists nano-banana prompts only
+*context                      # Show current workflow info (paths, references)
+*list                         # Lists nano-banana prompts only (isolation)
+*new                          # Creates prompt in nano-banana directory
 ```
 
-**Configuration**: See `packages/poem-core/poem-core-config.yaml`
-
-**Background**: Course correction `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md`
+**Configuration**: `packages/poem-core/poem-core-config.yaml`
+**Limitations**: `docs/architecture/multi-workflow-phase1-limitations.md`
+**Background**: `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md`
 
 ---
 

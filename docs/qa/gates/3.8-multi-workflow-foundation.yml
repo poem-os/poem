@@ -1,0 +1,85 @@
+schema: 1
+story: "3.8"
+story_title: "Multi-Workflow Foundation (Phase 1)"
+gate: PASS
+status_reason: "All 18 ACs met with excellent implementation, 55/55 unit tests passing, 9/9 automated SAT tests passed, comprehensive documentation, no blocking issues"
+reviewer: "Quinn (Test Architect)"
+updated: "2026-01-12T18:50:00Z"
+
+top_issues: [] # No blocking issues
+
+waiver:
+  active: false
+
+# Quality score: 95/100 (excellent)
+# Calculation: 100 - (0 FAILs × 20) - (1 minor CONCERN × 5)
+# Minor concern: 2 pre-existing flaky watcher tests (unrelated to story)
+quality_score: 95
+
+expires: "2026-01-26T18:50:00Z" # 2 weeks from review
+
+evidence:
+  tests_reviewed: 55
+  risks_identified: 0
+  trace:
+    ac_covered: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+    ac_gaps: []
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: "No authentication/secrets involved, path validation prevents traversal"
+  performance:
+    status: PASS
+    notes: "Hot-switching without restart (AC 11), no performance anti-patterns"
+  reliability:
+    status: PASS
+    notes: "Comprehensive error handling (ENOENT, parse errors, permissions), graceful fallback"
+  maintainability:
+    status: PASS
+    notes: "Clean separation of concerns, single source of truth pattern, comprehensive documentation"
+
+recommendations:
+  immediate: [] # No immediate actions required
+  future:
+    - action: "Address flaky watcher tests (test isolation issue)"
+      refs: ["packages/poem-app/tests/services/handlebars/watcher.test.ts"]
+      priority: "low"
+    - action: "Configure Astro adapter for production builds when deployment planned"
+      refs: ["packages/poem-app/astro.config.mjs"]
+      priority: "low"
+    - action: "Execute manual SAT tests via Penny agent when user ready"
+      refs: ["docs/stories/3.8.story-SAT.md"]
+      priority: "medium"
+
+strengths:
+  - "Clean TypeScript architecture with well-defined interfaces"
+  - "100% unit test coverage for new code (55 tests)"
+  - "Backward compatibility maintained (flat structure fallback)"
+  - "Comprehensive documentation (inline, architecture, limitations)"
+  - "Developer experience: Hot-switching, clear command UX"
+  - "Proper error handling and validation"
+
+concerns:
+  - "2 pre-existing flaky watcher tests (unrelated to story, pass in isolation)"
+  - "Manual SAT tests pending user execution (standard for agent features)"
+
+approval_notes: |
+  Story 3.8 delivers a solid Phase 1 foundation for multi-workflow support.
+  Implementation quality is excellent with:
+  - All 18 acceptance criteria met
+  - 55/55 unit tests passing
+  - 9/9 automated SAT tests passed
+  - Comprehensive documentation including Phase 1 vs Phase 2 limitations
+  - Clean code with proper TypeScript types and error handling
+
+  Manual SAT tests (Task 11) are appropriately deferred to user as they require
+  Penny agent activation and human interaction. This is standard practice.
+
+  Story approved for "Done" status. Ready for Epic 4 testing.
+
+next_steps:
+  - User executes manual SAT tests via Penny agent
+  - Story marked "Done" after approval
+  - Proceed with Epic 4 stories using Phase 1 foundation
+  - Phase 2 enhancements tracked in Story 4.9

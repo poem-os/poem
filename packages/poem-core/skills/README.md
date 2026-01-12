@@ -37,6 +37,9 @@ Skills are best for quick, single-purpose operations that don't require user inp
 | Check My Prompt | `check-my-prompt.md` | Validates prompt structure, syntax, schema alignment, and best practices | `POST /api/schema/extract`<br>`GET /api/helpers`<br>`POST /api/schema/validate` |
 | Preview with Data | `preview-with-data.md` | Renders prompt template with mock or provided data to preview output | `POST /api/prompt/render` |
 | Generate Schema | `generate-schema.md` | Extracts input and output JSON schemas from template placeholders and comments | `POST /api/schema/extract` |
+| List Workflows | `list-workflows.md` | Displays all available workflows in workspace with current workflow indicator | Config service (no API) |
+| Switch Workflow | `switch-workflow.md` | Changes active workflow context without requiring server restart | Config service (no API) |
+| Show Workflow Context | `show-workflow-context.md` | Shows current workflow information, paths, and reference materials | Config service (no API) |
 
 ## Skill Format
 
