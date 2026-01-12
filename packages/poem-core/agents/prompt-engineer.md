@@ -52,8 +52,8 @@ core_principles:
 # All commands require * prefix when used (e.g., *help)
 commands:
   - help: Show numbered list of the following commands to allow selection
-  - list: List all available prompts in the workspace with basic metadata
-  - view: Display a specific prompt template and schema (usage: *view <prompt-name>)
+  - list: List all available prompts in the workspace with rich metadata (size, modified date, schema status) in table format
+  - view: Display a specific prompt template with rich metadata (size, modified, line count), schema details, and template statistics (usage: *view <prompt-name>)
   - new: Execute workflow new-prompt.yaml to create a new prompt with schema
   - refine: Execute workflow refine-prompt.yaml to iteratively improve an existing prompt
   - test: Execute workflow test-prompt.yaml to test a prompt with mock or provided data
@@ -80,16 +80,45 @@ When activated, the Prompt Engineer agent assists users with:
 
 1. **Listing Prompts** (`*list`)
    - Read prompts directory (dev-workspace/prompts/ or poem/prompts/ based on mode)
-   - Display prompt names in a simple formatted list
-   - Show which prompts have corresponding schemas (check for .json files in schemas directory)
-   - Note: Basic implementation for immediate use, will be enhanced in Story 3.6
+   - Get file statistics for each .hbs file (size in KB, last modified date)
+   - Check for corresponding schema files in schemas directory (.json with matching name)
+   - Format output as Markdown table with columns:
+     - **Name**: Prompt filename (without .hbs extension)
+     - **Size**: File size in KB (e.g., "1.2 KB")
+     - **Modified**: Last modified date (e.g., "2026-01-10")
+     - **Has Schema**: ✓ if schema exists, ✗ if missing
+   - Support optional filtering:
+     - By name pattern: `*list search-term` (case-insensitive match)
+     - With schema only: `*list --with-schema`
+     - Without schema: `*list --no-schema`
+   - Handle empty directory gracefully: Display "No prompts found in workspace. Use `*new` to create your first prompt."
+   - Display total count at bottom: "Total: X prompts"
 
 2. **Viewing a Prompt** (`*view <prompt-name>`)
-   - Read specified prompt template file (.hbs)
-   - Read corresponding schema file (.json) if it exists
-   - Display template content and schema in readable format
-   - Handle missing files gracefully with helpful error messages
-   - Note: Basic implementation for immediate use, will be enhanced in Story 3.6
+   - Read specified prompt template file (.hbs) from workspace
+   - Get template file metadata:
+     - **Size**: File size in KB (e.g., "2.4 KB")
+     - **Modified**: Last modified date (e.g., "2026-01-10")
+     - **Line Count**: Number of lines in template
+   - Display template content with syntax highlighting (markdown code block with handlebars tag)
+   - Calculate and display template statistics:
+     - **Placeholder Count**: Number of unique placeholders (e.g., {{fieldName}})
+     - **Helper Usage**: List of Handlebars helpers used (e.g., truncate, titleCase)
+     - **Conditional Blocks**: Count of {{#if}}, {{#unless}} blocks
+     - **Loop Blocks**: Count of {{#each}} blocks
+   - Read corresponding schema file (.json) if it exists and display:
+     - **Schema File**: Filename (e.g., "generate-title.json")
+     - **Field Count**: Number of fields in schema
+     - **Required Fields**: List of required field names
+     - **Field Types**: Summary of types used (e.g., "3 strings, 1 number, 2 arrays")
+   - Handle missing files gracefully:
+     - If template not found: "Prompt '{name}' not found. Available prompts: {list}. Use `*list` to see all prompts."
+     - If schema not found: Display note "No schema file found. Use `generate-schema` skill to create one."
+   - Display in formatted sections:
+     1. Template Metadata (size, modified, lines)
+     2. Template Content (code block)
+     3. Template Statistics (placeholders, helpers, conditionals, loops)
+     4. Schema Details (if exists)
 
 3. **Creating New Prompts** (`*new`)
    - Gathers prompt purpose and requirements
