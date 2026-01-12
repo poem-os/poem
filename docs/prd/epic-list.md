@@ -10,11 +10,11 @@ Build the `.poem-app/` Astro server with Handlebars template engine, basic helpe
 
 ## Epic 3: Prompt Engineer Agent & Core Workflows
 
-Create the first agent (Prompt Engineer) with workflows for new prompt creation, refinement, testing, and validation—enabling the primary user journey.
+Create the first agent (Prompt Engineer) with workflows for new prompt creation, refinement, testing, and validation—enabling the primary user journey. **Includes multi-workflow foundation (Story 3.8)** to support multiple independent workflows within one workspace.
 
 ## Epic 4: YouTube Automation Workflow (System Validation)
 
-Validate POEM's core capabilities through the YouTube Launch Optimizer workflow—a real multi-prompt pipeline that transforms video transcripts into complete launch assets (titles, descriptions, chapters, thumbnails, tags, social posts). This epic tests schema extraction, template chaining, mock data generation, Handlebars helpers, progressive data accumulation, and human-in-the-loop patterns using 53 production templates across 11 workflow sections. Mock data generation is one capability among many being validated.
+Validate POEM's core capabilities through the YouTube Launch Optimizer workflow—a real multi-prompt pipeline that transforms video transcripts into complete launch assets (titles, descriptions, chapters, thumbnails, tags, social posts). This epic tests schema extraction, template chaining, mock data generation, Handlebars helpers, progressive data accumulation, and human-in-the-loop patterns using 53 production templates across 11 workflow sections. **Benefits from multi-workflow support** to test multiple workflows (YouTube Launch vs Video Planning vs NanoBanana) in parallel. **Includes multi-workflow polish (Story 4.9)** to finalize reference integration based on B72 learnings.
 
 ## Epic 5: System Agent & Helper Generation
 
@@ -52,5 +52,29 @@ Extract the Workflow Validator (Victor) pattern from POEM and generalize it for 
 **Dependencies**: Complete POEM Epic 3-4 validation to prove pattern effectiveness
 
 **Note**: POEM-specific implementation (Victor agent) complete and functional. See `dev-workspace/WORKFLOW-VALIDATION-GUIDE.md` for usage.
+
+---
+
+## Epic 9: Multi-Workflow Support (Future)
+
+**Status**: 📋 Requirements Complete, Foundation Ready for Drafting
+**Target**: POEM v1.1 - v2.0 (Q2-Q3 2026)
+
+**Foundation**: Stories 3.8 (Phase 1) and 4.9 (Phase 2) will deliver production-ready multi-workflow prototype validated through Epic 4.
+
+**What Epic 9 Adds**: Advanced features beyond Phase 1+2 prototype:
+- Visual workflow editor and designer
+- Auto-sync reference materials from git repositories
+- Cross-workflow analytics and insights
+- Workflow templates and marketplace
+- Advanced validation (step I/O compatibility checking)
+- Workflow execution orchestration
+- CI/CD integration for workflow testing
+
+**Dependencies**: Prototype validation through Epic 3-4, community feedback on Phase 1+2 usage patterns
+
+**Tracking**: `docs/future-enhancements.md` (Enhancement #11)
+
+**Course Correction**: `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md`
 
 ---

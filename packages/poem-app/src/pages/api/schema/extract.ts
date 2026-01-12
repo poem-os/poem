@@ -7,7 +7,7 @@ import type { APIContext } from 'astro';
 import { z } from 'zod';
 import { promises as fs } from 'node:fs';
 import { SchemaExtractor } from '../../../services/schema/extractor.js';
-import type { SchemaField } from '../../../services/schema/types.js';
+import type { UnifiedSchema } from '../../../services/schema/types.js';
 import { getHandlebarsService } from '../../../services/handlebars/index.js';
 import { resolvePathAsync, loadPoemConfig } from '../../../services/config/poem-config.js';
 
@@ -28,16 +28,11 @@ export interface ExtractRequest {
 }
 
 /**
- * Response interface for successful extraction (dual schema)
+ * Response interface for successful extraction (unified schema)
  */
 export interface ExtractResponse {
   success: true;
-  inputSchema: {
-    fields: SchemaField[];
-  };
-  outputSchema: {
-    fields: SchemaField[];
-  } | null;
+  schema: UnifiedSchema;
   requiredHelpers: string[];
   unregisteredHelpers: string[];
   templatePath?: string;
@@ -134,11 +129,11 @@ export async function POST({ request }: APIContext): Promise<Response> {
       }
     }
 
-    // Extract both input and output schemas (dual extraction)
+    // Extract unified schema (input + output in single structure)
     const extractor = new SchemaExtractor();
 
     try {
-      const result = extractor.extractDualSchema(templateContent);
+      const result = extractor.extractUnifiedSchema(templateContent, template);
 
       // Check which helpers are registered
       const handlebarsService = getHandlebarsService();
@@ -148,14 +143,7 @@ export async function POST({ request }: APIContext): Promise<Response> {
 
       const response: ExtractResponse = {
         success: true,
-        inputSchema: {
-          fields: result.inputSchema,
-        },
-        outputSchema: result.outputSchema
-          ? {
-              fields: result.outputSchema,
-            }
-          : null,
+        schema: result.schema,
         requiredHelpers: result.requiredHelpers,
         unregisteredHelpers,
       };

@@ -3,9 +3,9 @@
  * Tests for schema validation service
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { SchemaValidator } from '../../../src/services/schema/validator.js';
-import type { SchemaField } from '../../../src/services/schema/types.js';
+import type { SchemaField, UnifiedSchema } from '../../../src/services/schema/types.js';
 
 describe('SchemaValidator', () => {
   const validator = new SchemaValidator();
@@ -601,6 +601,208 @@ describe('SchemaValidator', () => {
 
       expect(result.valid).toBe(false);
       expect(result.errors[0].message).toContain('does not match required pattern');
+    });
+  });
+
+  describe('validateUnified - unified schema structure', () => {
+    it('should validate input section of unified schema', () => {
+      const schema: UnifiedSchema = {
+        templateName: 'generate-titles',
+        version: '1.0.0',
+        description: 'Generate YouTube video titles',
+        input: {
+          fields: [
+            { name: 'topic', type: 'string', required: true },
+            { name: 'audience', type: 'string', required: true },
+          ],
+        },
+      };
+      const data = { topic: 'TypeScript', audience: 'developers' };
+
+      const result = validator.validateUnified(data, schema, 'input');
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should validate output section of unified schema', () => {
+      const schema: UnifiedSchema = {
+        templateName: 'generate-titles',
+        version: '1.0.0',
+        input: {
+          fields: [{ name: 'topic', type: 'string', required: true }],
+        },
+        output: {
+          fields: [
+            { name: 'titles', type: 'array', required: true },
+            { name: 'count', type: 'number', required: true },
+          ],
+        },
+      };
+      const data = {
+        titles: ['Title 1', 'Title 2', 'Title 3'],
+        count: 3,
+      };
+
+      const result = validator.validateUnified(data, schema, 'output');
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should fail when validating against missing output section', () => {
+      const schema: UnifiedSchema = {
+        templateName: 'test-prompt',
+        version: '1.0.0',
+        input: {
+          fields: [{ name: 'input', type: 'string', required: true }],
+        },
+        // No output section
+      };
+      const data = { result: 'something' };
+
+      const result = validator.validateUnified(data, schema, 'output');
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].message).toContain('does not have an output section');
+    });
+
+    it('should include schema section in error messages for input', () => {
+      const schema: UnifiedSchema = {
+        templateName: 'test-prompt',
+        version: '1.0.0',
+        input: {
+          fields: [{ name: 'name', type: 'string', required: true }],
+        },
+      };
+      const data = {};
+
+      const result = validator.validateUnified(data, schema, 'input');
+
+      expect(result.valid).toBe(false);
+      expect(result.errors[0].message).toContain('[input]');
+      expect(result.errors[0].message).toContain('is required but missing');
+    });
+
+    it('should include schema section in error messages for output', () => {
+      const schema: UnifiedSchema = {
+        templateName: 'test-prompt',
+        version: '1.0.0',
+        input: {
+          fields: [{ name: 'input', type: 'string', required: true }],
+        },
+        output: {
+          fields: [{ name: 'result', type: 'number', required: true }],
+        },
+      };
+      const data = { result: 'not-a-number' };
+
+      const result = validator.validateUnified(data, schema, 'output');
+
+      expect(result.valid).toBe(false);
+      expect(result.errors[0].message).toContain('[output]');
+      expect(result.errors[0].message).toContain('expected type');
+    });
+
+    it('should validate complex unified schema with nested objects', () => {
+      const schema: UnifiedSchema = {
+        templateName: 'complex-prompt',
+        version: '1.0.0',
+        input: {
+          fields: [
+            {
+              name: 'config',
+              type: 'object',
+              required: true,
+              properties: [
+                { name: 'enabled', type: 'boolean', required: true },
+                { name: 'maxItems', type: 'number', required: false },
+              ],
+            },
+          ],
+        },
+        output: {
+          fields: [
+            {
+              name: 'results',
+              type: 'array',
+              required: true,
+              items: {
+                name: 'item',
+                type: 'string',
+                required: true,
+              },
+            },
+          ],
+        },
+      };
+
+      const inputData = {
+        config: {
+          enabled: true,
+          maxItems: 10,
+        },
+      };
+      const outputData = {
+        results: ['result1', 'result2', 'result3'],
+      };
+
+      const inputResult = validator.validateUnified(inputData, schema, 'input');
+      const outputResult = validator.validateUnified(outputData, schema, 'output');
+
+      expect(inputResult.valid).toBe(true);
+      expect(outputResult.valid).toBe(true);
+    });
+  });
+
+  describe('validate - backward compatibility', () => {
+    it('should show deprecation warning when using raw SchemaField[]', () => {
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const schema: SchemaField[] = [{ name: 'test', type: 'string', required: true }];
+      const data = { test: 'value' };
+
+      validator.validate(data, schema);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[DEPRECATED]')
+      );
+      consoleSpy.mockRestore();
+    });
+
+    it('should redirect UnifiedSchema to validateUnified when schemaSection provided', () => {
+      const schema: UnifiedSchema = {
+        templateName: 'test',
+        version: '1.0.0',
+        input: {
+          fields: [{ name: 'name', type: 'string', required: true }],
+        },
+      };
+      const data = { name: 'test' };
+
+      const result = validator.validate(data, schema, 'input');
+
+      expect(result.valid).toBe(true);
+    });
+
+    it('should default to input section when UnifiedSchema used without schemaSection', () => {
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const schema: UnifiedSchema = {
+        templateName: 'test',
+        version: '1.0.0',
+        input: {
+          fields: [{ name: 'name', type: 'string', required: true }],
+        },
+      };
+      const data = { name: 'test' };
+
+      const result = validator.validate(data, schema);
+
+      expect(result.valid).toBe(true);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Defaulting to "input"')
+      );
+      consoleSpy.mockRestore();
     });
   });
 });

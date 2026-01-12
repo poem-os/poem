@@ -1,40 +1,41 @@
 # Generate Schema
 
-A skill that automatically extracts JSON schemas (both input and output) from Handlebars prompt templates by analyzing placeholders and output format comments.
+A skill that automatically extracts a unified JSON schema (input and output sections) from Handlebars prompt templates by analyzing placeholders and output format comments.
 
 ## When to Use
 
 Invoke this skill when:
-- Creating a new prompt template and need to generate schemas
-- An existing prompt is missing its schema files
+- Creating a new prompt template and need to generate a schema
+- An existing prompt is missing its schema file
 - Template placeholders have changed and schema needs updating
 - You want to ensure schema matches template requirements
 - Documenting template data requirements
 
 ## What It Does
 
-This skill automatically generates schemas for prompts:
+This skill automatically generates a unified schema for prompts:
 
-1. **Input Schema Extraction**: Analyzes template placeholders to generate input data schema
-2. **Output Schema Extraction**: Parses template comments for expected output structure
+1. **Input Schema Extraction**: Analyzes template placeholders to generate input data schema section
+2. **Output Schema Extraction**: Parses template comments for expected output structure section
 3. **Helper Detection**: Identifies required Handlebars helpers used in template
-4. **Schema Creation**: Saves both input and output schemas to workspace
+4. **Unified Schema Creation**: Saves single schema file with both input and output sections to workspace
 
 ## How It Works
 
 1. Load the prompt template from workspace (or use template in context)
-2. Call `POST /api/schema/extract` to extract placeholders and helper usage
+2. Call `POST /api/schema/extract` to extract unified schema structure
 3. Parse template for output format comments (HTML or Handlebars comments)
 4. Extract output structure from "Expected Output" or "Output Format" sections
-5. Generate input schema JSON from placeholders (field names and inferred types)
-6. Generate output schema JSON from parsed output structure (if present)
-7. Save input schema as `{prompt-name}.json` in schemas directory
-8. Save output schema as `{prompt-name}-output.json` in schemas directory (if output format found)
-9. Report schemas created and any required helpers
+5. Generate input section from placeholders (field names and inferred types)
+6. Generate output section from parsed output structure (if present, otherwise omit)
+7. Combine into unified schema with `templateName`, `version`, `input`, and optional `output` sections
+8. Save unified schema as `{prompt-name}.json` in schemas directory
+9. Report schema created and any required helpers
 
 ## API Calls
 
-- `POST /api/schema/extract` - Extract placeholders, helpers, and structure from template
+- `POST /api/schema/extract` - Extract unified schema with input/output sections from template
+  - **Returns**: `{ schema: UnifiedSchema, requiredHelpers: string[], templatePath: string }`
 
 ## Output Schema Extraction
 
@@ -69,39 +70,46 @@ The skill searches for output format definitions in template comments:
 Schema Generation: {{promptName}}
 ==================================
 
-Input Schema Generated:
+Unified Schema Generated:
 - File: {prompt-name}.json
+- Template: {prompt-name}
+- Version: 1.0.0
+
+Input Section:
 - Fields: 5 (transcriptAbridgement, mainTopic, keywords, targetAudience, videoLength)
 - Required Helpers: titleCase, truncate
 
-Output Schema Generated:
-- File: {prompt-name}-output.json
+Output Section:
 - Fields: 3 (title, confidence, suggestions)
 - Structure: object with string, number, and array fields
 
-Schemas saved to workspace schemas directory.
+Schema saved to workspace schemas directory.
 
-Status: ✓ Schemas generated successfully
+Status: ✓ Unified schema generated successfully
 ```
 
-Without output schema:
+Without output section:
 
 ```
 Schema Generation: {{promptName}}
 ==================================
 
-Input Schema Generated:
+Unified Schema Generated:
 - File: {prompt-name}.json
+- Template: {prompt-name}
+- Version: 1.0.0
+
+Input Section:
 - Fields: 3 (name, description, category)
 - Required Helpers: none
 
-Output Schema:
+Output Section:
 - No output format defined in template (optional)
-- Output schemas enable validation but are not required
+- Output section enables validation but is not required
 
-Schemas saved to workspace schemas directory.
+Schema saved to workspace schemas directory.
 
-Status: ✓ Input schema generated successfully
+Status: ✓ Unified schema generated (input only)
 ```
 
 ## Example Usage
@@ -112,13 +120,17 @@ Status: ✓ Input schema generated successfully
 
 **Skill response**:
 ```
-I'll extract schemas from your prompt template.
+I'll extract a unified schema from your prompt template.
 
 Schema Generation: generate-chapter-titles.hbs
 ===============================================
 
-Input Schema Generated:
+Unified Schema Generated:
 - File: generate-chapter-titles.json
+- Template: generate-chapter-titles
+- Version: 1.0.0
+
+Input Section:
 - Fields: 4
   - transcriptAbridgement (string, required)
   - videoLength (number, required)
@@ -126,8 +138,7 @@ Input Schema Generated:
   - existingChapters (array, optional)
 - Required Helpers: formatTimestamp
 
-Output Schema Generated:
-- File: generate-chapter-titles-output.json
+Output Section:
 - Fields: 2
   - chapters (array of objects)
     - title (string)
@@ -135,11 +146,10 @@ Output Schema Generated:
     - duration (number)
   - totalChapters (number)
 
-Schemas saved to:
+Schema saved to:
 - /poem/schemas/generate-chapter-titles.json
-- /poem/schemas/generate-chapter-titles-output.json
 
-Status: ✓ Both schemas generated successfully
+Status: ✓ Unified schema generated successfully
 
-The schemas are now ready for use. You can validate inputs and outputs against these schemas when testing your prompt.
+The schema is now ready for use. You can validate inputs against the input section and outputs against the output section when testing your prompt.
 ```

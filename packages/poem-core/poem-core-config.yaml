@@ -38,6 +38,67 @@ workspace:
 #   config: poem/config
 #   workflowData: poem/workflow-data
 
+# ============================================================================
+# MULTI-WORKFLOW SUPPORT (Stories 3.8, 4.9)
+# ============================================================================
+#
+# POEM supports multiple independent workflows within one workspace.
+# Each workflow has its own prompts, schemas, mock data, and reference materials.
+#
+# To enable (after Story 3.8 implementation):
+#
+# workspace:
+#   currentWorkflow: youtube-launch-optimizer
+#
+#   workflows:
+#     youtube-launch-optimizer:
+#       prompts: dev-workspace/workflows/youtube-launch-optimizer/prompts
+#       schemas: dev-workspace/workflows/youtube-launch-optimizer/schemas
+#       mockData: dev-workspace/workflows/youtube-launch-optimizer/mock-data
+#       reference:
+#         - path: data/youtube-launch-optimizer/
+#           type: local
+#           priority: 10
+#         - path: /ad/brains/youtube/
+#           type: second-brain
+#           priority: 20
+#
+#     nano-banana:
+#       prompts: dev-workspace/workflows/nano-banana/prompts
+#       schemas: dev-workspace/workflows/nano-banana/schemas
+#       mockData: dev-workspace/workflows/nano-banana/mock-data
+#       reference:
+#         - path: data/nano-banana/reference/
+#           type: local
+#           priority: 10
+#         - path: /ad/brains/nano-banana/
+#           type: second-brain
+#           priority: 20
+#
+#   # Shared resources across workflows
+#   shared:
+#     prompts: dev-workspace/shared/prompts
+#     schemas: dev-workspace/shared/schemas
+#
+# Reference Material Types:
+#   - local: Relative to project (data/nano-banana/)
+#   - second-brain: Absolute path (/ad/brains/nano-banana/)
+#   - external: URL (future - Story 4.9)
+#   - git-repo: Git repository URL (future - Story 4.9)
+#
+# Priority System (Story 4.9):
+#   - Higher priority wins conflicts (same filename in multiple sources)
+#   - Default: 10, Typical: local=10, second-brain=20, external=5
+#
+# Workflow Commands (Story 3.8):
+#   Activate Penny: /poem/agents/penny
+#   List workflows: *workflows
+#   Switch workflow: *switch <name>
+#   Show context: *context
+#
+# See: docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md
+# ============================================================================
+
 # Logging configuration
 logging:
   # Log level: debug | info | warn | error

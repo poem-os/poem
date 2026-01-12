@@ -1,0 +1,162 @@
+{
+  "task": "generate_image",
+  "metadata": {
+    "version": "1.0",
+    "project": "vibedeck-kickstarter",
+    "timestamp": "2026-01-12",
+    "author": "AppyDave",
+    "shot_type": "hero_shot_001"
+  },
+  "product": {
+    "id": "vibedeck_controller",
+    "name": "VibeDeck",
+    "type": "hardware controller",
+    "form_factor": "horizontal keyboard-style device",
+    "dimensions": "8-10 inches wide, 3-4 inches deep, 1.5-2.5 inches tall",
+    "material": "brushed aluminum or high-quality ABS plastic",
+    "surface_finish": "matte, gunmetal gray",
+    "color": "#4A4A4A",
+    "components": [
+      {
+        "id": "oled_display",
+        "type": "OLED screen",
+        "position": "top center",
+        "size": "4-5 inches wide, 1 inch tall",
+        "content": "MODEL\nClaude Opus 4.5",
+        "text_color": "#00FF00",
+        "background_color": "#000000",
+        "font": "monospace terminal font"
+      },
+      {
+        "id": "rotary_encoder",
+        "type": "rotary dial with center button",
+        "position": "center, below display",
+        "material": "brushed aluminum",
+        "texture": "knurled edge",
+        "diameter": "1.5 inches",
+        "underglow": "#4A9EFF"
+      },
+      {
+        "id": "context_buttons",
+        "type": "mechanical keys",
+        "count": 6,
+        "arrangement": "hexagon pattern around rotary encoder",
+        "spacing": "1.5 inches from rotary center",
+        "keycaps": "low-profile, matte black",
+        "legends": "white text",
+        "backlighting": "#4A9EFF",
+        "button_labels": ["CTX 1", "CTX 2", "CTX 3", "CTX 4", "CTX 5", "CTX 6"]
+      },
+      {
+        "id": "standalone_buttons",
+        "type": "mechanical keys",
+        "count": 6,
+        "arrangement": "horizontal row at bottom",
+        "keycaps": "low-profile, matte black",
+        "legends": "white text",
+        "buttons": [
+          {"label": "YES", "icon": "✓", "backlight": "#4CAF50"},
+          {"label": "NO", "icon": "✗", "backlight": "#F44336"},
+          {"label": "OTHER", "icon": "↻", "backlight": "#FF9800"},
+          {"label": "🎤", "icon": "microphone", "backlight": "#00E5FF", "size": "1.5u"},
+          {"label": "SEND", "icon": "→", "backlight": "#2196F3"},
+          {"label": "CHAT", "icon": "💬", "backlight": "#9C27B0"}
+        ]
+      },
+      {
+        "id": "coiled_cable",
+        "type": "USB-C coiled cable",
+        "style": "retro telephone cord",
+        "color": "dark gray",
+        "length_visible": "6-8 inches of coil",
+        "position": "connected to left side, coiling naturally on desk"
+      }
+    ]
+  },
+  "lighting": {
+    "style": "professional product photography",
+    "primary_light": {
+      "type": "key light",
+      "position": "45 degrees from upper left",
+      "intensity": "medium-high",
+      "softness": "softbox diffused",
+      "color_temperature": "5500K neutral"
+    },
+    "fill_light": {
+      "type": "fill light",
+      "position": "right side",
+      "intensity": "medium-low",
+      "softness": "diffused",
+      "purpose": "reduce shadows, maintain depth"
+    },
+    "rim_light": {
+      "type": "rim light",
+      "position": "behind and above product",
+      "intensity": "low-medium",
+      "purpose": "edge definition, separate from background"
+    },
+    "practical_lights": {
+      "oled_display": "matrix green glow (#00FF00) illuminating nearby surface",
+      "button_backlighting": "cyan blue underglow (#4A9EFF) visible through keycaps",
+      "rotary_underglow": "cyan blue halo (#4A9EFF) around base of encoder"
+    }
+  },
+  "composition": {
+    "camera_angle": "3/4 view from slightly above",
+    "camera_height": "15-20 degrees above product",
+    "camera_distance": "close-up hero shot",
+    "focal_point": "rotary encoder and display",
+    "framing": "product fills 60-70% of frame",
+    "negative_space": "30-40% on right and top for copy/text overlay",
+    "depth_of_field": "f/4 - f/5.6, display and buttons sharp, background slightly soft"
+  },
+  "surface": {
+    "type": "dark wood desk",
+    "color": "#3E2723",
+    "texture": "natural wood grain visible",
+    "finish": "matte, non-reflective",
+    "lighting_interaction": "subtle wood grain catches rim light"
+  },
+  "background": {
+    "type": "blurred home office environment",
+    "depth": "3-5 feet behind product",
+    "content": "subtle hints of mechanical keyboard (partially visible), monitor glow (out of focus)",
+    "colors": "muted grays and blacks",
+    "blur_amount": "heavy blur (f/2.8-f/4 equivalent), bokeh effect",
+    "mood": "professional developer workspace"
+  },
+  "props": [
+    {
+      "id": "mechanical_keyboard_partial",
+      "item": "mechanical keyboard with dark keycaps",
+      "position": "left edge of frame, partially visible",
+      "visibility": "10-20% visible, mostly out of frame",
+      "purpose": "context, scale reference"
+    }
+  ],
+  "effects": {
+    "glow": {
+      "oled_display": "soft green glow radiating onto nearby surface",
+      "button_underglow": "cyan blue glow visible beneath and around buttons"
+    },
+    "reflections": {
+      "surface": "minimal specular reflections on brushed aluminum encoder",
+      "ambient": "subtle environmental reflections on housing"
+    }
+  },
+  "style_reference": {
+    "aesthetic": "premium studio gear",
+    "reference_brands": ["Elgato Stream Deck", "Focusrite Scarlett", "AKAI MPC", "Apple product photography"],
+    "photography_style": "clean product photography with practical lighting",
+    "mood": "professional, modern, retro-tech fusion"
+  },
+  "mood": "sophisticated professional tool for serious developers",
+  "negative_prompt": "toy-like, cheap plastic, gaming RGB rainbow, cluttered background, poor lighting, blurry product, oversaturated colors, lens distortion",
+  "output_format": {
+    "width": 2048,
+    "height": 1536,
+    "aspect_ratio": "4:3",
+    "mime_type": "image/png",
+    "quality": "high"
+  }
+}

@@ -1,0 +1,37 @@
+A premium hardware controller called VibeDeck designed for AI-assisted coding workflows (vibe coding).
+
+The device is a horizontal keyboard-style controller, approximately 8-10 inches wide and 3-4 inches deep, with a dark gray gunmetal housing made of brushed aluminum or high-quality ABS plastic.
+
+At the top is an OLED display (4-5 inches wide, 1 inch tall) showing two lines of text in matrix green color (#00FF00) on a black background. The display currently shows "MODEL" on the first line and "Claude Opus 4.5" on the second line, using a monospace terminal font.
+
+The centerpiece is a brushed aluminum rotary encoder with a knurled texture, approximately 1.5 inches in diameter. It has cyan blue underglow lighting (#4A9EFF) creating a subtle halo effect around its base.
+
+Arranged in a hexagon pattern around the rotary encoder are 6 context buttons. These are low-profile mechanical keyboard switches with matte black keycaps and white text legends. They're labeled "CTX 1" through "CTX 6" and have cyan blue backlighting.
+
+At the bottom is a row of 6 standalone buttons:
+- YES (green backlight #4CAF50, checkmark icon)
+- NO (red backlight #F44336, X icon)
+- OTHER (orange backlight #FF9800, refresh icon)
+- VOICE (cyan backlight #00E5FF, microphone icon, slightly wider button)
+- SEND (blue backlight #2196F3, arrow icon)
+- CHAT (purple backlight #9C27B0, chat bubble icon)
+
+A retro-style coiled USB-C cable (dark gray, like an old telephone cord) is connected to the left side of the device, with about 6-8 inches of coil visible, naturally resting on the desk surface.
+
+The device sits on a dark wood developer desk (color #3E2723) with natural wood grain visible. A mechanical keyboard with dark keycaps is partially visible on the left edge of the frame (about 10-20% visible), providing context and scale.
+
+The background is a softly blurred home office environment with hints of a monitor glow and possibly other developer gear, all out of focus to keep attention on the VibeDeck.
+
+The lighting is professional product photography:
+- Key light from 45 degrees upper left (medium-high intensity, softbox diffused, 5500K neutral)
+- Fill light from the right side (medium-low intensity, diffused)
+- Rim light from behind and above (low-medium intensity for edge definition)
+- Practical lights from the device itself: the green OLED display creates a subtle glow on nearby surface, and the cyan button backlighting creates underglow effects
+
+The camera angle is a classic 3/4 view from slightly above (15-20 degrees), showing the display, all buttons, and the rotary encoder clearly. The product fills about 60-70% of the frame with negative space on the right and top for potential text overlay.
+
+The aesthetic is "premium studio gear meets retro-tech" - think Elgato Stream Deck meets Focusrite Scarlett audio interface meets vintage terminal equipment. Professional, sophisticated, modern with nostalgic touches.
+
+The mood is: "This is a serious professional tool for developers who take their craft seriously, but it's also beautiful and fun to use."
+
+Avoid: toy-like appearance, cheap plastic look, gaming RGB rainbow effects, cluttered background, poor lighting, blurry product, oversaturated colors, lens distortion.

@@ -29,6 +29,28 @@ POEM's components are organized into three installation targets: the framework (
 | Integration Agent | `agents/integration-agent.md` | `*connect`, `*pull-dictionary`, `*publish`              |
 | Mock Data Agent   | `agents/mock-data-agent.md`   | `*generate-mock`, `*create-scenario`, `*curate-library` |
 
+**Workflow Context Awareness** (✅ Stories 3.8, 4.9):
+
+Agents support **workflow-scoped context**, enabling operation across multiple independent workflows within one workspace.
+
+**Capabilities**:
+- **Workflow Switching**: Penny has `*workflows`, `*switch <workflow>`, `*context` commands
+- **Scoped Operations**: All commands operate in current workflow context
+- **Reference Integration**: Access to workflow-specific reference materials from multiple sources (Story 4.9)
+- **Shared Resources**: Detection and management of cross-workflow prompts/schemas (Story 4.9)
+
+**Example**:
+```
+*workflows                    # List all workflows
+*switch nano-banana           # Change to NanoBanana workflow
+*context                      # Show current workflow info
+*list                         # Lists nano-banana prompts only
+```
+
+**Configuration**: See `packages/poem-core/poem-core-config.yaml`
+
+**Background**: Course correction `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md`
+
 ---
 
 ## Component: Workflows (poem-core)

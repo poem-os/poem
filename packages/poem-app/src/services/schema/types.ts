@@ -42,7 +42,29 @@ export interface FieldConstraints {
 }
 
 /**
- * Complete schema definition
+ * Unified schema structure with input and output sections
+ * Like a function signature: (input) -> output
+ */
+export interface UnifiedSchema {
+  /** Prompt template name (e.g., "generate-titles") */
+  templateName: string;
+  /** Schema version (e.g., "1.0.0") */
+  version: string;
+  /** Human-readable description */
+  description?: string;
+  /** Input schema section (required) */
+  input: {
+    fields: SchemaField[];
+  };
+  /** Output schema section (optional) */
+  output?: {
+    fields: SchemaField[];
+  };
+}
+
+/**
+ * @deprecated Use UnifiedSchema instead. This interface will be removed in a future version.
+ * Complete schema definition (legacy format with separate files)
  * Can represent input schemas, output schemas, or both
  */
 export interface Schema {
@@ -52,7 +74,7 @@ export interface Schema {
   version: string;
   /** Human-readable description */
   description?: string;
-  /** Schema type: input (data into prompt), output (data from prompt), or both */
+  /** @deprecated Use UnifiedSchema input/output sections instead */
   schemaType?: 'input' | 'output' | 'both';
   /** Field definitions */
   fields: SchemaField[];
@@ -70,6 +92,7 @@ export interface ExtractionResult {
 
 /**
  * Result of dual schema extraction (input + output)
+ * @deprecated Use UnifiedSchemaExtractionResult instead
  */
 export interface DualExtractionResult {
   /** Extracted input schema fields */
@@ -78,6 +101,18 @@ export interface DualExtractionResult {
   outputSchema: SchemaField[] | null;
   /** Helper names used in the template */
   requiredHelpers: string[];
+}
+
+/**
+ * Result of unified schema extraction
+ */
+export interface UnifiedSchemaExtractionResult {
+  /** Extracted unified schema */
+  schema: UnifiedSchema;
+  /** Helper names used in the template */
+  requiredHelpers: string[];
+  /** Template file path */
+  templatePath: string;
 }
 
 /**
@@ -100,4 +135,41 @@ export interface ValidationError {
   message: string;
   /** Error severity */
   severity: 'error' | 'warning';
+}
+
+/**
+ * Type guard to check if a value is a UnifiedSchema
+ */
+export function isUnifiedSchema(value: unknown): value is UnifiedSchema {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+
+  const obj = value as Record<string, unknown>;
+
+  return (
+    typeof obj.templateName === 'string' &&
+    typeof obj.version === 'string' &&
+    typeof obj.input === 'object' &&
+    obj.input !== null &&
+    Array.isArray((obj.input as { fields?: unknown }).fields)
+  );
+}
+
+/**
+ * Type guard to check if a value is a legacy Schema
+ */
+export function isLegacySchema(value: unknown): value is Schema {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+
+  const obj = value as Record<string, unknown>;
+
+  return (
+    typeof obj.path === 'string' &&
+    typeof obj.version === 'string' &&
+    Array.isArray(obj.fields) &&
+    !('templateName' in obj) // Distinguish from UnifiedSchema
+  );
 }

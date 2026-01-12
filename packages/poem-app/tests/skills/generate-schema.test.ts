@@ -237,8 +237,8 @@ describe('generate-schema skill', () => {
 
       if (outputFormatMatch) {
         const section = outputFormatMatch[1];
-        expect(section).toMatch(/Input Schema Generated/);
-        expect(section).toMatch(/Output Schema|output schema|without output/i);
+        expect(section).toMatch(/Unified Schema Generated/);
+        expect(section).toMatch(/Input Section|Output Section|without output/i);
       }
     });
 
@@ -290,8 +290,8 @@ describe('generate-schema skill', () => {
 
       if (exampleUsageMatch) {
         const section = exampleUsageMatch[1];
-        expect(section).toMatch(/Input Schema Generated/);
-        expect(section).toMatch(/Output Schema Generated/);
+        expect(section).toMatch(/Unified Schema Generated/);
+        expect(section).toMatch(/Input Section|Output Section/i);
       }
     });
 

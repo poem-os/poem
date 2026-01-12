@@ -3,7 +3,13 @@
  * Extracts JSON schemas from Handlebars templates by parsing placeholders and blocks
  */
 
-import type { SchemaField, ExtractionResult, DualExtractionResult } from './types.js';
+import type {
+  SchemaField,
+  ExtractionResult,
+  DualExtractionResult,
+  UnifiedSchema,
+  UnifiedSchemaExtractionResult,
+} from './types.js';
 
 /**
  * Known Handlebars built-in helpers (not custom helpers)
@@ -318,11 +324,15 @@ export class SchemaExtractor {
   }
 
   /**
+   * @deprecated Use extractUnifiedSchema() instead. This method will be removed in a future version.
    * Extract both input and output schemas from a Handlebars template
    * @param template - Handlebars template string
    * @returns DualExtractionResult with input schema, output schema (or null), and helpers
    */
   extractDualSchema(template: string): DualExtractionResult {
+    console.warn(
+      'extractDualSchema() is deprecated. Use extractUnifiedSchema() for the new unified schema format.'
+    );
     const inputResult = this.extract(template);
     const outputSchema = this.extractOutputSchema(template);
 
@@ -330,6 +340,48 @@ export class SchemaExtractor {
       inputSchema: inputResult.fields,
       outputSchema,
       requiredHelpers: inputResult.requiredHelpers,
+    };
+  }
+
+  /**
+   * Extract unified schema from a Handlebars template
+   * Returns a single UnifiedSchema with both input and output sections
+   * @param template - Handlebars template string
+   * @param templateName - Name of the template (e.g., "generate-titles")
+   * @param templatePath - Path to the template file
+   * @returns UnifiedSchemaExtractionResult with unified schema
+   */
+  extractUnifiedSchema(
+    template: string,
+    templateName: string,
+    templatePath: string
+  ): UnifiedSchemaExtractionResult {
+    // Extract input schema using existing logic
+    const inputResult = this.extract(template);
+
+    // Extract output schema (may be null)
+    const outputFields = this.extractOutputSchema(template);
+
+    // Build unified schema
+    const unifiedSchema: UnifiedSchema = {
+      templateName,
+      version: '1.0.0',
+      input: {
+        fields: inputResult.fields,
+      },
+    };
+
+    // Add output section if output schema was found
+    if (outputFields && outputFields.length > 0) {
+      unifiedSchema.output = {
+        fields: outputFields,
+      };
+    }
+
+    return {
+      schema: unifiedSchema,
+      requiredHelpers: inputResult.requiredHelpers,
+      templatePath,
     };
   }
 

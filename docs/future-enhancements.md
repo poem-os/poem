@@ -144,6 +144,90 @@ vs
 
 ---
 
+### 11. Multi-Workflow Support (Workspace Context Architecture)
+
+**Status**: 🔄 **In Progress** → Story 3.8 (Phase 1) ready for SM drafting, Story 4.9 (Phase 2) after Epic 4
+**Target**: POEM v1.1 (Phase 1+2) → v2.0 (Epic 9 advanced features)
+**Discovered**: 2026-01-12 (Story 3.7.1 testing with NanoBanana)
+**Course Correction**: `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md`
+
+**What**: Build workflow-scoped architecture to support multiple independent workflows within a single POEM workspace.
+
+**Why**: Current POEM architecture assumes one workspace = one flat set of prompts/schemas/data. Real-world usage requires multiple workflows (YouTube Launch, Video Planning, NanoBanana, SupportSignal) sharing a workspace while maintaining isolation and workflow-specific context.
+
+**The Problem**: Users have multiple distinct workflows with:
+- Different prompt collections (54 prompts for YouTube Launch vs different set for Video Planning)
+- Different schemas and data contracts
+- Different source-of-truth reference materials (API docs, domain knowledge)
+- Different workflow orchestration logic
+- Some shared components (e.g., `generate-title` used by both workflows)
+
+**Implementation Plan**:
+
+**Phase 1 - Story 3.8** (4-6 hours, Epic 3):
+- ✅ Workflow-scoped directory structure (`dev-workspace/workflows/<name>/`)
+- ✅ Config system with workflow definitions
+- ✅ Basic workflow commands: `*workflows`, `*switch`, `*context`
+- ✅ Reference config structure (array support for multiple sources)
+- ✅ Path resolution and isolation
+- ⏭️ Ready for SM to draft when user starts Story 3.8
+
+**Phase 2 - Story 4.9** (4-6 hours, after Epic 4):
+- 🔮 Reference materials loading from multiple sources
+- 🔮 Priority-based conflict resolution
+- 🔮 Shared resource detection
+- 🔮 Workflow definition format (based on B72 learnings)
+- 🔮 Enhanced commands (--verbose, --reference, --sections, --shared)
+- 🔮 Context-aware assistance
+- ⏭️ SM will draft after Epic 4 validation complete
+
+**Epic 9 - Future** (Q2-Q3 2026):
+- 🔮 Visual workflow editor
+- 🔮 Auto-sync from git repositories
+- 🔮 Cross-workflow analytics
+- 🔮 Workflow templates/marketplace
+- 🔮 CI/CD integration
+
+**Key User Insight** (2026-01-12):
+> "Reference material could come from more than one directory... it's almost like an array."
+
+Led to `reference: ReferenceConfig[]` array architecture supporting multiple sources (local, second-brain, external) with priority-based conflict resolution.
+
+**Example Configuration**:
+```yaml
+workspace:
+  currentWorkflow: nano-banana
+  workflows:
+    nano-banana:
+      prompts: dev-workspace/workflows/nano-banana/prompts
+      schemas: dev-workspace/workflows/nano-banana/schemas
+      reference:
+        - path: data/nano-banana/reference/
+          type: local
+          priority: 10
+        - path: /ad/brains/nano-banana/
+          type: second-brain
+          priority: 20
+```
+
+**Dependencies**:
+- Epic 3 complete (Penny operational) ✅
+- Epic 4 validation (proves B72 workflow end-to-end)
+- Requirements from multiple use cases validated
+
+**Effort Estimate**:
+- Phase 1: 4-6 hours
+- Phase 2: 4-6 hours
+- Epic 9: 40-60 hours
+
+**Tracking**:
+- Stories: `docs/prd/epic-details.md` (Story 3.8, Story 4.9)
+- Epic: `docs/prd/epic-list.md` (Epic 9)
+- Architecture: `docs/architecture/data-models.md` (WorkflowDefinition model)
+- Course Correction: `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md`
+
+---
+
 ## 🔮 Medium Priority
 
 ### 3. Automated Regression Testing

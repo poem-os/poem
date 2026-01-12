@@ -330,24 +330,59 @@ so that I can work efficiently without always invoking full workflows.
 
 ### Story 3.7: Define and Validate Output Schemas
 
+> **Note:** This story was initially implemented with separate schema files (input + output), but was corrected in **Story 3.7.1** to use unified schema files with `input` and `output` sections in a single file, aligning with the original 2026-01-07 architecture design.
+
 As a prompt engineer,
 I want to define output schemas for my prompts,
 so that I can validate AI responses and enable type-safe workflow chaining.
 
 **Acceptance Criteria**:
 
-1. Output schema stored alongside input schema (e.g., `generate-title-output.json`)
+1. ~~Output schema stored alongside input schema (e.g., `generate-title-output.json`)~~ **Corrected in Story 3.7.1:** Output schema stored within unified schema file with `input` and `output` sections (e.g., `generate-title.json` contains both)
 2. Schema defines expected AI response structure (fields, types, format)
 3. Output schema extraction from prompt "Expected Output" section (optional automation)
 4. API endpoint validates rendered output against output schema
 5. Validation reports missing fields, type mismatches, format errors
 6. Output schemas support both structured (JSON) and unstructured (text) outputs
-7. Prompt Engineer agent workflows handle dual schemas (input + output)
-8. Output schemas optional (prompts can omit if outputs are purely informational)
+7. Prompt Engineer agent workflows handle unified schemas (input + output in one file)
+8. Output schemas optional (prompts can omit `output` section if outputs are purely informational)
 
 **NFR Considerations**:
 - Schema validation completes in <100ms (NFR2)
 - Clear error messages for schema mismatches (NFR6)
+
+---
+
+### Story 3.8: Multi-Workflow Foundation (Phase 1)
+
+As a prompt engineer,
+I want to work with multiple independent workflows within one POEM workspace,
+so that I can manage distinct prompt collections (YouTube Launch, Video Planning, NanoBanana) with workflow-specific context while sharing common resources.
+
+**Acceptance Criteria**:
+
+1. Workflow-scoped directory structure created in `dev-workspace/workflows/<name>/`
+2. Config system extended to support `currentWorkflow` and workflow definitions
+3. Workflow configuration includes: prompts path, schemas path, reference paths (array)
+4. Config service resolves workflow-scoped paths based on active workflow
+5. Penny gains `*workflows` command to list available workflows
+6. Penny gains `*switch <workflow>` command to change active context
+7. Penny gains `*context` command to show current workflow info
+8. Existing Penny commands (`*list`, `*new`, `*view`) operate in workflow-scoped context
+9. Prompts created in workflow A don't appear when switched to workflow B
+10. Schemas scoped to workflow directories
+11. Can switch between workflows without restarting server or agent
+12. Active workflow persists across Penny sessions
+13. Workflow config supports reference paths as **array** (multiple sources)
+14. Reference path types supported: `local`, `second-brain`
+15. `*context` command displays available reference paths
+16. WorkflowDefinition model documented in architecture
+17. Workflow config structure documented with comments
+18. Phase 1 limitations documented (what's deferred to Phase 2)
+
+**Phase Note**: Phase 1 (4-6 hours) delivers foundation for Epic 4 testing. Phase 2 (Story 4.9) adds polish and integration based on Epic 4 learnings.
+
+**Related**: Course correction `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md`
 
 ---
 
@@ -536,6 +571,48 @@ so that generated content meets YouTube requirements.
 5. Warnings vs errors configurable per constraint
 6. Test with `5-1-generate-title` output against 50-char limit
 7. Validation results included in chain execution report
+
+---
+
+### Story 4.9: Multi-Workflow Polish & Integration (Phase 2)
+
+As a prompt engineer,
+I want reference materials and shared resources integrated with multi-workflow context,
+so that Penny can provide context-aware guidance using workflow-specific knowledge and detect cross-workflow resource usage.
+
+**Acceptance Criteria**:
+
+1. Penny can load and display reference materials from configured paths (array)
+2. Reference loading supports multiple types: `local`, `second-brain`, `external`
+3. Priority system used when same document exists in multiple sources
+4. `*context --reference` command displays available reference documents
+5. Reference documents viewable from Penny (e.g., `*view-reference api-docs.md`)
+6. Shared prompts directory (`dev-workspace/shared/prompts/`) functional
+7. Shared schemas directory functional
+8. Penny detects when prompt is shared across workflows
+9. `*list --shared` shows shared prompts with workflow usage info
+10. Creating/editing shared prompt shows multi-workflow impact warning
+11. Workflow definition file format finalized based on B72 learnings
+12. `workflow-definition.yaml` structure documented
+13. Workflow definitions include: name, description, sections, steps, I/O contracts
+14. YouTube Launch Optimizer workflow definition created as reference
+15. Workflow definitions loaded by config service
+16. `*workflows --verbose` shows detailed workflow info
+17. `*context --sections` displays workflow sections/steps (if definition exists)
+18. `*switch <workflow>` validates workflow definition and warns about missing files
+19. Better error messages and validation for workflow commands
+20. When creating new prompt, Penny suggests related reference materials
+21. When refining prompt, Penny references workflow-specific best practices
+22. Multi-workflow usage guide created
+23. Example workflows documented (YouTube, NanoBanana, SupportSignal)
+24. Migration guide for converting flat workspace to multi-workflow
+25. Phase 2 completion notes document learnings for Epic 9
+
+**Epic 4 Integration**: This story applies learnings from B72 workflow validation (Stories 4.1-4.8) to finalize workflow definition format and reference integration patterns discovered during real 53-prompt workflow testing.
+
+**Effort**: 4-6 hours (after Epic 4 validation complete)
+
+**Related**: Story 3.8 (Phase 1 foundation), Enhancement #11 (Future Enhancements)
 
 ---
 

@@ -1,0 +1,138 @@
+{
+  "task": "generate_image",
+  "metadata": {
+    "version": "1.0",
+    "project": "project-name",
+    "timestamp": "YYYY-MM-DD",
+    "author": "author-name",
+    "shot_type": "hero_shot | detail_shot | lifestyle_shot | technical_shot"
+  },
+  "product": {
+    "id": "product_main",
+    "name": "Product Name",
+    "type": "product category (hardware, food, tech, fashion, etc.)",
+    "form_factor": "physical shape and size description",
+    "dimensions": "width x depth x height",
+    "material": "primary material (aluminum, plastic, wood, fabric, etc.)",
+    "surface_finish": "matte | glossy | brushed | textured | etc.",
+    "color": "#HEXCODE",
+    "components": [
+      {
+        "id": "component_1",
+        "type": "component type",
+        "position": "where it is on the product",
+        "size": "dimensions if relevant",
+        "material": "component material",
+        "color": "#HEXCODE",
+        "details": "specific attributes"
+      }
+    ]
+  },
+  "lighting": {
+    "style": "professional product photography | natural light | dramatic | soft | studio | etc.",
+    "primary_light": {
+      "type": "key light",
+      "position": "45 degrees from upper left | upper right | directly above | etc.",
+      "intensity": "low | medium-low | medium | medium-high | high",
+      "softness": "hard light | softbox diffused | umbrella diffused | window diffused",
+      "color_temperature": "2700K warm | 3200K tungsten | 5500K neutral | 6500K daylight"
+    },
+    "fill_light": {
+      "type": "fill light",
+      "position": "opposite side from key light | right side | left side",
+      "intensity": "low | medium-low | medium",
+      "softness": "diffused | bounced | soft",
+      "purpose": "reduce shadows, maintain depth, lift dark areas"
+    },
+    "rim_light": {
+      "type": "rim light | back light | edge light",
+      "position": "behind and above product | behind and to side",
+      "intensity": "low | low-medium | medium",
+      "purpose": "edge definition, separate from background, add dimension"
+    },
+    "practical_lights": {
+      "description": "lights that are part of the product itself (LED displays, underglow, etc.)",
+      "examples": [
+        {
+          "source": "OLED display",
+          "color": "#00FF00",
+          "effect": "green glow on nearby surface"
+        }
+      ]
+    }
+  },
+  "composition": {
+    "camera_angle": "3/4 view from slightly above | straight-on | overhead | eye-level | low angle | high angle",
+    "camera_height": "degrees above or below product (e.g., 15-20 degrees)",
+    "camera_distance": "close-up | medium | wide shot",
+    "focal_point": "what draws the eye first",
+    "framing": "how much of frame the product fills (50% | 60-70% | 80%)",
+    "negative_space": "empty space for text/copy (30% top-right | 40% left side | etc.)",
+    "depth_of_field": "f/1.8-f/2.8 (very shallow) | f/4-f/5.6 (moderate) | f/8-f/11 (deep) | f/16+ (everything sharp)",
+    "lens": "35mm wide | 50mm normal | 85mm portrait | 100mm macro"
+  },
+  "surface": {
+    "type": "what the product sits on (wood desk | marble | concrete | glass | fabric | etc.)",
+    "color": "#HEXCODE",
+    "texture": "smooth | wood grain | rough | polished | matte",
+    "finish": "matte | glossy | satin | natural",
+    "lighting_interaction": "how light plays on the surface (reflections | shadows | highlights)"
+  },
+  "background": {
+    "type": "solid color | gradient | blurred environment | studio cyc wall | natural scene",
+    "depth": "how far behind product (2-3 feet | 5-10 feet | infinity)",
+    "content": "what's in the background (if blurred environment)",
+    "colors": "#HEXCODE or description",
+    "blur_amount": "sharp | slight blur | heavy blur | complete blur (bokeh)",
+    "mood": "professional | casual | industrial | natural | minimal"
+  },
+  "props": [
+    {
+      "id": "prop_1",
+      "item": "prop description",
+      "position": "foreground | middle-ground | background | left side | right side",
+      "visibility": "fully visible | partially visible | out of focus",
+      "purpose": "context | scale reference | storytelling | atmosphere"
+    }
+  ],
+  "effects": {
+    "glow": {
+      "description": "soft light emanating from product or lights",
+      "sources": [
+        {
+          "source": "LED display",
+          "color": "#HEXCODE",
+          "spread": "tight | medium | wide"
+        }
+      ]
+    },
+    "reflections": {
+      "surface_reflections": "how product reflects on surface (minimal | subtle | strong)",
+      "ambient_reflections": "environmental reflections in product (windows | lights | surroundings)",
+      "specular_highlights": "bright spots from lights on shiny surfaces"
+    },
+    "depth_of_field": {
+      "focal_plane": "what's in perfect focus",
+      "bokeh_style": "circular | hexagonal | smooth | busy",
+      "blur_gradient": "how quickly out-of-focus areas blur"
+    },
+    "atmospheric": {
+      "examples": ["condensation on cold beverage", "steam from hot coffee", "dust particles in light", "lens flare", "light rays"]
+    }
+  },
+  "style_reference": {
+    "aesthetic": "premium studio gear | Apple-style minimalism | retro-tech | industrial | luxury | etc.",
+    "reference_brands": ["Brand 1 (example style)", "Brand 2 (example style)", "Brand 3 (example style)"],
+    "photography_style": "clean product photography | lifestyle | editorial | catalog | advertising",
+    "mood": "sophisticated | playful | serious | warm | cold | energetic | calm"
+  },
+  "mood": "one sentence describing the emotional tone of the image",
+  "negative_prompt": "things to avoid (comma-separated): poor lighting, blurry, cluttered background, oversaturated colors, lens distortion, toy-like, cheap plastic, unrealistic, etc.",
+  "output_format": {
+    "width": 1024,
+    "height": 1024,
+    "aspect_ratio": "1:1 | 4:3 | 16:9 | 3:2 | etc.",
+    "mime_type": "image/png | image/jpeg",
+    "quality": "high | ultra"
+  }
+}

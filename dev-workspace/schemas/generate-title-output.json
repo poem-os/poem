@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Generate Title Output Schema",
+  "description": "Expected output schema for AI response to generate-title prompt. Defines the structure of 10 YouTube title options with metadata.",
+  "type": "object",
+  "required": ["titles"],
+  "properties": {
+    "titles": {
+      "type": "array",
+      "description": "Array of exactly 10 YouTube title options",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["number", "emotion", "chars", "mobile", "keywords", "title"],
+        "properties": {
+          "number": {
+            "type": "integer",
+            "description": "Sequential number (1-10)",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "emotion": {
+            "type": "string",
+            "description": "Primary emotional trigger used in the title",
+            "enum": ["CURIOSITY", "DESIRE", "FEAR"]
+          },
+          "chars": {
+            "type": "integer",
+            "description": "Exact character count of the title",
+            "minimum": 20,
+            "maximum": 100
+          },
+          "mobile": {
+            "type": "boolean",
+            "description": "True if under 50 characters (mobile-safe), false if 50+ characters"
+          },
+          "keywords": {
+            "type": "array",
+            "description": "2-4 primary keywords from the title",
+            "minItems": 2,
+            "maxItems": 4,
+            "items": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 30
+            }
+          },
+          "title": {
+            "type": "string",
+            "description": "The complete YouTube title (without quotes)",
+            "minLength": 20,
+            "maxLength": 100
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "description": "Optional analysis summary of the transcript and title generation strategy",
+      "properties": {
+        "mainTopic": {
+          "type": "string",
+          "description": "Primary topic identified from the transcript"
+        },
+        "targetAudience": {
+          "type": "string",
+          "description": "Target audience level (beginner, intermediate, expert)",
+          "enum": ["beginner", "intermediate", "expert", "mixed"]
+        },
+        "keyConcepts": {
+          "type": "array",
+          "description": "Key concepts and hooks identified",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

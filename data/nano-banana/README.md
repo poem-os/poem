@@ -4,10 +4,13 @@
 
 **Project Overview**:
 
-Two parallel research threads:
+**Primary Goal**: Use Nano Banana Pro to generate product images for VibeDeck Kickstarter campaign
 
-1. **Nano Banana Pro + JSON Prompting** - Understanding how to create precise, reproducible image generation prompts using structured JSON schemas for product photography, UI mockups, and data infographics
-2. **Vibe Deck Hardware** - Physical control surface for context engineering and vibe coding workflows (separate project using POEM research patterns)
+**Two connected pieces:**
+1. **VibeDeck Product** - Hardware controller for vibe coding (the thing we want to visualize)
+2. **Nano Banana Pro** - Image generation tool (how we'll create the visuals)
+
+Research gathered on JSON prompting, API implementation, and vibe coder workflows to support this goal.
 
 ---
 
@@ -25,7 +28,8 @@ Two parallel research threads:
 - Notes from research and experimentation
 
 **Current Research Complete**:
-- ✅ Nano Banana Pro JSON prompting patterns and schemas
+- ✅ Nano Banana Pro JSON prompting concepts (renderer vs vibes, handles)
+- ✅ Nano Banana Pro API implementation (Python SDK, request/response patterns)
 - ✅ Vibe Deck context engineering workflows (separate but related)
 
 **Directory Structure:**
@@ -33,9 +37,13 @@ Two parallel research threads:
 data/nano-banana/
 ├── README.md              # This file - project overview and plan
 ├── PLAN.md                # 3-step plan with next actions
-├── examples/              # Example prompts, shots, outputs (empty - awaiting your examples)
+├── examples/              # Example prompts, shots, outputs
+│   ├── vibe-deck-product-concept.md     # ✅ Project overview
+│   ├── vibe-deck-design-decisions.md    # 🔨 Working doc - fill this in
+│   └── references/                      # Drop reference images here
 └── reference/             # Domain knowledge, definitions, patterns
-    ├── nano-banana-json-prompting.md           # ✅ Complete
+    ├── nano-banana-json-prompting.md           # ✅ Concepts
+    ├── nano-banana-api-implementation.md       # ✅ Technical/API
     └── vibe-deck-context-engineering-research.md # ✅ Complete (related project)
 ```
 

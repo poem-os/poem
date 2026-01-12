@@ -15,6 +15,8 @@ This document defines the complete workflow from research to production prompts.
 - [x] Understand renderer vs vibes machine paradigm
 - [x] Document handle-based iteration patterns
 - [x] Capture multi-grammar schema patterns (photo/UI/diagram)
+- [x] Document API implementation (Python SDK, request/response)
+- [x] Capture advanced patterns (prompt chaining, identity persistence, minimal diff)
 - [ ] Collect YOUR specific example image generation prompts
 - [ ] Document YOUR camera angles and shot types vocabulary for nano banana
 - [ ] Define YOUR storytelling beat structure
@@ -22,8 +24,9 @@ This document defines the complete workflow from research to production prompts.
 - [ ] Note pain points and requirements specific to your workflow
 
 **Output Artifacts** (in `data/nano-banana/`):
-- `reference/` - Domain knowledge documents ✅ **2 documents complete**
-  - `nano-banana-json-prompting.md` - Core concepts and schema patterns
+- `reference/` - Domain knowledge documents ✅ **3 documents complete**
+  - `nano-banana-json-prompting.md` - Core concepts (renderer vs vibes, handles, schemas)
+  - `nano-banana-api-implementation.md` - Technical/API implementation (Python SDK, patterns)
   - `vibe-deck-context-engineering-research.md` - Related hardware project research
 - `examples/` - Real examples of what works/doesn't work ⏳ **Awaiting your examples**
 

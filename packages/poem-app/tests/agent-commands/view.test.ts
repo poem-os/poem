@@ -104,8 +104,8 @@ describe('prompt-engineer agent *view command', () => {
       if (viewBehaviorMatch) {
         const section = viewBehaviorMatch[0];
         expect(section).toMatch(/schema.*file.*\.json.*exists|Read.*schema/i);
-        expect(section).toMatch(/Field Count/i);
-        expect(section).toMatch(/Required Fields/i);
+        expect(section).toMatch(/Input Fields/i);
+        expect(section).toMatch(/Output Fields/i);
         expect(section).toMatch(/Field Types/i);
       }
     });
@@ -238,7 +238,7 @@ describe('prompt-engineer agent *view command', () => {
 
       if (viewBehaviorMatch) {
         const section = viewBehaviorMatch[0];
-        expect(section).toMatch(/Field Count.*:.*Number of fields/i);
+        expect(section).toMatch(/Input Fields.*:.*Number of input fields/i);
       }
     });
 
@@ -248,7 +248,7 @@ describe('prompt-engineer agent *view command', () => {
 
       if (viewBehaviorMatch) {
         const section = viewBehaviorMatch[0];
-        expect(section).toMatch(/Required Fields.*:.*List.*required/i);
+        expect(section).toMatch(/Input Fields.*:.*list of required field names/i);
       }
     });
 

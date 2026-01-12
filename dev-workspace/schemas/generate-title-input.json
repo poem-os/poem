@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Generate Title Input Schema",
+  "description": "Input data schema for the generate-title prompt template",
+  "type": "object",
+  "required": ["transcript"],
+  "properties": {
+    "transcript": {
+      "type": "string",
+      "description": "The complete video transcript to analyze for title generation",
+      "minLength": 100,
+      "examples": [
+        "Claude Opus 4.5 just got released and my initial reaction was..."
+      ]
+    },
+    "shortTitle": {
+      "type": "string",
+      "description": "Optional base title to use as a starting point for title generation",
+      "minLength": 10,
+      "maxLength": 100,
+      "examples": [
+        "Claude Opus 4.5 Builds Recording Namer App",
+        "How to Build Apps Fast with AI"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

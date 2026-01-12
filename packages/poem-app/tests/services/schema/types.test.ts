@@ -4,10 +4,284 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import type { Schema, SchemaField, ValidationResult, ValidationError } from '../../../src/services/schema/types.js';
+import type {
+  Schema,
+  UnifiedSchema,
+  SchemaField,
+  ValidationResult,
+  ValidationError,
+} from '../../../src/services/schema/types.js';
+import { isUnifiedSchema, isLegacySchema } from '../../../src/services/schema/types.js';
 
 describe('Schema Types', () => {
-  describe('Schema interface', () => {
+  describe('UnifiedSchema interface', () => {
+    it('should create unified schema with input and output sections', () => {
+      const schema: UnifiedSchema = {
+        templateName: 'generate-titles',
+        version: '1.0.0',
+        description: 'Generate YouTube video titles',
+        input: {
+          fields: [
+            {
+              name: 'topic',
+              type: 'string',
+              required: true,
+            },
+            {
+              name: 'audience',
+              type: 'string',
+              required: true,
+            },
+          ],
+        },
+        output: {
+          fields: [
+            {
+              name: 'titles',
+              type: 'array',
+              required: true,
+              items: {
+                name: 'title',
+                type: 'string',
+                required: true,
+              },
+            },
+          ],
+        },
+      };
+
+      expect(schema.templateName).toBe('generate-titles');
+      expect(schema.input.fields).toHaveLength(2);
+      expect(schema.output?.fields).toHaveLength(1);
+    });
+
+    it('should create unified schema with only input (no output)', () => {
+      const schema: UnifiedSchema = {
+        templateName: 'send-email',
+        version: '1.0.0',
+        input: {
+          fields: [
+            {
+              name: 'recipient',
+              type: 'string',
+              required: true,
+            },
+            {
+              name: 'subject',
+              type: 'string',
+              required: true,
+            },
+          ],
+        },
+      };
+
+      expect(schema.templateName).toBe('send-email');
+      expect(schema.input.fields).toHaveLength(2);
+      expect(schema.output).toBeUndefined();
+    });
+
+    it('should support complex nested structures in input', () => {
+      const schema: UnifiedSchema = {
+        templateName: 'analyze-data',
+        version: '1.0.0',
+        input: {
+          fields: [
+            {
+              name: 'data',
+              type: 'object',
+              required: true,
+              properties: [
+                {
+                  name: 'metrics',
+                  type: 'array',
+                  required: true,
+                  items: {
+                    name: 'metric',
+                    type: 'number',
+                    required: true,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        output: {
+          fields: [
+            {
+              name: 'average',
+              type: 'number',
+              required: true,
+            },
+          ],
+        },
+      };
+
+      expect(schema.input.fields[0].type).toBe('object');
+      expect(schema.input.fields[0].properties).toHaveLength(1);
+      expect(schema.output?.fields[0].name).toBe('average');
+    });
+  });
+
+  describe('Type Guards', () => {
+    describe('isUnifiedSchema', () => {
+      it('should return true for valid UnifiedSchema', () => {
+        const schema: UnifiedSchema = {
+          templateName: 'test',
+          version: '1.0.0',
+          input: {
+            fields: [],
+          },
+        };
+
+        expect(isUnifiedSchema(schema)).toBe(true);
+      });
+
+      it('should return false for null', () => {
+        expect(isUnifiedSchema(null)).toBe(false);
+      });
+
+      it('should return false for undefined', () => {
+        expect(isUnifiedSchema(undefined)).toBe(false);
+      });
+
+      it('should return false for non-object', () => {
+        expect(isUnifiedSchema('string')).toBe(false);
+        expect(isUnifiedSchema(123)).toBe(false);
+        expect(isUnifiedSchema(true)).toBe(false);
+      });
+
+      it('should return false for object without templateName', () => {
+        const invalid = {
+          version: '1.0.0',
+          input: { fields: [] },
+        };
+
+        expect(isUnifiedSchema(invalid)).toBe(false);
+      });
+
+      it('should return false for object without version', () => {
+        const invalid = {
+          templateName: 'test',
+          input: { fields: [] },
+        };
+
+        expect(isUnifiedSchema(invalid)).toBe(false);
+      });
+
+      it('should return false for object without input', () => {
+        const invalid = {
+          templateName: 'test',
+          version: '1.0.0',
+        };
+
+        expect(isUnifiedSchema(invalid)).toBe(false);
+      });
+
+      it('should return false for object with input but no fields array', () => {
+        const invalid = {
+          templateName: 'test',
+          version: '1.0.0',
+          input: {},
+        };
+
+        expect(isUnifiedSchema(invalid)).toBe(false);
+      });
+
+      it('should return true for UnifiedSchema with optional output', () => {
+        const schema: UnifiedSchema = {
+          templateName: 'test',
+          version: '1.0.0',
+          input: { fields: [] },
+          output: { fields: [] },
+        };
+
+        expect(isUnifiedSchema(schema)).toBe(true);
+      });
+    });
+
+    describe('isLegacySchema', () => {
+      it('should return true for valid legacy Schema', () => {
+        const schema: Schema = {
+          path: 'test.json',
+          version: '1.0',
+          fields: [],
+        };
+
+        expect(isLegacySchema(schema)).toBe(true);
+      });
+
+      it('should return false for UnifiedSchema', () => {
+        const schema: UnifiedSchema = {
+          templateName: 'test',
+          version: '1.0.0',
+          input: { fields: [] },
+        };
+
+        expect(isLegacySchema(schema)).toBe(false);
+      });
+
+      it('should return false for null', () => {
+        expect(isLegacySchema(null)).toBe(false);
+      });
+
+      it('should return false for undefined', () => {
+        expect(isLegacySchema(undefined)).toBe(false);
+      });
+
+      it('should return false for non-object', () => {
+        expect(isLegacySchema('string')).toBe(false);
+        expect(isLegacySchema(123)).toBe(false);
+      });
+
+      it('should return false for object without path', () => {
+        const invalid = {
+          version: '1.0',
+          fields: [],
+        };
+
+        expect(isLegacySchema(invalid)).toBe(false);
+      });
+
+      it('should return false for object without version', () => {
+        const invalid = {
+          path: 'test.json',
+          fields: [],
+        };
+
+        expect(isLegacySchema(invalid)).toBe(false);
+      });
+
+      it('should return false for object without fields', () => {
+        const invalid = {
+          path: 'test.json',
+          version: '1.0',
+        };
+
+        expect(isLegacySchema(invalid)).toBe(false);
+      });
+
+      it('should distinguish legacy Schema from UnifiedSchema by templateName', () => {
+        const legacy: Schema = {
+          path: 'test.json',
+          version: '1.0',
+          fields: [],
+        };
+
+        const unified: UnifiedSchema = {
+          templateName: 'test',
+          version: '1.0.0',
+          input: { fields: [] },
+        };
+
+        expect(isLegacySchema(legacy)).toBe(true);
+        expect(isLegacySchema(unified)).toBe(false);
+        expect(isUnifiedSchema(unified)).toBe(true);
+        expect(isUnifiedSchema(legacy)).toBe(false);
+      });
+    });
+  });
+
+  describe('Legacy Schema interface (deprecated)', () => {
     it('should create input schema with schemaType', () => {
       const inputSchema: Schema = {
         path: 'generate-titles.json',
@@ -211,7 +485,7 @@ describe('Schema Types', () => {
 
     it('should create warning with warning severity', () => {
       const warning: ValidationError = {
-        field: 'optional Field',
+        field: 'optionalField',
         message: 'Field is optional and missing',
         severity: 'warning',
       };
@@ -230,7 +504,7 @@ describe('Schema Types', () => {
     });
   });
 
-  describe('Schema type discrimination', () => {
+  describe('Schema type discrimination (legacy)', () => {
     it('should distinguish input from output schemas by schemaType', () => {
       const inputSchema: Schema = {
         path: 'input.json',

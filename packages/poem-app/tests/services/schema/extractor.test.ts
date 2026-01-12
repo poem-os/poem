@@ -504,5 +504,112 @@ describe('SchemaExtractor', () => {
         expect(result.outputSchema).not.toBeNull();
       });
     });
+
+    describe('extractUnifiedSchema (new unified format)', () => {
+      it('should extract unified schema with input and output sections', () => {
+        const template = `
+Generate YouTube video titles for: {{topic}}
+Target audience: {{audience}}
+
+<!-- Expected Output: { "title": string, "count": number } -->
+`;
+        const result = extractor.extractUnifiedSchema(template, 'generate-titles', 'prompts/generate-titles.hbs');
+
+        expect(result.schema).toBeDefined();
+        expect(result.schema.templateName).toBe('generate-titles');
+        expect(result.schema.version).toBe('1.0.0');
+        expect(result.schema.input.fields).toHaveLength(2);
+        expect(result.schema.input.fields.find((f) => f.name === 'topic')).toBeDefined();
+        expect(result.schema.input.fields.find((f) => f.name === 'audience')).toBeDefined();
+        expect(result.schema.output).toBeDefined();
+        expect(result.schema.output!.fields).toHaveLength(2);
+        expect(result.schema.output!.fields.find((f) => f.name === 'title')).toBeDefined();
+        expect(result.schema.output!.fields.find((f) => f.name === 'count')).toBeDefined();
+        expect(result.templatePath).toBe('prompts/generate-titles.hbs');
+      });
+
+      it('should extract unified schema without output section', () => {
+        const template = `Send email to {{recipient}} with subject: {{subject}}`;
+        const result = extractor.extractUnifiedSchema(template, 'send-email', 'prompts/send-email.hbs');
+
+        expect(result.schema.templateName).toBe('send-email');
+        expect(result.schema.input.fields).toHaveLength(2);
+        expect(result.schema.output).toBeUndefined();
+      });
+
+      it('should include required helpers in unified extraction', () => {
+        const template = `
+{{truncate title 50}}
+{{formatTimestamp timestamp}}
+<!-- Expected Output: { "result": "string" } -->
+`;
+        const result = extractor.extractUnifiedSchema(template, 'test-helpers', 'prompts/test.hbs');
+
+        expect(result.requiredHelpers).toContain('truncate');
+        expect(result.requiredHelpers).toContain('formatTimestamp');
+        expect(result.schema.output).toBeDefined();
+      });
+
+      it('should handle complex nested input structures', () => {
+        const template = `
+User: {{user.firstName}} {{user.lastName}}
+Email: {{user.email}}
+Address: {{user.address.city}}, {{user.address.state}}
+`;
+        const result = extractor.extractUnifiedSchema(template, 'user-info', 'prompts/user-info.hbs');
+
+        expect(result.schema.input.fields).toHaveLength(1);
+        expect(result.schema.input.fields[0].name).toBe('user');
+        expect(result.schema.input.fields[0].type).toBe('object');
+        expect(result.schema.input.fields[0].properties).toBeDefined();
+        expect(result.schema.input.fields[0].properties!.length).toBeGreaterThan(0);
+      });
+
+      it('should handle array input fields', () => {
+        const template = `
+{{#each items}}
+  - {{this}}
+{{/each}}
+`;
+        const result = extractor.extractUnifiedSchema(template, 'list-items', 'prompts/list.hbs');
+
+        expect(result.schema.input.fields).toHaveLength(1);
+        expect(result.schema.input.fields[0].name).toBe('items');
+        expect(result.schema.input.fields[0].type).toBe('array');
+      });
+
+      it('should extract unified schema from real-world template', () => {
+        const template = `
+You are a YouTube content strategist.
+
+Given the following video transcript abridgement:
+{{transcriptAbridgement}}
+
+Generate 5 compelling video titles that:
+- Capture the main topic
+- Are under 60 characters
+- Include relevant keywords
+- Drive clicks
+
+<!-- Expected Output:
+{
+  "title": string,
+  "keyword": string,
+  "confidence": number
+}
+-->
+`;
+        const result = extractor.extractUnifiedSchema(template, 'youtube-titles', 'prompts/youtube-titles.hbs');
+
+        expect(result.schema.templateName).toBe('youtube-titles');
+        expect(result.schema.input.fields).toHaveLength(1);
+        expect(result.schema.input.fields[0].name).toBe('transcriptAbridgement');
+        expect(result.schema.output).toBeDefined();
+        expect(result.schema.output!.fields).toHaveLength(3);
+        expect(result.schema.output!.fields.find((f) => f.name === 'title')).toBeDefined();
+        expect(result.schema.output!.fields.find((f) => f.name === 'keyword')).toBeDefined();
+        expect(result.schema.output!.fields.find((f) => f.name === 'confidence')).toBeDefined();
+      });
+    });
   });
 });

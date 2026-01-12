@@ -12,8 +12,7 @@ POEM's data models are primarily **file-based documents**, not database entities
 - `content`: string - Handlebars template content
 - `placeholders`: string[] - Extracted placeholder names
 - `helpers`: string[] - Required Handlebars helpers
-- `inputSchemaPath`: string - Associated input schema file path
-- `outputSchemaPath`: string - Associated output schema file path
+- `schemaPath`: string - Associated unified schema file path
 
 ```typescript
 interface PromptTemplate {
@@ -29,11 +28,8 @@ interface PromptTemplate {
   /** Required helper names */
   requiredHelpers: string[];
 
-  /** Associated input schema path (if exists) */
-  inputSchemaPath?: string;
-
-  /** Associated output schema path (if exists) */
-  outputSchemaPath?: string;
+  /** Associated unified schema path (if exists) */
+  schemaPath?: string;
 }
 
 interface PlaceholderInfo {
@@ -53,8 +49,7 @@ interface PlaceholderInfo {
 
 **Relationships:**
 
-- Has zero or one optional Input Schema (defines input data structure)
-- Has zero or one optional Output Schema (defines output data structure)
+- Has zero or one optional Unified Schema (defines input/output data structure)
 - May reference many Helpers
 - May be part of a Workflow chain
 
@@ -62,25 +57,26 @@ interface PlaceholderInfo {
 
 ## Schema
 
-**Purpose:** JSON document defining the data structure for EITHER the input data required by a prompt template OR the output data produced by a prompt template. A single schema file describes one direction (input or output), and prompts may have both an input schema and an output schema.
+**Purpose:** JSON document defining the unified data structure for a prompt template, combining both input parameters and output specifications in a single file. Schemas behave like **function signatures**: `(input) -> output`.
 
 **File Naming Convention:**
 
-- **Input schema:** `{prompt-name}.json` (e.g., `generate-titles.json`)
-- **Output schema:** `{prompt-name}-output.json` (e.g., `generate-titles-output.json`)
-- Both stored in `/poem/schemas/` directory
+- **Unified schema:** `{prompt-name}.json` (e.g., `generate-titles.json`)
+- Stored in `/poem/schemas/` directory
+- Contains both `input` and `output` sections in one file
 
 **Key Attributes:**
 
-- `path`: string - File path relative to `/poem/schemas/`
-- `schemaType`: "input" | "output" | "both" - Distinguishes schema purpose (optional, defaults to "input")
-- `fields`: Field[] - Schema field definitions
+- `templateName`: string - Prompt template name (matches template file)
 - `version`: string - Schema version for evolution
+- `description`: string - Human-readable description (optional)
+- `input`: object - Input schema section (required)
+- `output`: object - Output schema section (optional)
 
 ```typescript
-interface Schema {
-  /** Relative path from /poem/schemas/ */
-  path: string;
+interface UnifiedSchema {
+  /** Prompt template name (e.g., "generate-titles") */
+  templateName: string;
 
   /** Schema version */
   version: string;
@@ -88,11 +84,15 @@ interface Schema {
   /** Human-readable description */
   description?: string;
 
-  /** Schema type: input (data into prompt), output (data from prompt), or both */
-  schemaType?: "input" | "output" | "both";
+  /** Input schema section (required) */
+  input: {
+    fields: SchemaField[];
+  };
 
-  /** Field definitions */
-  fields: SchemaField[];
+  /** Output schema section (optional) */
+  output?: {
+    fields: SchemaField[];
+  };
 }
 
 interface SchemaField {
@@ -135,6 +135,41 @@ interface FieldConstraints {
 
   /** Regex pattern */
   pattern?: string;
+}
+```
+
+**Example Unified Schema:**
+
+```json
+{
+  "templateName": "generate-titles",
+  "version": "1.0.0",
+  "description": "Generate YouTube video titles",
+  "input": {
+    "fields": [
+      { "name": "topic", "type": "string", "required": true, "description": "Video topic" },
+      { "name": "audience", "type": "string", "required": true, "description": "Target audience" }
+    ]
+  },
+  "output": {
+    "fields": [
+      { "name": "titles", "type": "array", "required": true, "description": "Generated title options" },
+      { "name": "count", "type": "number", "required": true, "description": "Number of titles" }
+    ]
+  }
+}
+```
+
+**Function Signature Analogy:**
+
+```typescript
+// C# style function signature
+(string topic, string audience) GenerateTitles() -> (string[] titles, int count)
+
+// POEM unified schema (JSON) - same concept
+{
+  "input": { "fields": [...] },
+  "output": { "fields": [...] }
 }
 ```
 
@@ -320,6 +355,135 @@ interface DictionaryField {
 - Pulled from Provider
 - Used for schema validation
 - Stored in `/poem/schemas/dictionaries/`
+
+---
+
+## Workflow Definition
+
+**Purpose:** Define a multi-prompt workflow with orchestration logic, sections, and step dependencies.
+
+**Status**: ✅ **Phase 1 Structure Defined** (Story 3.8), ✅ **Phase 2 Integration** (Story 4.9). See course correction `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md` for background.
+
+**Key Attributes:**
+
+- `name`: string - Workflow identifier (e.g., "youtube-launch-optimizer")
+- `description`: string - Human-readable description
+- `version`: string - Workflow version
+- `sections`: Section[] - Logical groupings of steps
+- `reference`: ReferenceConfig[] - **Array** of reference material sources
+
+```typescript
+interface WorkflowDefinition {
+  /** Unique workflow identifier */
+  name: string;
+
+  /** Human-readable description */
+  description: string;
+
+  /** Workflow version */
+  version: string;
+
+  /** Workflow sections (logical groupings) */
+  sections: WorkflowSection[];
+
+  /** Reference material sources (can be multiple) */
+  reference?: ReferenceConfig[];  // ✅ ARRAY of sources
+}
+
+interface ReferenceConfig {
+  /** Path to reference materials (relative or absolute) */
+  path: string;
+
+  /** Reference source type */
+  type: 'local' | 'second-brain' | 'external' | 'git-repo';
+
+  /** Optional description of this reference source */
+  description?: string;
+
+  /** Priority for conflict resolution (higher = preferred, default: 10) */
+  priority?: number;
+}
+
+interface WorkflowSection {
+  /** Section name */
+  name: string;
+
+  /** Section description */
+  description?: string;
+
+  /** Steps in this section */
+  steps: WorkflowStep[];
+}
+
+interface WorkflowStep {
+  /** Step identifier */
+  id: string;
+
+  /** Prompt template path (relative to workflow prompts/) */
+  prompt: string;
+
+  /** Input field names */
+  inputs: string[];
+
+  /** Output field names */
+  outputs: string[];
+
+  /** Human-readable description */
+  description?: string;
+}
+```
+
+**Example: Multi-Source Reference Configuration**
+
+```yaml
+# Example: NanoBanana workflow with multiple reference sources
+name: nano-banana
+description: AI image generation using Nano Banana Pro JSON prompting
+version: 1.0.0
+
+reference:
+  # Local project reference materials
+  - path: data/nano-banana/reference/
+    type: local
+    description: API docs and JSON prompting guide
+    priority: 10
+
+  # Second brain curated knowledge
+  - path: /ad/brains/nano-banana/
+    type: second-brain
+    description: Curated best practices and examples
+    priority: 20
+
+  # External documentation (future - Story 4.9)
+  - path: https://github.com/appydave/nano-banana-docs
+    type: git-repo
+    description: Official Nano Banana documentation
+    priority: 5
+
+sections:
+  - name: Shot Generation
+    description: Generate Nano Banana JSON prompts from scene descriptions
+    steps:
+      - id: generate-shot
+        prompt: prompts/generate-shot.hbs
+        inputs: [sceneDescription, shotType, cameraAngle]
+        outputs: [jsonPrompt]
+        description: Create JSON prompt for image generation
+```
+
+**Priority System (Story 4.9)**:
+- Higher priority wins conflicts when same filename exists in multiple sources
+- Default priority: 10
+- Typical: local=10, second-brain=20, external=5
+- If `api-docs.md` exists in both local (priority 10) and second-brain (priority 20), second-brain version is used
+
+**Relationships:**
+
+- Has many PromptTemplates (via steps)
+- Has many WorkflowData (runtime executions)
+- Stored in `/poem/workflows/` or `data/<workflow>/` directory
+
+**Discovery**: Identified during Story 3.7.1 (2026-01-12) when testing Penny on NanoBanana data source.
 
 ---
 
