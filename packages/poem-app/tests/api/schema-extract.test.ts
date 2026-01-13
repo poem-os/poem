@@ -70,11 +70,12 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
 
       const result = await response.json();
       expect(result.success).toBe(true);
-      expect(result.inputSchema).toBeDefined();
-      expect(result.inputSchema.fields).toHaveLength(1);
-      expect(result.inputSchema.fields[0].name).toBe('name');
-      expect(result.inputSchema.fields[0].type).toBe('string');
-      expect(result.outputSchema).toBeNull(); // No output section in this template
+      expect(result.schema).toBeDefined();
+      expect(result.schema.input).toBeDefined();
+      expect(result.schema.input.fields).toHaveLength(1);
+      expect(result.schema.input.fields[0].name).toBe('name');
+      expect(result.schema.input.fields[0].type).toBe('string');
+      expect(result.schema.output).toBeUndefined(); // No output section in this template
     });
 
     it('should extract multiple fields', async () => {
@@ -89,7 +90,7 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
 
       expect(response.ok).toBe(true);
       const result = await response.json();
-      expect(result.inputSchema.fields).toHaveLength(2);
+      expect(result.schema.input.fields).toHaveLength(2);
     });
 
     it('should have correct Content-Type header', async () => {
@@ -120,11 +121,11 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
       expect(response.ok).toBe(true);
       const result = await response.json();
 
-      expect(result.inputSchema.fields).toHaveLength(1);
-      expect(result.inputSchema.fields[0].name).toBe('user');
-      expect(result.inputSchema.fields[0].type).toBe('object');
-      expect(result.inputSchema.fields[0].properties).toHaveLength(1);
-      expect(result.inputSchema.fields[0].properties[0].name).toBe('email');
+      expect(result.schema.input.fields).toHaveLength(1);
+      expect(result.schema.input.fields[0].name).toBe('user');
+      expect(result.schema.input.fields[0].type).toBe('object');
+      expect(result.schema.input.fields[0].properties).toHaveLength(1);
+      expect(result.schema.input.fields[0].properties[0].name).toBe('email');
     });
 
     it('should merge multiple nested properties', async () => {
@@ -138,7 +139,7 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
       });
 
       const result = await response.json();
-      expect(result.inputSchema.fields[0].properties).toHaveLength(2);
+      expect(result.schema.input.fields[0].properties).toHaveLength(2);
     });
 
     it('should handle deeply nested paths', async () => {
@@ -152,9 +153,9 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
       });
 
       const result = await response.json();
-      expect(result.inputSchema.fields[0].name).toBe('user');
-      expect(result.inputSchema.fields[0].properties[0].name).toBe('address');
-      expect(result.inputSchema.fields[0].properties[0].properties[0].name).toBe('city');
+      expect(result.schema.input.fields[0].name).toBe('user');
+      expect(result.schema.input.fields[0].properties[0].name).toBe('address');
+      expect(result.schema.input.fields[0].properties[0].properties[0].name).toBe('city');
     });
   });
 
@@ -172,9 +173,9 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
       expect(response.ok).toBe(true);
       const result = await response.json();
 
-      expect(result.inputSchema.fields).toHaveLength(1);
-      expect(result.inputSchema.fields[0].name).toBe('items');
-      expect(result.inputSchema.fields[0].type).toBe('array');
+      expect(result.schema.input.fields).toHaveLength(1);
+      expect(result.schema.input.fields[0].name).toBe('items');
+      expect(result.schema.input.fields[0].type).toBe('array');
     });
 
     it('should extract array index access', async () => {
@@ -188,7 +189,7 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
       });
 
       const result = await response.json();
-      expect(result.inputSchema.fields[0].type).toBe('array');
+      expect(result.schema.input.fields[0].type).toBe('array');
     });
   });
 
@@ -204,8 +205,8 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
       });
 
       const result = await response.json();
-      expect(result.inputSchema.fields[0].name).toBe('active');
-      expect(result.inputSchema.fields[0].type).toBe('boolean');
+      expect(result.schema.input.fields[0].name).toBe('active');
+      expect(result.schema.input.fields[0].type).toBe('boolean');
     });
   });
 
@@ -299,8 +300,8 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
       });
 
       const result = await response.json();
-      expect(result.inputSchema).toHaveProperty('fields');
-      expect(Array.isArray(result.inputSchema.fields)).toBe(true);
+      expect(result.schema.input).toHaveProperty('fields');
+      expect(Array.isArray(result.schema.input.fields)).toBe(true);
     });
 
     it('should include name, type, required for each field', async () => {
@@ -314,7 +315,7 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
       });
 
       const result = await response.json();
-      const field = result.inputSchema.fields[0];
+      const field = result.schema.input.fields[0];
       expect(field).toHaveProperty('name');
       expect(field).toHaveProperty('type');
       expect(field).toHaveProperty('required');
@@ -410,7 +411,7 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
       const result = await response.json();
       expect(result.success).toBe(true);
       expect(result.templatePath).toBeDefined();
-      expect(result.inputSchema.fields).toBeDefined();
+      expect(result.schema.input.fields).toBeDefined();
     });
 
     it('should include templatePath in response for file-based templates', async () => {
@@ -465,17 +466,17 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
       const result = await response.json();
 
       // Check input schema
-      expect(result.inputSchema).toBeDefined();
-      expect(result.inputSchema.fields).toHaveLength(2);
-      const inputFieldNames = result.inputSchema.fields.map((f: { name: string }) => f.name);
+      expect(result.schema.input).toBeDefined();
+      expect(result.schema.input.fields).toHaveLength(2);
+      const inputFieldNames = result.schema.input.fields.map((f: { name: string }) => f.name);
       expect(inputFieldNames).toContain('name');
       expect(inputFieldNames).toContain('age');
 
       // Check output schema
-      expect(result.outputSchema).toBeDefined();
-      expect(result.outputSchema).not.toBeNull();
-      expect(result.outputSchema.fields).toHaveLength(2);
-      const outputFieldNames = result.outputSchema.fields.map((f: { name: string }) => f.name);
+      expect(result.schema.output).toBeDefined();
+      expect(result.schema.output).toBeDefined();
+      expect(result.schema.output.fields).toHaveLength(2);
+      const outputFieldNames = result.schema.output.fields.map((f: { name: string }) => f.name);
       expect(outputFieldNames).toContain('title');
       expect(outputFieldNames).toContain('count');
     });
@@ -495,8 +496,8 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
       expect(response.ok).toBe(true);
       const result = await response.json();
 
-      expect(result.inputSchema).toBeDefined();
-      expect(result.outputSchema).toBeNull();
+      expect(result.schema.input).toBeDefined();
+      expect(result.schema.output).toBeUndefined();
     });
 
     it('should extract output schema from Handlebars comment', async () => {
@@ -517,9 +518,9 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
       expect(response.ok).toBe(true);
       const result = await response.json();
 
-      expect(result.outputSchema).toBeDefined();
-      expect(result.outputSchema).not.toBeNull();
-      expect(result.outputSchema.fields[0].type).toBe('array');
+      expect(result.schema.output).toBeDefined();
+      expect(result.schema.output).toBeDefined();
+      expect(result.schema.output.fields[0].type).toBe('array');
     });
   });
 
@@ -548,20 +549,20 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
       const result = await response.json();
 
       // Check fields
-      const fieldNames = result.inputSchema.fields.map((f: { name: string }) => f.name);
+      const fieldNames = result.schema.input.fields.map((f: { name: string }) => f.name);
       expect(fieldNames).toContain('showTitle');
       expect(fieldNames).toContain('title');
       expect(fieldNames).toContain('author');
       expect(fieldNames).toContain('chapters');
 
       // Check types
-      const showTitle = result.inputSchema.fields.find((f: { name: string }) => f.name === 'showTitle');
+      const showTitle = result.schema.input.fields.find((f: { name: string }) => f.name === 'showTitle');
       expect(showTitle.type).toBe('boolean');
 
-      const chapters = result.inputSchema.fields.find((f: { name: string }) => f.name === 'chapters');
+      const chapters = result.schema.input.fields.find((f: { name: string }) => f.name === 'chapters');
       expect(chapters.type).toBe('array');
 
-      const author = result.inputSchema.fields.find((f: { name: string }) => f.name === 'author');
+      const author = result.schema.input.fields.find((f: { name: string }) => f.name === 'author');
       expect(author.type).toBe('object');
       expect(author.properties).toBeDefined();
 
@@ -581,7 +582,7 @@ describe.skipIf(SKIP_INTEGRATION)('POST /api/schema/extract', () => {
 
       expect(response.ok).toBe(true);
       const result = await response.json();
-      expect(result.inputSchema.fields).toHaveLength(0);
+      expect(result.schema.input.fields).toHaveLength(0);
       expect(result.requiredHelpers).toHaveLength(0);
     });
   });
