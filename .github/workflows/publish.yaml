@@ -1,0 +1,84 @@
+# GitHub Actions Workflow for NPM Publishing
+#
+# Status: Template (Not Active)
+# To activate: Remove the workflow_dispatch trigger comment and configure NPM_TOKEN secret
+#
+# This workflow will be fully implemented in Epic 3 (CI/CD phase)
+
+name: Publish to NPM
+
+on:
+  # Trigger manually via GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 0.1.0)'
+        required: true
+        type: string
+
+  # Uncomment to trigger on git tags (future)
+  # push:
+  #   tags:
+  #     - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write  # Required for NPM provenance
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build packages
+        run: npm run build
+
+      - name: Publish to NPM
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          release_name: Release v${{ github.event.inputs.version }}
+          body: |
+            Published to NPM: https://www.npmjs.com/package/poem-os
+
+            See [CHANGELOG.md](CHANGELOG.md) for details.
+          draft: false
+          prerelease: false
+
+# Required Secrets:
+# - NPM_TOKEN: NPM access token with publish permissions
+#   Generate at: https://www.npmjs.com/settings/<username>/tokens
+#   Add to: GitHub repo Settings → Secrets and variables → Actions
+#
+# Setup Instructions:
+# 1. Generate NPM access token (Automation type)
+# 2. Add NPM_TOKEN to GitHub secrets
+# 3. Test workflow with manual dispatch
+# 4. Enable tag-based triggers when ready
+#
+# See PUBLISHING.md for complete publishing workflow

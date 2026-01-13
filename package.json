@@ -1,12 +1,28 @@
 {
   "name": "poem-os",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
   "description": "POEM - Prompt Orchestration and Engineering Method",
   "workspaces": [
     "packages/*"
   ],
+  "bin": {
+    "poem-os": "./bin/install.js"
+  },
+  "files": [
+    "bin/",
+    "packages/",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appydave/poem-os.git"
+  },
+  "bugs": {
+    "url": "https://github.com/appydave/poem-os/issues"
+  },
+  "homepage": "https://github.com/appydave/poem-os#readme",
   "engines": {
     "node": ">=22.0.0"
   },
