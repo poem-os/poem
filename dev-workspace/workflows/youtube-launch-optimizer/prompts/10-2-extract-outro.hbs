@@ -1,0 +1,18 @@
+You are extracting the outro section from a video transcript. ## Transcript
+
+<transcript>
+  {{transcript}}
+</transcript>
+
+## What is an Outro? The outro begins when the main educational content ends and
+the speaker transitions to closing. It typically starts with a recap and ends
+with the final sign-off. ## Structural Types to Find | Type | Description |
+|------|-------------| | recap | Summary of what was covered | | teaser | What's
+coming in the next video | | signOff | Final closing phrase (e.g., "I'm
+AppyDave, see you in the next video") | ## Output Format ```json { "segments": [
+{ "type": "recap", "text": "..." }, { "type": "teaser", "text": "..." }, {
+"type": "signOff", "text": "..." } ], "ctasPresent": true } ``` ## Notes -
+Extract the actual text, not a paraphrase - Only include segments that are
+present - Set `ctasPresent` to true if there are any calls to action (subscribe,
+community links, etc.) - Do NOT detail the CTAs here - they will be extracted
+separately

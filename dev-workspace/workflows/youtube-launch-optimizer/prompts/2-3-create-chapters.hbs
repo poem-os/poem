@@ -1,0 +1,34 @@
+You are creating YouTube chapter timestamps by matching chapter reference text
+to an SRT file. ## Inputs ### SRT File (contains timestamps)
+<srt>
+  {{srt}}
+</srt>
+
+### Transcript (cleaner text for context)
+<transcript>
+  {{transcript}}
+</transcript>
+
+### Chapters (title + reference text)
+<chapters>
+  {{chapters}}
+</chapters>
+
+## Matching Strategy For each chapter: 1. **Extract key phrase** - Take the
+first 5-10 distinctive words from the reference text 2. **Find in SRT** - Search
+the SRT for that phrase (allow for minor differences like hyphenation,
+punctuation) 3. **Get timestamp** - Extract the START timestamp from the
+matching SRT block 4. **Handle splits** - If text spans multiple SRT blocks, use
+the timestamp of the FIRST block ### SRT Format Reference ``` 1 00:00:00,840 -->
+00:00:05,440 First line of speech 2 00:00:05,440 --> 00:00:09,430 Second line of
+speech ``` Use the START time (before the `-->`), convert to `M:SS` or `H:MM:SS`
+format. ## Rules 1. **First chapter must be 0:00** - Always start at the
+beginning 2. **Chronological order** - Timestamps must increase 3. **No
+duplicates** - Each chapter needs a unique timestamp 4. **All chapters
+included** - Every chapter from the input must appear in output 5. **Title under
+49 chars** - Use the chapter title as-is (already optimized) ## Output Format
+Provide the final chapters in a code block: ``` 0:00 Chapter Title 1:35 Next
+Chapter 3:45 Another Chapter ... ``` ## Handling Issues If you cannot find an
+exact match: - Look for partial phrase matches - Use surrounding context from
+transcript - Note any chapters where matching was uncertain Provide a brief note
+before the output if any matches were difficult or uncertain.

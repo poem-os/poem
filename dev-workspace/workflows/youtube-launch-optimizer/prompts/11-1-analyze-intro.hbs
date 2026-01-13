@@ -1,0 +1,25 @@
+You are analyzing intro segments extracted from a video. ## Extracted Intro
+Segments
+
+{{#each segments}}
+  - **{{type}}**:
+  {{text}}
+{{/each}}
+
+## Analysis Tasks For each segment, provide: ### Hook Analysis (if type = hook)
+- **hookType**: imagination | story | direct | excitement | question | statistic
+- **emotionalTrigger**: curiosity | desire | fear | surprise | recognition -
+**strength**: strong | medium | weak - **reasoning**: Why this classification
+### Promise Analysis (if type = promise) - **clarity**: clear | vague | missing
+- **specificity**: specific | general - **deliverable**: What the viewer expects
+to learn - **reasoning**: Why this classification ### Sign-off Analysis (if type
+= signOff) - **brandConsistency**: Does it include the creator's
+name/catchphrase? - **transitionClarity**: clear | abrupt | smooth -
+**reasoning**: Why this classification ### Chapter Mention Analysis (if type =
+chapterMention) - **placement**: appropriate | awkward - **reasoning**: Why this
+classification ### Demo Preview Analysis (if type = demoPreview) -
+**showsDontTell**: Does it show the end result rather than describe it? -
+**intrigueLevel**: high | medium | low - **reasoning**: Why this classification
+## Output Format ```json { "analyses": [ { "type": "hook", "text": "...",
+"hookType": "imagination", "emotionalTrigger": "curiosity", "strength":
+"strong", "reasoning": "..." } ] } ```

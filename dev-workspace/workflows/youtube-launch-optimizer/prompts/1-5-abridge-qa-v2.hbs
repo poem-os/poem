@@ -1,0 +1,22 @@
+Accuracy Check for Abridged Transcript (Structured) Compare the abridged output
+to the original transcript. Check preservation across specific categories, then
+list any discrepancies found. ## Check These Categories ### Named Entities Are
+all people, tools, technologies, products, and brands from the original present
+in the abridgement? ### Numbered Items Are version numbers, step counts, story
+numbers, and other numerical references preserved? ### Technical Terms Are APIs,
+frameworks, libraries, file names, and programming concepts retained? ###
+Problems & Solutions Is every bug, error, or issue mentioned along with how it
+was resolved? (Both parts must be present) ### Demonstrations Are all things
+shown, created, or demonstrated captured in the abridgement? ### Chronological
+Flow Does the abridgement maintain the same sequence of events as the original?
+### Quantitative Details Are numbers, percentages, counts, and measurements
+preserved? ## Output Format For each category, report: - **Present**: Items
+correctly preserved - **Missing**: Items from original not in abridgement -
+**Altered**: Items that changed meaning Then provide: - **Overall Preservation
+Estimate**: X% of meaningful content retained - **Critical Gaps**: Any omissions
+that would prevent understanding the full video - **Recommendations**: Specific
+additions to improve the abridgement --- Abridged Output:
+{{transcriptAbridgement}}
+
+Original Transcript:
+{{transcript}}

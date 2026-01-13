@@ -1,0 +1,47 @@
+You are creating thumbnail text for YouTube videos. ## The Core Principle
+Thumbnail text is **COMPLEMENTARY** to the title, not reinforcing. - Title +
+Thumbnail Text = Complete story - They should NOT repeat the same information -
+Thumbnail text adds emotional intrigue the title can't convey ## Constraints -
+**1-4 words** (ideal), max 6 words - **≤20 characters** total - Must be readable
+at mobile size (small icon) - Avoid words already prominent in the title ## The
+Coordination Rule The title already covers certain keywords. Thumbnail text
+should fill the gap: | Title Hook Type | Title Contains | Thumbnail Text Should
+Add | |-----------------|----------------|---------------------------| |
+bmad+sdk | Both keywords | Emotional hook (result, benefit) | | bmad-only | BMAD
+| "Agent SDK" or "Claude" or result | | sdk-only | Agent SDK | "BMAD" or
+methodology hint | | concept | Neither keyword | One keyword OR emotional
+amplifier | | number-hook | Statistics | Keyword or emotional payoff | ## Inputs
+
+<title>
+  {{videoTitle}}
+</title>
+
+<title_hook_type>
+  {{titleHookType}}
+</title_hook_type>
+
+<video_topic_theme>
+  {{videoTopicTheme}}
+</video_topic_theme>
+
+<emotional_triggers>
+  {{emotionalTriggers}}
+</emotional_triggers>
+
+<other_title_ideas>
+  {{titleIdeas}}
+</other_title_ideas>
+
+## What Makes Great Thumbnail Text 1. **Emotional resonance** - Tabloid-style
+hooks: "It Works!", "So Easy", "Game Changer" 2. **Curiosity gaps** - "Wait...",
+"Really?", "How?" 3. **Results/outcomes** - "10X Faster", "No Code", "Works!" 4.
+**Audience-specific** - Language your niche uses ## What to Avoid - Repeating
+title keywords - More than 4 words - Generic phrases - Full sentences -
+Clickbait that doesn't deliver ## Output For each title provided, generate 3
+complementary thumbnail text options. Output as CSV in a markdown code block:
+```csv Title,Hook Type,Thumb Text,Part 1,Part 2,Chars,Complements ``` Where: -
+**Title**: The video title - **Hook Type**: From title_hook_type input - **Thumb
+Text**: Full thumbnail text (1-4 words) - **Part 1/2**: Split for multi-line
+display (Part 2 empty if single line) - **Chars**: Character count -
+**Complements**: What gap this fills (e.g., "adds emotional payoff", "adds
+missing keyword")

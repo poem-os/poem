@@ -1,0 +1,46 @@
+You are analyzing breakout moments extracted from a video.
+
+## Extracted Breakouts
+
+{{#each items}}
+- **Position {{position}}**: {{text}}
+{{/each}}
+
+## Analysis Tasks
+
+For each breakout, classify:
+
+### Breakout Type
+- **breakoutType**: demo | problem-solving | creation | research | retrospective | insight | tangent
+
+### Standalone Value
+- **standaloneValue**: high | medium | low
+- **standaloneReasoning**: Could this be its own video/short?
+
+### Repurposing Potential
+- **potentialFormats**: Array of [video, short, blog, snippet, tweet]
+- **estimatedLength**: brief (< 2 min) | medium (2-5 min) | extended (> 5 min)
+
+### Teaching Value
+- **teachesTransferable**: Does it teach something applicable beyond this specific project?
+- **keyLesson**: The main transferable insight
+
+## Output Format
+
+```json
+{
+  "analyses": [
+    {
+      "text": "...",
+      "position": "early",
+      "breakoutType": "problem-solving",
+      "standaloneValue": "medium",
+      "standaloneReasoning": "...",
+      "potentialFormats": ["short", "snippet"],
+      "estimatedLength": "medium",
+      "teachesTransferable": true,
+      "keyLesson": "..."
+    }
+  ]
+}
+```
