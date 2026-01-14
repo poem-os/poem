@@ -1,0 +1,25 @@
+# YouTube 3-Step Chain Definition
+# Tests: 1-4-abridge → 4-1-analyze-content-essence → 5-1-generate-title
+
+name: youtube-3-step-chain
+description: Abridge → Analyze → Generate Titles
+version: 1.0.0
+
+steps:
+  - id: abridge
+    prompt: youtube-launch-optimizer/prompts/1-4-abridge-v2.hbs
+    inputs: [rawTranscript]
+    outputs: [transcriptAbridgement]
+    description: Abridge the raw transcript to a manageable summary
+
+  - id: analyze
+    prompt: youtube-launch-optimizer/prompts/4-1-analyze-content-essence.hbs
+    inputs: [transcriptAbridgement]
+    outputs: [analyzeContentEssence]
+    description: Analyze content essence from abridged transcript
+
+  - id: generateTitles
+    prompt: youtube-launch-optimizer/prompts/5-1-generate-title-v2.hbs
+    inputs: [transcriptAbridgement, analyzeContentEssence]
+    outputs: [titleCandidates]
+    description: Generate YouTube title candidates from analysis

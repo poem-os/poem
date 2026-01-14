@@ -96,6 +96,47 @@ so that I can access POEM workflows from Claude Code.
 
 ---
 
+### Story 1.6: NPM Package Publishing ✅ DONE
+
+As a developer,
+I want to publish POEM to NPM as a public package,
+so that users can install it globally via `npx poem-os install`.
+
+**Acceptance Criteria**:
+
+1. Remove `"private": true` from root `package.json`
+2. Add `"bin"` field mapping `"poem-os"` command to `"bin/install.js"`
+3. Add `"repository"`, `"bugs"`, and `"homepage"` URLs to package.json
+4. Define `"files"` array in package.json to control published content
+5. Test package installation locally using `npm link` followed by `npx poem-os install`
+6. Create `PUBLISHING.md` documenting the manual publishing process
+7. Add GitHub Actions workflow for automated NPM publishing (optional, future enhancement)
+
+**Status**: Completed. POEM can now be installed via `npx poem-os install`.
+
+---
+
+### Story 1.7: Startup Script and Port Configuration
+
+As a user,
+I want to start POEM from my project root and configure the server port,
+so that I can run POEM without navigating into .poem-app/ and manage multiple POEM instances on different ports.
+
+**Acceptance Criteria**:
+
+1. `npx poem-os start` command launches POEM server from project root
+2. Startup script validates `.poem-app/` exists and shows helpful error if not
+3. During installation, users prompted for port number (default: 4321)
+4. Port configuration written to `.poem-app/.env`
+5. Users can override port temporarily: `npx poem-os start --port=XXXX`
+6. Users can reconfigure port permanently: `npx poem-os config --port XXXX`
+7. Users can view current config: `npx poem-os config --list`
+8. Port validation rejects invalid values (< 1024 or > 65535)
+9. Startup script is cross-platform compatible (Windows/macOS/Linux)
+10. Documentation updated (README.md, PUBLISHING.md)
+
+---
+
 ## Epic 2: Astro Runtime & Handlebars Engine
 
 **Goal**: Build the `.poem-app/` Astro server with Handlebars template engine, enabling template rendering via API endpoints. This provides the runtime foundation for all template-based operations.

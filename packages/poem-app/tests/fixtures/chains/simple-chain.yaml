@@ -1,0 +1,22 @@
+# Simple Chain for Unit Testing
+# Tests basic chain execution and field mapper functionality
+
+name: simple-test-chain
+description: Simple 2-step chain for unit testing
+version: 1.0.0
+
+steps:
+  - id: step1
+    prompt: test-template-1.hbs
+    inputs: [inputData]
+    outputs: [outputData]
+    description: First step - simple transformation
+
+  - id: step2
+    prompt: test-template-2.hbs
+    inputs: [outputData]
+    outputs: [finalResult]
+    mapper:
+      # Test field mapper: prompt output → workflow attribute name
+      result: finalResult
+    description: Second step - uses output from step 1
