@@ -87,6 +87,54 @@ Converts an object to a formatted JSON string for debugging.
 
 **Edge cases:** Returns "null" for null, "undefined" for undefined. Handles circular references by replacing them with `[Circular Reference]`.
 
+### gt
+
+Greater than comparison helper for use in Handlebars conditionals.
+
+```handlebars
+{{#if (gt chapters.length 20)}}
+  This video has many chapters!
+{{/if}}
+
+{{#if (gt count 10)}}...{{/if}}
+```
+
+**Edge cases:** Returns `false` for null/undefined or non-numeric types.
+
+### truncate
+
+Truncates a string to a specified length with ellipsis.
+
+```handlebars
+{{truncate title 49}} → "First 49 characters..."
+{{truncate longDescription 100}}
+```
+
+**Edge cases:** Returns empty string for null/undefined/non-strings. Returns original string if shorter than limit or if truncation wouldn't save space (length < 4).
+
+### join
+
+Joins array elements with a specified separator.
+
+```handlebars
+{{join keywords ", "}} → "keyword1, keyword2"
+{{join tags " | "}}
+{{join authors}} → uses default separator ", "
+```
+
+**Edge cases:** Returns empty string for null/undefined/non-arrays/empty arrays. Default separator is `", "` if not provided.
+
+### formatTimestamp
+
+Formats seconds as MM:SS timestamp.
+
+```handlebars
+{{formatTimestamp 125}} → "02:05"
+{{formatTimestamp chapter.startTime}} → "03:45"
+```
+
+**Edge cases:** Returns "00:00" for null/undefined/non-numeric/negative values.
+
 ---
 
 ## Adding a New Helper

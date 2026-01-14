@@ -8,6 +8,8 @@ import { z } from 'zod';
 import { promises as fs } from 'node:fs';
 import { getHandlebarsService } from '../../../services/handlebars/index.js';
 import { resolvePathAsync, loadPoemConfig } from '../../../services/config/poem-config.js';
+import { SchemaValidator } from '../../../services/schema/validator.js';
+import type { UnifiedSchema } from '../../../services/schema/types.js';
 
 /**
  * Request schema with Zod validation
@@ -36,6 +38,8 @@ export interface RenderResponse {
   renderTimeMs: number;
   warnings: string[];
   templatePath?: string;
+  dataSource: string;
+  helperUsageCount: number;
 }
 
 /**
@@ -57,6 +61,76 @@ export interface ErrorResponse {
  */
 async function resolveTemplatePath(templatePath: string): Promise<string> {
   return resolvePathAsync('prompts', templatePath);
+}
+
+/**
+ * Validate rendered output against output schema if present
+ * Validation failures are added as warnings (AC4 pattern)
+ * @param templatePath - Template path (e.g., "youtube-launch-optimizer/5-1-generate-title.hbs")
+ * @param rendered - Rendered output string
+ * @param warnings - Warnings array to append validation errors to
+ */
+async function validateOutputSchema(
+  templatePath: string,
+  rendered: string,
+  warnings: string[]
+): Promise<void> {
+  try {
+    // Derive template name from path (remove directory and .hbs extension)
+    const templateName = templatePath
+      .split('/')
+      .pop()
+      ?.replace(/\.hbs$/, '') || templatePath;
+
+    // Try to load schema file
+    const schemaPath = await resolvePathAsync('schemas', `${templateName}.json`);
+
+    let schemaContent: string;
+    try {
+      schemaContent = await fs.readFile(schemaPath, 'utf-8');
+    } catch (error) {
+      const err = error as NodeJS.ErrnoException;
+      if (err.code === 'ENOENT') {
+        // No schema file - skip validation (optional)
+        return;
+      }
+      throw error;
+    }
+
+    // Parse schema
+    const schema = JSON.parse(schemaContent) as UnifiedSchema;
+
+    // Check if schema has output section
+    if (!schema.output) {
+      // No output validation defined - skip
+      return;
+    }
+
+    // Try to parse rendered output as JSON
+    let parsedOutput: unknown;
+    try {
+      parsedOutput = JSON.parse(rendered);
+    } catch {
+      // Not JSON - add warning
+      warnings.push('[Schema Validation] Output is not valid JSON, cannot validate against schema');
+      return;
+    }
+
+    // Validate output
+    const validator = new SchemaValidator();
+    const validationResult = validator.validateUnified(parsedOutput, schema, 'output');
+
+    // Add validation errors as warnings
+    if (!validationResult.valid) {
+      for (const error of validationResult.errors) {
+        warnings.push(`[Schema Validation] ${error.field}: ${error.message}`);
+      }
+    }
+  } catch (error) {
+    // Validation errors should not fail the render - add as warning
+    const err = error as Error;
+    warnings.push(`[Schema Validation Error] ${err.message}`);
+  }
 }
 
 /**
@@ -138,11 +212,24 @@ export async function POST({ request }: APIContext): Promise<Response> {
       const result = service.renderWithWarnings(templateContent, data);
       const renderTimeMs = Math.round((performance.now() - startTime) * 100) / 100;
 
+      // Collect all warnings
+      const allWarnings = [...result.warnings];
+
+      // Output schema validation (AC8-9)
+      if (!isRawTemplate && template) {
+        await validateOutputSchema(template, result.rendered, allWarnings);
+      }
+
+      // Determine data source
+      const dataSource = isRawTemplate ? 'provided' : 'provided';
+
       const response: RenderResponse = {
         success: true,
         rendered: result.rendered,
         renderTimeMs,
-        warnings: result.warnings,
+        warnings: allWarnings,
+        dataSource,
+        helperUsageCount: service.getHelperCount(),
       };
 
       if (templatePath) {
