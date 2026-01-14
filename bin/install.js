@@ -19,6 +19,8 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as readline from 'readline';
 import { fileURLToPath } from 'url';
+import { spawn } from 'child_process';
+import { existsSync } from 'fs';
 
 // Get the directory where this script is located
 const __filename = fileURLToPath(import.meta.url);
@@ -61,6 +63,27 @@ function parseArgs() {
   const args = process.argv.slice(2);
   const command = args.find((arg) => !arg.startsWith('-')) || '';
 
+  // Parse --port flag (supports both --port=XXXX and --port XXXX)
+  let port = null;
+  let list = false;
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+
+    // Handle --port=XXXX format
+    if (arg.startsWith('--port=')) {
+      port = arg.substring(7);
+    }
+    // Handle --port XXXX format
+    else if (arg === '--port' && i + 1 < args.length) {
+      port = args[i + 1];
+    }
+    // Handle --list flag
+    else if (arg === '--list') {
+      list = true;
+    }
+  }
+
   return {
     command,
     flags: {
@@ -69,33 +92,46 @@ function parseArgs() {
       force: args.includes('--force'),
       verbose: args.includes('--verbose') || args.includes('-v'),
       help: args.includes('--help') || args.includes('-h'),
+      port,
+      list,
     },
   };
 }
 
 function showHelp() {
   console.log(`
-POEM Installer v${VERSION}
+POEM CLI v${VERSION}
 Prompt Orchestration and Engineering Method
 
 Usage:
-  npx poem-os install [options]
+  npx poem-os <command> [options]
 
 Commands:
   install     Install POEM into the current directory
+  start       Start the POEM server
+  config      Configure POEM settings
 
-Options:
+Install Options:
   --core      Install only .poem-core/ (framework documents)
   --app       Install only .poem-app/ (runtime server)
   --force     Skip overwrite prompts (overwrite existing files)
   --verbose   Show detailed logging output
   --help, -h  Show this help message
 
+Start Options:
+  --port=XXXX Override server port temporarily
+
+Config Options:
+  --list      Show current configuration
+  --port XXXX Set server port permanently
+
 Examples:
   npx poem-os install              # Full installation
   npx poem-os install --core       # Install framework only
-  npx poem-os install --app        # Install runtime only
-  npx poem-os install --force      # Overwrite without prompts
+  npx poem-os start                # Start server on configured port
+  npx poem-os start --port=3000    # Start on port 3000
+  npx poem-os config --list        # View configuration
+  npx poem-os config --port 8080   # Set port to 8080
 `);
 }
 
@@ -347,6 +383,65 @@ async function installCommands(targetDir) {
 }
 
 // ============================================================================
+// Port Configuration
+// ============================================================================
+
+async function promptForPort(force) {
+  if (force) return 4321; // Skip prompt with --force
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  return new Promise((resolve) => {
+    rl.question('\n? What port should POEM run on? (default: 4321): ', (answer) => {
+      rl.close();
+      if (!answer.trim()) {
+        resolve(4321);
+        return;
+      }
+
+      const port = parseInt(answer, 10);
+      if (isNaN(port) || port < 1024 || port > 65535) {
+        console.error('⚠️  Invalid port. Using default: 4321');
+        resolve(4321);
+      } else {
+        resolve(port);
+      }
+    });
+  });
+}
+
+async function configurePort(targetDir, port) {
+  const envFile = path.join(targetDir, '.poem-app', '.env');
+  let content = '';
+
+  try {
+    content = await fs.readFile(envFile, 'utf-8');
+  } catch {
+    // File doesn't exist yet, will create it
+  }
+
+  const lines = content.split('\n');
+  let updated = false;
+  const newLines = lines.map((line) => {
+    if (line.startsWith('PORT=')) {
+      updated = true;
+      return `PORT=${port}`;
+    }
+    return line;
+  });
+
+  if (!updated) {
+    newLines.push(`PORT=${port}`);
+  }
+
+  await fs.writeFile(envFile, newLines.join('\n'), 'utf-8');
+  logVerbose(`Configured PORT=${port} in .poem-app/.env`);
+}
+
+// ============================================================================
 // Success Message
 // ============================================================================
 
@@ -383,34 +478,11 @@ function showSuccessMessage(results, targetDir) {
 }
 
 // ============================================================================
-// Main Entry Point
+// Command Handlers
 // ============================================================================
 
-async function main() {
+async function handleInstall(flags) {
   const startTime = Date.now();
-
-  // Check Node.js version first
-  checkNodeVersion();
-
-  // Parse command line arguments
-  const { command, flags } = parseArgs();
-  verboseMode = flags.verbose;
-
-  // Show help if requested
-  if (flags.help) {
-    showHelp();
-    process.exit(0);
-  }
-
-  // Validate command
-  if (command !== 'install') {
-    if (command) {
-      logError(`Unknown command: ${command}`);
-    }
-    log('\nUsage: npx poem-os install [options]');
-    log('Run "npx poem-os --help" for more information.\n');
-    process.exit(1);
-  }
 
   // Determine what to install
   const shouldInstallCore = !flags.app || flags.core;
@@ -483,6 +555,13 @@ async function main() {
       results.createdWorkspace = true;
     }
 
+    // Configure port if installing the app
+    if (shouldInstallApp) {
+      const port = await promptForPort(flags.force);
+      await configurePort(targetDir, port);
+      log(`   ✓ Configured server port: ${port}`);
+    }
+
     // Calculate elapsed time
     const elapsed = Date.now() - startTime;
     logVerbose(`Installation completed in ${elapsed}ms`);
@@ -492,6 +571,190 @@ async function main() {
   } catch (error) {
     logError(error.message, { path: error.path, code: error.code });
     process.exit(1);
+  }
+}
+
+async function handleStart(flags) {
+  // Validate POEM is installed
+  if (!existsSync('.poem-app')) {
+    console.error('\n❌ POEM is not installed in this directory.');
+    console.error('   Run: npx poem-os install\n');
+    process.exit(1);
+  }
+
+  // Load PORT from .env or use default
+  const envFile = path.join(process.cwd(), '.poem-app', '.env');
+  let port = '4321'; // Default port
+
+  try {
+    const content = await fs.readFile(envFile, 'utf-8');
+    const lines = content.split('\n');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('PORT=')) {
+        port = trimmed.substring(5); // Extract value after 'PORT='
+        break;
+      }
+    }
+  } catch {
+    // .env file doesn't exist or can't be read, use default
+    logVerbose('Could not read .env file, using default port 4321');
+  }
+
+  // Override with --port flag if provided
+  if (flags.port) {
+    port = flags.port.toString();
+  }
+
+  // Validate port
+  const portNum = parseInt(port, 10);
+  if (isNaN(portNum) || portNum < 1024 || portNum > 65535) {
+    console.error(`\n❌ Invalid port: ${port}`);
+    console.error('   Port must be between 1024 and 65535.\n');
+    process.exit(1);
+  }
+
+  log(`\n🚀 Starting POEM server on port ${portNum}...\n`);
+
+  // Determine npm command (Windows uses npm.cmd)
+  const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+
+  // Spawn npm run dev in .poem-app directory
+  const child = spawn(npm, ['run', 'dev'], {
+    cwd: path.resolve('.poem-app'),
+    env: { ...process.env, PORT: portNum.toString() },
+    stdio: 'inherit', // Pass through stdout/stderr to show Astro logs
+  });
+
+  // Handle Ctrl+C gracefully
+  process.on('SIGINT', () => {
+    child.kill('SIGINT');
+    process.exit(0);
+  });
+
+  // Forward child process exit code
+  child.on('exit', (code) => {
+    process.exit(code || 0);
+  });
+}
+
+async function handleConfig(flags) {
+  // Validate POEM is installed
+  if (!existsSync('.poem-app')) {
+    console.error('\n❌ POEM is not installed in this directory.');
+    console.error('   Run: npx poem-os install\n');
+    process.exit(1);
+  }
+
+  const envFile = path.join(process.cwd(), '.poem-app', '.env');
+
+  // Handle --list flag
+  if (flags.list) {
+    let config = {};
+    try {
+      const content = await fs.readFile(envFile, 'utf-8');
+      const lines = content.split('\n');
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#')) {
+          const [key, ...values] = trimmed.split('=');
+          if (key) {
+            config[key] = values.join('=');
+          }
+        }
+      }
+    } catch {
+      // .env file doesn't exist, use defaults
+    }
+
+    log('\nCurrent POEM Configuration:');
+    log(`  PORT: ${config.PORT || '4321 (default)'}`);
+    log(`  POEM_DEV: ${config.POEM_DEV || 'false (default)'}\n`);
+    process.exit(0);
+  }
+
+  // Handle --port flag
+  if (flags.port) {
+    const portNum = parseInt(flags.port, 10);
+    if (isNaN(portNum) || portNum < 1024 || portNum > 65535) {
+      console.error(`\n❌ Invalid port: ${flags.port}`);
+      console.error('   Port must be between 1024 and 65535.\n');
+      process.exit(1);
+    }
+
+    // Read existing .env file
+    let config = {};
+    try {
+      const content = await fs.readFile(envFile, 'utf-8');
+      const lines = content.split('\n');
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#')) {
+          const [key, ...values] = trimmed.split('=');
+          if (key) {
+            config[key] = values.join('=');
+          }
+        }
+      }
+    } catch {
+      // .env file doesn't exist, will create it
+    }
+
+    // Update PORT
+    config.PORT = portNum.toString();
+
+    // Write back to .env
+    const lines = Object.entries(config).map(([key, value]) => `${key}=${value}`);
+    await fs.writeFile(envFile, lines.join('\n') + '\n', 'utf-8');
+
+    log(`\n✅ Port updated to ${portNum}`);
+    log('   Restart POEM for changes to take effect:');
+    log('   npx poem-os start\n');
+    process.exit(0);
+  }
+
+  // No valid flags provided
+  console.error('\n❌ Invalid usage.');
+  console.error('   Usage: npx poem-os config --list | --port XXXX\n');
+  process.exit(1);
+}
+
+// ============================================================================
+// Main Entry Point
+// ============================================================================
+
+async function main() {
+  // Check Node.js version first
+  checkNodeVersion();
+
+  // Parse command line arguments
+  const { command, flags } = parseArgs();
+  verboseMode = flags.verbose;
+
+  // Show help if requested
+  if (flags.help) {
+    showHelp();
+    process.exit(0);
+  }
+
+  // Default to 'install' if no command provided
+  const cmd = command || 'install';
+
+  // Route to command handlers
+  switch (cmd) {
+    case 'install':
+      await handleInstall(flags);
+      break;
+    case 'start':
+      await handleStart(flags);
+      break;
+    case 'config':
+      await handleConfig(flags);
+      break;
+    default:
+      console.error(`\n❌ Unknown command: ${cmd}`);
+      console.error('   Run "npx poem-os --help" for usage information.\n');
+      process.exit(1);
   }
 }
 

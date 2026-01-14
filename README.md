@@ -36,13 +36,83 @@ npx poem-os install --verbose
 **After Installation**:
 ```bash
 # Install runtime dependencies
-cd .poem-app && npm install
+cd .poem-app && npm install && cd ..
 
-# Start the development server
-npm run dev
+# Start the POEM server (from project root)
+npx poem-os start
+
+# Or start with custom port
+npx poem-os start --port=3000
+
+# View current configuration
+npx poem-os config --list
+
+# Change port permanently
+npx poem-os config --port 8080
 
 # Activate Prompt Engineer agent in Claude Code
 /poem/agents/prompt-engineer
+```
+
+## Usage
+
+### Starting the Server
+
+Start POEM from your project root:
+
+```bash
+npx poem-os start
+```
+
+By default, POEM runs on port 4321. You can override this:
+
+```bash
+# Temporary port override (this session only)
+npx poem-os start --port=3000
+```
+
+### Configuration Management
+
+View your current POEM configuration:
+
+```bash
+npx poem-os config --list
+```
+
+Change the server port permanently:
+
+```bash
+npx poem-os config --port 8080
+```
+
+**Port Requirements**: Port numbers must be between 1024 and 65535.
+
+### Troubleshooting
+
+**Error: POEM is not installed**
+```bash
+# Solution: Install POEM first
+npx poem-os install
+```
+
+**Error: Port already in use**
+```bash
+# Solution: Use a different port
+npx poem-os start --port=4322
+# Or permanently change it
+npx poem-os config --port 4322
+```
+
+**Running multiple POEM instances**
+```bash
+# Terminal 1 (project A)
+cd ~/projects/project-a
+npx poem-os start  # Port 4321
+
+# Terminal 2 (project B)
+cd ~/projects/project-b
+npx poem-os config --port 4322
+npx poem-os start  # Port 4322
 ```
 
 ## What is POEM?
