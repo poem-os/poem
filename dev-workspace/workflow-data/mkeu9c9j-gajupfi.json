@@ -1,0 +1,11 @@
+{
+  "id": "mkeu9c9j-gajupfi",
+  "workflowName": "tracking-test",
+  "startedAt": "2026-01-15T02:36:47.563Z",
+  "updatedAt": "2026-01-15T02:36:47.695Z",
+  "executedTemplates": [],
+  "data": {
+    "input": "test"
+  },
+  "checkpoint": null
+}
