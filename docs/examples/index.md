@@ -36,13 +36,27 @@ examples/
 
 ### Epic 3 Examples (Prompt Engineering Agent Foundation)
 
-*To be populated via KDD retrospective execution*
+Complete, runnable examples demonstrating patterns established in Epic 3.
 
-Expected examples:
-- Unified Schema Creation (Story 3.7.1)
-- Multi-Workflow Setup (Story 3.8)
-- Skill Creation Pattern (Story 3.6)
-- Workflow Validation End-to-End (Story 3.5)
+1. **[Unified Schema Creation](unified-schema-creation/)** (Story 3.7.1)
+   - Create prompts with unified schemas (input + output in single file)
+   - Function signature metaphor: `(input) -> output`
+   - Extract, validate input/output, render, validate AI response
+
+2. **[Multi-Workflow Setup](multi-workflow-setup/)** (Story 3.8)
+   - Configure multiple independent workflows (YouTube, NanoBanana, SupportSignal)
+   - Hot-switch between workflows without restart
+   - Test workflow isolation and persistence
+
+3. **[Skill Creation Pattern](skill-creation-pattern/)** (Story 3.6)
+   - Create new skill using 8-section markdown format
+   - Self-describing "When to Use" for autonomous activation
+   - API-first integration, structure testing, execution testing
+
+4. **[Workflow Validation End-to-End](workflow-validation-end-to-end/)** (Story 3.5)
+   - Complete validation workflow: syntax → schema → semantic → integration
+   - Skill composition: check-my-prompt, find-fields, preview-with-data
+   - API-driven validation pipeline
 
 ---
 

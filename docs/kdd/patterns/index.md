@@ -28,14 +28,32 @@ Each pattern document should include:
 
 ### Epic 3 Patterns (Prompt Engineering Agent Foundation)
 
-*To be populated via KDD retrospective execution*
+Epic 3 established foundational patterns for the Prompt Engineer agent (Penny) and workflow management system.
 
-Expected patterns:
-- Config Service Single Source of Truth
-- Unified Schema Structure (Function Signature Pattern)
-- Skills Self-Description Format
-- Workflow-Scoped Resource Management
-- API-First Heavy Operations
+1. **[Config Service Single Source of Truth](config-service-single-source-of-truth.md)** (Stories 3.2.5, 3.8)
+   - Centralize all workspace path definitions in config service
+   - Workflows/agents inherit paths without duplication
+   - Enables multi-workflow support without touching 15+ files
+
+2. **[Unified Schema Structure](unified-schema-structure.md)** (Stories 3.7, 3.7.1)
+   - Schemas as function signatures: `(input) -> output` in single file
+   - Corrects Story 3.7's dual-file approach (architectural alignment)
+   - Makes prompt contracts explicit and chainable
+
+3. **[Skills Self-Description Format](skills-self-description-format.md)** (Stories 3.5, 3.6)
+   - 8-section markdown format for autonomous agent capabilities
+   - "When to Use" enables context-aware skill activation
+   - API-integrated, single-responsibility, self-documenting
+
+4. **[API-First Heavy Operations](api-first-heavy-operations.md)** (Stories 3.2, 3.3, 3.4, 3.7)
+   - Route expensive operations (rendering, validation) through Astro APIs
+   - Agents call HTTP endpoints, not TypeScript imports
+   - Testability, external integration, clear contracts
+
+5. **[Workflow-Scoped Resource Management](workflow-scoped-resource-management.md)** (Story 3.8)
+   - Isolate prompts/schemas in workflow-specific directories
+   - Hot-switchable context with persistent workflow selection
+   - Supports multiple independent projects in one workspace
 
 ---
 
