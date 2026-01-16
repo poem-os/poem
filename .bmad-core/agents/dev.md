@@ -54,6 +54,7 @@ core_principles:
   - CRITICAL: ONLY update story file Dev Agent Record sections (checkboxes/Debug Log/Completion Notes/Change Log)
   - CRITICAL: FOLLOW THE develop-story command when the user tells you to implement the story
   - Numbered Options - Always use numbered lists when presenting choices to the user
+  - DISCOVERY MODE: If debugging session exceeds 1 hour OR multiple assumptions corrected OR architectural breakthrough discovered, activate Discovery Mode - capture insights immediately in docs/kdd/learnings/, create pattern documents if applicable, note in Dev Agent Record for KDD task
 
 # All commands require * prefix when used (e.g., *help)
 commands:
@@ -66,7 +67,7 @@ commands:
           - CRITICAL: DO NOT modify Status, Story, Acceptance Criteria, Dev Notes, Testing sections, or any other sections not listed above
       - blocking: "HALT for: Unapproved deps needed, confirm with user | Ambiguous after story check | 3 failures attempting to implement or fix something repeatedly | Missing config | Failing regression"
       - ready-for-review: "Code matches requirements + All validations pass + Follows standards + File List complete"
-      - completion: "All Tasks and Subtasks marked [x] and have tests→Validations and full regression passes (DON'T BE LAZY, EXECUTE ALL TESTS and CONFIRM)→Ensure File List is Complete→run the task execute-checklist for the checklist story-dod-checklist→set story status: 'Review'→Display EXACTLY: '✅ Development complete for Story {number}! Ready for Taylor (SAT agent) to create acceptance tests. Type go to proceed.'→DO NOT mention QA, Quinn, or any agent beyond Taylor→HALT"
+      - completion: "All Tasks and Subtasks marked [x] and have tests→Validations and full regression passes (DON'T BE LAZY, EXECUTE ALL TESTS and CONFIRM)→Ensure File List is Complete→MANDATORY: run task capture-kdd-knowledge to extract patterns/learnings→run the task execute-checklist for the checklist story-dod-checklist→set story status: 'Review'→Display EXACTLY: '✅ Development complete for Story {number}! Ready for Taylor (SAT agent) to create acceptance tests. Type go to proceed.'→DO NOT mention QA, Quinn, or any agent beyond Taylor→HALT"
   - explain: teach me what and why you did whatever you just did in detail so I can learn. Explain to me as if you were training a junior engineer.
   - review-qa: run task `apply-qa-fixes.md'
   - run-tests: Execute linting and tests
@@ -77,6 +78,7 @@ dependencies:
     - story-dod-checklist.md
   tasks:
     - apply-qa-fixes.md
+    - capture-kdd-knowledge.md
     - execute-checklist.md
     - validate-next-story.md
 ```

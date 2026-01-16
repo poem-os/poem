@@ -79,6 +79,19 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] User-facing documentation updated, if changes impact users.
    - [ ] Technical documentation (e.g., READMEs, system diagrams) updated if significant architectural changes were made.
 
+8. **KDD Compliance (Knowledge-Driven Development):**
+
+   [[LLM: MANDATORY - Execute capture-kdd-knowledge task before marking story complete. Target: 95%+ execution rate.]]
+   - [ ] **KDD Task Executed**: Ran `capture-kdd-knowledge` task after implementation complete.
+   - [ ] **Git Analysis Complete**: Analyzed actual code changes (git log, git diff) to identify modified files.
+   - [ ] **Knowledge Assets Created**: Created at least ONE asset in docs/kdd/ (pattern, learning, decision) or docs/examples/.
+   - [ ] **TOC Maintenance**: Updated relevant index.md files (patterns/index.md, learnings/index.md, examples/index.md, decisions/index.md).
+   - [ ] **Cross-References Validated**: Verified bidirectional links between story, patterns, examples, and architecture docs.
+   - [ ] **Story KDD Summary**: Added KDD summary section to Dev Agent Record with file paths to knowledge assets.
+   - [ ] **Architecture Docs Updated**: Updated architecture documentation if story changed data models, components, APIs, or workflows.
+
+   [[LLM: KDD captures institutional knowledge. If you skip this, future developers lose context. Be honest about execution.]]
+
 ## Final Confirmation
 
 [[LLM: FINAL DOD SUMMARY
