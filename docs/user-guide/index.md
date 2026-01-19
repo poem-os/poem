@@ -2,9 +2,19 @@
 
 Documentation for users of POEM OS.
 
-## Status
+## Getting Started
 
-This section is a placeholder for future user documentation.
+**[Getting Started with Workflows](./getting-started-with-workflows.md)** ⭐ **START HERE**
+
+**What it covers**:
+- When you need workflows vs standalone prompts
+- How the workflow data accumulation pattern works
+- Building your first 3-prompt workflow
+- Real example walkthrough (YouTube Launch Optimizer)
+
+**Perfect for**: Users who have installed POEM, organized their prompts, and are wondering "what's next?"
+
+---
 
 ## Planned Content
 

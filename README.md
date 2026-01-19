@@ -54,6 +54,9 @@ npx poem-os config --port 8080
 /poem/agents/prompt-engineer
 ```
 
+**Next Steps**:
+- **[Getting Started with Workflows](docs/user-guide/getting-started-with-workflows.md)** - Learn when you need workflows vs standalone prompts, and how to build your first workflow
+
 ## Usage
 
 ### Starting the Server

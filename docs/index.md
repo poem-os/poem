@@ -5,6 +5,7 @@ Welcome to the POEM (Prompt Orchestration and Engineering Method) documentation.
 ## Quick Start
 
 - **[CLAUDE.md](../CLAUDE.md)** - Project overview and AI assistant instructions
+- **[Getting Started with Workflows](./user-guide/getting-started-with-workflows.md)** ⭐ - Post-installation onboarding guide
 - **[PRD](./prd.md)** - Product requirements (consolidated)
 - **[Architecture](./architecture.md)** - Technical architecture (consolidated)
 
