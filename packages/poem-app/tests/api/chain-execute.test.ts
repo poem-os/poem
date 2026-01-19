@@ -37,6 +37,10 @@ describe("POST /api/chain/execute", () => {
         // Ignore cleanup errors
       }
     }
+
+    // Note: Test template files (api-test-1.hbs, api-test-2.hbs) are no longer cleaned up here.
+    // They are covered by .gitignore patterns and won't be committed to source control.
+    // The dev-workspace directory isolation ensures they don't pollute the framework.
   });
 
   it("should execute a 2-step chain successfully", async () => {

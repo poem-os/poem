@@ -516,6 +516,16 @@ npm install
 cd packages/poem-app && npm install
 ```
 
+### Pre-commit Hook Requirements
+
+The `.husky/pre-commit` hook uses **gitleaks** for secret scanning. This tool must be installed globally before committing changes.
+
+**Installation**:
+- macOS: `brew install gitleaks`
+- Other platforms: See https://github.com/gitleaks/gitleaks
+
+If gitleaks is not installed, commits will fail with an error. This is intentional to prevent accidentally committing secrets.
+
 ### Two Operating Modes
 
 | Mode | Detection | Framework Location | User Workspace |

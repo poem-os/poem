@@ -27,6 +27,10 @@ describe("ChainExecutorService", () => {
       }
     }
     createdWorkflowIds = [];
+
+    // Note: Test template files are no longer cleaned up here to avoid race conditions.
+    // They are now covered by .gitignore patterns and won't be committed to source control.
+    // The dev-workspace directory isolation ensures they don't pollute the framework.
   });
 
   describe("loadChainDefinition", () => {
