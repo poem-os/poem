@@ -1,5 +1,6 @@
 # macOS
 .DS_Store
+**/.DS_Store
 .AppleDouble
 .LSOverride
 
@@ -14,6 +15,7 @@ build/
 
 # Astro
 .astro/
+packages/**/.astro/     # Astro build cache in workspace packages
 
 # IDE
 .vscode/
@@ -50,3 +52,7 @@ validation-backups/     # Validation data backups (local only)
 # Ignore all JSON files in any workflow-data directory
 **/workflow-data/
 !**/workflow-data/.gitkeep
+
+# Test artifacts (should be in dev-workspace, not source)
+packages/*/poem/prompts/*-test.hbs
+packages/*/poem/prompts/test-*.hbs
