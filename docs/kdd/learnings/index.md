@@ -51,7 +51,31 @@ Epic 3 revealed insights about architecture validation, test maintenance, emerge
    - **Solution**: Comprehensive error handling with graceful degradation
    - **Lesson**: Simple ≠ Easy. State loss better than crash. Test edge cases thoroughly.
 
+### Epic 4 (YouTube Automation Workflow)
+
+Epic 4 revealed insights about type safety in generation, testing workflows, pattern emergence, and API design.
+
+5. **[Array Type Override in Mock Data Generation](epic4-array-type-override-bug.md)**
+   - **Challenge**: Pattern-based detection overrode array types (generated string instead of array)
+   - **Solution**: Check field.type BEFORE applying pattern generators
+   - **Lesson**: Type hierarchy > Pattern detection. Schema contract > content hint.
+
+6. **[Integration Tests Deferred to SAT Phase](epic4-integration-tests-deferred-to-sat.md)**
+   - **Challenge**: Integration tests require running server (5-10 sec startup overhead)
+   - **Solution**: Write during development, execute during SAT (Story Acceptance Testing)
+   - **Lesson**: Intentional workflow pattern - unit tests (dev) vs integration tests (SAT).
+
+7. **[Section-Based Naming Pattern Emergence](epic4-section-naming-pattern-emergence.md)**
+   - **Challenge**: Section-based naming not designed upfront, emerged from YouTube workflow
+   - **Solution**: Adopted real-world pattern as POEM convention
+   - **Lesson**: Real-world usage reveals patterns design phase misses. Architecture guides, not dictates.
+
+8. **[Helper Metadata Needed for API Discovery](epic4-helper-metadata-api-discovery.md)**
+   - **Challenge**: Agents need to discover helpers programmatically, no API endpoint existed
+   - **Solution**: Add description/example metadata exports, create `/api/helpers` endpoint
+   - **Lesson**: Apply API-First pattern to ALL discoverable resources, not just heavy operations.
+
 ---
 
-**Last Updated**: 2026-01-16
+**Last Updated**: 2026-01-19
 **Maintainer**: Dev Agent (updates during KDD task execution)

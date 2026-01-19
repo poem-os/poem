@@ -55,7 +55,46 @@ Epic 3 established foundational patterns for the Prompt Engineer agent (Penny) a
    - Hot-switchable context with persistent workflow selection
    - Supports multiple independent projects in one workspace
 
+### Epic 4 Patterns (YouTube Automation Workflow - System Validation)
+
+Epic 4 validated POEM with real-world YouTube workflow (53 templates), establishing patterns for mock data generation, prompt chaining, and helper management.
+
+1. **[Schema-Based Mock Data Generation](4-schema-based-mock-data-generation.md)** (Story 4.3)
+   - Use UnifiedSchema to generate realistic test data with Faker.js
+   - Pattern-based field detection for domain-specific content
+   - Constraint satisfaction (minLength, maxLength) + reproducibility via seeds
+
+2. **[Field Mapper Pattern](4-field-mapper-pattern.md)** (Story 4.6)
+   - Translate prompt output names to workflow attribute names
+   - Prevents collisions when multiple prompts output similar fields
+   - Enables prompt reusability with generic names
+
+3. **[Workflow Chain Execution](4-workflow-chain-execution.md)** (Story 4.6)
+   - Sequential prompt execution with progressive data accumulation
+   - File-based persistence enables pause/resume and crash recovery
+   - Execution history tracks what ran, when, and what it produced
+
+4. **[Handlebars Helper Module Pattern](4-handlebars-helper-module-pattern.md)** (Story 4.4)
+   - ESM helpers with self-describing metadata (description, example)
+   - Auto-loading via import.meta.glob + hot-reload with chokidar
+   - API-accessible for agent-driven development
+
+5. **[Section-Based Template Naming](4-section-based-template-naming.md)** (Story 4.1)
+   - Organize templates with `{section}-{sequence}-{description}.hbs` pattern
+   - Encodes workflow phase and execution order in filename
+   - Scales to 50+ templates with visual grouping
+
+6. **[Output Schema Validation as Warnings](4-output-schema-validation-warnings.md)** (Story 4.5)
+   - Validate rendered output against output schema section
+   - Report violations as warnings (not errors) for graceful degradation
+   - Enables debugging without breaking workflows
+
+7. **[WorkflowData File-Based Persistence](4-workflowdata-file-persistence.md)** (Story 4.6)
+   - Store workflow state as pretty-printed JSON files
+   - Human-readable execution logs + crash recovery
+   - No database dependencies (file-based philosophy)
+
 ---
 
-**Last Updated**: 2026-01-16
+**Last Updated**: 2026-01-19
 **Maintainer**: Dev Agent (updates during KDD task execution)

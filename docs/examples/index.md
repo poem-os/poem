@@ -58,7 +58,31 @@ Complete, runnable examples demonstrating patterns established in Epic 3.
    - Skill composition: check-my-prompt, find-fields, preview-with-data
    - API-driven validation pipeline
 
+### Epic 4 Examples (YouTube Automation Workflow)
+
+Complete, runnable examples demonstrating patterns from Epic 4's real-world YouTube workflow validation.
+
+5. **[Schema-Based Mock Data Generation](epic4-schema-based-mock-generation/)** (Story 4.3)
+   - Generate realistic test data from UnifiedSchema using Faker.js
+   - Domain-specific generators for YouTube content (titles, transcripts, keywords)
+   - Constraint satisfaction + deterministic seeding
+
+6. **[Field Mapper in Prompt Chains](epic4-field-mapper-chain/)** (Story 4.6)
+   - Translate prompt output names to workflow attribute names
+   - Prevent collisions in multi-step workflows
+   - YouTube 3-step chain (abridge → analyze → generate titles)
+
+7. **[Creating New Handlebars Helper](epic4-helper-creation/)** (Story 4.4)
+   - ESM helper with metadata exports (description, example)
+   - Auto-loading via import.meta.glob + hot-reload
+   - API-accessible for agent discovery
+
+8. **[Workflow Pause and Resume](epic4-workflow-pause-resume/)** (Story 4.6)
+   - File-based persistence enables mid-chain pausing
+   - Human-readable workflow-data inspection
+   - Crash recovery and state preservation
+
 ---
 
-**Last Updated**: 2026-01-16
+**Last Updated**: 2026-01-19
 **Maintainer**: Dev Agent (updates during KDD task execution)

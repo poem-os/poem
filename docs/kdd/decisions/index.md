@@ -56,7 +56,35 @@ Epic 3 established four foundational architectural decisions that shape POEM's a
    - **Status**: Accepted (7 skills created)
    - **Key Innovation**: "When to Use" section enables autonomous activation
 
+### Epic 4 Decisions (YouTube Automation Workflow)
+
+Epic 4 established decisions for mock data generation, prompt chaining, helper management, and workflow persistence.
+
+5. **[ADR-005: Mock Data Generation with Faker.js](adr-005-mock-data-generation-fakerjs.md)** (Story 4.3)
+   - **Decision**: Use @faker-js/faker with domain-specific generators
+   - **Rationale**: Mature library (45K stars), TypeScript support, deterministic seeding
+   - **Status**: Accepted (61/61 tests passing)
+   - **Key Innovation**: Pattern-based field detection for YouTube-specific content
+
+6. **[ADR-006: Field Mapper Architecture for Prompt Chaining](adr-006-field-mapper-architecture.md)** (Story 4.6)
+   - **Decision**: Optional mappers translate prompt field names to workflow attributes
+   - **Rationale**: Enables prompt reusability with generic names, prevents collisions
+   - **Status**: Accepted (28/28 chain executor tests passing)
+   - **Alternative Rejected**: Step ID prefixing (couples workflow-data to chain structure)
+
+7. **[ADR-007: ESM Helpers with Hot-Reload via Chokidar](adr-007-esm-helpers-hot-reload.md)** (Story 4.4)
+   - **Decision**: ESM modules with import.meta.glob + chokidar watcher
+   - **Rationale**: Vite compatibility, hot-reload DX, API-accessible metadata
+   - **Status**: Accepted (146/146 tests passing, 18 watcher tests)
+   - **Key Innovation**: Helper metadata exports for agent discovery
+
+8. **[ADR-008: File-Based Workflow Persistence over Database](adr-008-file-based-workflow-persistence.md)** (Story 4.6)
+   - **Decision**: Pretty-printed JSON files in dev-workspace/workflow-data/
+   - **Rationale**: Human-readable, zero infrastructure, crash recovery built-in
+   - **Status**: Accepted (17/17 persistence tests passing)
+   - **Alternative Rejected**: SQLite (binary format defeats human-readability)
+
 ---
 
-**Last Updated**: 2026-01-16
+**Last Updated**: 2026-01-19
 **Maintainer**: Dev Agent (updates during KDD task execution)
