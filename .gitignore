@@ -47,5 +47,6 @@ dev-workspace/**
 validation-backups/     # Validation data backups (local only)
 
 # Workflow runtime data (test artifacts, execution state)
-**/workflow-data/*.json # Exclude workflow-data JSON files from all locations
-!**/workflow-data/.gitkeep # But keep .gitkeep files to preserve directories
+# Ignore all JSON files in any workflow-data directory
+**/workflow-data/
+!**/workflow-data/.gitkeep
