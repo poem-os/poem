@@ -1041,9 +1041,31 @@ async function handleInstall(flags) {
 
     // Configure port if installing the app
     if (shouldInstallApp) {
-      const port = await promptForPort(flags.force, targetDir);
+      let port;
+
+      if (isReinstallation) {
+        // Reinstallation: Try to keep existing port
+        const { readEnvFile } = await import('./utils.js');
+        const envFile = path.join(targetDir, '.poem-app', '.env');
+        const envConfig = await readEnvFile(envFile);
+        const existingPort = envConfig.PORT ? parseInt(envConfig.PORT, 10) : null;
+
+        if (existingPort) {
+          logVerbose(`Found existing port: ${existingPort}`);
+          port = existingPort;
+          log(`   ✓ Using existing port: ${port}`);
+        } else {
+          // No existing port found, prompt for one
+          port = await promptForPort(flags.force, targetDir);
+          log(`   ✓ Configured server port: ${port}`);
+        }
+      } else {
+        // Fresh install: Prompt for port
+        port = await promptForPort(flags.force, targetDir);
+        log(`   ✓ Configured server port: ${port}`);
+      }
+
       await configurePort(targetDir, port);
-      log(`   ✓ Configured server port: ${port}`);
 
       // Register installation in ~/.poem/registry.json
       await registerInstallation(targetDir, port);
