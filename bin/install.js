@@ -8,11 +8,12 @@
  *   npx poem-os install [options]
  *
  * Options:
- *   --core     Install only .poem-core/ (framework documents)
- *   --app      Install only .poem-app/ (runtime server)
- *   --force    Skip overwrite prompts
- *   --verbose  Show detailed logging
- *   --help     Show this help message
+ *   --core      Install only .poem-core/ (framework documents)
+ *   --app       Install only .poem-app/ (runtime server)
+ *   --force     Skip overwrite prompts
+ *   --skip-deps Skip automatic dependency installation (for offline environments)
+ *   --verbose   Show detailed logging
+ *   --help      Show this help message
  */
 
 import * as fs from 'fs/promises';
@@ -90,6 +91,7 @@ function parseArgs() {
       core: args.includes('--core'),
       app: args.includes('--app'),
       force: args.includes('--force'),
+      'skip-deps': args.includes('--skip-deps'),
       verbose: args.includes('--verbose') || args.includes('-v'),
       help: args.includes('--help') || args.includes('-h'),
       port,
@@ -115,6 +117,7 @@ Install Options:
   --core      Install only .poem-core/ (framework documents)
   --app       Install only .poem-app/ (runtime server)
   --force     Skip overwrite prompts (overwrite existing files)
+  --skip-deps Skip automatic dependency installation (for offline/air-gapped environments)
   --verbose   Show detailed logging output
   --help, -h  Show this help message
 
@@ -441,12 +444,61 @@ async function configurePort(targetDir, port) {
   logVerbose(`Configured PORT=${port} in .poem-app/.env`);
 }
 
+async function installDependencies(targetDir) {
+  const appDir = path.join(targetDir, '.poem-app');
+
+  log('Installing dependencies (this may take a minute)...');
+  logVerbose(`Running npm install in ${appDir}`);
+
+  return new Promise((resolve, reject) => {
+    const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+
+    const child = spawn(npm, ['install'], {
+      cwd: appDir,
+      stdio: verboseMode ? 'inherit' : 'pipe', // Show output only in verbose mode
+    });
+
+    let errorOutput = '';
+
+    if (!verboseMode) {
+      // Collect error output silently for error reporting
+      child.stderr?.on('data', (data) => {
+        errorOutput += data.toString();
+      });
+    }
+
+    child.on('error', (error) => {
+      reject(new Error(`Failed to run npm install: ${error.message}`));
+    });
+
+    child.on('exit', (code) => {
+      if (code === 0) {
+        log('   ✓ Dependencies installed');
+        resolve();
+      } else {
+        const error = new Error('npm install failed');
+        error.details = errorOutput;
+        error.exitCode = code;
+        reject(error);
+      }
+    });
+  });
+}
+
 // ============================================================================
 // Success Message
 // ============================================================================
 
 function showSuccessMessage(results, targetDir) {
-  const { installedCore, installedApp, createdWorkspace, installedCommands } = results;
+  const {
+    installedCore,
+    installedApp,
+    createdWorkspace,
+    installedCommands,
+    installedDependencies,
+    skippedDependencies,
+    dependencyError,
+  } = results;
 
   log('\n✅ POEM installed successfully!\n');
 
@@ -469,9 +521,29 @@ function showSuccessMessage(results, targetDir) {
   log('  /poem/help                    - List all POEM commands');
 
   log('\nNext steps:');
-  log('  1. cd .poem-app && npm install');
-  log('  2. npm run dev');
-  log('  3. In Claude Code: /poem/agents/prompt-engineer');
+
+  // Show appropriate next steps based on dependency installation status
+  if (installedDependencies) {
+    // Dependencies installed successfully - ready to go
+    log('  1. npx poem-os start              (start the server)');
+    log('  2. In Claude Code: /poem/agents/prompt-engineer');
+  } else if (skippedDependencies || dependencyError) {
+    // Dependencies not installed - manual steps required
+    log('  1. cd .poem-app && npm install    (install dependencies)');
+    log('  2. cd ..                          (return to project root)');
+    log('  3. npx poem-os start              (start the server)');
+    log('  4. In Claude Code: /poem/agents/prompt-engineer');
+
+    if (dependencyError) {
+      log('\n⚠️  Dependencies were not installed automatically.');
+      log('   Complete step 1 manually before starting the server.');
+    }
+  } else {
+    // App not installed or core-only install
+    log('  1. cd .poem-app && npm install');
+    log('  2. npm run dev');
+    log('  3. In Claude Code: /poem/agents/prompt-engineer');
+  }
 
   log(`\nVersion: ${VERSION}`);
   log(`Location: ${targetDir}\n`);
@@ -543,6 +615,32 @@ async function handleInstall(flags) {
     if (shouldInstallApp) {
       await installApp(targetDir);
       results.installedApp = true;
+
+      // Install dependencies automatically unless --skip-deps flag is set
+      if (!flags['skip-deps']) {
+        try {
+          await installDependencies(targetDir);
+          results.installedDependencies = true;
+        } catch (error) {
+          log('\n⚠️  Warning: Failed to install dependencies automatically');
+          log(`   Error: ${error.message}\n`);
+          log('   This usually means:');
+          log('   • No internet connection (air-gapped environment)');
+          log('   • npm registry is unreachable');
+          log('   • Firewall or proxy blocking npm\n');
+          log('   To complete installation manually:');
+          log('   1. cd .poem-app');
+          log('   2. npm install');
+          log('   3. cd ..\n');
+          log('   Alternatively, re-run with: npx poem-os install --skip-deps\n');
+          results.installedDependencies = false;
+          results.dependencyError = error.message;
+        }
+      } else {
+        log('   ⊘ Skipping dependency installation (--skip-deps)');
+        results.installedDependencies = false;
+        results.skippedDependencies = true;
+      }
     }
 
     if (shouldInstallCommands) {
@@ -579,6 +677,13 @@ async function handleStart(flags) {
   if (!existsSync('.poem-app')) {
     console.error('\n❌ POEM is not installed in this directory.');
     console.error('   Run: npx poem-os install\n');
+    process.exit(1);
+  }
+
+  // Validate dependencies are installed
+  if (!existsSync('.poem-app/node_modules')) {
+    console.error('\n❌ POEM dependencies not installed.');
+    console.error('   Run: cd .poem-app && npm install && cd ..\n');
     process.exit(1);
   }
 
