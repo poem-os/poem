@@ -191,6 +191,39 @@ POEM is a **Framework/Operating System** (like BMAD), not a traditional web appl
 
 ## Epic List
 
+### Epic 0: Maintenance & Continuous Improvement
+
+**Status**: 🔄 Perpetual (Never Completes)
+
+Ongoing maintenance, bug fixes, technical debt, developer experience improvements, performance optimizations, security patches, infrastructure updates, and documentation refinements that emerge during and after feature development.
+
+**Purpose**: Epic 0 provides a structured home for all non-feature work that keeps POEM healthy, performant, and maintainable. Unlike feature epics (1-7) which have defined completion criteria, Epic 0 is perpetual—it absorbs maintenance work throughout the project lifecycle and continues indefinitely as long as POEM is actively maintained.
+
+**Categories**:
+- **Technical Debt**: Refactoring, code quality improvements, architectural cleanup
+- **Bug Fix**: Production bugs, edge cases, error handling improvements
+- **Developer Experience**: Build tooling, testing infrastructure, local development workflow
+- **Performance**: Optimization of template rendering, server startup, API response times
+- **Security**: Vulnerability patches, dependency updates, security audits
+- **Infrastructure**: CI/CD improvements, deployment automation, monitoring
+- **Documentation**: README updates, inline comments, troubleshooting guides
+
+**Sprint Allocation**: 10-20% of each sprint reserved for Epic 0 work (e.g., 1-2 stories per 2-week sprint alongside 5-8 feature stories)
+
+**Priority System**:
+- **P0 (Critical)**: Production blockers, security vulnerabilities, data loss risks—must be addressed immediately
+- **P1 (High)**: Significant bugs affecting core workflows, major performance issues, critical technical debt—should be addressed within 1-2 sprints
+- **P2 (Medium)**: Minor bugs, small optimizations, low-impact technical debt—can be scheduled opportunistically
+
+**Key Principles**:
+- Epic 0 stories use lighter ceremony than feature stories (shorter descriptions, focused acceptance criteria)
+- Each story clearly identifies category (e.g., "Bug Fix: Template rendering fails for empty arrays")
+- Priority assigned based on impact and urgency, not arbitrary scheduling
+- Epic 0 work is planned alongside feature work, not as an afterthought
+- Team reviews Epic 0 backlog weekly to assess priorities and allocate capacity
+
+---
+
 ### Epic 1: Foundation & Monorepo Setup
 
 Establish project infrastructure with monorepo structure, NPX installer, and basic `.poem-core/` + `.poem-app/` scaffolding that copies to user projects.
@@ -378,6 +411,23 @@ so that I can avoid port conflicts across multiple POEM instances without manual
 8. Debug CLI command: `npx poem-os registry --clean` removes entries for missing installations
 9. Registry operations are silent and automatic (no user interaction required for normal operations)
 10. Documentation updated: README.md, CLAUDE.md, docs/architecture.md, packages/poem-app/astro.config.mjs
+
+---
+
+#### Story 1.9: Installation Preservation System
+
+As a POEM user,
+I want a preservation system that protects my user files during reinstallation,
+so that I can safely run `npx poem-os install` to get the latest POEM version without losing my custom workflows and data.
+
+**Acceptance Criteria**:
+
+1. During installation, create `.poem-preserve` file in project root with default preservation rules (`poem/`, `dev-workspace/`)
+2. When reinstalling, read preservation rules and identify files to update vs preserve; user workflows detected by "not in framework workflow list"
+3. Before overwriting, display installation summary with file counts and prompt for confirmation: "This will overwrite X files. Continue? [y/N]"
+4. Extend installation registry to track POEM version (`poemVersion` field read from `package.json`)
+5. If framework files were modified by user (hash mismatch), warn during summary: "⚠ X files were modified and will be overwritten"
+6. Update `README.md` with `.poem-preserve` explanation and examples
 
 ---
 

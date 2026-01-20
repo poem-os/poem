@@ -1,5 +1,38 @@
 # Epic List
 
+## Epic 0: Maintenance & Continuous Improvement
+
+**Status**: 🔄 Perpetual (Never Completes)
+
+Ongoing maintenance, bug fixes, technical debt, developer experience improvements, performance optimizations, security patches, infrastructure updates, and documentation refinements that emerge during and after feature development.
+
+**Purpose**: Epic 0 provides a structured home for all non-feature work that keeps POEM healthy, performant, and maintainable. Unlike feature epics (1-7) which have defined completion criteria, Epic 0 is perpetual—it absorbs maintenance work throughout the project lifecycle and continues indefinitely as long as POEM is actively maintained.
+
+**Categories**:
+- **Technical Debt**: Refactoring, code quality improvements, architectural cleanup
+- **Bug Fix**: Production bugs, edge cases, error handling improvements
+- **Developer Experience**: Build tooling, testing infrastructure, local development workflow
+- **Performance**: Optimization of template rendering, server startup, API response times
+- **Security**: Vulnerability patches, dependency updates, security audits
+- **Infrastructure**: CI/CD improvements, deployment automation, monitoring
+- **Documentation**: README updates, inline comments, troubleshooting guides
+
+**Sprint Allocation**: 10-20% of each sprint reserved for Epic 0 work (e.g., 1-2 stories per 2-week sprint alongside 5-8 feature stories)
+
+**Priority System**:
+- **P0 (Critical)**: Production blockers, security vulnerabilities, data loss risks—must be addressed immediately
+- **P1 (High)**: Significant bugs affecting core workflows, major performance issues, critical technical debt—should be addressed within 1-2 sprints
+- **P2 (Medium)**: Minor bugs, small optimizations, low-impact technical debt—can be scheduled opportunistically
+
+**Key Principles**:
+- Epic 0 stories use lighter ceremony than feature stories (shorter descriptions, focused acceptance criteria)
+- Each story clearly identifies category (e.g., "Bug Fix: Template rendering fails for empty arrays")
+- Priority assigned based on impact and urgency, not arbitrary scheduling
+- Epic 0 work is planned alongside feature work, not as an afterthought
+- Team reviews Epic 0 backlog weekly to assess priorities and allocate capacity
+
+---
+
 ## Epic 1: Foundation & Monorepo Setup
 
 Establish project infrastructure with monorepo structure, NPX installer, and basic `.poem-core/` + `.poem-app/` scaffolding that copies to user projects.
