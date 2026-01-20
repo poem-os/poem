@@ -724,9 +724,12 @@ async function analyzeInstallation(
   const { parsePreservationFile, isPreserved, isUserWorkflow } = await import('./preservation.js');
   const { readRegistry } = await import('./utils.js');
 
-  const filesToUpdate = [];
-  const filesPreserved = [];
-  const foldersPreserved = new Set();
+  // Track files by category for detailed reporting
+  const coreFilesToUpdate = [];
+  const appFilesToUpdate = [];
+  const preservedWorkspace = new Set();
+  const preservedConfig = [];
+  const preservedCustomWorkflows = [];
   const modifiedFiles = [];
 
   // Get registry for hash comparison
@@ -746,21 +749,18 @@ async function analyzeInstallation(
 
         // Check if preserved by rules
         if (isPreserved(targetPath, preservationRules)) {
-          filesPreserved.push(targetPath);
-          // Extract folder name for reporting
-          const folder = targetPath.split(path.sep)[0] + '/';
-          foldersPreserved.add(folder);
+          // Don't track individual files in preserved folders
           continue;
         }
 
         // Check if user workflow
         if (isUserWorkflow(targetPath)) {
-          filesPreserved.push(targetPath);
+          preservedCustomWorkflows.push(targetPath);
           continue;
         }
 
         // File will be updated
-        filesToUpdate.push(targetPath);
+        coreFilesToUpdate.push(targetPath);
 
         // Check if file was modified (hash mismatch)
         const targetFullPath = path.join(targetDir, targetPath);
@@ -783,22 +783,42 @@ async function analyzeInstallation(
 
         // Check if preserved by rules
         if (isPreserved(targetPath, preservationRules)) {
-          filesPreserved.push(targetPath);
-          const folder = targetPath.split(path.sep)[0] + '/';
-          foldersPreserved.add(folder);
+          // Track .env specifically as config
+          if (targetPath === '.poem-app/.env') {
+            preservedConfig.push('.poem-app/.env');
+          }
           continue;
         }
 
         // File will be updated
-        filesToUpdate.push(targetPath);
+        appFilesToUpdate.push(targetPath);
       }
     }
   }
 
+  // Check for preserved workspace folders
+  if (preservationRules.includes('poem/')) {
+    preservedWorkspace.add('poem/');
+  }
+  if (preservationRules.includes('dev-workspace/')) {
+    preservedWorkspace.add('dev-workspace/');
+  }
+
   return {
-    filesToUpdate,
-    filesPreserved,
-    foldersPreserved: Array.from(foldersPreserved),
+    // Categorized updates
+    coreFilesToUpdate,
+    appFilesToUpdate,
+    totalFilesToUpdate: coreFilesToUpdate.length + appFilesToUpdate.length,
+
+    // Categorized preserved items
+    preservedWorkspace: Array.from(preservedWorkspace),
+    preservedConfig,
+    preservedCustomWorkflows,
+
+    // Legacy fields for compatibility
+    filesToUpdate: [...coreFilesToUpdate, ...appFilesToUpdate],
+    filesPreserved: [...preservedConfig, ...preservedCustomWorkflows],
+    foldersPreserved: Array.from(preservedWorkspace),
     modifiedFiles,
   };
 }
@@ -809,35 +829,71 @@ async function analyzeInstallation(
  * @returns {Promise<boolean>} - True if user confirms, false if cancels
  */
 async function promptInstallationConfirmation(analysis) {
-  const { filesToUpdate, filesPreserved, foldersPreserved, modifiedFiles } = analysis;
+  const {
+    coreFilesToUpdate,
+    appFilesToUpdate,
+    totalFilesToUpdate,
+    preservedWorkspace,
+    preservedConfig,
+    preservedCustomWorkflows,
+    modifiedFiles,
+  } = analysis;
 
   log('\n' + '─'.repeat(50));
   log('POEM Installation Summary:');
   log('─'.repeat(50));
-  log(`  Files to update: ${filesToUpdate.length} (framework files)`);
-  log(`  Files preserved: ${filesPreserved.length} (user content)`);
 
-  if (foldersPreserved.length > 0) {
-    log(`  Folders preserved: ${foldersPreserved.join(', ')}`);
+  // Updates section
+  log('Updates:');
+  if (coreFilesToUpdate.length > 0) {
+    log(`  .poem-core/    ${coreFilesToUpdate.length} files (framework)`);
+  }
+  if (appFilesToUpdate.length > 0) {
+    log(`  .poem-app/     ${appFilesToUpdate.length} files (runtime)`);
   }
 
-  // Show modified files warning if any
-  if (modifiedFiles.length > 0) {
-    log(`\n  ⚠️  ${modifiedFiles.length} file(s) were modified and will be overwritten:`);
-    const toShow = modifiedFiles.slice(0, 10);
-    for (const file of toShow) {
-      log(`      - ${file}`);
+  // Preserved section - only show if there are preserved items
+  const hasPreservedItems =
+    preservedWorkspace.length > 0 ||
+    preservedConfig.length > 0 ||
+    preservedCustomWorkflows.length > 0;
+
+  if (hasPreservedItems) {
+    log('  ');
+    log('Preserved:');
+
+    // Show workspace folders
+    for (const workspace of preservedWorkspace) {
+      log(`  ✓ ${workspace} (workspace)`);
     }
-    if (modifiedFiles.length > 10) {
-      log(`      ...and ${modifiedFiles.length - 10} more`);
+
+    // Show config files
+    for (const config of preservedConfig) {
+      log(`  ✓ ${config} (configuration)`);
+    }
+
+    // Show custom workflows
+    if (preservedCustomWorkflows.length > 0) {
+      log(`  ✓ ${preservedCustomWorkflows.length} custom workflows`);
     }
   }
 
   log('─'.repeat(50));
 
-  const answer = await prompt(
-    `\nThis will overwrite ${filesToUpdate.length} file(s). Continue? [y/N]: `
-  );
+  // Show modified files warning if any
+  if (modifiedFiles.length > 0) {
+    log(`\n⚠️  ${modifiedFiles.length} file(s) were modified and will be overwritten:`);
+    const toShow = modifiedFiles.slice(0, 10);
+    for (const file of toShow) {
+      log(`    - ${file}`);
+    }
+    if (modifiedFiles.length > 10) {
+      log(`    ...and ${modifiedFiles.length - 10} more`);
+    }
+    log('');
+  }
+
+  const answer = await prompt(`\nContinue? [y/N]: `);
 
   return answer === 'y' || answer === 'yes';
 }
