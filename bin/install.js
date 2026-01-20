@@ -67,6 +67,8 @@ function parseArgs() {
   // Parse --port flag (supports both --port=XXXX and --port XXXX)
   let port = null;
   let list = false;
+  let health = false;
+  let cleanup = false;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -83,6 +85,14 @@ function parseArgs() {
     else if (arg === '--list') {
       list = true;
     }
+    // Handle --health flag
+    else if (arg === '--health') {
+      health = true;
+    }
+    // Handle --cleanup flag
+    else if (arg === '--cleanup') {
+      cleanup = true;
+    }
   }
 
   return {
@@ -96,6 +106,8 @@ function parseArgs() {
       help: args.includes('--help') || args.includes('-h'),
       port,
       list,
+      health,
+      cleanup,
     },
   };
 }
@@ -112,6 +124,7 @@ Commands:
   install     Install POEM into the current directory
   start       Start the POEM server
   config      Configure POEM settings
+  registry    Manage POEM installations registry
 
 Install Options:
   --core      Install only .poem-core/ (framework documents)
@@ -128,13 +141,21 @@ Config Options:
   --list      Show current configuration
   --port XXXX Set server port permanently
 
+Registry Options:
+  --list      Show all POEM installations
+  --health    Check installation health and update registry
+  --cleanup   Remove missing installations from registry
+
 Examples:
-  npx poem-os install              # Full installation
-  npx poem-os install --core       # Install framework only
-  npx poem-os start                # Start server on configured port
-  npx poem-os start --port=3000    # Start on port 3000
-  npx poem-os config --list        # View configuration
-  npx poem-os config --port 8080   # Set port to 8080
+  npx poem-os install                # Full installation
+  npx poem-os install --core         # Install framework only
+  npx poem-os start                  # Start server on configured port
+  npx poem-os start --port=3000      # Start on port 3000
+  npx poem-os config --list          # View configuration
+  npx poem-os config --port 8080     # Set port to 8080
+  npx poem-os registry --list        # List all installations
+  npx poem-os registry --health      # Check installation health
+  npx poem-os registry --cleanup     # Clean up missing installations
 `);
 }
 
@@ -389,30 +410,92 @@ async function installCommands(targetDir) {
 // Port Configuration
 // ============================================================================
 
-async function promptForPort(force) {
-  if (force) return 4321; // Skip prompt with --force
+async function promptForPort(force, targetDir = null) {
+  const { checkPortConflict, suggestAvailablePorts } = await import('./utils.js');
+
+  // Helper function to check and validate port
+  async function validatePortWithConflictCheck(port) {
+    // First validate port range
+    if (isNaN(port) || port < 1024 || port > 65535) {
+      return { valid: false, error: 'invalid_range' };
+    }
+
+    // Check for conflicts (exclude current installation path)
+    const installPath = targetDir ? path.resolve(targetDir) : null;
+    const { conflict, installation } = await checkPortConflict(port, installPath);
+
+    if (conflict) {
+      return { valid: false, error: 'conflict', installation };
+    }
+
+    return { valid: true };
+  }
+
+  if (force) {
+    // In force mode, still check for conflicts but use first available port
+    const { conflict } = await checkPortConflict(9500, targetDir ? path.resolve(targetDir) : null);
+    if (conflict) {
+      const suggestions = await suggestAvailablePorts(9500, 1);
+      return suggestions[0];
+    }
+    return 9500;
+  }
 
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
-  return new Promise((resolve) => {
-    rl.question('\n? What port should POEM run on? (default: 4321): ', (answer) => {
-      rl.close();
-      if (!answer.trim()) {
-        resolve(4321);
-        return;
-      }
+  return new Promise(async (resolve) => {
+    // First, check if default port is available
+    const defaultPort = 9500;
+    const defaultCheck = await validatePortWithConflictCheck(defaultPort);
 
-      const port = parseInt(answer, 10);
-      if (isNaN(port) || port < 1024 || port > 65535) {
-        console.error('⚠️  Invalid port. Using default: 4321');
-        resolve(4321);
-      } else {
-        resolve(port);
-      }
-    });
+    if (!defaultCheck.valid && defaultCheck.error === 'conflict') {
+      // Default port has conflict, show suggestions
+      const suggestions = await suggestAvailablePorts(9500, 3);
+      log(`\n⚠️  Port ${defaultPort} is already allocated to:`);
+      log(`   [${defaultCheck.installation.id}] ${defaultCheck.installation.path}`);
+      log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
+    }
+
+    const askForPort = () => {
+      rl.question('\n? What port should POEM run on? (default: 9500): ', async (answer) => {
+        if (!answer.trim()) {
+          // User pressed enter, use default or first suggestion
+          if (!defaultCheck.valid && defaultCheck.error === 'conflict') {
+            const suggestions = await suggestAvailablePorts(9500, 1);
+            rl.close();
+            resolve(suggestions[0]);
+          } else {
+            rl.close();
+            resolve(9500);
+          }
+          return;
+        }
+
+        const port = parseInt(answer, 10);
+        const validation = await validatePortWithConflictCheck(port);
+
+        if (!validation.valid) {
+          if (validation.error === 'invalid_range') {
+            console.error('⚠️  Invalid port. Port must be between 1024 and 65535.');
+            askForPort(); // Ask again
+          } else if (validation.error === 'conflict') {
+            const suggestions = await suggestAvailablePorts(9500, 3);
+            console.error(`\n⚠️  Port ${port} is already allocated to:`);
+            console.error(`   [${validation.installation.id}] ${validation.installation.path}`);
+            console.log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
+            askForPort(); // Ask again
+          }
+        } else {
+          rl.close();
+          resolve(port);
+        }
+      });
+    };
+
+    askForPort();
   });
 }
 
@@ -442,6 +525,87 @@ async function configurePort(targetDir, port) {
 
   await fs.writeFile(envFile, newLines.join('\n'), 'utf-8');
   logVerbose(`Configured PORT=${port} in .poem-app/.env`);
+}
+
+async function registerInstallation(targetDir, port) {
+  const {
+    readRegistry,
+    writeRegistry,
+    generateInstallationId,
+    getGitBranch
+  } = await import('./utils.js');
+
+  // Read current registry
+  const registry = await readRegistry();
+
+  // Generate installation record
+  const installPath = path.resolve(targetDir);
+  const id = generateInstallationId(installPath);
+  const gitBranch = await getGitBranch(installPath);
+
+  // Determine mode from .env
+  const envFile = path.join(targetDir, '.poem-app', '.env');
+  let mode = 'production';
+  try {
+    const content = await fs.readFile(envFile, 'utf-8');
+    if (content.includes('POEM_DEV=true')) {
+      mode = 'development';
+    }
+  } catch {
+    // .env doesn't exist yet or can't be read
+  }
+
+  // Check if installation already exists
+  const existingIndex = registry.installations.findIndex(
+    install => install.path === installPath
+  );
+
+  const now = new Date().toISOString();
+
+  if (existingIndex >= 0) {
+    // Update existing installation (preserve installedAt)
+    const existing = registry.installations[existingIndex];
+    registry.installations[existingIndex] = {
+      ...existing,
+      id,
+      port,
+      lastChecked: now,
+      version: VERSION,
+      mode,
+      gitBranch,
+      status: 'active',
+      metadata: {
+        lastServerRun: existing.metadata?.lastServerRun || null,
+        workflowCount: existing.metadata?.workflowCount || 0,
+        promptCount: existing.metadata?.promptCount || 0
+      }
+    };
+  } else {
+    // Create new installation
+    const installation = {
+      id,
+      path: installPath,
+      port,
+      installedAt: now,
+      lastChecked: now,
+      version: VERSION,
+      mode,
+      currentWorkflow: null,
+      gitBranch,
+      status: 'active',
+      metadata: {
+        lastServerRun: null,
+        workflowCount: 0,
+        promptCount: 0
+      }
+    };
+    registry.installations.push(installation);
+  }
+
+  // Write registry
+  await writeRegistry(registry);
+
+  log(`   ✓ Registered in ~/.poem/registry.json`);
 }
 
 async function installDependencies(targetDir) {
@@ -655,9 +819,12 @@ async function handleInstall(flags) {
 
     // Configure port if installing the app
     if (shouldInstallApp) {
-      const port = await promptForPort(flags.force);
+      const port = await promptForPort(flags.force, targetDir);
       await configurePort(targetDir, port);
       log(`   ✓ Configured server port: ${port}`);
+
+      // Register installation in ~/.poem/registry.json
+      await registerInstallation(targetDir, port);
     }
 
     // Calculate elapsed time
@@ -780,10 +947,25 @@ async function handleConfig(flags) {
 
   // Handle --port flag
   if (flags.port) {
+    const { checkPortConflict, suggestAvailablePorts } = await import('./utils.js');
+
     const portNum = parseInt(flags.port, 10);
     if (isNaN(portNum) || portNum < 1024 || portNum > 65535) {
       console.error(`\n❌ Invalid port: ${flags.port}`);
       console.error('   Port must be between 1024 and 65535.\n');
+      process.exit(1);
+    }
+
+    // Check for port conflicts (exclude current installation)
+    const targetDir = process.cwd();
+    const { conflict, installation } = await checkPortConflict(portNum, path.resolve(targetDir));
+
+    if (conflict) {
+      const suggestions = await suggestAvailablePorts(9500, 3);
+      console.error(`\n⚠️  Port ${portNum} is already allocated to:`);
+      console.error(`   [${installation.id}] ${installation.path}`);
+      console.log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
+      console.log('   Override with: npx poem-os config --port XXXX\n');
       process.exit(1);
     }
 
@@ -812,6 +994,9 @@ async function handleConfig(flags) {
     const lines = Object.entries(config).map(([key, value]) => `${key}=${value}`);
     await fs.writeFile(envFile, lines.join('\n') + '\n', 'utf-8');
 
+    // Update registry with new port
+    await registerInstallation(targetDir, portNum);
+
     log(`\n✅ Port updated to ${portNum}`);
     log('   Restart POEM for changes to take effect:');
     log('   npx poem-os start\n');
@@ -821,6 +1006,139 @@ async function handleConfig(flags) {
   // No valid flags provided
   console.error('\n❌ Invalid usage.');
   console.error('   Usage: npx poem-os config --list | --port XXXX\n');
+  process.exit(1);
+}
+
+async function handleRegistry(flags) {
+  const { readRegistry, writeRegistry, generateInstallationId, getGitBranch } = await import('./utils.js');
+
+  // Handle --list flag (show all installations)
+  if (flags.list) {
+    const registry = await readRegistry();
+
+    log('\n📋 POEM Installation Registry\n');
+    log(`Registry version: ${registry.version}`);
+    log(`Location: ~/.poem/registry.json`);
+    log(`Total installations: ${registry.installations.length}\n`);
+
+    if (registry.installations.length === 0) {
+      log('No installations found.\n');
+      process.exit(0);
+    }
+
+    // Sort by status (active first) then by lastChecked
+    const sorted = [...registry.installations].sort((a, b) => {
+      if (a.status === 'active' && b.status !== 'active') return -1;
+      if (a.status !== 'active' && b.status === 'active') return 1;
+      return b.lastChecked.localeCompare(a.lastChecked);
+    });
+
+    for (const install of sorted) {
+      const statusIcon = {
+        active: '✓',
+        inactive: '○',
+        stale: '⚠',
+        missing: '✗'
+      }[install.status] || '?';
+
+      log(`${statusIcon} [${install.id}] ${install.status.toUpperCase()}`);
+      log(`  Path: ${install.path}`);
+      log(`  Port: ${install.port !== null ? install.port : 'not configured'}`);
+      log(`  Version: ${install.version}`);
+      log(`  Mode: ${install.mode}`);
+      if (install.gitBranch) {
+        log(`  Branch: ${install.gitBranch}`);
+      }
+      log(`  Installed: ${new Date(install.installedAt).toLocaleString()}`);
+      log(`  Last checked: ${new Date(install.lastChecked).toLocaleString()}`);
+      log('');
+    }
+
+    process.exit(0);
+  }
+
+  // Handle --health flag (check and update installation status)
+  if (flags.health) {
+    const registry = await readRegistry();
+
+    log('\n🏥 Checking installation health...\n');
+
+    let updated = false;
+    for (const install of registry.installations) {
+      // Check if installation directory exists
+      const poemAppDir = path.join(install.path, '.poem-app');
+      const exists = existsSync(poemAppDir);
+
+      // Check git branch (may have changed)
+      const gitBranch = await getGitBranch(install.path);
+
+      let newStatus = install.status;
+      if (!exists) {
+        newStatus = 'missing';
+      } else if (install.status === 'missing') {
+        newStatus = 'active'; // Directory exists again
+      }
+
+      // Update if status or branch changed
+      if (newStatus !== install.status || gitBranch !== install.gitBranch) {
+        install.status = newStatus;
+        install.gitBranch = gitBranch;
+        install.lastChecked = new Date().toISOString();
+        updated = true;
+
+        const statusIcon = {
+          active: '✓',
+          inactive: '○',
+          stale: '⚠',
+          missing: '✗'
+        }[newStatus] || '?';
+
+        log(`${statusIcon} [${install.id}] ${newStatus.toUpperCase()}`);
+        log(`  Path: ${install.path}`);
+        log('');
+      }
+    }
+
+    if (updated) {
+      await writeRegistry(registry);
+      log('✅ Registry updated\n');
+    } else {
+      log('✅ All installations are up to date\n');
+    }
+
+    process.exit(0);
+  }
+
+  // Handle --cleanup flag (remove stale/missing installations)
+  if (flags.cleanup) {
+    const registry = await readRegistry();
+
+    log('\n🧹 Cleaning up registry...\n');
+
+    const before = registry.installations.length;
+    registry.installations = registry.installations.filter(install => {
+      if (install.status === 'missing') {
+        log(`✗ Removing [${install.id}] ${install.path} (missing)`);
+        return false;
+      }
+      return true;
+    });
+
+    const removed = before - registry.installations.length;
+
+    if (removed > 0) {
+      await writeRegistry(registry);
+      log(`\n✅ Removed ${removed} installation(s)\n`);
+    } else {
+      log('✅ No installations to remove\n');
+    }
+
+    process.exit(0);
+  }
+
+  // No valid flags provided
+  console.error('\n❌ Invalid usage.');
+  console.error('   Usage: npx poem-os registry --list | --health | --cleanup\n');
   process.exit(1);
 }
 
@@ -855,6 +1173,9 @@ async function main() {
       break;
     case 'config':
       await handleConfig(flags);
+      break;
+    case 'registry':
+      await handleRegistry(flags);
       break;
     default:
       console.error(`\n❌ Unknown command: ${cmd}`);

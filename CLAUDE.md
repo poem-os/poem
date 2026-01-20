@@ -580,7 +580,7 @@ POEM uses a hybrid path resolution approach:
 ```bash
 cd packages/poem-app
 npm run dev
-# Server starts at http://localhost:4321
+# Server starts at http://localhost:9500
 ```
 
 ### Testing POEM Agents

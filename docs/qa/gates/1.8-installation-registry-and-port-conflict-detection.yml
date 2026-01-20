@@ -1,0 +1,369 @@
+---
+# Quality Gate: Installation Registry and Port Conflict Detection
+# Story: docs/stories/1.8.story.md
+# Reviewer: Quinn (Test Architect)
+# Date: 2026-01-20
+
+story: "1.8 Installation Registry and Port Conflict Detection"
+status: CONCERNS
+overall_score: 7.8/10
+
+decision:
+  rationale: |
+    Core functionality is well-implemented with solid test coverage for registry operations.
+    However, missing test coverage for 2 critical acceptance criteria (config port conflict
+    and CLI commands) and incomplete documentation prevent a PASS decision.
+
+    The implementation demonstrates good code quality, appropriate error handling, and
+    reasonable architectural decisions. Minor reliability concerns (race conditions) are
+    acceptable for v0.1.0.
+
+    Recommended actions before merge:
+    1. Add integration tests for config port conflict detection (AC2)
+    2. Add integration tests for registry CLI commands (AC10)
+    3. Complete documentation for registry commands in README (Task 7)
+
+# ==============================================================================
+# Requirements Coverage Analysis
+# ==============================================================================
+
+requirements:
+  acceptance_criteria:
+    total: 11
+    covered: 9
+    coverage_percentage: 82%
+
+    covered_criteria:
+      - id: AC1
+        description: "Port conflict detection during install"
+        implementation: bin/install.js:413-500 (promptForPort)
+        tests: tests/bin/install.test.ts:279 (should detect port conflicts correctly)
+        status: PASS
+
+      - id: AC3
+        description: "Port suggestion algorithm (increments of 10)"
+        implementation: bin/utils.js:288-302 (suggestAvailablePorts)
+        tests: tests/bin/install.test.ts:357 (should suggest available ports)
+        status: PASS
+
+      - id: AC4
+        description: "Registry data structure validation"
+        implementation: bin/utils.js:156-183 (readRegistry)
+        tests: tests/bin/install.test.ts:23 (should verify registry utilities)
+        status: PASS
+
+      - id: AC5
+        description: "Preserve installedAt timestamp on update"
+        implementation: bin/install.js:558-582 (registerInstallation update branch)
+        tests: tests/bin/install.test.ts:34 (should preserve installedAt timestamp)
+        status: PASS
+
+      - id: AC6
+        description: "Development mode detection from .env"
+        implementation: bin/install.js:547-556 (mode detection)
+        tests: tests/bin/install.test.ts:86 (should detect development mode)
+        status: PASS
+
+      - id: AC7
+        description: "Installation ID generation"
+        implementation: bin/utils.js:211-235 (generateInstallationId)
+        tests: tests/bin/install.test.ts:100 (should generate installation ID)
+        status: PASS
+
+      - id: AC8
+        description: "Git branch detection"
+        implementation: bin/utils.js:243-254 (getGitBranch)
+        tests: tests/bin/install.test.ts:116 (should get git branch)
+        status: PASS
+
+      - id: AC9
+        description: "Graceful handling of corrupted registry"
+        implementation: bin/utils.js:156-183 (readRegistry error handling)
+        tests: tests/bin/install.test.ts:204 (should handle corrupted registry)
+        status: PASS
+
+      - id: AC11
+        description: "Documentation updates"
+        implementation: README.md (default port documented)
+        tests: Manual verification via SAT
+        status: PARTIAL (registry commands not documented)
+
+    missing_coverage:
+      - id: AC2
+        description: "Port conflict detection during config change"
+        implementation: bin/install.js:949-970 (handleConfig)
+        tests: MISSING
+        severity: MEDIUM
+        impact: "Config port changes could conflict without user awareness"
+        recommendation: "Add integration test for `npx poem-os config --port` conflict detection"
+
+      - id: AC10
+        description: "CLI commands (--list, --health, --cleanup)"
+        implementation: bin/install.js:1012-1143 (handleRegistry)
+        tests: MISSING
+        severity: MEDIUM
+        impact: "Registry management commands untested"
+        recommendation: "Add integration tests for all registry subcommands"
+
+# ==============================================================================
+# Code Quality Assessment
+# ==============================================================================
+
+code_quality:
+  overall_score: 9/10
+
+  strengths:
+    - "Well-structured port conflict detection with clear error messages"
+    - "Registry operations properly separated in utils.js"
+    - "Good error handling for edge cases (corruption, missing files)"
+    - "Appropriate use of async/await patterns"
+    - "Clear function naming and reasonable sizes"
+    - "JSDoc comments on utility functions"
+
+  areas_for_improvement:
+    - severity: LOW
+      issue: "Nested promise/async in promptForPort (line 449)"
+      location: bin/install.js:449
+      suggestion: "Refactor to avoid async callback inside Promise constructor"
+
+    - severity: LOW
+      issue: "Port conflict check could have race condition"
+      location: bin/utils.js:262-280
+      suggestion: "Consider file locking for concurrent installs (future enhancement)"
+
+# ==============================================================================
+# Test Architecture Review
+# ==============================================================================
+
+test_architecture:
+  overall_score: 7/10
+
+  test_coverage:
+    total_tests: 13
+    unit_tests: 13
+    integration_tests: 0
+
+  strengths:
+    - "Comprehensive unit tests for registry utilities"
+    - "Good edge case coverage (corruption, missing files, empty registry)"
+    - "Proper test isolation with beforeEach/afterEach cleanup"
+    - "Tests backup and restore actual registry (safe for system)"
+
+  gaps:
+    - "No integration tests for CLI commands"
+    - "No integration tests for port conflict detection during config"
+    - "No end-to-end tests for full install workflow"
+
+  recommendations:
+    - priority: HIGH
+      action: "Add integration tests for config command port conflict detection"
+      rationale: "AC2 is critical for preventing user errors"
+
+    - priority: HIGH
+      action: "Add integration tests for registry commands (--list, --health, --cleanup)"
+      rationale: "AC10 covers user-facing CLI features"
+
+    - priority: MEDIUM
+      action: "Consider E2E tests for full install flow"
+      rationale: "Would catch integration issues between components"
+
+# ==============================================================================
+# NFR Validation
+# ==============================================================================
+
+non_functional_requirements:
+  security:
+    status: PASS
+    assessment: |
+      - Registry stored at ~/.poem/ is appropriate location
+      - Port validation prevents invalid values
+      - No sensitive data or authentication concerns
+      - No security vulnerabilities identified
+
+  performance:
+    status: PASS
+    assessment: |
+      - Registry operations are not performance-critical
+      - Port conflict check is O(n) where n = installations (acceptable)
+      - Port suggestion algorithm is efficient (single pass)
+      - No performance bottlenecks identified
+
+  reliability:
+    status: CONCERNS
+    assessment: |
+      - Good error handling for corrupted data and missing files
+      - Graceful degradation when git is unavailable
+      - Minor concern: Race condition possible with concurrent installs
+      - Minor concern: No registry file locking mechanism
+      - Acceptable for v0.1.0, should address in future versions
+
+  maintainability:
+    status: PASS
+    assessment: |
+      - Clear function names and logical structure
+      - Good separation of concerns (utils.js for registry logic)
+      - JSDoc comments on utility functions
+      - Reasonable function sizes and complexity
+      - Easy to understand and modify
+
+  cross_platform_compatibility:
+    status: PASS
+    assessment: |
+      - Uses os.homedir() for registry path (cross-platform)
+      - Uses path.join() throughout (cross-platform)
+      - No platform-specific code in registry logic
+      - Should work on Windows, macOS, and Linux
+
+# ==============================================================================
+# Standards Compliance
+# ==============================================================================
+
+standards_compliance:
+  overall_score: 9/10
+
+  coding_standards:
+    - standard: "ESM imports"
+      status: PASS
+      notes: "Correct use of import statements throughout"
+
+    - standard: "Error handling patterns"
+      status: PASS
+      notes: "Consistent try-catch blocks with appropriate error messages"
+
+    - standard: "Async/await usage"
+      status: PASS
+      notes: "Appropriate use of async/await, minimal promise nesting"
+
+    - standard: "Code documentation"
+      status: PASS
+      notes: "JSDoc comments on utility functions"
+
+    - standard: "Test coverage"
+      status: CONCERNS
+      notes: "82% AC coverage (9/11), missing CLI integration tests"
+
+# ==============================================================================
+# Task Completion Analysis
+# ==============================================================================
+
+task_completion:
+  total_tasks: 8
+  completed: 6
+  incomplete: 2
+
+  completed_tasks:
+    - "Task 1: Define registry data structure"
+    - "Task 2: Implement registry read/write utilities"
+    - "Task 3: Port conflict detection"
+    - "Task 4: Update install command"
+    - "Task 5: Update config command"
+    - "Task 6: Implement registry CLI commands"
+
+  incomplete_tasks:
+    - id: "Task 7"
+      title: "Update documentation"
+      status: INCOMPLETE
+      issue: "Default port documented (9500) but registry commands NOT documented"
+      evidence: "README.md mentions port 9500, but no registry command examples"
+      recommendation: "Add registry command documentation to README.md"
+
+    - id: "Task 8"
+      title: "Add additional tests"
+      status: COMPLETE
+      notes: "Edge case tests exist (corruption, missing file, empty registry)"
+
+# ==============================================================================
+# Issues Summary
+# ==============================================================================
+
+issues:
+  critical: []
+
+  medium:
+    - issue: "AC2 (port conflict during config) has no test coverage"
+      impact: "Config port changes could conflict without user awareness"
+      recommendation: "Add integration test for config port conflict detection"
+
+    - issue: "AC10 (CLI commands) has no test coverage"
+      impact: "Registry management commands are untested"
+      recommendation: "Add integration tests for --list, --health, --cleanup"
+
+    - issue: "Task 7 incomplete - registry commands not documented"
+      impact: "Users won't know about registry CLI features"
+      recommendation: "Add registry command examples to README.md"
+
+  low:
+    - issue: "Potential race condition on concurrent installs"
+      impact: "Registry could corrupt with simultaneous installations"
+      recommendation: "Consider file locking in future version"
+
+    - issue: "Nested promise/async in promptForPort"
+      impact: "Minor code smell, no functional impact"
+      recommendation: "Refactor to cleaner async pattern"
+
+# ==============================================================================
+# Recommendations
+# ==============================================================================
+
+recommendations:
+  before_merge:
+    - priority: HIGH
+      action: "Add integration test for config port conflict (AC2)"
+      effort: "SHORT (1-2 hours)"
+
+    - priority: HIGH
+      action: "Add integration tests for registry CLI commands (AC10)"
+      effort: "SHORT (2-3 hours)"
+
+    - priority: HIGH
+      action: "Document registry commands in README (Task 7)"
+      effort: "QUICK (30 minutes)"
+
+  future_enhancements:
+    - priority: MEDIUM
+      action: "Implement registry file locking"
+      effort: "MEDIUM (1 day)"
+      rationale: "Prevent race conditions with concurrent installs"
+
+    - priority: LOW
+      action: "Refactor promptForPort to avoid nested async"
+      effort: "QUICK (1 hour)"
+      rationale: "Cleaner code pattern"
+
+    - priority: LOW
+      action: "Add E2E tests for full install workflow"
+      effort: "MEDIUM (2-3 days)"
+      rationale: "Catch integration issues between components"
+
+# ==============================================================================
+# Approval Status
+# ==============================================================================
+
+approval:
+  status: CONCERNS
+  summary: |
+    The implementation is solid with good code quality and comprehensive unit test coverage
+    for core registry operations. However, missing test coverage for 2 acceptance criteria
+    and incomplete documentation prevent immediate approval.
+
+    Key strengths:
+    - Well-implemented registry operations with graceful error handling
+    - Comprehensive unit tests for utility functions (9/11 ACs covered)
+    - Good architectural decisions (separation of concerns)
+    - Cross-platform compatibility
+
+    Key concerns:
+    - AC2 (config port conflict) untested
+    - AC10 (registry CLI commands) untested
+    - Task 7 incomplete (registry commands not documented)
+
+    Decision: CONCERNS with recommendation to address before merge.
+    The missing tests and documentation are HIGH priority but SHORT effort.
+
+  next_steps:
+    - "Developer: Add integration tests for AC2 and AC10"
+    - "Developer: Complete Task 7 documentation"
+    - "QA: Re-review after fixes, update gate status"
+    - "Team: Discuss if CONCERNS waived for v0.1.0 or if fixes required"
+
+---

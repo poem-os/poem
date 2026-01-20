@@ -6,7 +6,7 @@ import { poemServer } from "./src/integrations/poem-server.js";
 export default defineConfig({
   output: "server",
   server: {
-    port: parseInt(process.env.PORT || "4321", 10),
+    port: parseInt(process.env.PORT || "9500", 10),
     host: process.env.HOST || true,
   },
   integrations: [tailwind(), poemServer()],

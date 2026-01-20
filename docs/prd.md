@@ -349,7 +349,7 @@ so that I can run POEM without navigating into .poem-app/ and manage multiple PO
 
 1. `npx poem-os start` command launches POEM server from project root
 2. Startup script validates `.poem-app/` exists and shows helpful error if not
-3. During installation, users prompted for port number (default: 4321)
+3. During installation, users prompted for port number (default: 9500)
 4. Port configuration written to `.poem-app/.env`
 5. Users can override port temporarily: `npx poem-os start --port=XXXX`
 6. Users can reconfigure port permanently: `npx poem-os config --port XXXX`

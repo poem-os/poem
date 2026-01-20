@@ -70,7 +70,7 @@ Start POEM from your project root:
 npx poem-os start
 ```
 
-By default, POEM runs on port 4321. You can override this:
+By default, POEM runs on port 9500. You can override this:
 
 ```bash
 # Temporary port override (this session only)
@@ -93,6 +93,52 @@ npx poem-os config --port 8080
 
 **Port Requirements**: Port numbers must be between 1024 and 65535.
 
+### Installation Registry Management
+
+POEM maintains a registry of all installations at `~/.poem/registry.json`. This allows managing multiple POEM installations across different projects.
+
+**List all installations:**
+
+```bash
+npx poem-os registry --list
+```
+
+Shows all POEM installations on your system with details:
+- Installation ID and status (active/inactive/missing)
+- Installation path
+- Configured port
+- POEM version
+- Development/production mode
+- Git branch (if in a git repository)
+- Installation and last checked timestamps
+
+**Check installation health:**
+
+```bash
+npx poem-os registry --health
+```
+
+Scans all registered installations and updates their status:
+- Verifies installation directories exist
+- Updates git branch information
+- Marks missing installations
+- Updates last checked timestamps
+
+**Clean up missing installations:**
+
+```bash
+npx poem-os registry --cleanup
+```
+
+Removes installations from the registry that no longer exist on disk. This is useful after deleting project directories.
+
+**Port Conflict Prevention:**
+
+The registry automatically prevents port conflicts between installations:
+- During `install`: Detects if chosen port is already allocated and suggests alternatives
+- During `config --port`: Validates port is available before updating configuration
+- Suggestions use increments of 10 (e.g., 9500, 9510, 9520, 9530)
+
 ### Troubleshooting
 
 **Error: POEM is not installed**
@@ -104,21 +150,21 @@ npx poem-os install
 **Error: Port already in use**
 ```bash
 # Solution: Use a different port
-npx poem-os start --port=4322
+npx poem-os start --port=9510
 # Or permanently change it
-npx poem-os config --port 4322
+npx poem-os config --port 9510
 ```
 
 **Running multiple POEM instances**
 ```bash
 # Terminal 1 (project A)
 cd ~/projects/project-a
-npx poem-os start  # Port 4321
+npx poem-os start  # Port 9500
 
 # Terminal 2 (project B)
 cd ~/projects/project-b
-npx poem-os config --port 4322
-npx poem-os start  # Port 4322
+npx poem-os config --port 9510
+npx poem-os start  # Port 9510
 ```
 
 ## What is POEM?

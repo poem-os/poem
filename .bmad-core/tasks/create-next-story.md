@@ -112,3 +112,60 @@ ALWAYS cite source documents: `[Source: architecture/{filename}.md#{section}]`
   - Any deviations or conflicts noted between epic and architecture
   - Checklist Results
   - Next steps: For Complex stories, suggest the user carefully review the story draft and also optionally have the PO run the task `.bmad-core/tasks/validate-next-story`
+
+### 7. Update PRD Documentation
+
+- **If story creation was successful**, update PRD with new story (both consolidated and sharded if present)
+- **Extract story details** from the newly created story file:
+  - Story title (from filename or first H1 heading)
+  - Story statement (from "Story" section)
+  - Acceptance criteria (from "Acceptance Criteria" section)
+- **Construct story block** in markdown format:
+  ```markdown
+  ---
+
+  #### Story {epicNum}.{storyNum}: {Story Title}
+
+  {Story Statement}
+
+  **Acceptance Criteria**:
+
+  1. {AC1}
+  2. {AC2}
+  ...
+  ```
+- **Update sharded PRD** (if `prdSharded: true` from config):
+  - Target file: `{prdShardedLocation}/epic-details.md`
+  - Find Epic section: Search for `### Epic {epicNum}:` heading (H3)
+  - Find insertion point:
+    - If next epic exists (`### Epic {epicNum + 1}:`), insert before it
+    - Otherwise, insert at end of Epic section (before next H3 or EOF)
+  - Insert story block at insertion point
+  - Verify insertion: Re-read file and confirm story heading exists
+  - Log: "✓ Updated {prdShardedLocation}/epic-details.md with Story {epicNum}.{storyNum}"
+- **Update consolidated PRD** (if `prdFile` exists):
+  - Target file: `{prdFile}`
+  - Use same logic as sharded PRD (find epic section, insert before next epic or EOF)
+  - Verify insertion: Re-read file and confirm story heading exists
+  - Log: "✓ Updated {prdFile} with Story {epicNum}.{storyNum}"
+- **Error Handling** (graceful degradation):
+  - If epic section not found: WARN user with manual instructions
+    ```
+    ⚠ WARNING: Could not find Epic {epicNum} section in {file}
+    Please manually add the story using this block:
+
+    [Generated story block shown here]
+    ```
+  - If file write fails: WARN user with manual instructions
+  - **Never fail story creation** due to PRD update failure (story file is primary artifact)
+- **Epic Section Detection**:
+  - Epic heading pattern: `### Epic {epicNum}:`
+  - Find last story in epic section (last `#### Story {epicNum}.{M}:` heading)
+  - Insert new story after last story, or after epic heading if no stories exist yet
+- **Duplicate Prevention**:
+  - Before insertion, check if `#### Story {epicNum}.{storyNum}:` already exists in the epic section
+  - If exists, skip insertion and log: "ℹ Story {epicNum}.{storyNum} already exists in PRD. Skipping update."
+- **Final Report**:
+  - "Story created successfully: {devStoryLocation}/{epicNum}.{storyNum}.story.md"
+  - "PRD updated: {list of files updated}"
+  - If any PRD updates failed, show warning and provide manual instructions with copy-paste story block

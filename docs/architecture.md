@@ -106,7 +106,7 @@ graph TB
 
     subgraph "POEM Runtime (.poem-app/)"
         direction TB
-        ASTRO[Astro Server<br/>localhost:4321]
+        ASTRO[Astro Server<br/>localhost:9500]
         HBS[Handlebars Service]
         HELP[Custom Helpers<br/>titleCase, truncate, gt...]
         API[REST APIs]
@@ -1024,7 +1024,7 @@ info:
     schema operations, and provider integration.
 
 servers:
-  - url: http://localhost:4321/api
+  - url: http://localhost:9500/api
     description: Local development server (port configurable)
 
 paths:
@@ -2252,7 +2252,7 @@ npm run deps:check
 # .poem-app/.env.local
 
 # Server Configuration
-POEM_PORT=4321                    # API server port (default: 4321)
+POEM_PORT=9500                    # API server port (default: 9500)
 POEM_HOST=localhost               # Server host
 
 # Workspace Path (relative to .poem-app/)
@@ -2274,7 +2274,7 @@ NODE_ENV=development
 # User's project .env (after installation)
 
 # POEM Configuration
-POEM_PORT=4321                    # Can customize port
+POEM_PORT=9500                    # Can customize port
 
 # Provider Credentials (if using integrations)
 SUPPORTSIGNAL_API_KEY=xxx         # For SupportSignal provider
@@ -2302,13 +2302,13 @@ npm run installer:test -- --target ../test-project
 # 1. Start development server with hot reload
 npm run dev
 
-# 2. Server starts at http://localhost:4321
-# 3. API endpoints available at http://localhost:4321/api/
+# 2. Server starts at http://localhost:9500
+# 3. API endpoints available at http://localhost:9500/api/
 
 # 4. Test endpoints manually
-curl http://localhost:4321/api/health
+curl http://localhost:9500/api/health
 
-curl -X POST http://localhost:4321/api/prompt/render \
+curl -X POST http://localhost:9500/api/prompt/render \
   -H "Content-Type: application/json" \
   -d '{"template": "Hello {{name}}", "data": {"name": "World"}, "isRawTemplate": true}'
 
@@ -2338,7 +2338,7 @@ EOF
 
 # 3. Hot reload picks it up automatically (if server running)
 # 4. Test via API
-curl -X POST http://localhost:4321/api/helpers/test \
+curl -X POST http://localhost:9500/api/helpers/test \
   -H "Content-Type: application/json" \
   -d '{"helper": "myHelper", "args": ["test"]}'
 
@@ -2898,11 +2898,11 @@ SERVER_PID=$!
 sleep 5
 
 # Step 8: Test health endpoint
-curl -f http://localhost:4321/api/health
+curl -f http://localhost:9500/api/health
 echo "✓ Health endpoint OK"
 
 # Step 9: Test render endpoint
-curl -X POST http://localhost:4321/api/prompt/render \
+curl -X POST http://localhost:9500/api/prompt/render \
   -H "Content-Type: application/json" \
   -d '{"template": "Hello {{name}}", "data": {"name": "World"}, "isRawTemplate": true}'
 echo "✓ Render endpoint OK"
@@ -3067,8 +3067,8 @@ jobs:
           npm run dev &
           sleep 5
 
-          curl -f http://localhost:4321/api/health
-          curl -f -X POST http://localhost:4321/api/prompt/render \
+          curl -f http://localhost:9500/api/health
+          curl -f -X POST http://localhost:9500/api/prompt/render \
             -H "Content-Type: application/json" \
             -d '{"template": "Test", "data": {}, "isRawTemplate": true}'
 ```
