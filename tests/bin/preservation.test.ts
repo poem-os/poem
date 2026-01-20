@@ -299,3 +299,48 @@ describe('Version Tracking Integration', () => {
     }
   });
 });
+
+describe('Configuration File Preservation', () => {
+  it('should preserve .poem-app/.env during reinstallation', async () => {
+    const { parsePreservationFile, isPreserved } = await import('../../bin/preservation.js');
+
+    const testDir = path.join(process.cwd(), 'tests', 'fixtures', 'env-preservation-test');
+    await fs.mkdir(testDir, { recursive: true });
+
+    try {
+      // Create .poem-preserve file with default rules
+      const preserveFile = path.join(testDir, '.poem-preserve');
+      await fs.writeFile(preserveFile, `# .poem-preserve
+poem/
+dev-workspace/
+.poem-app/.env
+`);
+
+      const rules = await parsePreservationFile(testDir);
+
+      // Verify .poem-app/.env is in preservation rules
+      expect(rules).toContain('.poem-app/.env');
+
+      // Verify .poem-app/.env is preserved
+      expect(isPreserved('.poem-app/.env', rules)).toBe(true);
+
+      // Verify other .poem-app files are NOT preserved
+      expect(isPreserved('.poem-app/package.json', rules)).toBe(false);
+      expect(isPreserved('.poem-app/src/index.ts', rules)).toBe(false);
+    } finally {
+      await fs.rm(testDir, { recursive: true, force: true });
+    }
+  });
+
+  it('should allow .env preservation with exact path match', async () => {
+    const { isPreserved } = await import('../../bin/preservation.js');
+
+    const rules = ['.poem-app/.env'];
+
+    // Exact match
+    expect(isPreserved('.poem-app/.env', rules)).toBe(true);
+
+    // No directory-style matching for .env (it's a file, not directory)
+    expect(isPreserved('.poem-app/.env.backup', rules)).toBe(false);
+  });
+});

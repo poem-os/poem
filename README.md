@@ -146,12 +146,13 @@ POEM protects your custom files during reinstallation using a `.poem-preserve` f
 **What Gets Preserved:**
 - `poem/` - Your workspace (prompts, schemas, mock data)
 - `dev-workspace/` - Development workspace (if exists)
+- `.poem-app/.env` - Your port configuration and environment settings
 - User-created workflows in `.poem-core/workflows/`
 - Any custom paths you add to `.poem-preserve`
 
 **What Gets Updated:**
 - Framework files (agents, skills, templates)
-- Runtime server (`.poem-app/`)
+- Runtime server (`.poem-app/` except `.env`)
 - Framework workflows (create-prompt, refine-prompt, etc.)
 
 **The `.poem-preserve` File:**
@@ -167,6 +168,9 @@ poem/
 
 # Dev workspace - always preserved (if exists)
 dev-workspace/
+
+# User configuration - always preserved
+.poem-app/.env
 
 # Add custom preservation rules below:
 # .poem-core/my-custom-workflow.yaml

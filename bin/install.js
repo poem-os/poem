@@ -937,18 +937,6 @@ async function handleInstall(flags) {
     const hasApp = await directoryExists(path.join(targetDir, '.poem-app'));
     const isReinstallation = hasCore || hasApp;
 
-    // CRITICAL: Read existing port BEFORE file copying (if reinstalling)
-    let existingPort = null;
-    if (isReinstallation && shouldInstallApp) {
-      const { readEnvFile } = await import('./utils.js');
-      const envFile = path.join(targetDir, '.poem-app', '.env');
-      const envConfig = await readEnvFile(envFile);
-      existingPort = envConfig.PORT ? parseInt(envConfig.PORT, 10) : null;
-      if (existingPort) {
-        logVerbose(`Found existing port before reinstall: ${existingPort}`);
-      }
-    }
-
     // Prepare preservation context for reinstallation
     let preservationContext = null;
     if (isReinstallation && !flags.force) {
@@ -1053,19 +1041,30 @@ async function handleInstall(flags) {
 
     // Configure port if installing the app
     if (shouldInstallApp) {
+      const { readEnvFile } = await import('./utils.js');
+      const envFile = path.join(targetDir, '.poem-app', '.env');
       let port;
 
-      if (isReinstallation && existingPort) {
-        // Reinstallation: Reuse existing port (read before file copying)
-        port = existingPort;
-        log(`   ✓ Using existing port: ${port}`);
+      if (isReinstallation) {
+        // Reinstallation: .env is preserved by preservation system
+        // Just read the port for registry registration
+        const envConfig = await readEnvFile(envFile);
+        port = envConfig.PORT ? parseInt(envConfig.PORT, 10) : null;
+
+        if (port) {
+          log(`   ✓ Using existing port: ${port}`);
+        } else {
+          // Existing installation but no port configured (edge case)
+          port = await promptForPort(flags.force, targetDir);
+          await configurePort(targetDir, port);
+          log(`   ✓ Configured server port: ${port}`);
+        }
       } else {
-        // Fresh install OR no existing port: Prompt for port
+        // Fresh install: Prompt for port and create .env
         port = await promptForPort(flags.force, targetDir);
+        await configurePort(targetDir, port);
         log(`   ✓ Configured server port: ${port}`);
       }
-
-      await configurePort(targetDir, port);
 
       // Register installation in ~/.poem/registry.json
       await registerInstallation(targetDir, port);

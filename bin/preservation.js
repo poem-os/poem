@@ -40,6 +40,9 @@ poem/
 # Dev workspace - always preserved (if exists)
 dev-workspace/
 
+# User configuration - always preserved
+.poem-app/.env
+
 # Add custom preservation rules below:
 # .poem-core/my-custom-workflow.yaml
 # .poem-core/templates/my-template.hbs
