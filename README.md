@@ -35,9 +35,6 @@ npx poem-os install --verbose
 
 **After Installation**:
 ```bash
-# Install runtime dependencies
-cd .poem-app && npm install && cd ..
-
 # Start the POEM server (from project root)
 npx poem-os start
 
@@ -52,6 +49,12 @@ npx poem-os config --port 8080
 
 # Activate Prompt Engineer agent in Claude Code
 /poem/agents/prompt-engineer
+```
+
+**Note**: Dependencies are installed automatically during `npx poem-os install`. For offline/air-gapped environments, use `--skip-deps` and install manually:
+```bash
+npx poem-os install --skip-deps
+cd .poem-app && npm install && cd ..
 ```
 
 **Next Steps**:

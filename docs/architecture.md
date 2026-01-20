@@ -2363,9 +2363,10 @@ npx ../poem/bin/install.js
 ls -la .poem-core/
 ls -la .poem-app/
 ls -la poem/
+ls -la .poem-app/node_modules/  # Verify dependencies were installed automatically
 
 # 5. Start the server
-cd .poem-app && npm install && npm run dev
+npx poem-os start
 ```
 
 ---

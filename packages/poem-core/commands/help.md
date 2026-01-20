@@ -44,10 +44,11 @@ poem/                 # Your workspace (prompts, schemas, config)
 
 ## Getting Started
 
-1. Install dependencies: `cd .poem-app && npm install`
-2. Start the server: `npm run dev`
-3. Activate an agent: `/poem/agents/prompt-engineer`
-4. Create your first prompt: `*new`
+1. Start the server: `npx poem-os start`
+2. Activate an agent: `/poem/agents/prompt-engineer`
+3. Create your first prompt: `*new`
+
+**Note**: Dependencies are installed automatically during `npx poem-os install`.
 
 ## More Information
 
