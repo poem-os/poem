@@ -189,7 +189,37 @@ function logError(message, context = {}) {
 // Directory Copy Utility
 // ============================================================================
 
-async function copyDirectory(src, dest, stats = { files: 0, dirs: 0 }) {
+/**
+ * Recursively scans a directory and returns all file paths relative to root
+ * @param {string} dir - Directory to scan
+ * @param {string} root - Root directory for relative paths
+ * @param {string[]} files - Accumulated file list
+ * @returns {Promise<string[]>} - Array of relative file paths
+ */
+async function getAllFiles(dir, root = dir, files = []) {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+
+    // Skip excluded patterns
+    if (EXCLUDE_PATTERNS.includes(entry.name)) {
+      continue;
+    }
+
+    if (entry.isDirectory()) {
+      await getAllFiles(fullPath, root, files);
+    } else {
+      // Store relative path from root
+      const relativePath = path.relative(root, fullPath);
+      files.push(relativePath);
+    }
+  }
+
+  return files;
+}
+
+async function copyDirectory(src, dest, stats = { files: 0, dirs: 0 }, preservationContext = null) {
   // Create destination directory
   await fs.mkdir(dest, { recursive: true });
   stats.dirs++;
@@ -206,8 +236,26 @@ async function copyDirectory(src, dest, stats = { files: 0, dirs: 0 }) {
       continue;
     }
 
+    // Check preservation if context provided
+    if (preservationContext) {
+      const relativePath = path.relative(preservationContext.targetDir, destPath);
+      const normalizedPath = relativePath.replace(/\\/g, '/');
+
+      // Check if preserved by rules
+      if (preservationContext.isPreserved(normalizedPath, preservationContext.rules)) {
+        logVerbose(`Preserved: ${normalizedPath}`);
+        continue;
+      }
+
+      // Check if user workflow
+      if (preservationContext.isUserWorkflow(normalizedPath)) {
+        logVerbose(`Preserved (user workflow): ${normalizedPath}`);
+        continue;
+      }
+    }
+
     if (entry.isDirectory()) {
-      await copyDirectory(srcPath, destPath, stats);
+      await copyDirectory(srcPath, destPath, stats, preservationContext);
     } else {
       await fs.copyFile(srcPath, destPath);
       stats.files++;
@@ -290,7 +338,7 @@ async function checkExistingInstallation(targetDir, flags) {
 // Installation Logic
 // ============================================================================
 
-async function installCore(targetDir) {
+async function installCore(targetDir, preservationContext = null) {
   const srcDir = path.join(PACKAGE_ROOT, 'packages', 'poem-core');
   const destDir = path.join(targetDir, '.poem-core');
 
@@ -299,13 +347,13 @@ async function installCore(targetDir) {
   }
 
   log('Installing .poem-core/ (framework documents)...');
-  const stats = await copyDirectory(srcDir, destDir);
+  const stats = await copyDirectory(srcDir, destDir, { files: 0, dirs: 0 }, preservationContext);
   log(`   ✓ Copied ${stats.files} files in ${stats.dirs} directories`);
 
   return stats;
 }
 
-async function installApp(targetDir) {
+async function installApp(targetDir, preservationContext = null) {
   const srcDir = path.join(PACKAGE_ROOT, 'packages', 'poem-app');
   const destDir = path.join(targetDir, '.poem-app');
 
@@ -314,7 +362,7 @@ async function installApp(targetDir) {
   }
 
   log('Installing .poem-app/ (runtime server)...');
-  const stats = await copyDirectory(srcDir, destDir);
+  const stats = await copyDirectory(srcDir, destDir, { files: 0, dirs: 0 }, preservationContext);
   log(`   ✓ Copied ${stats.files} files in ${stats.dirs} directories`);
 
   return stats;
@@ -532,7 +580,8 @@ async function registerInstallation(targetDir, port) {
     readRegistry,
     writeRegistry,
     generateInstallationId,
-    getGitBranch
+    getGitBranch,
+    getPoemVersion
   } = await import('./utils.js');
 
   // Read current registry
@@ -542,6 +591,7 @@ async function registerInstallation(targetDir, port) {
   const installPath = path.resolve(targetDir);
   const id = generateInstallationId(installPath);
   const gitBranch = await getGitBranch(installPath);
+  const poemVersion = await getPoemVersion(PACKAGE_ROOT);
 
   // Determine mode from .env
   const envFile = path.join(targetDir, '.poem-app', '.env');
@@ -569,6 +619,7 @@ async function registerInstallation(targetDir, port) {
       ...existing,
       id,
       port,
+      poemVersion,
       lastChecked: now,
       version: VERSION,
       mode,
@@ -586,6 +637,7 @@ async function registerInstallation(targetDir, port) {
       id,
       path: installPath,
       port,
+      poemVersion,
       installedAt: now,
       lastChecked: now,
       version: VERSION,
@@ -647,6 +699,147 @@ async function installDependencies(targetDir) {
       }
     });
   });
+}
+
+// ============================================================================
+// Installation Analysis
+// ============================================================================
+
+/**
+ * Analyzes what will be changed during installation
+ * @param {string} sourceDir - Source directory (PACKAGE_ROOT)
+ * @param {string} targetDir - Target directory (project root)
+ * @param {string[]} preservationRules - Preservation rules from .poem-preserve
+ * @param {boolean} shouldInstallCore - Whether to install .poem-core
+ * @param {boolean} shouldInstallApp - Whether to install .poem-app
+ * @returns {Promise<Object>} - Analysis object with file lists
+ */
+async function analyzeInstallation(
+  sourceDir,
+  targetDir,
+  preservationRules,
+  shouldInstallCore = true,
+  shouldInstallApp = true
+) {
+  const { parsePreservationFile, isPreserved, isUserWorkflow } = await import('./preservation.js');
+  const { readRegistry } = await import('./utils.js');
+
+  const filesToUpdate = [];
+  const filesPreserved = [];
+  const foldersPreserved = new Set();
+  const modifiedFiles = [];
+
+  // Get registry for hash comparison
+  const registry = await readRegistry();
+  const installPath = path.resolve(targetDir);
+  const existingInstall = registry.installations.find(i => i.path === installPath);
+  const fileHashes = existingInstall?.metadata?.fileHashes || {};
+
+  // Scan .poem-core files
+  if (shouldInstallCore) {
+    const coreSource = path.join(sourceDir, 'packages', 'poem-core');
+    if (await directoryExists(coreSource)) {
+      const coreFiles = await getAllFiles(coreSource);
+
+      for (const file of coreFiles) {
+        const targetPath = path.join('.poem-core', file);
+
+        // Check if preserved by rules
+        if (isPreserved(targetPath, preservationRules)) {
+          filesPreserved.push(targetPath);
+          // Extract folder name for reporting
+          const folder = targetPath.split(path.sep)[0] + '/';
+          foldersPreserved.add(folder);
+          continue;
+        }
+
+        // Check if user workflow
+        if (isUserWorkflow(targetPath)) {
+          filesPreserved.push(targetPath);
+          continue;
+        }
+
+        // File will be updated
+        filesToUpdate.push(targetPath);
+
+        // Check if file was modified (hash mismatch)
+        const targetFullPath = path.join(targetDir, targetPath);
+        if (existsSync(targetFullPath)) {
+          // TODO: Implement hash checking when registry tracks file hashes
+          // For now, skip modification detection
+        }
+      }
+    }
+  }
+
+  // Scan .poem-app files
+  if (shouldInstallApp) {
+    const appSource = path.join(sourceDir, 'packages', 'poem-app');
+    if (await directoryExists(appSource)) {
+      const appFiles = await getAllFiles(appSource);
+
+      for (const file of appFiles) {
+        const targetPath = path.join('.poem-app', file);
+
+        // Check if preserved by rules
+        if (isPreserved(targetPath, preservationRules)) {
+          filesPreserved.push(targetPath);
+          const folder = targetPath.split(path.sep)[0] + '/';
+          foldersPreserved.add(folder);
+          continue;
+        }
+
+        // File will be updated
+        filesToUpdate.push(targetPath);
+      }
+    }
+  }
+
+  return {
+    filesToUpdate,
+    filesPreserved,
+    foldersPreserved: Array.from(foldersPreserved),
+    modifiedFiles,
+  };
+}
+
+/**
+ * Prompts user for confirmation before overwriting files
+ * @param {Object} analysis - Analysis object from analyzeInstallation
+ * @returns {Promise<boolean>} - True if user confirms, false if cancels
+ */
+async function promptInstallationConfirmation(analysis) {
+  const { filesToUpdate, filesPreserved, foldersPreserved, modifiedFiles } = analysis;
+
+  log('\n' + '─'.repeat(50));
+  log('POEM Installation Summary:');
+  log('─'.repeat(50));
+  log(`  Files to update: ${filesToUpdate.length} (framework files)`);
+  log(`  Files preserved: ${filesPreserved.length} (user content)`);
+
+  if (foldersPreserved.length > 0) {
+    log(`  Folders preserved: ${foldersPreserved.join(', ')}`);
+  }
+
+  // Show modified files warning if any
+  if (modifiedFiles.length > 0) {
+    log(`\n  ⚠️  ${modifiedFiles.length} file(s) were modified and will be overwritten:`);
+    const toShow = modifiedFiles.slice(0, 10);
+    for (const file of toShow) {
+      log(`      - ${file}`);
+    }
+    if (modifiedFiles.length > 10) {
+      log(`      ...and ${modifiedFiles.length - 10} more`);
+    }
+  }
+
+  log('─'.repeat(50));
+
+  const answer = await prompt(
+    `\nThis will overwrite ${filesToUpdate.length} file(s). Continue? [y/N]: `
+  );
+
+  return answer === 'y' || answer === 'yes';
 }
 
 // ============================================================================
@@ -747,8 +940,45 @@ async function handleInstall(flags) {
       process.exit(0);
     }
 
+    // Check if this is a reinstallation (requires preservation and confirmation)
+    const isReinstallation = mode === 'overwrite' || mode === 'merge';
+
+    // Prepare preservation context for reinstallation
+    let preservationContext = null;
+    if (isReinstallation && !flags.force) {
+      const { parsePreservationFile, isPreserved, isUserWorkflow } = await import('./preservation.js');
+      const preservationRules = await parsePreservationFile(targetDir);
+
+      // Run installation analysis
+      const analysis = await analyzeInstallation(
+        PACKAGE_ROOT,
+        targetDir,
+        preservationRules,
+        shouldInstallCore,
+        shouldInstallApp
+      );
+
+      // Show confirmation prompt
+      const confirmed = await promptInstallationConfirmation(analysis);
+
+      if (!confirmed) {
+        log('\nInstallation cancelled.\n');
+        process.exit(0);
+      }
+
+      // Create preservation context for file copying
+      preservationContext = {
+        targetDir,
+        rules: preservationRules,
+        isPreserved,
+        isUserWorkflow,
+      };
+    }
+
     // In overwrite mode, remove existing directories first
-    if (mode === 'overwrite') {
+    // (Only non-preserved directories will be removed)
+    if (mode === 'overwrite' && !isReinstallation) {
+      // Only remove directories if not using preservation system
       if (shouldInstallCore) {
         await removeDirectory(path.join(targetDir, '.poem-core'));
       }
@@ -772,12 +1002,12 @@ async function handleInstall(flags) {
     };
 
     if (shouldInstallCore) {
-      await installCore(targetDir);
+      await installCore(targetDir, preservationContext);
       results.installedCore = true;
     }
 
     if (shouldInstallApp) {
-      await installApp(targetDir);
+      await installApp(targetDir, preservationContext);
       results.installedApp = true;
 
       // Install dependencies automatically unless --skip-deps flag is set
@@ -815,6 +1045,17 @@ async function handleInstall(flags) {
     if (shouldCreateWorkspace) {
       await createWorkspace(targetDir, mode);
       results.createdWorkspace = true;
+    }
+
+    // Create preservation file (if doesn't exist)
+    const { createPreservationFile } = await import('./preservation.js');
+    const preserveResult = await createPreservationFile(targetDir);
+    if (preserveResult.created) {
+      log('Creating .poem-preserve (preservation rules)...');
+      log('   ✓ Created preservation file');
+      results.createdPreservationFile = true;
+    } else if (preserveResult.reason === 'already_exists') {
+      logVerbose('Preservation file already exists, skipping creation');
     }
 
     // Configure port if installing the app

@@ -115,6 +115,7 @@ export const REGISTRY_VERSION = '1.0';
  * @property {string} id - Short identifier (auto-generated from path)
  * @property {string} path - Absolute path to installation root
  * @property {number|null} port - Server port (null if not configured)
+ * @property {string} poemVersion - POEM framework version (from POEM's package.json)
  * @property {string} installedAt - ISO timestamp of installation
  * @property {string} lastChecked - ISO timestamp of last health check
  * @property {string} version - POEM version (from package.json)
@@ -250,6 +251,23 @@ export async function getGitBranch(dirPath) {
   } catch {
     // Not a git repo or git command failed
     return null;
+  }
+}
+
+/**
+ * Reads POEM version from package.json
+ * @param {string} packageRoot - POEM package root directory
+ * @returns {Promise<string>} - Version string or "unknown"
+ */
+export async function getPoemVersion(packageRoot) {
+  try {
+    const packageJsonPath = path.join(packageRoot, 'package.json');
+    const content = await fs.readFile(packageJsonPath, 'utf-8');
+    const packageData = JSON.parse(content);
+    return packageData.version || 'unknown';
+  } catch {
+    // package.json doesn't exist or can't be read
+    return 'unknown';
   }
 }
 

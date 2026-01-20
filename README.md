@@ -139,6 +139,95 @@ The registry automatically prevents port conflicts between installations:
 - During `config --port`: Validates port is available before updating configuration
 - Suggestions use increments of 10 (e.g., 9500, 9510, 9520, 9530)
 
+### Preserving Your Files During Updates
+
+POEM protects your custom files during reinstallation using a `.poem-preserve` file. This ensures you can safely update POEM without losing your work.
+
+**What Gets Preserved:**
+- `poem/` - Your workspace (prompts, schemas, mock data)
+- `dev-workspace/` - Development workspace (if exists)
+- User-created workflows in `.poem-core/workflows/`
+- Any custom paths you add to `.poem-preserve`
+
+**What Gets Updated:**
+- Framework files (agents, skills, templates)
+- Runtime server (`.poem-app/`)
+- Framework workflows (create-prompt, refine-prompt, etc.)
+
+**The `.poem-preserve` File:**
+
+Created automatically during installation at your project root:
+
+```
+# .poem-preserve
+# Files/folders protected from overwriting during POEM installation
+
+# User workspace - always preserved
+poem/
+
+# Dev workspace - always preserved (if exists)
+dev-workspace/
+
+# Add custom preservation rules below:
+# .poem-core/my-custom-workflow.yaml
+# .poem-core/templates/my-template.hbs
+```
+
+**Adding Custom Preservation Rules:**
+
+To protect additional files, add them to `.poem-preserve`:
+
+```bash
+# Example 1: Preserve a custom workflow
+echo ".poem-core/workflows/my-project-workflow.yaml" >> .poem-preserve
+
+# Example 2: Preserve custom templates
+echo ".poem-core/templates/my-custom-template.hbs" >> .poem-preserve
+
+# Example 3: Preserve project-specific configuration
+echo "poem/config/my-project.yaml" >> .poem-preserve
+```
+
+**Reinstallation Confirmation:**
+
+When running `npx poem-os install` over an existing installation, you'll see a summary:
+
+```
+POEM Installation Summary:
+──────────────────────────────────────────────────
+  Files to update: 47 (framework files)
+  Files preserved: 3 (user content)
+  Folders preserved: poem/, dev-workspace/
+
+This will overwrite 47 file(s). Continue? [y/N]:
+```
+
+- Enter `y` or `Y` to proceed with the update
+- Enter `n`, `N`, or press Enter to cancel (safe default)
+
+**Modified Files Warning:**
+
+If you've modified framework files, you'll be warned:
+
+```
+⚠️ 2 file(s) were modified and will be overwritten:
+    - .poem-core/agents/prompt-engineer.md
+    - .poem-app/src/services/config.ts
+```
+
+**Best Practices:**
+1. Never modify framework files directly - they'll be overwritten during updates
+2. Create custom workflows instead of modifying framework workflows
+3. Use `.poem-preserve` to protect project-specific customizations
+4. Review the installation summary before confirming updates
+5. Keep `.poem-preserve` in version control with your project
+
+**User Workflows Detection:**
+
+POEM automatically preserves user-created workflows in `.poem-core/workflows/`:
+- Framework workflows (create-prompt.yaml, refine-prompt.yaml, etc.) - updated during reinstall
+- All other `.yaml` files in workflows/ - automatically preserved
+
 ### Troubleshooting
 
 **Error: POEM is not installed**

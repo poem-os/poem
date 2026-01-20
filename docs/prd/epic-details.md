@@ -166,6 +166,23 @@ so that I can avoid port conflicts across multiple POEM instances without manual
 
 ---
 
+### Story 1.9: Installation Preservation System
+
+As a POEM user,
+I want a preservation system that protects my user files during reinstallation,
+so that I can safely run `npx poem-os install` to get the latest POEM version without losing my custom workflows and data.
+
+**Acceptance Criteria**:
+
+1. During installation, create `.poem-preserve` file in project root with default preservation rules (`poem/`, `dev-workspace/`)
+2. When reinstalling, read preservation rules and identify files to update vs preserve; user workflows detected by "not in framework workflow list"
+3. Before overwriting, display installation summary with file counts and prompt for confirmation: "This will overwrite X files. Continue? [y/N]"
+4. Extend installation registry to track POEM version (`poemVersion` field read from `package.json`)
+5. If framework files were modified by user (hash mismatch), warn during summary: "⚠ X files were modified and will be overwritten"
+6. Update `README.md` with `.poem-preserve` explanation and examples
+
+---
+
 ## Epic 2: Astro Runtime & Handlebars Engine
 
 **Goal**: Build the `.poem-app/` Astro server with Handlebars template engine, enabling template rendering via API endpoints. This provides the runtime foundation for all template-based operations.
