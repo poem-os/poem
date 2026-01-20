@@ -932,20 +932,15 @@ async function handleInstall(flags) {
   logVerbose(`Package root: ${PACKAGE_ROOT}`);
 
   try {
-    // Check for existing installation
-    const mode = await checkExistingInstallation(targetDir, flags);
-
-    if (mode === 'cancel') {
-      log('\nInstallation cancelled.\n');
-      process.exit(0);
-    }
-
-    // Check if this is a reinstallation (requires preservation and confirmation)
-    const isReinstallation = mode === 'overwrite' || mode === 'merge';
+    // Silently detect existing installation
+    const hasCore = await directoryExists(path.join(targetDir, '.poem-core'));
+    const hasApp = await directoryExists(path.join(targetDir, '.poem-app'));
+    const isReinstallation = hasCore || hasApp;
 
     // Prepare preservation context for reinstallation
     let preservationContext = null;
     if (isReinstallation && !flags.force) {
+      // Reinstallation: Use preservation system with confirmation prompt
       const { parsePreservationFile, isPreserved, isUserWorkflow } = await import('./preservation.js');
       const preservationRules = await parsePreservationFile(targetDir);
 
@@ -958,7 +953,7 @@ async function handleInstall(flags) {
         shouldInstallApp
       );
 
-      // Show confirmation prompt
+      // Show NEW preservation-aware confirmation prompt
       const confirmed = await promptInstallationConfirmation(analysis);
 
       if (!confirmed) {
@@ -973,24 +968,10 @@ async function handleInstall(flags) {
         isPreserved,
         isUserWorkflow,
       };
-    }
-
-    // In overwrite mode, remove existing directories first
-    // (Only non-preserved directories will be removed)
-    if (mode === 'overwrite' && !isReinstallation) {
-      // Only remove directories if not using preservation system
-      if (shouldInstallCore) {
-        await removeDirectory(path.join(targetDir, '.poem-core'));
-      }
-      if (shouldInstallApp) {
-        await removeDirectory(path.join(targetDir, '.poem-app'));
-      }
-      if (shouldCreateWorkspace) {
-        await removeDirectory(path.join(targetDir, 'poem'));
-      }
-      if (shouldInstallCommands) {
-        await removeDirectory(path.join(targetDir, '.claude', 'commands', 'poem'));
-      }
+    } else if (isReinstallation && flags.force) {
+      // Force mode: Skip prompts, show warning
+      log(`\n⚠️  Existing installation detected (--force mode)`);
+      log('   Overwriting without confirmation...\n');
     }
 
     // Perform installation
