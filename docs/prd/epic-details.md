@@ -137,6 +137,35 @@ so that I can run POEM without navigating into .poem-app/ and manage multiple PO
 
 ---
 
+### Story 1.8: Installation Registry and Port Conflict Detection
+
+As a developer,
+I want POEM installations to automatically register with port conflict detection,
+so that I can avoid port conflicts across multiple POEM instances without manual tracking.
+
+**Acceptance Criteria**:
+
+**Core Functionality (Port Conflict Detection)**:
+1. Default port changed from 4321 to 9500 across all documentation and configuration files
+2. Installation process automatically registers in `~/.poem/registry.json` (creates directory if needed)
+3. Port conflict detection runs automatically during `npx poem-os install` with warning and suggested alternatives (increments of 10: 9510, 9520, 9530...)
+4. Port conflict detection runs automatically during `npx poem-os config --port XXXX` with warning and suggested alternatives
+5. Port suggestion algorithm finds next available port in increments of 10 from 9500 (9500, 9510, 9520...)
+6. Registry operations are silent and automatic (no user interaction required for normal operations)
+
+**Registry Data Structure**:
+7. Registry format stores: id, path, port, installedAt, lastChecked, version, mode, gitBranch, status, metadata
+
+**Debug/Inspection Tools (Optional, for troubleshooting)**:
+8. Debug CLI command: `npx poem-os registry --list` displays all registered installations with status
+9. Debug CLI command: `npx poem-os registry --refresh` scans filesystem and updates registry
+10. Debug CLI command: `npx poem-os registry --clean` removes entries for missing installations
+
+**Documentation**:
+11. Documentation updated: README.md, CLAUDE.md, docs/architecture.md, packages/poem-app/astro.config.mjs
+
+---
+
 ## Epic 2: Astro Runtime & Handlebars Engine
 
 **Goal**: Build the `.poem-app/` Astro server with Handlebars template engine, enabling template rendering via API endpoints. This provides the runtime foundation for all template-based operations.

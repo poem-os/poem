@@ -2,6 +2,31 @@
 
 POEM uses a monorepo structure for development, which transforms into installed directories in user projects.
 
+## For BMAD Development
+
+**CRITICAL FOR STORY IMPLEMENTATION:**
+
+When implementing stories, ALL development work happens in the **Development Repository Structure** below:
+- Modify files in `packages/poem-core/` and `packages/poem-app/`
+- Reference `packages/` paths in Dev Notes and story files
+- Create new files in `packages/` directories
+- The `dev-workspace/` directory (when `POEM_DEV=true`) is for testing user workflows, not source code
+
+The **Installed Structure** is for reference only—it shows what users see after running `npx poem-os install`.
+
+**Path Examples for Story Implementation:**
+- ✅ Correct: `packages/poem-app/src/services/config/index.ts`
+- ✅ Correct: `packages/poem-core/agents/prompt-engineer.md`
+- ✅ Correct: `packages/poem-app/tests/services/config.test.ts`
+- ❌ Wrong: `.poem-app/src/services/config/index.ts` (installed path, not dev path)
+- ❌ Wrong: `.poem-core/agents/prompt-engineer.md` (installed path, not dev path)
+
+**Dev Workspace vs Source Code:**
+- `packages/` = Source code (version controlled, stories modify these)
+- `dev-workspace/` = Transient testing workspace (gitignored, for testing POEM features)
+
+---
+
 ## Development Repository Structure
 
 ```

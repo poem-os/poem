@@ -319,6 +319,68 @@ so that I can access POEM workflows from Claude Code.
 
 ---
 
+#### Story 1.6: NPM Package Publishing ✅ DONE
+
+As a developer,
+I want to publish POEM to NPM as a public package,
+so that users can install it globally via `npx poem-os install`.
+
+**Acceptance Criteria**:
+
+1. Remove `"private": true` from root `package.json`
+2. Add `"bin"` field mapping `"poem-os"` command to `"bin/install.js"`
+3. Add `"repository"`, `"bugs"`, and `"homepage"` URLs to package.json
+4. Define `"files"` array in package.json to control published content
+5. Test package installation locally using `npm link` followed by `npx poem-os install`
+6. Create `PUBLISHING.md` documenting the manual publishing process
+7. Add GitHub Actions workflow for automated NPM publishing (optional, future enhancement)
+
+**Status**: Completed. POEM can now be installed via `npx poem-os install`.
+
+---
+
+#### Story 1.7: Startup Script and Port Configuration
+
+As a user,
+I want to start POEM from my project root and configure the server port,
+so that I can run POEM without navigating into .poem-app/ and manage multiple POEM instances on different ports.
+
+**Acceptance Criteria**:
+
+1. `npx poem-os start` command launches POEM server from project root
+2. Startup script validates `.poem-app/` exists and shows helpful error if not
+3. During installation, users prompted for port number (default: 4321)
+4. Port configuration written to `.poem-app/.env`
+5. Users can override port temporarily: `npx poem-os start --port=XXXX`
+6. Users can reconfigure port permanently: `npx poem-os config --port XXXX`
+7. Users can view current config: `npx poem-os config --list`
+8. Port validation rejects invalid values (< 1024 or > 65535)
+9. Startup script is cross-platform compatible (Windows/macOS/Linux)
+10. Documentation updated (README.md, PUBLISHING.md)
+
+---
+
+#### Story 1.8: Installation Registry and Port Conflict Detection
+
+As a developer,
+I want POEM installations to automatically register with port conflict detection,
+so that I can avoid port conflicts across multiple POEM instances without manual tracking.
+
+**Acceptance Criteria**:
+
+1. Default port changed from 4321 to 9500 across all documentation and configuration files
+2. Installation process automatically registers in `~/.poem/registry.json` (creates directory if needed)
+3. Port conflict detection runs automatically during `npx poem-os install` with warning and suggested alternatives
+4. Port conflict detection runs automatically during `npx poem-os config --port XXXX` with warning
+5. Registry format stores: id, path, port, installedAt, lastChecked, version, mode, gitBranch, status, metadata
+6. Debug CLI command: `npx poem-os registry --list` displays all registered installations with status
+7. Debug CLI command: `npx poem-os registry --refresh` scans filesystem and updates registry
+8. Debug CLI command: `npx poem-os registry --clean` removes entries for missing installations
+9. Registry operations are silent and automatic (no user interaction required for normal operations)
+10. Documentation updated: README.md, CLAUDE.md, docs/architecture.md, packages/poem-app/astro.config.mjs
+
+---
+
 ### Epic 2: Astro Runtime & Handlebars Engine
 
 **Goal**: Build the `.poem-app/` Astro server with Handlebars template engine, enabling template rendering via API endpoints. This provides the runtime foundation for all template-based operations.
