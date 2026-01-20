@@ -937,6 +937,18 @@ async function handleInstall(flags) {
     const hasApp = await directoryExists(path.join(targetDir, '.poem-app'));
     const isReinstallation = hasCore || hasApp;
 
+    // CRITICAL: Read existing port BEFORE file copying (if reinstalling)
+    let existingPort = null;
+    if (isReinstallation && shouldInstallApp) {
+      const { readEnvFile } = await import('./utils.js');
+      const envFile = path.join(targetDir, '.poem-app', '.env');
+      const envConfig = await readEnvFile(envFile);
+      existingPort = envConfig.PORT ? parseInt(envConfig.PORT, 10) : null;
+      if (existingPort) {
+        logVerbose(`Found existing port before reinstall: ${existingPort}`);
+      }
+    }
+
     // Prepare preservation context for reinstallation
     let preservationContext = null;
     if (isReinstallation && !flags.force) {
@@ -1043,24 +1055,12 @@ async function handleInstall(flags) {
     if (shouldInstallApp) {
       let port;
 
-      if (isReinstallation) {
-        // Reinstallation: Try to keep existing port
-        const { readEnvFile } = await import('./utils.js');
-        const envFile = path.join(targetDir, '.poem-app', '.env');
-        const envConfig = await readEnvFile(envFile);
-        const existingPort = envConfig.PORT ? parseInt(envConfig.PORT, 10) : null;
-
-        if (existingPort) {
-          logVerbose(`Found existing port: ${existingPort}`);
-          port = existingPort;
-          log(`   ✓ Using existing port: ${port}`);
-        } else {
-          // No existing port found, prompt for one
-          port = await promptForPort(flags.force, targetDir);
-          log(`   ✓ Configured server port: ${port}`);
-        }
+      if (isReinstallation && existingPort) {
+        // Reinstallation: Reuse existing port (read before file copying)
+        port = existingPort;
+        log(`   ✓ Using existing port: ${port}`);
       } else {
-        // Fresh install: Prompt for port
+        // Fresh install OR no existing port: Prompt for port
         port = await promptForPort(flags.force, targetDir);
         log(`   ✓ Configured server port: ${port}`);
       }
