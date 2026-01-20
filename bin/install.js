@@ -368,12 +368,12 @@ async function installApp(targetDir, preservationContext = null) {
   return stats;
 }
 
-async function createWorkspace(targetDir, mode) {
+async function createWorkspace(targetDir) {
   const workspaceDir = path.join(targetDir, 'poem');
 
-  // In merge mode, preserve existing workspace
-  if (mode === 'merge' && (await directoryExists(workspaceDir))) {
-    log('Preserving existing poem/ workspace (merge mode)...');
+  // Preserve existing workspace (aligned with preservation system)
+  if (await directoryExists(workspaceDir)) {
+    log('Preserving existing poem/ workspace...');
     return { files: 0, dirs: 0, preserved: true };
   }
 
@@ -1024,7 +1024,7 @@ async function handleInstall(flags) {
     }
 
     if (shouldCreateWorkspace) {
-      await createWorkspace(targetDir, mode);
+      await createWorkspace(targetDir);
       results.createdWorkspace = true;
     }
 
