@@ -165,6 +165,44 @@ Examples:
 
 let verboseMode = false;
 
+// ANSI color codes
+const colors = {
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
+  dim: '\x1b[2m',
+  cyan: '\x1b[36m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  gray: '\x1b[90m',
+};
+
+// Formatting helpers
+function bold(text) {
+  return `${colors.bold}${text}${colors.reset}`;
+}
+
+function cyan(text) {
+  return `${colors.cyan}${text}${colors.reset}`;
+}
+
+function green(text) {
+  return `${colors.green}${text}${colors.reset}`;
+}
+
+function yellow(text) {
+  return `${colors.yellow}${text}${colors.reset}`;
+}
+
+function gray(text) {
+  return `${colors.gray}${text}${colors.reset}`;
+}
+
+function dim(text) {
+  return `${colors.dim}${text}${colors.reset}`;
+}
+
 function log(message) {
   console.log(message);
 }
@@ -346,9 +384,9 @@ async function installCore(targetDir, preservationContext = null) {
     throw new Error(`Source directory not found: ${srcDir}`);
   }
 
-  log('Installing .poem-core/ (framework documents)...');
+  log(cyan('Installing .poem-core/') + dim(' (framework documents)...'));
   const stats = await copyDirectory(srcDir, destDir, { files: 0, dirs: 0 }, preservationContext);
-  log(`   ✓ Copied ${stats.files} files in ${stats.dirs} directories`);
+  log(`   ${green('✓')} Copied ${bold(stats.files)} files in ${bold(stats.dirs)} directories`);
 
   return stats;
 }
@@ -361,9 +399,9 @@ async function installApp(targetDir, preservationContext = null) {
     throw new Error(`Source directory not found: ${srcDir}`);
   }
 
-  log('Installing .poem-app/ (runtime server)...');
+  log(cyan('Installing .poem-app/') + dim(' (runtime server)...'));
   const stats = await copyDirectory(srcDir, destDir, { files: 0, dirs: 0 }, preservationContext);
-  log(`   ✓ Copied ${stats.files} files in ${stats.dirs} directories`);
+  log(`   ${green('✓')} Copied ${bold(stats.files)} files in ${bold(stats.dirs)} directories`);
 
   return stats;
 }
@@ -373,11 +411,11 @@ async function createWorkspace(targetDir) {
 
   // Preserve existing workspace (aligned with preservation system)
   if (await directoryExists(workspaceDir)) {
-    log('Preserving existing poem/ workspace...');
+    log(green('Preserving existing poem/ workspace...'));
     return { files: 0, dirs: 0, preserved: true };
   }
 
-  log('Creating poem/ workspace...');
+  log(cyan('Creating poem/ workspace...'));
 
   const subdirs = [
     'prompts',
@@ -416,7 +454,7 @@ providers: []
   await fs.writeFile(configPath, defaultConfig);
   logVerbose('Created: poem/config/poem.yaml');
 
-  log(`   ✓ Created workspace with ${subdirs.length} directories`);
+  log(`   ${green('✓')} Created workspace with ${bold(subdirs.length)} directories`);
 
   return { files: 1, dirs: subdirs.length };
 }
@@ -436,20 +474,20 @@ async function installCommands(targetDir) {
   // Check if source commands directory exists
   if (!(await directoryExists(srcDir))) {
     // Create empty directory structure if no commands exist yet
-    log('Creating .claude/commands/poem/ (slash commands)...');
+    log(cyan('Creating .claude/commands/poem/') + dim(' (slash commands)...'));
     const subdirs = ['agents', 'skills'];
     for (const subdir of subdirs) {
       const dirPath = path.join(destDir, subdir);
       await fs.mkdir(dirPath, { recursive: true });
       logVerbose(`Created: .claude/commands/poem/${subdir}/`);
     }
-    log(`   ✓ Created slash command directories`);
+    log(`   ${green('✓')} Created slash command directories`);
     return { files: 0, dirs: subdirs.length };
   }
 
-  log('Installing .claude/commands/poem/ (slash commands)...');
+  log(cyan('Installing .claude/commands/poem/') + dim(' (slash commands)...'));
   const stats = await copyDirectory(srcDir, destDir);
-  log(`   ✓ Copied ${stats.files} files in ${stats.dirs} directories`);
+  log(`   ${green('✓')} Copied ${bold(stats.files)} files in ${bold(stats.dirs)} directories`);
 
   return stats;
 }
@@ -681,13 +719,13 @@ async function registerInstallation(targetDir, port) {
   // Write registry
   await writeRegistry(registry);
 
-  log(`   ✓ Registered in ~/.poem/registry.json`);
+  log(`   ${green('✓')} Registered in ${dim('~/.poem/registry.json')}`);
 }
 
 async function installDependencies(targetDir) {
   const appDir = path.join(targetDir, '.poem-app');
 
-  log('Installing dependencies (this may take a minute)...');
+  log(cyan('Installing dependencies') + dim(' (this may take a minute)...'));
   logVerbose(`Running npm install in ${appDir}`);
 
   return new Promise((resolve, reject) => {
@@ -713,7 +751,7 @@ async function installDependencies(targetDir) {
 
     child.on('exit', (code) => {
       if (code === 0) {
-        log('   ✓ Dependencies installed');
+        log(`   ${green('✓')} Dependencies installed`);
         resolve();
       } else {
         const error = new Error('npm install failed');
@@ -863,17 +901,17 @@ async function promptInstallationConfirmation(analysis) {
     modifiedFiles,
   } = analysis;
 
-  log('\n' + '─'.repeat(50));
-  log('POEM Installation Summary:');
-  log('─'.repeat(50));
+  log('\n' + gray('─'.repeat(50)));
+  log(bold('POEM Installation Summary:'));
+  log(gray('─'.repeat(50)));
 
   // Updates section
-  log('Updates:');
+  log('\n' + cyan('Updates:'));
   if (coreFilesToUpdate.length > 0) {
-    log(`  .poem-core/    ${coreFilesToUpdate.length} files (framework)`);
+    log(`  ${cyan('.poem-core/')}    ${bold(coreFilesToUpdate.length)} files ${dim('(framework)')}`);
   }
   if (appFilesToUpdate.length > 0) {
-    log(`  .poem-app/     ${appFilesToUpdate.length} files (runtime)`);
+    log(`  ${cyan('.poem-app/')}     ${bold(appFilesToUpdate.length)} files ${dim('(runtime)')}`);
   }
 
   // Preserved section - only show if there are preserved items
@@ -883,26 +921,25 @@ async function promptInstallationConfirmation(analysis) {
     preservedCustomWorkflows.length > 0;
 
   if (hasPreservedItems) {
-    log('  ');
-    log('Preserved:');
+    log('\n' + green('Preserved:'));
 
     // Show workspace folders
     for (const workspace of preservedWorkspace) {
-      log(`  ✓ ${workspace} (workspace)`);
+      log(`  ${green('✓')} ${workspace} ${dim('(workspace)')}`);
     }
 
     // Show config files
     for (const config of preservedConfig) {
-      log(`  ✓ ${config} (configuration)`);
+      log(`  ${green('✓')} ${config} ${dim('(configuration)')}`);
     }
 
     // Show custom workflows
     if (preservedCustomWorkflows.length > 0) {
-      log(`  ✓ ${preservedCustomWorkflows.length} custom workflows`);
+      log(`  ${green('✓')} ${preservedCustomWorkflows.length} custom workflows`);
     }
   }
 
-  log('─'.repeat(50));
+  log('\n' + gray('─'.repeat(50)));
 
   // Show modified files warning if any
   if (modifiedFiles.length > 0) {
@@ -937,27 +974,27 @@ function showSuccessMessage(results, targetDir) {
     dependencyError,
   } = results;
 
-  log('\n✅ POEM installed successfully!\n');
+  log('\n' + green('✅ POEM installed successfully!') + '\n');
 
-  log('Installed:');
+  log(bold('Installed:'));
   if (installedCore) {
-    log('  ├── .poem-core/           (framework documents)');
+    log(`  ${gray('├──')} ${cyan('.poem-core/')}           ${dim('(framework documents)')}`);
   }
   if (installedApp) {
-    log('  ├── .poem-app/            (runtime server)');
+    log(`  ${gray('├──')} ${cyan('.poem-app/')}            ${dim('(runtime server)')}`);
   }
   if (installedCommands) {
-    log('  ├── .claude/commands/poem/ (slash commands)');
+    log(`  ${gray('├──')} ${cyan('.claude/commands/poem/')} ${dim('(slash commands)')}`);
   }
   if (createdWorkspace) {
-    log('  └── poem/                 (your workspace)');
+    log(`  ${gray('└──')} ${cyan('poem/')}                 ${dim('(your workspace)')}`);
   }
 
-  log('\nSlash Commands:');
-  log('  /poem/agents/prompt-engineer  - Activate Prompt Engineer agent');
-  log('  /poem/help                    - List all POEM commands');
+  log('\n' + bold('Slash Commands:'));
+  log(`  ${cyan('/poem/agents/prompt-engineer')}  - Activate Prompt Engineer agent`);
+  log(`  ${cyan('/poem/help')}                    - List all POEM commands`);
 
-  log('\nNext steps:');
+  log('\n' + bold('Next steps:'));
 
   // Show appropriate next steps based on dependency installation status
   if (installedDependencies) {
@@ -999,11 +1036,11 @@ async function handleInstall(flags) {
   const shouldCreateWorkspace = !flags.core && !flags.app; // Only create workspace for full install
   const shouldInstallCommands = !flags.app; // Install commands with core or full install
 
-  log('\n📦 POEM Installer v' + VERSION);
-  log('─'.repeat(40));
+  log('\n' + bold('📦 POEM Installer') + ' ' + dim('v' + VERSION));
+  log(gray('─'.repeat(40)) + '\n');
 
   if (verboseMode) {
-    log('Verbose mode enabled\n');
+    log(dim('Verbose mode enabled') + '\n');
   }
 
   // Target is current working directory
@@ -1123,8 +1160,8 @@ async function handleInstall(flags) {
       const { createPreservationFile } = await import('./preservation.js');
       const preserveResult = await createPreservationFile(targetDir);
       if (preserveResult.created) {
-        log('Creating .poem-preserve (preservation rules)...');
-        log('   ✓ Created preservation file');
+        log(cyan('Creating .poem-preserve') + dim(' (preservation rules)...'));
+        log(`   ${green('✓')} Created preservation file`);
         results.createdPreservationFile = true;
       } else if (preserveResult.migrated) {
         logVerbose(`Migrated .poem-preserve (added: ${preserveResult.missingRules.join(', ')})`);
@@ -1158,7 +1195,7 @@ async function handleInstall(flags) {
             await configurePort(targetDir, port);
           }
 
-          log(`   ✓ Using existing port: ${port}`);
+          log(`   ${green('✓')} Using existing port: ${bold(port)}`);
         } else {
           // Fallback: Try reading from .env
           const envConfig = await readEnvFile(envFile);
@@ -1166,20 +1203,20 @@ async function handleInstall(flags) {
 
           if (port) {
             logVerbose(`Found port in .env: ${port}`);
-            log(`   ✓ Using existing port: ${port}`);
+            log(`   ${green('✓')} Using existing port: ${bold(port)}`);
           } else {
             // Last resort: Prompt for port
             logVerbose(`No port found in registry or .env, prompting user`);
             port = await promptForPort(flags.force, targetDir);
             await configurePort(targetDir, port);
-            log(`   ✓ Configured server port: ${port}`);
+            log(`   ${green('✓')} Configured server port: ${bold(port)}`);
           }
         }
       } else {
         // Fresh install: Prompt for port and create .env
         port = await promptForPort(flags.force, targetDir);
         await configurePort(targetDir, port);
-        log(`   ✓ Configured server port: ${port}`);
+        log(`   ${green('✓')} Configured server port: ${bold(port)}`);
       }
 
       // Register installation in ~/.poem/registry.json
