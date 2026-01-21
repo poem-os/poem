@@ -40,7 +40,39 @@ The Triage System eliminates decision paralysis when routing development work by
 
 # Triage with explicit description
 /triage Add schema validation for prompt templates
+
+# Planning mode detected automatically when plan.md exists
 ```
+
+### Input Modes
+
+The triage system supports four input modes:
+
+**Mode A: Conversation-Based (Default)**
+- Command: `/triage`
+- Analyzes last 10-20 messages in conversation
+- Extracts work description, scope, area, impact
+- Best for: Ad-hoc work, ongoing discussions
+
+**Mode B: Usage Issues**
+- Command: `/triage issue-7`
+- Reads from: `docs/planning/gap-analysis/usage-issues.jsonl`
+- Structured issue data with severity, category, references
+- Best for: Converting tracked issues to actionable work
+
+**Mode C: Explicit Description**
+- Command: `/triage Add schema validation`
+- User provides description directly
+- System analyzes and routes
+- Best for: Clear, well-defined work
+
+**Mode D: Planning Documents** ⭐ NEW
+- Automatically detected when `plan.md` exists
+- Reads from: `~/.claude/plans/[session-name].md`
+- Extracts signals: file count, phases, time estimates, risk level
+- Enriches analysis with explicit complexity indicators
+- Best for: Work explored via Claude Code planning mode
+- **High confidence routing**: Planning docs document complexity explicitly
 
 ### What Happens
 
@@ -384,7 +416,7 @@ Analyzing context...
 1️⃣ Epic 4 Story (if focus is workflow logic vs UI)
 ```
 
-### Path #3: Quick Fix
+### Quick Fix
 
 **Scenario**: Fix typo in CONTRIBUTING.md
 
@@ -403,19 +435,22 @@ Analyzing context...
 📋 Routing Decision
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-✅ RECOMMENDED: Quick Fixes (Path #3)
-   Category: documentation
-   Simple fix, no ceremony needed
+✅ RECOMMENDED: Quick Fix
 
-   Reason:
-   - <1 hour scope (5 minutes)
-   - Simple correction, no tests required
-   - Direct fix more efficient than story overhead
+Simple documentation fix taking <5 minutes with no ceremony needed.
 
-   Next: /BMad/agents/sm then *add-fix documentation "Fix typo in CONTRIBUTING.md"
+┌────────┬──────────────┬─────────────────────────────────────┬──────────────────────┐
+│ Option │ Route To →   │ Agent & Command                     │ Why                  │
+├────────┼──────────────┼─────────────────────────────────────┼──────────────────────┤
+│ ✅ REC │ Quick Fix    │ SM (Bob)                            │ <1hr, no tests       │
+│        │              │ /BMad/agents/sm → *add-fix          │ Simple correction    │
+│        │              │   documentation "Fix typo..."       │                      │
+├────────┼──────────────┼─────────────────────────────────────┼──────────────────────┤
+│   1️⃣   │ Epic 0 Story │ SM (Bob)                            │ Formal tracking      │
+│        │              │ /BMad/agents/sm → *draft (0)        │ if desired           │
+└────────┴──────────────┴─────────────────────────────────────┴──────────────────────┘
 
-🔀 Alternatives:
-1️⃣ Create Epic 0 Story (if you want formal tracking)
+Type 'go', '1', or '2': _
 ```
 
 ### Path #4: Epic 0 Story
@@ -535,6 +570,14 @@ Analyzing context...
 
 **A**: Type "auto" when prompted for confirmation. Issue Logger will skip all future prompts and use inferred values for remaining issues in the session. Useful for bulk issue logging.
 
+### Q: How does planning mode (Mode D) work?
+
+**A**: When you use Claude Code's planning mode (`Shift+Tab` twice) and create a `plan.md` file, triage automatically detects it. The plan document provides explicit signals (file count, phases, time estimates, risk level) that improve routing confidence. You don't need to do anything special - if a plan exists, triage will find and use it.
+
+### Q: What if I have a plan but triage doesn't detect it?
+
+**A**: Triage looks for plan files in `~/.claude/plans/` by modification time. If the file is very old or in a different format, triage gracefully falls back to conversation-based analysis. The plan detection is transparent and never blocks routing.
+
 ---
 
 ## Troubleshooting
@@ -593,9 +636,10 @@ Analyzing context...
 
 1. **Use triage early**: Don't start work without triaging first
 2. **Provide context**: The more detail in conversation, the better the recommendation
-3. **Trust but verify**: Triage is 90%+ accurate, but you're the final decision-maker
-4. **Track patterns**: If triage consistently misroutes, provide feedback to improve criteria
-5. **Update usage issues**: Keep `usage-issues.jsonl` current for accurate issue triage
+3. **Use planning mode for complex work**: For multi-file changes or unclear scope, enter planning mode first (`Shift+Tab` twice), then triage. The plan provides explicit complexity signals for higher confidence routing.
+4. **Trust but verify**: Triage is 90%+ accurate, but you're the final decision-maker
+5. **Track patterns**: If triage consistently misroutes, provide feedback to improve criteria
+6. **Update usage issues**: Keep `usage-issues.jsonl` current for accurate issue triage
 
 ---
 

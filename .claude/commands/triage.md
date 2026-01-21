@@ -5,9 +5,10 @@ Unified work intake triage system for routing development work to the appropriat
 ## Usage
 
 ```bash
-/triage                    # Analyze recent conversation
-/triage issue-3            # Triage usage issue #3
-/triage Add prompt validation  # Triage explicit description
+/triage                           # Analyze recent conversation
+/triage issue-3                   # Triage usage issue #3
+/triage Add prompt validation     # Triage explicit description
+# Planning mode detected automatically when plan.md exists
 ```
 
 ## What This Does
@@ -18,6 +19,7 @@ Analyzes development work and recommends the optimal workflow path:
 - **Epic 0 Stories** (maintenance work >1hr)
 - **Existing Stories** (continue AppyDave workflow)
 - **Usage Issues** (convert issues to stories/fixes)
+- **Planning Documents** (Mode D - enriches analysis with plan.md signals)
 
 ## Instructions
 
@@ -51,29 +53,22 @@ Analyzing context...
 📋 Routing Decision
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-✅ RECOMMENDED: Quick Fixes (Path #3)
-   Category: documentation
-   Simple fix, no ceremony needed
+✅ RECOMMENDED: Quick Fix
 
-   Reason:
-   - <1 hour scope (5 minutes)
-   - Simple correction, no tests required
-   - Direct fix more efficient than story overhead
+Simple documentation correction taking <5 minutes with no ceremony needed.
 
-   Next: /BMad/agents/sm then *add-fix documentation "Fix typo in CONTRIBUTING.md"
+┌────────┬──────────────┬─────────────────────────────────────┬──────────────────────┐
+│ Option │ Route To →   │ Agent & Command                     │ Why                  │
+├────────┼──────────────┼─────────────────────────────────────┼──────────────────────┤
+│ ✅ REC │ Quick Fix    │ SM (Bob)                            │ <1hr, no tests       │
+│        │              │ /BMad/agents/sm → *add-fix          │ Simple correction    │
+│        │              │   documentation "Fix typo in..."    │                      │
+├────────┼──────────────┼─────────────────────────────────────┼──────────────────────┤
+│   1️⃣   │ Epic 0 Story │ SM (Bob)                            │ Formal tracking      │
+│        │              │ /BMad/agents/sm → *draft (0)        │ if desired           │
+└────────┴──────────────┴─────────────────────────────────────┴──────────────────────┘
 
-   Press Enter or type 'go' to proceed ⏎
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔀 Alternatives
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1️⃣ Create Epic 0 Story (if you want formal tracking)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Type 'go' for recommended path, '1' for alternative,
-or describe what you'd prefer: _
+Type 'go', '1', or '2': _
 ```
 
 ---

@@ -746,7 +746,7 @@ async function installDependencies(targetDir) {
   return new Promise((resolve, reject) => {
     const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
-    const child = spawn(npm, ['install'], {
+    const child = spawn(npm, ['install', '--legacy-peer-deps'], {
       cwd: appDir,
       stdio: verboseMode ? 'inherit' : 'pipe', // Show output only in verbose mode
     });

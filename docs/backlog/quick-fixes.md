@@ -48,6 +48,7 @@
 
 ### 2026-01-21
 
+- [x] **Infrastructure**: Upgrade Astro 5.0.0 to 6.0 Beta — Upgraded to astro@6.0.0-beta.1, added @astrojs/node@10.0.0-beta.0 adapter (required for Astro 6 SSR), verified dev server and build work correctly
 - [x] **Documentation**: Add "What Gets Installed" section to README.md — Already present (lines 46-50), verified complete
 - [x] **Documentation**: Create CHANGELOG.md with version history — Created with v0.1.0 release notes, linked from README
 

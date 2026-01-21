@@ -1,0 +1,201 @@
+---
+import { config } from "../config/index.js";
+
+const version = config.version;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>POEM - Prompt Orchestration & Engineering Method</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Courier New", monospace;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        color: #fff;
+      }
+
+      .container {
+        background: rgba(0, 0, 0, 0.8);
+        border: 2px solid #667eea;
+        border-radius: 12px;
+        padding: 3rem;
+        max-width: 800px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .ascii-art {
+        white-space: pre;
+        font-size: 0.75rem;
+        line-height: 1.2;
+        color: #a78bfa;
+        text-align: center;
+        margin-bottom: 2rem;
+        text-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #c4b5fd;
+      }
+
+      .subtitle {
+        text-align: center;
+        font-size: 1rem;
+        color: #d8b4fe;
+        margin-bottom: 2rem;
+        font-style: italic;
+      }
+
+      .info {
+        background: rgba(167, 139, 250, 0.1);
+        border-left: 4px solid #a78bfa;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        border-radius: 4px;
+      }
+
+      .info p {
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+      }
+
+      .endpoints {
+        background: rgba(102, 126, 234, 0.1);
+        border: 1px solid #667eea;
+        border-radius: 8px;
+        padding: 1.5rem;
+      }
+
+      .endpoints h2 {
+        color: #c4b5fd;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+      }
+
+      .endpoint {
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
+        transition: all 0.3s;
+      }
+
+      .endpoint:hover {
+        background: rgba(102, 126, 234, 0.2);
+        transform: translateX(5px);
+      }
+
+      .endpoint code {
+        color: #a78bfa;
+        font-weight: bold;
+      }
+
+      .endpoint span {
+        color: #d8b4fe;
+        font-size: 0.9rem;
+      }
+
+      .version {
+        text-align: center;
+        margin-top: 2rem;
+        color: #9ca3af;
+        font-size: 0.85rem;
+      }
+
+      a {
+        color: #a78bfa;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 768px) {
+        .ascii-art {
+          font-size: 0.5rem;
+        }
+
+        .container {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="ascii-art">╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║  ██████╗  ██████╗ ███████╗███╗   ███╗                         ║
+║  ██╔══██╗██╔═══██╗██╔════╝████╗ ████║                         ║
+║  ██████╔╝██║   ██║█████╗  ██╔████╔██║                         ║
+║  ██╔═══╝ ██║   ██║██╔══╝  ██║╚██╔╝██║                         ║
+║  ██║     ╚██████╔╝███████╗██║ ╚═╝ ██║                         ║
+║  ╚═╝      ╚═════╝ ╚══════╝╚═╝     ╚═╝                         ║
+║                                                               ║
+║   Prompt Orchestration & Engineering Method                   ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝</div>
+
+      <h1>Prompt Orchestration & Engineering Method</h1>
+      <p class="subtitle">Poetry in Prompt Engineering</p>
+
+      <div class="info">
+        <p>
+          <strong>POEM</strong> is a Prompt Engineering Operating System for
+          systematic creation, testing, and deployment of AI prompts.
+        </p>
+        <p>
+          Build prompts with schemas, templates, and mock data generation—all
+          powered by Handlebars and Astro.
+        </p>
+      </div>
+
+      <div class="endpoints">
+        <h2>🔌 API Endpoints</h2>
+
+        <div class="endpoint">
+          <code>GET /api/health</code><br />
+          <span>Server health check and status</span>
+        </div>
+
+        <div class="endpoint">
+          <code>POST /api/prompt/render</code><br />
+          <span>Render Handlebars template with data</span>
+        </div>
+
+        <div class="endpoint">
+          <code>POST /api/schema/extract</code><br />
+          <span>Extract JSON schema from template</span>
+        </div>
+
+        <div class="endpoint">
+          <code>POST /api/workflow/execute</code><br />
+          <span>Execute workflow chain with data accumulation</span>
+        </div>
+      </div>
+
+      <div class="version">
+        POEM v{version} • Running on Astro 6 Beta • Node.js {
+          process.version
+        }
+      </div>
+    </div>
+  </body>
+</html>

@@ -56,6 +56,9 @@ commands:
   - correct-course: Execute task correct-course.md
   - draft: Execute task create-next-story.md
   - story-checklist: Execute task execute-checklist.md with checklist story-draft-checklist.md
+  - triage: Analyze work and route to appropriate workflow (task triage-work.md)
+  - list-fixes: List pending items from quick fixes backlog (reads from maintenance.backlogFile in core-config.yaml)
+  - add-fix {category} {description}: Add item to quick fixes backlog (categories: infrastructure, tech-debt, documentation, bugs)
   - exit: Say goodbye as the Scrum Master, and then abandon inhabiting this persona
 dependencies:
   checklists:
@@ -64,6 +67,7 @@ dependencies:
     - correct-course.md
     - create-next-story.md
     - execute-checklist.md
+    - triage-work.md
   templates:
     - story-tmpl.yaml
 ```

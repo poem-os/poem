@@ -33,6 +33,20 @@ Determine which triage mode to use:
 - User types `/triage [description]`
 - Use provided description directly
 
+**Mode D: Planning Document Triage**
+- Detect if Claude Code planning document exists in current session
+- Check for plan files in `~/.claude/plans/` directory
+- Read most recent plan.md file (by modification time)
+- Extract signals from plan:
+  - **File count**: Count file mentions → Scope indicator (search for file paths, "Create", "Modify" keywords)
+  - **Phase count**: Count "## Phase" headers → Complexity tier
+  - **Time estimates**: Extract hour estimates from "Effort:", "Timeline:", or explicit hour mentions
+  - **Risk level**: Extract from "Risk Level:" or "Risk:" sections
+  - **Complexity keywords**: "simple", "medium", "complex", "most complex"
+- Enrich conversation-based analysis with planning signals
+- Display: "✓ Planning document found: [filename]"
+- If plan file not found or unreadable: Gracefully fall back to Mode A
+
 ### Step 2: Context Analysis
 
 **Reference Documents**:
@@ -79,6 +93,20 @@ Extract the following attributes from conversation/issue/description:
   - Scope indicators: "typo", "quick" → <1hr; "implement", "create" → 1-4hr+
   - Impact indicators: "blocks", "critical", "users" → high; "nice to have" → low
 
+**For Planning Documents** (Mode D):
+- **Read planning signals directly**:
+  - File count → Estimate (1-3 files→<1hr, 4-8 files→1-4hr, 8+ files→4-8hr+)
+  - Phase count → Complexity (1 phase→simple, 2-3 phases→medium, 4+ phases→complex)
+  - Explicit time estimates → Use directly (overrides file count inference)
+  - Risk level → Impact (Low risk→low/medium impact, Medium/High risk→high impact)
+- **Enrich conversation context**:
+  - Combine planning signals with conversation-based extraction
+  - Planning signals take precedence for Estimate and Complexity
+  - Display confidence: "✓ High confidence routing (planning doc confirms [signal])"
+- **Fallback handling**:
+  - If planning doc exists but signals unclear → Use conversation-based extraction
+  - If no planning doc → Transparent fallback to Mode A
+
 ### Step 3: Apply Decision Criteria
 
 Evaluate in priority order:
@@ -86,14 +114,14 @@ Evaluate in priority order:
 **Criterion 1: Time/Ceremony Check**
 ```
 Is estimate <1 hour AND no ceremony needed (no tests, no complex validation)?
-├─ YES → Route to Quick Fixes (Path #3)
+├─ YES → Route to Quick Fix
 └─ NO → Story required, continue to Criterion 2
 ```
 
 **Criterion 2: Existing Story Check**
 ```
 Does a story file already exist for this work?
-├─ YES → Route to AppyDave Workflow (Path #1)
+├─ YES → Route to Existing Story (AppyDave Workflow)
 └─ NO → Continue to Criterion 3
 ```
 
@@ -108,14 +136,14 @@ Does work align with a feature epic theme?
 ├─ Epic 6: Web visualization, dashboards
 ├─ Epic 7: CLI commands, developer tools
 │
-├─ MATCH FOUND → Route to Feature Epic Story (Path #2)
+├─ MATCH FOUND → Route to Feature Epic Story (Epic 1-7)
 └─ NO MATCH → Continue to Criterion 4
 ```
 
 **Criterion 4: Epic 0 vs Ambiguous**
 ```
 Is this pure maintenance (bug fix, perf, tech debt, security, infra, docs)?
-├─ YES → Route to Epic 0 Story (Path #4)
+├─ YES → Route to Epic 0 Story (Maintenance)
 └─ NO (ambiguous, needs clarification) → Ask user for clarification
 ```
 
@@ -141,46 +169,7 @@ Is this pure maintenance (bug fix, perf, tech debt, security, infra, docs)?
 
 Generate output using this format:
 
-**For v2.0 with Valid Suggestion**:
-```
-🔍 Work Intake Triage (v2.0 Fast-Path)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Analyzing context...
-✓ Found: [description]
-✓ Area: [thematicArea from issue]
-✓ Estimate: [estimatedTime from issue]
-✓ Impact: [inferred from severity]
-✓ Type: [type from issue]
-✓ Suggestion still valid (logged {timestamp})
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 Routing Decision
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-✅ RECOMMENDED: [suggestedPath from issue]
-   [Path details - see Step 5 for templates]
-   Reason (from Issue Logger):
-   [suggestedPathRationale bullets from issue]
-
-   Next: [Command sequence - see handoff templates below]
-
-   Press Enter or type 'go' to proceed ⏎
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔀 Alternatives
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1️⃣ [Alternative path with brief rationale]
-2️⃣ [Alternative path with brief rationale]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Type 'go' for recommended path, '1' or '2' for alternatives,
-or describe what you'd prefer: _
-```
-
-**For v2.0 with Stale Suggestion / v1.0 / Conversation-Based**:
+**All Modes (Unified Format)**:
 ```
 🔍 Work Intake Triage
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -191,105 +180,70 @@ Analyzing context...
 ✓ Estimate: [time]
 ✓ Impact: [high/medium/low]
 ✓ Type: [bug/enhancement/refactor/docs/feature]
+[Optional indicators:]
+✓ Planning document found: [filename]  [if Mode D]
+✓ Suggestion still valid (logged {timestamp})  [if v2.0 valid]
 ⚠ Suggestion stale (>30 days), recomputed  [if v2.0 stale]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📋 Routing Decision
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-✅ RECOMMENDED: [Path Name]
-   [Path details - see Step 5 for templates]
-   Reason:
-   - [Reason 1 based on criteria]
-   - [Reason 2 based on analysis]
-   - [Reason 3 based on impact/type]
+✅ RECOMMENDED: [Route Destination Name]
 
-   Next: [Command sequence - see handoff templates below]
+[Brief 1-2 sentence summary of why this route was chosen]
 
-   Press Enter or type 'go' to proceed ⏎
+┌────────┬──────────────────┬─────────────────────────────────────┬──────────────────────┐
+│ Option │ Route To →       │ Agent & Command                     │ Why                  │
+├────────┼──────────────────┼─────────────────────────────────────┼──────────────────────┤
+│ ✅ REC │ [Destination]    │ [Agent Name]                        │ [Key reason]         │
+│        │                  │ [Command]                           │ [Secondary reason]   │
+├────────┼──────────────────┼─────────────────────────────────────┼──────────────────────┤
+│   1️⃣   │ [Alt 1 Dest]     │ [Agent Name]                        │ [Key reason]         │
+│        │                  │ [Command]                           │                      │
+├────────┼──────────────────┼─────────────────────────────────────┼──────────────────────┤
+│   2️⃣   │ [Alt 2 Dest]     │ [Agent Name]                        │ [Key reason]         │
+│        │                  │ [Command]                           │                      │
+└────────┴──────────────────┴─────────────────────────────────────┴──────────────────────┘
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔀 Alternatives
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1️⃣ [Alternative path with brief rationale]
-2️⃣ [Alternative path with brief rationale]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Type 'go' for recommended path, '1' or '2' for alternatives,
-or describe what you'd prefer: _
+Type 'go', '1', or '2': _
 ```
 
-### Step 5: Handoff Templates by Path
+### Step 5: Routing Destinations and Commands
 
-**Path #1: Existing Story → AppyDave Workflow**
-```
-✅ RECOMMENDED: Existing Story (Path #1)
-   Story {story-number} already exists for this work
-   Use AppyDave workflow to continue development
+These are reference templates for populating the table rows. Use user-facing destination names, not internal path numbers.
 
-   Reason:
-   - Story file found: docs/stories/{story-number}.story.md
-   - Avoid duplication by using existing story
-   - Workflow handles full lifecycle (Dev → SAT → QA)
+**Existing Story → AppyDave Workflow**
+- **Route To →**: Existing Story (Story {story-number})
+- **Agent & Command**: AppyDave Workflow → `/appydave-workflow {story-number}`
+- **When**: Story file already exists for this work
+- **Why**: Avoid duplication, workflow handles full lifecycle (Dev → SAT → QA)
 
-   Next: /appydave-workflow {story-number}
-```
+**Feature Epic Story (Epics 1-7)**
+- **Route To →**: Epic {N} Story
+- **Agent & Command**: SM (Bob) → `/BMad/agents/sm` then `*draft` (enter {N})
+- **When**: Work aligns with feature epic themes (Installation, Prompts, Mock Data, Workflows, Integration, Visualization, CLI)
+- **Why**: Clear alignment with Epic {N} goals, multi-hour effort with testing needs
 
-**Path #2: New Feature Epic Story → Bob *draft**
-```
-✅ RECOMMENDED: Epic {N} Story (Path #2)
-   Create new story in Epic {N}: {epic-name}
-   Work fits theme: {thematic-fit-explanation}
+**Quick Fix**
+- **Route To →**: Quick Fix
+- **Agent & Command**: SM (Bob) → `/BMad/agents/sm` then `*add-fix {category} "{description}"`
+- **Categories**: infrastructure, tech-debt, documentation, bugs
+- **When**: <1 hour scope AND no ceremony needed (no tests, simple correction)
+- **Why**: Direct fix more efficient than story overhead, logged in backlog for tracking
 
-   Reason:
-   - Clear alignment with Epic {N} goals
-   - {Impact justification - e.g., "High impact feature requiring full ceremony"}
-   - {Complexity justification - e.g., "Multi-hour effort with testing needs"}
+**Epic 0 Story (Maintenance)**
+- **Route To →**: Epic 0 Story
+- **Agent & Command**: SM (Bob) → `/BMad/agents/sm` then `*draft` (enter 0)
+- **When**: Maintenance work >1 hour (bug fix, perf, tech debt, security, infra, docs)
+- **Why**: Structured approach needed, requires full ceremony (Dev → SAT → QA)
+- **Priority**: P0 (critical), P1 (high), P2 (medium)
 
-   Next: /BMad/agents/sm then *draft
-   (Bob will prompt for epic number - enter {N})
-```
-
-**Path #3: Quick Fixes → Bob *add-fix**
-```
-✅ RECOMMENDED: Quick Fixes (Path #3)
-   Category: {category} (infrastructure, tech-debt, documentation, bugs)
-   Simple fix, no ceremony needed
-
-   Reason:
-   - <1 hour scope ({estimate})
-   - {Simplicity indicator - e.g., "Simple correction, no tests required"}
-   - Direct fix more efficient than story overhead
-
-   Next: /BMad/agents/sm then *add-fix {category} "{description}"
-```
-
-**Path #4: Epic 0 Story → Bob *draft**
-```
-✅ RECOMMENDED: Epic 0 Story (Path #4)
-   Maintenance work requiring full ceremony
-   Priority: {P0/P1/P2 based on impact}
-
-   Reason:
-   - >1 hour scope, needs structured approach
-   - {Type} work fits Epic 0 category
-   - {Impact justification - e.g., "High impact maintenance requiring QA validation"}
-
-   Next: /BMad/agents/sm then *draft
-   (Bob will prompt for epic number - enter 0)
-```
-
-**Path #5: From Usage Issue → Depends on Analysis**
-```
-✅ RECOMMENDED: [Determined by analysis]
-   Issue #{N}: {issue-title}
-   Severity: {severity}
-
-   [Apply Criteria 1-4 to route to appropriate path]
-   [Use handoff template for determined path]
-```
+**Usage Issue Routing**
+- **Route To →**: [Determined by applying Criteria 1-4]
+- **Agent & Command**: [Use one of the above templates based on analysis]
+- **When**: Triaging from `usage-issues.jsonl` file
+- **Note**: Apply decision criteria to determine which of the above 4 routes to use
 
 ### Step 6: Present Alternatives
 
