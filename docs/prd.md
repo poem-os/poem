@@ -242,6 +242,28 @@ Ongoing maintenance, bug fixes, technical debt, developer experience improvement
 
 ---
 
+#### Story 0.2: Triage and Issue Logger Normalization
+
+**As a** POEM developer,
+**I want** the Triage and Issue Logger systems normalized with unified vocabulary and schema alignment,
+**so that** I can eliminate dual data entry, improve triage accuracy, and maintain system architectural separation while enabling seamless data reuse.
+
+**Acceptance Criteria**:
+
+1. Create `.bmad-core/vocabularies/work-item-taxonomy.yaml` with unified severity/impact scale, work type classification, epic thematic areas, and time estimate categories
+2. Create `.bmad-core/utils/triage-logic.md` with 4 sequential decision criteria, epic theme matching rules, estimate/impact inference heuristics, and type classification rules
+3. No breaking changes to existing workflows (Layer 1 validation)
+4. Update Issue Logger JSONL schema to v2.0 with `schemaVersion`, `estimatedTime`, `thematicArea`, `type`, `suggestedPath`, and `suggestedPathRationale` fields
+5. Update `docs/planning/gap-analysis/observation-collector.md` to prompt for estimate/area with smart defaults and generate v2.0 JSONL records
+6. Update `.bmad-core/tasks/triage-work.md` to read v2.0 fields directly with v1.0 fallback and use pre-computed `suggestedPath`
+7. Update `docs/planning/gap-analysis/README.md` with v2.0 schema documentation
+8. Issue Logger computes `suggestedPath` automatically by loading triage logic and applying 4 sequential checks
+9. Triage uses pre-computed suggestions with staleness detection (>30 days, completed epic)
+10. Update `docs/workflows/triage-guide.md` with Layer 3 integration details
+11. 5 integration tests pass (auto-inference, user override, v1.0 compatibility, staleness detection, migration)
+
+---
+
 ### Epic 1: Foundation & Monorepo Setup
 
 Establish project infrastructure with monorepo structure, NPX installer, and basic `.poem-core/` + `.poem-app/` scaffolding that copies to user projects.

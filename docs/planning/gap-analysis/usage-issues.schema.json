@@ -138,6 +138,34 @@
         }
       },
       "required": ["status"]
+    },
+    "schemaVersion": {
+      "type": "string",
+      "enum": ["1.0", "2.0"],
+      "description": "Schema version identifier (absent = v1.0, present = v2.0)"
+    },
+    "estimatedTime": {
+      "type": "string",
+      "enum": ["<1hr", "1-4hr", "4-8hr", ">8hr"],
+      "description": "Time estimate for addressing this issue (v2.0 field)"
+    },
+    "thematicArea": {
+      "type": "string",
+      "description": "Epic thematic area (installation, prompts, schemas, workflows, youtube, providers, visualization, deployment, maintenance) (v2.0 field)"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["bug", "enhancement", "refactor", "docs", "feature"],
+      "description": "Unified work type classification (v2.0 field)"
+    },
+    "suggestedPath": {
+      "type": "string",
+      "enum": ["Quick Fix", "Epic 0 Story", "Feature Epic Story"],
+      "description": "Triage routing recommendation (v2.0 field)"
+    },
+    "suggestedPathRationale": {
+      "type": "string",
+      "description": "2-3 bullet points explaining routing decision (v2.0 field, optional)"
     }
   }
 }

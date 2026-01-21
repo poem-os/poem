@@ -1,0 +1,225 @@
+storyId: "0.2"
+storyTitle: "Triage and Issue Logger Normalization"
+reviewDate: 2026-01-21
+reviewer: Quinn (QA Agent)
+reviewType: comprehensive-documentation
+
+gateStatus: PASS
+
+qualityScore:
+  overall: 95
+  breakdown:
+    requirementsCoverage: 100
+    testArchitecture: 95
+    documentationQuality: 95
+    nfrCompliance: 100
+    criticalIssues: 0
+
+summary: |
+  Story 0.2 successfully normalizes the Issue Logger and Triage systems through a 3-layer architecture.
+  All 11 acceptance criteria have explicit test coverage in the SAT guide. Documentation is complete,
+  clear, and maintainable. Backward compatibility is preserved (v1.0 issues continue working).
+
+  This is a framework story (documentation/agents only, no runtime code), which appropriately requires
+  manual testing via agent activation.
+
+requirementsTraceability:
+  totalAcceptanceCriteria: 11
+  coveredAcceptanceCriteria: 11
+  coveragePercentage: 100
+
+  mappings:
+    - ac: AC1
+      requirement: "Unified vocabulary file exists"
+      validationMethod: "File verification"
+      satTest: "Test A"
+      status: covered
+
+    - ac: AC2
+      requirement: "Triage logic reference doc exists"
+      validationMethod: "File verification"
+      satTest: "Test B"
+      status: covered
+
+    - ac: AC3
+      requirement: "Existing v1.0 issues unchanged"
+      validationMethod: "File verification"
+      satTest: "Test C"
+      status: covered
+
+    - ac: AC4
+      requirement: "Documentation contains v2.0 references"
+      validationMethod: "Grep verification"
+      satTest: "Test D"
+      status: covered
+
+    - ac: AC5
+      requirement: "Issue Logger has inference logic section"
+      validationMethod: "Grep verification"
+      satTest: "Test E"
+      status: covered
+
+    - ac: AC6
+      requirement: "Triage task has v2.0 detection logic"
+      validationMethod: "Grep verification"
+      satTest: "Test F"
+      status: covered
+
+    - ac: AC7
+      requirement: "Triage task has staleness logic"
+      validationMethod: "Included in Test F"
+      satTest: "Test F"
+      status: covered
+
+    - ac: AC8
+      requirement: "Issue Logger displays v2.0 inference prompts"
+      validationMethod: "Agent activation test"
+      satTest: "Tests 1-3"
+      status: covered
+
+    - ac: AC9
+      requirement: "Triage displays v2.0 fast-path for new issues"
+      validationMethod: "Agent activation test"
+      satTest: "Tests 4, 6"
+      status: covered
+
+    - ac: AC10
+      requirement: "Triage guide has Layer 3 section"
+      validationMethod: "Grep verification"
+      satTest: "Test G"
+      status: covered
+
+    - ac: AC11
+      requirement: "Triage infers fields for v1.0 issues"
+      validationMethod: "Agent activation test"
+      satTest: "Test 5"
+      status: covered
+
+documentationQuality:
+  observationCollectorMd:
+    status: excellent
+    findings:
+      - "v2.0 schema fully documented with all 6 new fields"
+      - "Inference logic section complete (estimatedTime, thematicArea, type)"
+      - "suggestedPath computation documented with 4-criteria reference"
+      - "User prompt format specified: '(yes/no/auto)'"
+      - "Auto mode behavior documented"
+      - "Example usage shows full interaction flow"
+
+  triageWorkMd:
+    status: excellent
+    findings:
+      - "Mode B detection logic for schemaVersion field"
+      - "v2.0 field reading documented"
+      - "Staleness detection rules specified (>30 days, epic completion)"
+      - "Fast-path display format with verification status"
+      - "v1.0 fallback logic preserved (backward compatibility)"
+      - "Output format templates for both v2.0 valid/stale paths"
+
+  triageGuideMd:
+    status: excellent
+    findings:
+      - "Layer 3 section added with clear title"
+      - "v2.0 schema integration explained"
+      - "Fast-path behavior documented with examples"
+      - "Staleness detection rules explained"
+      - "User-facing guidance clear and actionable"
+
+testArchitecture:
+  satGuideStructure: proper
+  terminalTests: 7
+  humanTests: 6
+  totalTests: 13
+
+  coverage:
+    fileVerification: covered
+    documentationVerification: covered
+    behavioralValidation: covered
+    backwardCompatibility: covered
+    edgeCases: covered
+
+  findings:
+    - "Terminal Tests (A-G) are copy-paste ready with expected outputs"
+    - "Human Tests (1-6) have step-by-step instructions"
+    - "Troubleshooting guide included for common issues"
+    - "All test scenarios align with acceptance criteria"
+
+nfrValidation:
+  maintainability:
+    status: pass
+    evidence:
+      - "Unified vocabulary in single file (.bmad-core/vocabularies/work-item-taxonomy.yaml)"
+      - "Triage logic centralized (.bmad-core/utils/triage-logic.md)"
+      - "No code duplication (agents reference shared logic)"
+
+  backwardCompatibility:
+    status: pass
+    evidence:
+      - "v1.0 issues continue working (no migration required)"
+      - "Inference fallback for missing v2.0 fields"
+      - "Existing usage-issues.jsonl file unchanged"
+
+  usability:
+    status: pass
+    evidence:
+      - "User confirmation prompts for inferred values"
+      - "Auto mode for bulk logging efficiency"
+      - "Clear verification status messages ('✓ Suggestion still valid')"
+
+  documentationQuality:
+    status: pass
+    evidence:
+      - "Layer 3 user guide explains behavioral changes"
+      - "SAT guide provides clear testing instructions"
+      - "Troubleshooting section addresses common issues"
+
+concerns:
+  critical: []
+
+  nonBlocking:
+    - id: C1
+      severity: low
+      description: "Manual testing required for agent activation tests (Tests 1-6)"
+      impact: "Framework stories require human execution to validate agent behavior"
+      recommendation: "Execute SAT Human Tests 1-6 via agent activation"
+      rationale: "Expected for framework stories - not a defect"
+
+    - id: C2
+      severity: low
+      description: "Staleness logic validation requires timestamp manipulation"
+      impact: "Test 6 requires editing JSONL timestamp to test >30 days staleness"
+      recommendation: "Follow Test 6 instructions in SAT guide"
+      rationale: "Staleness detection is time-based - manual timestamp editing is appropriate testing approach"
+
+evidence:
+  satGuide: "docs/stories/0.2.story-SAT.md"
+  filesModified:
+    - "docs/planning/gap-analysis/observation-collector.md"
+    - ".bmad-core/tasks/triage-work.md"
+    - "docs/workflows/triage-guide.md"
+  filesCreated:
+    - ".bmad-core/vocabularies/work-item-taxonomy.yaml"
+    - ".bmad-core/utils/triage-logic.md"
+
+recommendation:
+  decision: PASS
+  rationale: |
+    Story 0.2 meets all quality standards for framework documentation stories:
+
+    1. **Requirements Coverage**: 100% (11/11 ACs have explicit test coverage)
+    2. **Documentation Quality**: Excellent (clear, complete, maintainable)
+    3. **Backward Compatibility**: Preserved (v1.0 issues continue working)
+    4. **Test Architecture**: Strong (13 tests covering all scenarios)
+    5. **NFR Compliance**: Full (maintainability, usability, backward compat)
+
+    The two minor concerns (manual testing, staleness validation) are expected for framework
+    stories and are properly addressed in the SAT guide.
+
+  nextSteps:
+    - "Execute SAT Terminal Tests (A-G) to verify file contents"
+    - "Execute SAT Human Tests (1-6) via agent activation (/poem/log-issues and /triage)"
+    - "Document test results in SAT guide"
+    - "If all tests pass, mark story as 'Done'"
+
+approvedBy: Quinn (QA Agent)
+approvalDate: 2026-01-21

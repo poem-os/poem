@@ -23,6 +23,9 @@ Determine which triage mode to use:
 - User types `/triage issue-{N}` where N is issue number
 - Load usage issues file: `docs/planning/gap-analysis/usage-issues.jsonl`
 - Parse JSONL and extract issue N (N = line number in file)
+- **Detect schema version**: Check for `schemaVersion` field
+  - If `schemaVersion == "2.0"`: Read v2.0 fields directly (estimatedTime, thematicArea, type, suggestedPath, suggestedPathRationale)
+  - If `schemaVersion` missing or `"1.0"`: Use v1.0 inference (see Step 2 fallback logic)
 - If file missing: gracefully inform user "Usage issues file not found. Use /triage without issue number." and switch to Mode A
 - If issue resolved: inform user and offer to list open issues
 
@@ -31,6 +34,10 @@ Determine which triage mode to use:
 - Use provided description directly
 
 ### Step 2: Context Analysis
+
+**Reference Documents**:
+- **Unified Vocabulary**: `.bmad-core/vocabularies/work-item-taxonomy.yaml` - severity scales, work types, epic themes, time estimates
+- **Decision Rules**: `.bmad-core/utils/triage-logic.md` - inference heuristics, classification rules, staleness detection
 
 Extract the following attributes from conversation/issue/description:
 
@@ -41,11 +48,36 @@ Extract the following attributes from conversation/issue/description:
 - **Impact**: User impact level (low, medium, high)
 - **Type**: Work classification (bug, enhancement, refactor, docs, feature)
 
-**Analysis Hints**:
-- Keywords: "fix" suggests bug, "add" suggests enhancement, "refactor" suggests tech debt
-- File paths mentioned: `docs/` suggests documentation, `.github/` suggests infrastructure
-- Scope indicators: "typo", "quick" → <1hr; "implement", "create" → 1-4hr+
-- Impact indicators: "blocks", "critical", "users" → high; "nice to have" → low
+**For v2.0 Usage Issues** (Mode B with `schemaVersion: "2.0"`):
+- **Read directly from JSONL**:
+  - `estimatedTime` → Estimate
+  - `thematicArea` → Area
+  - `type` → Type
+  - `severity` → infer Impact (critical/high→high, medium→medium, low→low)
+  - `suggestedPath` → Pre-computed routing suggestion
+  - `suggestedPathRationale` → Reason for routing
+- **Staleness Check** (see `.bmad-core/utils/triage-logic.md` staleness rules):
+  - IF `timestamp` > 30 days old → Mark as STALE, recompute routing
+  - IF `suggestedEpic` status is Done → Mark as STALE, recompute routing
+  - IF `estimatedTime` differs from severity inference → Recompute routing
+- **If STALE**: Recompute `suggestedPath` using Criteria 1-4 (Step 3), display warning: "⚠ Suggestion stale (>30 days), recomputed"
+- **If VALID**: Use pre-computed `suggestedPath` as primary recommendation, display: "✓ Suggestion still valid ({timestamp})"
+
+**For v1.0 Usage Issues** (Mode B with no `schemaVersion` or `"1.0"`):
+- **Infer missing fields** using `.bmad-core/utils/triage-logic.md` inference rules:
+  - `severity` → Estimate (critical→4-8hr, high→1-4hr, medium/low→<1hr)
+  - `tags` + `references.files` + keywords → Area (see triage-logic.md thematic area inference)
+  - `category` + `severity` → Type (bug→bug, missing-feature+critical→feature, etc.)
+  - `severity` → Impact (critical/high→high, medium→medium, low→low)
+- **Compute routing on-the-fly** using Criteria 1-4 (Step 3)
+- **No staleness detection** (v1.0 has no stored suggestions)
+
+**For Conversation-Based / Explicit Description** (Mode A / Mode C):
+- **Extract from conversation/description**:
+  - Keywords: "fix" suggests bug, "add" suggests enhancement, "refactor" suggests tech debt
+  - File paths mentioned: `docs/` suggests documentation, `.github/` suggests infrastructure
+  - Scope indicators: "typo", "quick" → <1hr; "implement", "create" → 1-4hr+
+  - Impact indicators: "blocks", "critical", "users" → high; "nice to have" → low
 
 ### Step 3: Apply Decision Criteria
 
@@ -89,8 +121,66 @@ Is this pure maintenance (bug fix, perf, tech debt, security, infra, docs)?
 
 ### Step 4: Generate Routing Recommendation
 
-Based on decision criteria, generate output using this format:
+**For v2.0 Usage Issues with Valid Pre-Computed Suggestion**:
+- Read `suggestedPath` from issue
+- Read `suggestedPathRationale` from issue
+- Display with verification status: "✓ Suggestion still valid ({timestamp})"
+- Use pre-computed suggestion as primary recommendation
+- Rationale bullets come from `suggestedPathRationale` field
 
+**For v2.0 Usage Issues with Stale Suggestion**:
+- Display warning: "⚠ Suggestion stale (>30 days old / Epic {N} completed), recomputed"
+- Recompute routing using Criteria 1-4 (Step 3)
+- Generate new rationale bullets based on current state
+
+**For v1.0 Usage Issues / Conversation-Based / Explicit Description**:
+- Compute routing using Criteria 1-4 (Step 3)
+- Generate rationale bullets based on criteria evaluation
+
+---
+
+Generate output using this format:
+
+**For v2.0 with Valid Suggestion**:
+```
+🔍 Work Intake Triage (v2.0 Fast-Path)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Analyzing context...
+✓ Found: [description]
+✓ Area: [thematicArea from issue]
+✓ Estimate: [estimatedTime from issue]
+✓ Impact: [inferred from severity]
+✓ Type: [type from issue]
+✓ Suggestion still valid (logged {timestamp})
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Routing Decision
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ RECOMMENDED: [suggestedPath from issue]
+   [Path details - see Step 5 for templates]
+   Reason (from Issue Logger):
+   [suggestedPathRationale bullets from issue]
+
+   Next: [Command sequence - see handoff templates below]
+
+   Press Enter or type 'go' to proceed ⏎
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔀 Alternatives
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1️⃣ [Alternative path with brief rationale]
+2️⃣ [Alternative path with brief rationale]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Type 'go' for recommended path, '1' or '2' for alternatives,
+or describe what you'd prefer: _
+```
+
+**For v2.0 with Stale Suggestion / v1.0 / Conversation-Based**:
 ```
 🔍 Work Intake Triage
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -101,6 +191,7 @@ Analyzing context...
 ✓ Estimate: [time]
 ✓ Impact: [high/medium/low]
 ✓ Type: [bug/enhancement/refactor/docs/feature]
+⚠ Suggestion stale (>30 days), recomputed  [if v2.0 stale]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📋 Routing Decision

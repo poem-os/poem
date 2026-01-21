@@ -19,6 +19,21 @@ This directory captures **real-world usage observations** from POEM implementati
 
 ## Observation Schema
 
+### Schema Versioning
+
+The usage issues schema has evolved to support improved triage and routing. Two versions are supported:
+
+| Version | Status | Features |
+|---------|--------|----------|
+| **v1.0** | Legacy | Original schema (10 fields) |
+| **v2.0** | Current | Adds triage-compatible fields (16 fields total) |
+
+**Backward Compatibility**: v1.0 issues remain valid. Triage system infers missing v2.0 fields on-the-fly.
+
+---
+
+### Schema v1.0 (Legacy)
+
 Each line in `*.jsonl` files is a JSON object with this structure:
 
 ```json
@@ -38,6 +53,89 @@ Each line in `*.jsonl` files is a JSON object with this structure:
     "commands": ["/poem/agents/prompt-engineer"],
     "docs": ["docs/architecture.md#section"]
   }
+}
+```
+
+---
+
+### Schema v2.0 (Current)
+
+v2.0 adds 6 triage-compatible fields for improved routing and reduced dual data entry:
+
+```json
+{
+  // v1.0 fields (unchanged)
+  "timestamp": "2026-01-15T10:30:00Z",
+  "session": "vibedeck-usage-2026-01-15",
+  "category": "missing-feature",
+  "severity": "high",
+  "observation": "Detailed description of what was noticed",
+  "context": "Where/when this occurred",
+  "expected": "What was expected to happen (optional)",
+  "actual": "What actually happened (optional)",
+  "impact": "How this affects workflow (optional)",
+  "tags": ["prompt-engineering", "schema"],
+  "references": {
+    "files": ["path/to/file.ts"],
+    "commands": [],
+    "docs": []
+  },
+
+  // v2.0 new fields
+  "schemaVersion": "2.0",
+  "estimatedTime": "<1hr|1-4hr|4-8hr|>8hr",
+  "thematicArea": "installation|prompts|schemas|workflows|youtube|providers|visualization|deployment|maintenance",
+  "type": "bug|enhancement|refactor|docs|feature",
+  "suggestedPath": "Quick Fix|Epic 0 Story|Feature Epic Story",
+  "suggestedPathRationale": "2-3 bullet points explaining routing decision (optional)"
+}
+```
+
+**New Fields Explained**:
+
+| Field | Type | Description | Inferred From (v1.0 fallback) |
+|-------|------|-------------|-------------------------------|
+| `schemaVersion` | string | Version identifier ("1.0" or "2.0") | Absent = v1.0 |
+| `estimatedTime` | enum | Time estimate (<1hr, 1-4hr, 4-8hr, >8hr) | severity (critical→4-8hr, high→1-4hr, medium/low→<1hr) |
+| `thematicArea` | string | Epic theme (installation, prompts, etc.) | tags, references.files, category |
+| `type` | enum | Work classification (bug, enhancement, refactor, docs, feature) | category (bug→bug, missing-feature→enhancement, architecture→refactor, docs-gap→docs) |
+| `suggestedPath` | enum | Routing recommendation (Quick Fix, Epic 0 Story, Feature Epic Story) | Computed via triage logic (4 sequential criteria) |
+| `suggestedPathRationale` | string | 2-3 bullet explaining why this path (optional) | N/A |
+
+---
+
+### Migration Path: v1.0 → v2.0
+
+Existing v1.0 issues **remain valid**. No manual migration required.
+
+**Triage System Behavior**:
+1. **Read** JSONL record
+2. **Detect** version: `schemaVersion === undefined` → v1.0
+3. **Infer** missing fields using `.bmad-core/utils/triage-logic.md` inference rules
+4. **Route** using inferred values
+
+**Issue Logger Behavior** (from Story 0.2):
+- New issues logged in **v2.0 format** (includes all 16 fields)
+- Smart defaults inferred automatically, user can override
+- `suggestedPath` pre-computed using triage decision criteria
+
+**Example v1.0 → v2.0 Inference**:
+
+```json
+// v1.0 issue (existing)
+{
+  "category": "bug",
+  "severity": "critical",
+  "tags": ["installation", "npx"]
+}
+
+// Inferred v2.0 fields
+{
+  "schemaVersion": "1.0",  // detected
+  "estimatedTime": "4-8hr",  // from severity
+  "thematicArea": "installation",  // from tags
+  "type": "bug",  // from category
+  "suggestedPath": "Epic 0 Story"  // computed
 }
 ```
 

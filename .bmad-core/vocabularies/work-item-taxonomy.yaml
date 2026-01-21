@@ -1,0 +1,228 @@
+# Work Item Taxonomy
+# Unified vocabulary for Issue Logger and Triage systems
+
+# Severity/Impact Scale
+severity:
+  critical:
+    description: Production blockers, data loss, security vulnerabilities
+    triageImpact: high
+    priority: P0
+    estimatedTime: 4-8hr
+    examples:
+      - Server crash on startup
+      - Security vulnerability (disclosed CVE)
+      - Data loss risk
+
+  high:
+    description: Affects core workflows, impacts multiple users, difficult workaround
+    triageImpact: high
+    priority: P1
+    estimatedTime: 1-4hr
+    examples:
+      - Template rendering fails for arrays
+      - Major performance issue (10s API response)
+      - Critical technical debt blocking features
+
+  medium:
+    description: Minor issues with workarounds, edge cases
+    triageImpact: medium
+    priority: P1
+    estimatedTime: <1hr
+    examples:
+      - Unclear error message
+      - Small optimization (reduce startup by 0.5s)
+      - Low-impact technical debt
+
+  low:
+    description: Nice-to-have improvements, minor enhancements
+    triageImpact: low
+    priority: P2
+    estimatedTime: <1hr
+    examples:
+      - Typo in docs
+      - Code formatting inconsistency
+      - Optional feature enhancement
+
+# Work Type Classification
+workType:
+  bug:
+    description: Defects causing incorrect behavior, errors, or unexpected outcomes
+    category: bug
+    epicFit: Epic 0
+    examples:
+      - Template rendering failure
+      - NPX installer crash
+      - Port conflict detection false positive
+
+  enhancement:
+    description: Improvements to existing functionality (not new features)
+    category: missing-feature
+    epicFit: depends-on-context
+    examples:
+      - Improve error messages
+      - Add hot-reload support
+      - Optimize template caching
+
+  refactor:
+    description: Code restructuring to improve maintainability without changing behavior
+    category: architecture
+    epicFit: Epic 0
+    examples:
+      - Extract duplicated validation logic
+      - Migrate callbacks to promises
+      - Rename variables for clarity
+
+  docs:
+    description: Documentation updates (README, guides, inline comments)
+    category: docs-gap
+    epicFit: Epic 0
+    examples:
+      - Add troubleshooting section
+      - Document API with examples
+      - Create quickstart guide
+
+  feature:
+    description: New capabilities or major functionality additions
+    category: missing-feature
+    epicFit: Feature Epic (1-7)
+    examples:
+      - Add workflow chain execution
+      - Implement human-in-the-loop checkpoint
+      - Create new provider integration
+
+# Epic Thematic Areas
+epicThemes:
+  installation:
+    epic: 1
+    keywords:
+      - install
+      - setup
+      - npx
+      - bin/install.js
+      - .poem-core
+      - .poem-app
+    description: Installation, setup, and initialization
+
+  prompts:
+    epic: 2
+    keywords:
+      - template
+      - handlebars
+      - .hbs
+      - prompt-engineer
+      - render
+    description: Prompt template management
+
+  schemas:
+    epic: 2
+    keywords:
+      - schema
+      - json
+      - validation
+      - extract
+    description: Schema extraction and validation
+
+  workflows:
+    epic: 3
+    keywords:
+      - workflow
+      - chain
+      - workflow-data
+      - sequence
+    description: Workflow orchestration
+
+  youtube:
+    epic: 4
+    keywords:
+      - youtube
+      - launch-optimizer
+      - video
+    description: YouTube Launch Optimizer validation
+
+  providers:
+    epic: 5
+    keywords:
+      - provider
+      - anthropic
+      - openai
+      - integration
+    description: Provider integrations
+
+  visualization:
+    epic: 6
+    keywords:
+      - ui
+      - dashboard
+      - visualization
+      - astro-pages
+    description: Visualization and UI
+
+  deployment:
+    epic: 7
+    keywords:
+      - deploy
+      - publish
+      - npm
+      - github-actions
+    description: Deployment and distribution
+
+  maintenance:
+    epic: 0
+    keywords:
+      - bug
+      - performance
+      - refactor
+      - docs
+      - tech-debt
+    description: Maintenance, bugs, tech debt, documentation
+
+# Time Estimate Categories
+timeEstimate:
+  quick:
+    value: <1hr
+    description: Quick fixes, typos, simple config changes
+    triageRoute: Quick Fix
+    ceremonyLevel: none
+    examples:
+      - Fix typo in README
+      - Add .gitignore entry
+      - Update link in docs
+
+  short:
+    value: 1-4hr
+    description: Small features, bug fixes, minor refactors
+    triageRoute: Epic 0 Story or Feature Epic Story
+    ceremonyLevel: full
+    examples:
+      - Add new Handlebars helper
+      - Fix template rendering bug
+      - Document API endpoint
+
+  medium:
+    value: 4-8hr
+    description: Moderate features, significant refactors
+    triageRoute: Feature Epic Story
+    ceremonyLevel: full
+    examples:
+      - Implement workflow chain execution
+      - Refactor schema validation
+      - Add provider integration
+
+  long:
+    value: '>8hr'
+    description: Large features, architectural changes
+    triageRoute: Feature Epic Story
+    ceremonyLevel: full
+    examples:
+      - Build visualization dashboard
+      - Implement deployment system
+      - Create comprehensive test suite
+
+# Category-to-Type Mapping (for v1.0 compatibility)
+categoryTypeMapping:
+  bug: bug
+  missing-feature: enhancement  # default, check severity for feature
+  usability: enhancement
+  docs-gap: docs
+  architecture: refactor
+  performance: enhancement

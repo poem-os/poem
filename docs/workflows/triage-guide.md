@@ -159,6 +159,163 @@ The Triage System eliminates decision paralysis when routing development work by
 
 ---
 
+## Layer 3: Behavioral Integration (v2.0)
+
+Starting with **Story 0.2**, the Issue Logger and Triage systems have been integrated through schema v2.0, enabling automated routing suggestions and fast-path triage.
+
+### What is Layer 3?
+
+**Layer 3** connects the Issue Logger agent with the Triage task so that:
+1. **Issue Logger** automatically computes routing suggestions when logging issues
+2. **Triage** uses pre-computed suggestions as the primary recommendation
+3. **Staleness detection** ensures suggestions remain valid over time
+
+### v2.0 Issue Schema
+
+When you log issues via `/poem/log-issues`, the Issue Logger now:
+- Prompts you to confirm inferred values (estimatedTime, thematicArea, type)
+- Applies triage logic automatically to compute `suggestedPath`
+- Stores routing rationale in `suggestedPathRationale`
+- Supports "auto" mode to skip all prompts and use inference
+
+**v2.0 fields**:
+```json
+{
+  "schemaVersion": "2.0",
+  "estimatedTime": "<1hr|1-4hr|4-8hr|>8hr",
+  "thematicArea": "installation|prompts|schemas|workflows|...",
+  "type": "bug|enhancement|refactor|docs|feature",
+  "suggestedPath": "Quick Fix|Epic 0 Story|Feature Epic Story",
+  "suggestedPathRationale": "2-3 bullet points explaining routing",
+  "suggestedEpic": "Epic 0-7 (if applicable)"
+}
+```
+
+### Fast-Path Triage for v2.0 Issues
+
+When you run `/triage issue-{N}` on a v2.0 issue:
+
+**If suggestion is valid** (logged <30 days ago, epic not completed):
+```
+🔍 Work Intake Triage (v2.0 Fast-Path)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Analyzing context...
+✓ Found: [description]
+✓ Area: [thematicArea from issue]
+✓ Estimate: [estimatedTime from issue]
+✓ Impact: [inferred from severity]
+✓ Type: [type from issue]
+✓ Suggestion still valid (logged 2026-01-15)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Routing Decision
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ RECOMMENDED: [suggestedPath from issue]
+   [Path details]
+   Reason (from Issue Logger):
+   • [rationale bullet 1]
+   • [rationale bullet 2]
+   • [rationale bullet 3]
+
+   Next: [Command sequence]
+```
+
+**If suggestion is stale** (>30 days old OR epic completed):
+```
+🔍 Work Intake Triage
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Analyzing context...
+✓ Found: [description]
+✓ Area: [thematicArea from issue]
+✓ Estimate: [estimatedTime from issue]
+✓ Impact: [inferred from severity]
+✓ Type: [type from issue]
+⚠ Suggestion stale (>30 days), recomputed
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Routing Decision
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ RECOMMENDED: [newly computed path]
+   [Path details]
+   Reason:
+   • [criterion 1 reasoning]
+   • [criterion 2 reasoning]
+
+   Next: [Command sequence]
+```
+
+### Staleness Detection Rules
+
+Triage recomputes `suggestedPath` when:
+
+1. **Age > 30 days**: Issue logged over 30 days ago
+   - Rationale: Epic priorities shift, new stories created
+   - Action: Rerun Criteria 1-4 with current project state
+
+2. **Epic completed**: `suggestedEpic` status is Done
+   - Rationale: Feature epic finished, work should route to Epic 0
+   - Action: Re-evaluate epic fit, typically routes to Epic 0
+
+3. **Estimate changed**: User overrides `estimatedTime`
+   - Rationale: Time estimate affects Criterion 1 (Quick Fix vs Story)
+   - Action: Rerun Criteria 1-4 with new estimate
+
+### Backward Compatibility (v1.0 Issues)
+
+Triage automatically detects v1.0 issues (no `schemaVersion` field) and:
+- Infers missing fields using rules from `.bmad-core/utils/triage-logic.md`
+- Computes routing on-the-fly (no staleness detection)
+- Works seamlessly with existing 10 logged issues
+
+**No migration required** - v1.0 issues continue working as before.
+
+### Benefits of Layer 3 Integration
+
+1. **Eliminates Dual Entry**: Issue Logger captures routing data once
+2. **Faster Triage**: Pre-computed suggestions reduce analysis time
+3. **Historical Record**: Routing rationale stored with issue for debugging
+4. **Automatic Updates**: Staleness detection adapts to project changes
+5. **User Control**: Confirmation prompts allow override of inferred values
+
+---
+
+## Unified Vocabulary
+
+The Triage System uses a shared vocabulary defined in `.bmad-core/vocabularies/work-item-taxonomy.yaml`. This ensures consistent classification across Issue Logger and Triage.
+
+**Key Concepts**:
+
+### Severity Scale
+- **critical**: Production blockers, data loss, security vulnerabilities → P0 priority, 4-8hr estimate
+- **high**: Affects core workflows, impacts multiple users → P1 priority, 1-4hr estimate
+- **medium**: Minor issues with workarounds, edge cases → P1 priority, <1hr estimate
+- **low**: Nice-to-have improvements → P2 priority, <1hr estimate
+
+### Work Types
+- **bug**: Defects causing incorrect behavior → Routes to Epic 0
+- **enhancement**: Improvements to existing functionality → Routes by epic fit
+- **refactor**: Code restructuring for maintainability → Routes to Epic 0
+- **docs**: Documentation updates → Routes to Epic 0
+- **feature**: New capabilities → Routes to Feature Epics (1-7)
+
+### Epic Themes
+- **Epic 1**: Installation, setup, NPX installer
+- **Epic 2**: Prompt management, schemas, validation
+- **Epic 3**: Mock data generation
+- **Epic 4**: Workflow orchestration, chains
+- **Epic 5**: Provider integrations
+- **Epic 6**: Web visualization, dashboards
+- **Epic 7**: CLI commands, developer tools
+- **Epic 0**: Maintenance, bugs, tech debt, docs, performance
+
+**Reference**: See `.bmad-core/vocabularies/work-item-taxonomy.yaml` for complete taxonomy and `.bmad-core/utils/triage-logic.md` for decision rules.
+
+---
+
 ## Example Scenarios
 
 ### Path #1: Existing Story
@@ -361,6 +518,22 @@ Analyzing context...
 ### Q: Can I use triage for client projects?
 
 **A**: Yes! Triage works for any BMAD-based project. Epic themes will differ, but decision criteria are universal.
+
+### Q: How do v2.0 issues differ from v1.0?
+
+**A**: v2.0 issues include pre-computed routing suggestions (suggestedPath, suggestedPathRationale) from Issue Logger. Triage uses these as the primary recommendation with staleness detection. v1.0 issues compute routing on-the-fly (no stored suggestions).
+
+### Q: What happens if I change the estimate in a v2.0 issue?
+
+**A**: Triage detects the change and recomputes the routing suggestion, displaying "⚠ Suggestion stale (estimate changed), recomputed".
+
+### Q: Can I override Issue Logger's suggested routing?
+
+**A**: Yes! When logging issues, answer "no" to the confirmation prompt to provide custom values. When triaging, use alternatives (type `1` or `2`) or describe what you prefer.
+
+### Q: What is "auto" mode in Issue Logger?
+
+**A**: Type "auto" when prompted for confirmation. Issue Logger will skip all future prompts and use inferred values for remaining issues in the session. Useful for bulk issue logging.
 
 ---
 
