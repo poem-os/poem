@@ -1116,18 +1116,40 @@ async function handleInstall(flags) {
       let port;
 
       if (isReinstallation) {
-        // Reinstallation: .env is preserved by preservation system
-        // Just read the port for registry registration
-        const envConfig = await readEnvFile(envFile);
-        port = envConfig.PORT ? parseInt(envConfig.PORT, 10) : null;
+        // Reinstallation: Check registry first (source of truth), then .env, then prompt
+        const { readRegistry } = await import('./utils.js');
+        const registry = await readRegistry();
+        const installPath = path.resolve(targetDir);
+        const existingInstall = registry.installations.find(i => i.path === installPath);
 
-        if (port) {
+        // Try registry first
+        if (existingInstall && existingInstall.port) {
+          port = existingInstall.port;
+          logVerbose(`Found port in registry: ${port}`);
+
+          // Update .env if it's missing PORT (repair scenario)
+          const envConfig = await readEnvFile(envFile);
+          if (!envConfig.PORT) {
+            logVerbose(`Repairing .env (missing PORT entry)`);
+            await configurePort(targetDir, port);
+          }
+
           log(`   ✓ Using existing port: ${port}`);
         } else {
-          // Existing installation but no port configured (edge case)
-          port = await promptForPort(flags.force, targetDir);
-          await configurePort(targetDir, port);
-          log(`   ✓ Configured server port: ${port}`);
+          // Fallback: Try reading from .env
+          const envConfig = await readEnvFile(envFile);
+          port = envConfig.PORT ? parseInt(envConfig.PORT, 10) : null;
+
+          if (port) {
+            logVerbose(`Found port in .env: ${port}`);
+            log(`   ✓ Using existing port: ${port}`);
+          } else {
+            // Last resort: Prompt for port
+            logVerbose(`No port found in registry or .env, prompting user`);
+            port = await promptForPort(flags.force, targetDir);
+            await configurePort(targetDir, port);
+            log(`   ✓ Configured server port: ${port}`);
+          }
         }
       } else {
         // Fresh install: Prompt for port and create .env
