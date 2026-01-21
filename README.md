@@ -339,6 +339,7 @@ We welcome contributions! If you'd like to contribute to POEM development:
 
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Complete guide for developers including setup, testing, and workflow
 - **[publishing-guide.md](publishing-guide.md)** - Release process for maintainers
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history and release notes
 
 **Quick Start for Contributors:**
 ```bash
