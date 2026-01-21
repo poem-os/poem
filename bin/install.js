@@ -996,8 +996,12 @@ async function handleInstall(flags) {
     // Prepare preservation context for reinstallation
     let preservationContext = null;
     if (isReinstallation && !flags.force) {
+      // CRITICAL: Create .poem-preserve FIRST if it doesn't exist
+      // This ensures preservation rules are available during analysis
+      const { createPreservationFile, parsePreservationFile, isPreserved, isUserWorkflow } = await import('./preservation.js');
+      await createPreservationFile(targetDir);
+
       // Reinstallation: Use preservation system with confirmation prompt
-      const { parsePreservationFile, isPreserved, isUserWorkflow } = await import('./preservation.js');
       const preservationRules = await parsePreservationFile(targetDir);
 
       // Run installation analysis
@@ -1084,15 +1088,18 @@ async function handleInstall(flags) {
       results.createdWorkspace = true;
     }
 
-    // Create preservation file (if doesn't exist)
-    const { createPreservationFile } = await import('./preservation.js');
-    const preserveResult = await createPreservationFile(targetDir);
-    if (preserveResult.created) {
-      log('Creating .poem-preserve (preservation rules)...');
-      log('   ✓ Created preservation file');
-      results.createdPreservationFile = true;
-    } else if (preserveResult.reason === 'already_exists') {
-      logVerbose('Preservation file already exists, skipping creation');
+    // Create preservation file for fresh installs
+    // (For reinstallations, it was already created before analysis)
+    if (!isReinstallation) {
+      const { createPreservationFile } = await import('./preservation.js');
+      const preserveResult = await createPreservationFile(targetDir);
+      if (preserveResult.created) {
+        log('Creating .poem-preserve (preservation rules)...');
+        log('   ✓ Created preservation file');
+        results.createdPreservationFile = true;
+      } else if (preserveResult.reason === 'already_exists') {
+        logVerbose('Preservation file already exists, skipping creation');
+      }
     }
 
     // Configure port if installing the app
