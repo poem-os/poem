@@ -219,7 +219,7 @@ async function getAllFiles(dir, root = dir, files = []) {
   return files;
 }
 
-async function copyDirectory(src, dest, stats = { files: 0, dirs: 0, preserved: [], skipped: [] }, preservationContext = null) {
+async function copyDirectory(src, dest, stats = { files: 0, dirs: 0 }, preservationContext = null) {
   // Create destination directory
   await fs.mkdir(dest, { recursive: true });
   stats.dirs++;
@@ -232,10 +232,7 @@ async function copyDirectory(src, dest, stats = { files: 0, dirs: 0, preserved: 
 
     // Check if should be excluded
     if (EXCLUDE_PATTERNS.includes(entry.name)) {
-      stats.skipped = stats.skipped || [];
-      if (!stats.skipped.includes(entry.name)) {
-        stats.skipped.push(entry.name);
-      }
+      logVerbose(`Skipping: ${entry.name}`);
       continue;
     }
 
@@ -246,15 +243,13 @@ async function copyDirectory(src, dest, stats = { files: 0, dirs: 0, preserved: 
 
       // Check if preserved by rules
       if (preservationContext.isPreserved(normalizedPath, preservationContext.rules)) {
-        stats.preserved = stats.preserved || [];
-        stats.preserved.push(normalizedPath);
+        logVerbose(`Preserved: ${normalizedPath}`);
         continue;
       }
 
       // Check if user workflow
       if (preservationContext.isUserWorkflow(normalizedPath)) {
-        stats.preserved = stats.preserved || [];
-        stats.preserved.push(`${normalizedPath} (user workflow)`);
+        logVerbose(`Preserved (user workflow): ${normalizedPath}`);
         continue;
       }
     }
@@ -264,6 +259,7 @@ async function copyDirectory(src, dest, stats = { files: 0, dirs: 0, preserved: 
     } else {
       await fs.copyFile(srcPath, destPath);
       stats.files++;
+      logVerbose(`Copied: ${entry.name}`);
     }
   }
 
@@ -351,22 +347,7 @@ async function installCore(targetDir, preservationContext = null) {
   }
 
   log('Installing .poem-core/ (framework documents)...');
-  if (verboseMode) {
-    logVerbose(`Copying from ${srcDir}...`);
-  }
-
-  const stats = await copyDirectory(srcDir, destDir, { files: 0, dirs: 0, preserved: [], skipped: [] }, preservationContext);
-
-  // Show grouped verbose info
-  if (verboseMode) {
-    if (stats.preserved && stats.preserved.length > 0) {
-      stats.preserved.forEach(item => logVerbose(`Preserved: ${item}`));
-    }
-    if (stats.skipped && stats.skipped.length > 0) {
-      logVerbose(`Skipped: ${stats.skipped.join(', ')}`);
-    }
-  }
-
+  const stats = await copyDirectory(srcDir, destDir, { files: 0, dirs: 0 }, preservationContext);
   log(`   ✓ Copied ${stats.files} files in ${stats.dirs} directories`);
 
   return stats;
@@ -383,16 +364,6 @@ async function installApp(targetDir, preservationContext = null) {
   log('Installing .poem-app/ (runtime server)...');
   const stats = await copyDirectory(srcDir, destDir, { files: 0, dirs: 0 }, preservationContext);
   log(`   ✓ Copied ${stats.files} files in ${stats.dirs} directories`);
-
-  // Show grouped verbose info after copying
-  if (verboseMode) {
-    if (stats.preserved && stats.preserved.length > 0) {
-      stats.preserved.forEach(item => logVerbose(`Preserved: ${item}`));
-    }
-    if (stats.skipped && stats.skipped.length > 0) {
-      logVerbose(`Skipped: ${stats.skipped.join(', ')}`);
-    }
-  }
 
   return stats;
 }
@@ -479,16 +450,6 @@ async function installCommands(targetDir) {
   log('Installing .claude/commands/poem/ (slash commands)...');
   const stats = await copyDirectory(srcDir, destDir);
   log(`   ✓ Copied ${stats.files} files in ${stats.dirs} directories`);
-
-  // Show grouped verbose info after copying
-  if (verboseMode) {
-    if (stats.preserved && stats.preserved.length > 0) {
-      stats.preserved.forEach(item => logVerbose(`Preserved: ${item}`));
-    }
-    if (stats.skipped && stats.skipped.length > 0) {
-      logVerbose(`Skipped: ${stats.skipped.join(', ')}`);
-    }
-  }
 
   return stats;
 }
