@@ -996,10 +996,15 @@ async function handleInstall(flags) {
     // Prepare preservation context for reinstallation
     let preservationContext = null;
     if (isReinstallation && !flags.force) {
-      // CRITICAL: Create .poem-preserve FIRST if it doesn't exist
+      // CRITICAL: Create/migrate .poem-preserve FIRST
       // This ensures preservation rules are available during analysis
       const { createPreservationFile, parsePreservationFile, isPreserved, isUserWorkflow } = await import('./preservation.js');
-      await createPreservationFile(targetDir);
+      const preserveResult = await createPreservationFile(targetDir);
+
+      // Notify user of migration if rules were added
+      if (preserveResult.migrated) {
+        logVerbose(`Migrated .poem-preserve (added: ${preserveResult.missingRules.join(', ')})`);
+      }
 
       // Reinstallation: Use preservation system with confirmation prompt
       const preservationRules = await parsePreservationFile(targetDir);
@@ -1089,7 +1094,7 @@ async function handleInstall(flags) {
     }
 
     // Create preservation file for fresh installs
-    // (For reinstallations, it was already created before analysis)
+    // (For reinstallations, it was already created/migrated before analysis)
     if (!isReinstallation) {
       const { createPreservationFile } = await import('./preservation.js');
       const preserveResult = await createPreservationFile(targetDir);
@@ -1097,6 +1102,8 @@ async function handleInstall(flags) {
         log('Creating .poem-preserve (preservation rules)...');
         log('   ✓ Created preservation file');
         results.createdPreservationFile = true;
+      } else if (preserveResult.migrated) {
+        logVerbose(`Migrated .poem-preserve (added: ${preserveResult.missingRules.join(', ')})`);
       } else if (preserveResult.reason === 'already_exists') {
         logVerbose('Preservation file already exists, skipping creation');
       }

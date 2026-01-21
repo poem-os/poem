@@ -199,10 +199,38 @@ dev-workspace/
       const result = await createPreservationFile(testDir);
 
       expect(result.created).toBe(false);
+      // Migration should occur (add missing dev-workspace/ and .poem-app/.env)
+      expect(result.migrated).toBe(true);
+      expect(result.missingRules).toContain('dev-workspace/');
+      expect(result.missingRules).toContain('.poem-app/.env');
+
+      const content = await fs.readFile(path.join(testDir, '.poem-preserve'), 'utf-8');
+      // Content should be updated with missing rules
+      expect(content).toContain('poem/');
+      expect(content).toContain('dev-workspace/');
+      expect(content).toContain('.poem-app/.env');
+    });
+
+    it('should not migrate if all default rules are present', async () => {
+      const { createPreservationFile } = await import('../../bin/preservation.js');
+
+      const completeContent = `# .poem-preserve
+poem/
+dev-workspace/
+.poem-app/.env
+# My custom rules
+.custom-folder/
+`;
+      await fs.writeFile(path.join(testDir, '.poem-preserve'), completeContent);
+
+      const result = await createPreservationFile(testDir);
+
+      expect(result.created).toBe(false);
+      expect(result.migrated).toBeUndefined(); // No migration needed
       expect(result.reason).toBe('already_exists');
 
       const content = await fs.readFile(path.join(testDir, '.poem-preserve'), 'utf-8');
-      expect(content).toBe(existingContent);
+      expect(content).toBe(completeContent); // Unchanged
     });
   });
 

@@ -157,27 +157,100 @@ export function isUserWorkflow(filePath) {
 
 /**
  * Creates a .poem-preserve file with default rules
+ * Auto-migrates existing files to add missing default rules
  * @param {string} targetDir - Project root directory
- * @returns {Promise<{created: boolean, reason?: string}>} - Result object
+ * @returns {Promise<{created: boolean, migrated?: boolean, reason?: string}>} - Result object
  */
 export async function createPreservationFile(targetDir) {
   const preserveFile = path.join(targetDir, '.poem-preserve');
 
   try {
     // Check if file already exists
+    let existingContent = null;
     try {
-      await fs.access(preserveFile);
-      return { created: false, reason: 'already_exists' };
+      existingContent = await fs.readFile(preserveFile, 'utf-8');
     } catch {
-      // File doesn't exist, create it
+      // File doesn't exist, create it with defaults
+      await fs.writeFile(preserveFile, DEFAULT_PRESERVATION_RULES, 'utf-8');
+      return { created: true };
     }
 
-    // Write default preservation rules
-    await fs.writeFile(preserveFile, DEFAULT_PRESERVATION_RULES, 'utf-8');
+    // File exists - check if it needs migration (missing default rules)
+    const requiredRules = ['poem/', 'dev-workspace/', '.poem-app/.env'];
+    const missingRules = [];
 
-    return { created: true };
+    for (const rule of requiredRules) {
+      // Check if rule exists (as a standalone line, not in a comment)
+      const lines = existingContent.split('\n');
+      const hasRule = lines.some(line => {
+        const trimmed = line.trim();
+        return trimmed === rule && !trimmed.startsWith('#');
+      });
+
+      if (!hasRule) {
+        missingRules.push(rule);
+      }
+    }
+
+    // If no missing rules, file is up-to-date
+    if (missingRules.length === 0) {
+      return { created: false, reason: 'already_exists' };
+    }
+
+    // Migrate: Add missing rules before "Add custom preservation rules" section
+    const lines = existingContent.split('\n');
+    const customSectionIndex = lines.findIndex(line =>
+      line.includes('Add custom preservation rules')
+    );
+
+    if (customSectionIndex === -1) {
+      // No custom section marker, append to end
+      let updatedContent = existingContent.trimEnd() + '\n\n';
+
+      // Add missing rules with labels
+      const ruleLabels = {
+        'poem/': '# User workspace - always preserved',
+        'dev-workspace/': '# Dev workspace - always preserved (if exists)',
+        '.poem-app/.env': '# User configuration - always preserved',
+      };
+
+      for (const rule of missingRules) {
+        if (ruleLabels[rule]) {
+          updatedContent += ruleLabels[rule] + '\n';
+        }
+        updatedContent += rule + '\n\n';
+      }
+
+      await fs.writeFile(preserveFile, updatedContent, 'utf-8');
+      return { created: false, migrated: true, missingRules };
+    } else {
+      // Insert before custom section (keeping user's custom rules intact)
+      const beforeCustom = lines.slice(0, customSectionIndex);
+      const afterCustom = lines.slice(customSectionIndex);
+
+      const ruleLabels = {
+        'poem/': '# User workspace - always preserved',
+        'dev-workspace/': '# Dev workspace - always preserved (if exists)',
+        '.poem-app/.env': '# User configuration - always preserved',
+      };
+
+      const insertLines = [];
+      for (const rule of missingRules) {
+        if (ruleLabels[rule]) {
+          insertLines.push(ruleLabels[rule]);
+        }
+        insertLines.push(rule);
+        insertLines.push(''); // Blank line
+      }
+
+      const updatedLines = [...beforeCustom, ...insertLines, ...afterCustom];
+      const updatedContent = updatedLines.join('\n');
+
+      await fs.writeFile(preserveFile, updatedContent, 'utf-8');
+      return { created: false, migrated: true, missingRules };
+    }
   } catch (error) {
-    console.warn(`⚠️  Could not create .poem-preserve: ${error.message}`);
+    console.warn(`⚠️  Could not create/migrate .poem-preserve: ${error.message}`);
     return { created: false, reason: error.message };
   }
 }
