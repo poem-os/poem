@@ -32,6 +32,7 @@
 
 - [ ] Fix unused `_context` param warning in `packages/poem-app/src/pages/api/health.ts`
 - [ ] Production build fails - needs Astro adapter (discovered Story 2.1, deferred)
+- [ ] **Before Production Release**: Upgrade from Astro 6 Beta to stable Astro 6 release and remove `--legacy-peer-deps` workaround — Currently using astro@6.0.0-beta.1 with --legacy-peer-deps to bypass peer dependency conflicts (Tailwind integration expects Astro 3-5). When Astro 6 stable releases, upgrade and ensure all integrations are compatible without the workaround.
 - [x] NFR2 test flaky - server startup sometimes exceeds 3s under load — Fixed by: (1) increased test threshold to 5s (PRD target remains 3s), (2) created `test:unit` script excluding server-spawning tests, (3) updated pre-commit hook to use `test:unit` for fast commits
 
 ### Documentation
