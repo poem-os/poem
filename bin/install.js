@@ -38,6 +38,7 @@ const EXCLUDE_PATTERNS = [
   '.git',
   '.DS_Store',
   'package-lock.json',
+  'dev-workspace', // Issue #1: dev-workspace should only exist at project root during POEM development
 ];
 
 // ============================================================================
