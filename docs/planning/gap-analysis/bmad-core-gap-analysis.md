@@ -750,6 +750,139 @@ Maintenance Backlog (POEM)
 
 ---
 
+## POEM Innovation: Work Intake Triage System
+
+**Date Added**: 2026-01-21
+**Story**: 0.1 - Work Intake Triage System
+**Status**: Implemented ✅
+
+### Innovation Summary
+
+POEM has developed a **unified work intake triage system** that eliminates decision paralysis when routing development work. This addresses a common BMAD pain point: knowing which workflow to use for incoming work.
+
+### The Problem
+
+BMAD projects have 5+ entry points for development work:
+1. Existing stories → `/appydave-workflow {story}`
+2. New feature stories → Bob `*draft` in Epic 1-7
+3. Quick fixes → Bob `*add-fix`
+4. Epic 0 stories → Bob `*draft` in Epic 0
+5. Usage issues → Manual conversion
+
+**Pain Point**: Developers experience decision paralysis - is this <1hr (quick fix) or >1hr (story)? Which epic does this fit? Should I use ceremony or not?
+
+### The POEM Solution: `/triage` Command
+
+**Pattern**: Context Analysis → Decision Criteria → Routing Recommendation → Handoff
+
+**Implementation**:
+- **Skill Wrapper**: `.claude/commands/triage.md` (30 lines)
+- **Core Logic**: `.bmad-core/tasks/triage-work.md` (comprehensive task)
+- **Agent Integration**: Added `*triage` command to Bob (SM) and Sarah (PO)
+- **User Documentation**: `docs/workflows/triage-guide.md` (200 lines)
+
+**Decision Criteria** (applied in priority order):
+1. **Time/Ceremony**: <1hr AND no ceremony → Quick Fix, else Story
+2. **Existing Story**: Story file exists → AppyDave Workflow
+3. **Epic Thematic Fit**: Matches Epic 1-7 theme → Feature Epic Story
+4. **Epic 0 vs Ambiguous**: Pure maintenance → Epic 0 Story
+
+**Output Format**:
+```
+🔍 Work Intake Triage
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Analyzing context...
+✓ Found: [description]
+✓ Area: [epic/category]
+✓ Estimate: [time]
+✓ Impact: [high/medium/low]
+✓ Type: [bug/enhancement/refactor/docs]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Routing Decision
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ RECOMMENDED: [Path Name]
+   [Path details]
+   Reason: [2-3 bullet points]
+
+   Next: [Command to execute]
+
+🔀 Alternatives:
+1️⃣ [Alternative 1]
+2️⃣ [Alternative 2]
+```
+
+### Benefits
+
+1. **Eliminates Decision Paralysis**: Clear criteria replace guesswork
+2. **Reduces Friction**: Single entry point for all work types
+3. **Consistent Routing**: Same decision logic every time
+4. **Handoff Clarity**: Exact command sequences provided
+5. **Usage Issue Integration**: Converts issues from JSONL to routed work
+6. **Quick Fixes Clarity**: Renamed "Maintenance Backlog" to "Quick Fixes" with explicit <1hr boundary
+
+### SupportSignal Adoption Recommendation
+
+**Priority**: High (P1)
+
+**Value for SupportSignal**:
+- **KDD Integration**: Triage could analyze KDD documents to determine epic fit
+- **Parallel Development**: Multiple developers could use consistent routing logic
+- **Onboarding**: New team members get guided workflow selection
+- **Pattern Recognition**: Triage could learn project-specific routing patterns
+
+**Implementation Path**:
+1. Copy POEM's triage implementation:
+   - `.bmad-core/tasks/triage-work.md`
+   - `.claude/commands/triage.md`
+   - `docs/workflows/triage-guide.md`
+2. Adapt decision criteria to SupportSignal's epic structure
+3. Add KDD document analysis to context extraction
+4. Integrate with SupportSignal's usage issue tracking
+5. Add Bob/Sarah `*triage` command
+6. Train team on `/triage` usage
+
+**Estimated Effort**: 2-4 hours (mostly adaptation, core logic is reusable)
+
+**Risk**: Low (read-only analysis, doesn't modify files)
+
+### Broader BMAD Community Benefit
+
+**Proposal**: Elevate triage system to **BMAD v5.0 core feature**
+
+**Rationale**:
+- Every BMAD project faces work routing decisions
+- Pattern is project-agnostic (decision criteria adapt to project structure)
+- Reduces cognitive load on developers
+- Improves workflow adoption (clear entry points)
+
+**Requirements for BMAD v5.0**:
+- Generalize epic theme detection (configurable in core-config.yaml)
+- Add project-specific decision criteria customization
+- Create triage analytics (track routing accuracy, user overrides)
+- Integrate with BMAD CLI for cross-project triage
+
+### Related Files
+
+**Core Implementation**:
+- `.bmad-core/tasks/triage-work.md` - Task logic
+- `.claude/commands/triage.md` - Skill wrapper
+- `.bmad-core/agents/sm.md` - Bob integration (line 55)
+- `.bmad-core/agents/po.md` - Sarah integration (line 67)
+
+**Documentation**:
+- `docs/workflows/triage-guide.md` - User guide (200 lines)
+- `docs/prd/epic-0.md` - Quick Fixes vs Epic 0 Stories section
+- `docs/stories/0.1.story.md` - Implementation story
+
+**Supporting Files**:
+- `docs/backlog/quick-fixes.md` - Renamed from maintenance.md
+- `.bmad-core/core-config.yaml` - Updated backlogFile path
+
+---
+
 **Document prepared by**: Claude Code (Sonnet 4.5)
-**Review status**: Initial draft
+**Review status**: Initial draft + Triage innovation documented
 **Next steps**: Review findings, prioritize recommendations, plan implementation

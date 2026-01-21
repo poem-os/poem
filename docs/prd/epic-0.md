@@ -40,6 +40,34 @@ Epic 0 provides a dedicated home for all non-feature work, ensuring maintenance 
 - Major architectural changes (use Architect agent + feature epic)
 - Research spikes (use appropriate feature epic or create temporary "Research" epic)
 
+### Quick Fixes vs Epic 0 Stories
+
+**Quick Fixes** (`docs/backlog/quick-fixes.md`):
+- **Scope**: <1 hour
+- **Ceremony**: None (no story file, no QA gate)
+- **Process**: Direct fix and log with commit reference
+- **Categories**: infrastructure, tech-debt, documentation, bugs
+- **Examples**: Fix typo in docs, add missing .gitignore entry, update README link
+- **File Location**: `docs/backlog/quick-fixes.md`
+- **Commands**: `*add-fix`, `*list-fixes` (via Bob/Sarah agents)
+
+**Epic 0 Stories**:
+- **Scope**: >1 hour
+- **Ceremony**: Full BMAD workflow (5-agent AppyDave workflow: Bob → James → Taylor → Quinn)
+- **Process**: Story file with acceptance criteria, tasks, QA review, SAT
+- **Priority Levels**: P0 (Critical), P1 (High), P2 (Medium)
+- **Examples**: Add triage system, refactor schema validation, implement gitleaks pre-commit hook
+- **File Location**: `docs/stories/{epic}.{story}.story.md`
+- **Commands**: `/appydave-workflow {story}` for full lifecycle
+
+**Promotion Path**:
+- If a Quick Fix grows beyond 1 hour during implementation → Promote to Epic 0 story
+- Process: Create Epic 0 story via `/BMad/agents/sm` then `*draft` (enter 0 for epic)
+- Reference original Quick Fix item in story Background section
+
+**Decision Guidance**:
+- Use `/triage` command to automatically route work to Quick Fixes vs Epic 0 Stories based on scope, ceremony, and impact
+
 ---
 
 ## Story Categories
@@ -211,6 +239,26 @@ Epic 0 stories use **lighter ceremony** than feature stories:
 - Fewer acceptance criteria (3-5 vs 7-10 for feature stories)
 - Priority explicitly stated (P0/P1/P2)
 - Category identified in title (e.g., "Bug Fix:", "Performance:")
+
+---
+
+## Stories
+
+### Story 0.1: Work Intake Triage System
+
+**As a** POEM developer,
+**I want** a unified work intake triage system,
+**so that** I can quickly route development work to the appropriate workflow without decision paralysis or confusion.
+
+**Acceptance Criteria**:
+
+1. Rename "Maintenance Backlog" to "Quick Fixes" system (`*add-fix`, `*list-fixes` commands)
+2. Create `.bmad-core/tasks/triage-work.md` with decision criteria and routing logic for 5 paths
+3. Create `.claude/commands/triage.md` skill wrapper (top-level, NOT in `/poem/`)
+4. Add `*triage` command to Bob (SM) and Sarah (PO) agents
+5. Create `docs/workflows/triage-guide.md` user documentation with examples
+6. Support `/triage issue-{N}` format for usage issue conversion
+7. Update Epic 0 PRD to clarify boundary between Quick Fixes (<1hr) and Epic 0 Stories (>1hr)
 
 ---
 

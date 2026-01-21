@@ -62,10 +62,11 @@ commands:
   - doc-out: Output full document to current destination file
   - execute-checklist-po: Run task execute-checklist (checklist po-master-checklist)
   - shard-doc {document} {destination}: run the task shard-doc against the optionally provided document to the specified destination
+  - triage: Analyze work and route to appropriate workflow (task triage-work.md)
   - validate-story-draft {story}: run the task validate-next-story against the provided story file
   - yolo: Toggle Yolo Mode off on - on will skip doc section confirmations
-  - list-maint: List pending items from maintenance backlog (reads from maintenance.backlogFile in core-config.yaml)
-  - add-maint {category} {description}: Add item to maintenance backlog (categories: infrastructure, tech-debt, documentation, bugs)
+  - list-fixes: List pending items from quick fixes backlog (reads from maintenance.backlogFile in core-config.yaml)
+  - add-fix {category} {description}: Add item to quick fixes backlog (categories: infrastructure, tech-debt, documentation, bugs)
   - exit: Exit (confirm)
 dependencies:
   checklists:
@@ -75,6 +76,7 @@ dependencies:
     - correct-course.md
     - execute-checklist.md
     - shard-doc.md
+    - triage-work.md
     - validate-next-story.md
   templates:
     - story-tmpl.yaml

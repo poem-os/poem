@@ -224,6 +224,24 @@ Ongoing maintenance, bug fixes, technical debt, developer experience improvement
 
 ---
 
+#### Story 0.1: Work Intake Triage System
+
+**As a** POEM developer,
+**I want** a unified work intake triage system,
+**so that** I can quickly route development work to the appropriate workflow without decision paralysis or confusion.
+
+**Acceptance Criteria**:
+
+1. Rename "Maintenance Backlog" to "Quick Fixes" system (`*add-fix`, `*list-fixes` commands)
+2. Create `.bmad-core/tasks/triage-work.md` with decision criteria and routing logic for 5 paths
+3. Create `.claude/commands/triage.md` skill wrapper (top-level, NOT in `/poem/`)
+4. Add `*triage` command to Bob (SM) and Sarah (PO) agents
+5. Create `docs/workflows/triage-guide.md` user documentation with examples
+6. Support `/triage issue-{N}` format for usage issue conversion
+7. Update Epic 0 PRD to clarify boundary between Quick Fixes (<1hr) and Epic 0 Stories (>1hr)
+
+---
+
 ### Epic 1: Foundation & Monorepo Setup
 
 Establish project infrastructure with monorepo structure, NPX installer, and basic `.poem-core/` + `.poem-app/` scaffolding that copies to user projects.
