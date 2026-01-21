@@ -203,6 +203,20 @@ function dim(text) {
   return `${colors.dim}${text}${colors.reset}`;
 }
 
+// Helper to get visible length of string (without ANSI codes)
+function visibleLength(str) {
+  // Remove ANSI escape codes
+  return str.replace(/\x1b\[[0-9;]*m/g, '').length;
+}
+
+// Helper to pad a line for the banner (63 chars wide content area)
+function bannerLine(content) {
+  const width = 63;
+  const visLen = visibleLength(content);
+  const padding = ' '.repeat(Math.max(0, width - visLen));
+  return cyan('║') + content + padding + cyan('║');
+}
+
 function log(message) {
   console.log(message);
 }
@@ -1037,22 +1051,21 @@ async function handleInstall(flags) {
   const shouldInstallCommands = !flags.app; // Install commands with core or full install
 
   // Print ASCII art banner
-  const banner = `
-${cyan('╔═══════════════════════════════════════════════════════════════╗')}
-${cyan('║')}                                                               ${cyan('║')}
-${cyan('║')}  ${bold('██████╗  ██████╗ ███████╗███╗   ███╗')}                       ${cyan('║')}
-${cyan('║')}  ${bold('██╔══██╗██╔═══██╗██╔════╝████╗ ████║')}                       ${cyan('║')}
-${cyan('║')}  ${bold('██████╔╝██║   ██║█████╗  ██╔████╔██║')}                       ${cyan('║')}
-${cyan('║')}  ${bold('██╔═══╝ ██║   ██║██╔══╝  ██║╚██╔╝██║')}                       ${cyan('║')}
-${cyan('║')}  ${bold('██║     ╚██████╔╝███████╗██║ ╚═╝ ██║')}                       ${cyan('║')}
-${cyan('║')}  ${bold('╚═╝      ╚═════╝ ╚══════╝╚═╝     ╚═╝')}                       ${cyan('║')}
-${cyan('║')}                                                               ${cyan('║')}
-${cyan('║')}   ${dim('Prompt Orchestration & Engineering Method')}              ${cyan('║')}
-${cyan('║')}   ${dim('v' + VERSION)}                                                  ${cyan('║')}
-${cyan('║')}                                                               ${cyan('║')}
-${cyan('╚═══════════════════════════════════════════════════════════════╝')}
-`;
-  log(banner);
+  log('');
+  log(cyan('╔═══════════════════════════════════════════════════════════════╗'));
+  log(bannerLine(''));
+  log(bannerLine('  ' + bold('██████╗  ██████╗ ███████╗███╗   ███╗')));
+  log(bannerLine('  ' + bold('██╔══██╗██╔═══██╗██╔════╝████╗ ████║')));
+  log(bannerLine('  ' + bold('██████╔╝██║   ██║█████╗  ██╔████╔██║')));
+  log(bannerLine('  ' + bold('██╔═══╝ ██║   ██║██╔══╝  ██║╚██╔╝██║')));
+  log(bannerLine('  ' + bold('██║     ╚██████╔╝███████╗██║ ╚═╝ ██║')));
+  log(bannerLine('  ' + bold('╚═╝      ╚═════╝ ╚══════╝╚═╝     ╚═╝')));
+  log(bannerLine(''));
+  log(bannerLine('   ' + dim('Prompt Orchestration & Engineering Method')));
+  log(bannerLine('   ' + dim('v' + VERSION)));
+  log(bannerLine(''));
+  log(cyan('╚═══════════════════════════════════════════════════════════════╝'));
+  log('');
 
   if (verboseMode) {
     log(dim('Verbose mode enabled') + '\n');
