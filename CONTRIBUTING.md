@@ -61,7 +61,7 @@ All commands should complete without errors.
 # Start the Astro development server
 npm run dev
 
-# Server runs at http://localhost:4321
+# Server runs at http://localhost:9500
 ```
 
 ## Development Workflow

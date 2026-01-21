@@ -130,7 +130,7 @@ npm install /path/to/poem-os-0.1.0.tgz
 # Test the installer
 npx poem-os install
 # During installation, you'll be prompted:
-# "? What port should POEM run on? (default: 4321):"
+# "? What port should POEM run on? (default: 9500):"
 # Press Enter to accept default or enter custom port (1024-65535)
 
 # Test start command

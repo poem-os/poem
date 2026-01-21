@@ -1,3 +1,19 @@
+```
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║  ██████╗  ██████╗ ███████╗███╗   ███╗                        ║
+║  ██╔══██╗██╔═══██╗██╔════╝████╗ ████║                        ║
+║  ██████╔╝██║   ██║█████╗  ██╔████╔██║                        ║
+║  ██╔═══╝ ██║   ██║██╔══╝  ██║╚██╔╝██║                        ║
+║  ██║     ╚██████╔╝███████╗██║ ╚═╝ ██║                        ║
+║  ╚═╝      ╚═════╝ ╚══════╝╚═╝     ╚═╝                        ║
+║                                                               ║
+║   Prompt Orchestration & Engineering Method                  ║
+║   v0.1.0                                                      ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+```
+
 # POEM - Prompt Orchestration and Engineering Method
 
 > _Poetry in Prompt Engineering_
@@ -304,10 +320,16 @@ POEM uses a three-part structure:
 🎨 **Template Management** - Handlebars-based reusability
 🔄 **Mapping System** - Transform between data formats
 🚀 **Integration Tools** - Deploy prompts to applications
+📂 **Multi-Workflow Support** - Organize prompts by project with independent reference materials
 
 ## Status
 
-**Current Phase**: Planning complete - BMAD implementation in progress
+**Current Phase**: Foundation Complete - Core Features In Progress
+
+- ✅ **Epic 1: Foundation & Monorepo Setup** (Complete) - NPM package, installer, registry, port configuration
+- ✅ **Epic 2: Astro Runtime & Handlebars Engine** (Complete) - Template rendering, API endpoints
+- 🚧 **Epic 3: Prompt Engineer Agent & Core Workflows** (In Progress) - Agent-guided prompt development
+- 🚧 **Epic 4: YouTube Automation Workflow** (In Progress) - System validation with 53-prompt workflow
 
 This project uses the [BMAD Method](https://github.com/bmadcode/bmad-method) for structured AI-driven development.
 
