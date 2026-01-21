@@ -604,7 +604,7 @@ AppyDave testing NanoBanana:
 **Tracking**:
 - Epic: `docs/prd/epic-list.md` (Epic 9)
 - Discovery: Course Correct Task (2026-01-12)
-- Related: NanoBanana Plan (`data/nano-banana/PLAN.md`)
+- Related: NanoBanana Plan (`data/nano-banana/project-plan.md`)
 - Current datasets: `data/youtube-launch-optimizer/`, `data/nano-banana/`, `data/supportsignal/`, `data/storyline/`
 
 **Related Enhancements**:

@@ -110,7 +110,7 @@ poem/
 │   │   ├── cicd-strategy.md
 │   │   └── next-steps.md
 │   └── planning/                  # Pre-implementation planning (historical)
-│       ├── POEM.md                # Original POEM requirements
+│       ├── poem-requirements.md                # Original POEM requirements
 │       ├── README.md              # Planning navigation hub
 │       ├── system-explorations/   # Architecture ideas
 │       ├── decisions/             # Open questions and alternatives
@@ -164,7 +164,7 @@ The project has completed PRD and Architecture phases. Documents are organized b
 | `docs/future-enhancements.md`                     | Future work and Epic 8 tracking   | Planning ahead                     |
 | `.bmad-core/user-guide.md`                        | BMAD methodology guide            | Understanding workflow             |
 | `.bmad-core/enhanced-ide-development-workflow.md` | Step-by-step dev process          | During implementation              |
-| `docs/planning/POEM.md`                           | Original requirements exploration | Historical context                 |
+| `docs/planning/poem-requirements.md`                           | Original requirements exploration | Historical context                 |
 
 ## Development Commands
 
@@ -608,7 +608,7 @@ npm run dev
 ### DO
 
 - ✅ Use BMAD agents via slash commands for formal workflow
-- ✅ Read `docs/planning/POEM.md` for project understanding
+- ✅ Read `docs/planning/poem-requirements.md` for project understanding
 - ✅ Follow agent permissions (dev/qa section restrictions)
 - ✅ Run tests and validation before marking "Ready for Review"
 - ✅ Update File List in stories when modifying code

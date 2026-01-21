@@ -615,7 +615,7 @@ The POEM project underwent comprehensive planning documented in `docs/planning/`
 
 **Key Planning Documents**:
 
-- `docs/planning/POEM.md` - Complete requirements and vision ⭐
+- `docs/planning/poem-requirements.md` - Complete requirements and vision ⭐
 - `docs/planning/system-explorations/` - Agent, skill, workflow, architecture planning
 - `docs/planning/reference/examples.md` - Complete domain examples with real data
 - `docs/planning/reference/bmad-reference.md` - BMAD v4 methodology patterns

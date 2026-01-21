@@ -10,7 +10,7 @@
 
 ## 🎯 Start Here
 
-**Primary Document**: **[POEM.md](./POEM.md)** ← Complete requirements and system overview
+**Primary Document**: **[poem-requirements.md](./poem-requirements.md)** ← Complete requirements and system overview
 
 **This README**: Navigation hub for planning folder + cross-cutting concerns (decision log, status tracking, reading paths)
 
@@ -22,7 +22,7 @@ This folder contains planning documentation for POEM. **Important**: These are p
 
 ### Organization
 
-1. **POEM.md** - Primary requirements document (START HERE)
+1. **poem-requirements.md** - Primary requirements document (START HERE)
    - What POEM is and what it does
    - Architecture, agents, skills, workflows
    - Complete system overview
@@ -52,7 +52,7 @@ This folder contains planning documentation for POEM. **Important**: These are p
 
 ```
 docs/planning/
-├── POEM.md                         # ← PRIMARY DOCUMENT (start here)
+├── poem-requirements.md                         # ← PRIMARY DOCUMENT (start here)
 ├── README.md                       # ← You are here (index)
 │
 ├── system-explorations/            # ✅ RENAMED (was architecture/)
@@ -98,7 +98,7 @@ docs/planning/
 
 | Date       | Decision                                                              | Doc                              |
 | ---------- | --------------------------------------------------------------------- | -------------------------------- |
-| 2025-11-18 | **Application Type**: Prompt Engineering OS                           | POEM.md                          |
+| 2025-11-18 | **Application Type**: Prompt Engineering OS                           | poem-requirements.md                          |
 | 2025-11-19 | **Name**: POEM (Prompt Orchestration and Engineering Method)          | exploration/naming.md            |
 | 2025-11-19 | **3-4 Agents**: Function-based naming, skills autonomous              | system-explorations/agents.md    |
 | 2025-11-19 | **8 Skills**: Core POEM capabilities                                  | system-explorations/skills.md    |
@@ -142,7 +142,7 @@ docs/planning/
 
 ### First Time (Understanding POEM)
 
-1. **[POEM.md](./POEM.md)** - Complete overview (start here)
+1. **[poem-requirements.md](./poem-requirements.md)** - Complete overview (start here)
 2. **[reference/examples.md](./reference/examples.md)** - Real-world use cases (SupportSignal + Storyline)
 3. **[system-explorations/agents.md](./system-explorations/agents.md)** - POEM's agents (what we're building)
 4. **[system-explorations/workflows.md](./system-explorations/workflows.md)** - Core workflows
@@ -163,11 +163,11 @@ docs/planning/
 
 ### For BMAD Team
 
-**Business Analyst**: POEM.md → reference/examples.md → exploration/ (why POEM exists)
+**Business Analyst**: poem-requirements.md → reference/examples.md → exploration/ (why POEM exists)
 
-**PRD Writer**: POEM.md → system-explorations/ (as ideas, not specs) → decisions/README.md
+**PRD Writer**: poem-requirements.md → system-explorations/ (as ideas, not specs) → decisions/README.md
 
-**Architect**: POEM.md → system-explorations/README.md (read disclaimer) → reference/bmad-reference.md → Second brains
+**Architect**: poem-requirements.md → system-explorations/README.md (read disclaimer) → reference/bmad-reference.md → Second brains
 
 ---
 
@@ -175,7 +175,7 @@ docs/planning/
 
 **When starting BMAD**:
 
-1. Read **[POEM.md](./POEM.md)** as primary requirements document
+1. Read **[poem-requirements.md](./poem-requirements.md)** as primary requirements document
 2. Reference `system-explorations/` for planning ideas (NOT final architecture)
 3. Use `reference/` docs for external context (BMAD methodology, SupportSignal patterns)
 4. Resolve `decisions/` as needed during implementation
@@ -183,7 +183,7 @@ docs/planning/
 
 **Key Principle**: This is planning. BMAD will turn planning ideas into actual implementation.
 
-**Second Brains**: See [POEM.md](./POEM.md#second-brains-knowledge-bases) for complete list
+**Second Brains**: See [poem-requirements.md](./poem-requirements.md#second-brains-knowledge-bases) for complete list
 
 ---
 
@@ -193,7 +193,7 @@ docs/planning/
 
 **External Knowledge**: See [reference/README.md](./reference/README.md) for second brain locations
 
-**Primary Reference**: [POEM.md](./POEM.md) - Always start there for what POEM is and does
+**Primary Reference**: [poem-requirements.md](./poem-requirements.md) - Always start there for what POEM is and does
 
 ---
 

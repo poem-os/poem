@@ -32,7 +32,7 @@ Key areas requiring architectural decisions:
 
 Reference documents:
 - Project Brief: docs/brief.md
-- Planning overview: docs/planning/POEM.md
+- Planning overview: docs/planning/poem-requirements.md
 - YouTube workflow spec: docs/planning/exploration/youtube-launch-optimizer-workflow-spec.md
 - Example data: data/youtube-launch-optimizer/, data/supportsignal/, data/storyline/
 

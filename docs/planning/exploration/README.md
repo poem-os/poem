@@ -17,7 +17,7 @@ This folder contains the historical journey of how we discovered POEM.
 
 | File                         | Date       | Purpose                         | Superseded?                |
 | ---------------------------- | ---------- | ------------------------------- | -------------------------- |
-| `brief.md`                   | 2025-11-08 | Original project brief          | Partially (see POEM.md)    |
+| `brief.md`                   | 2025-11-08 | Original project brief          | Partially (see poem-requirements.md)    |
 | `application-type-README.md` | 2025-11-18 | Discovery journey to OS concept | No - explains evolution    |
 | `conventional-types.md`      | 2025-11-18 | Early app type exploration      | Yes - but useful context   |
 | `naming.md`                  | 2025-11-20 | POEM naming journey             | No - explains brand choice |
@@ -105,7 +105,7 @@ Not just "test prompts" but:
 
 **Don't get lost in details**:
 
-- Focus on POEM.md for current requirements
+- Focus on poem-requirements.md for current requirements
 - Use this for "why" questions
 - Historical context, not specifications
 

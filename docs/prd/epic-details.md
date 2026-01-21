@@ -109,7 +109,7 @@ so that users can install it globally via `npx poem-os install`.
 3. Add `"repository"`, `"bugs"`, and `"homepage"` URLs to package.json
 4. Define `"files"` array in package.json to control published content
 5. Test package installation locally using `npm link` followed by `npx poem-os install`
-6. Create `PUBLISHING.md` documenting the manual publishing process
+6. Create `publishing-guide.md` documenting the manual publishing process
 7. Add GitHub Actions workflow for automated NPM publishing (optional, future enhancement)
 
 **Status**: Completed. POEM can now be installed via `npx poem-os install`.
@@ -133,7 +133,7 @@ so that I can run POEM without navigating into .poem-app/ and manage multiple PO
 7. Users can view current config: `npx poem-os config --list`
 8. Port validation rejects invalid values (< 1024 or > 65535)
 9. Startup script is cross-platform compatible (Windows/macOS/Linux)
-10. Documentation updated (README.md, PUBLISHING.md)
+10. Documentation updated (README.md, publishing-guide.md)
 
 ---
 

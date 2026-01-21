@@ -316,7 +316,7 @@ This project uses the [BMAD Method](https://github.com/bmadcode/bmad-method) for
 We welcome contributions! If you'd like to contribute to POEM development:
 
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Complete guide for developers including setup, testing, and workflow
-- **[PUBLISHING.md](PUBLISHING.md)** - Release process for maintainers
+- **[publishing-guide.md](publishing-guide.md)** - Release process for maintainers
 
 **Quick Start for Contributors:**
 ```bash
@@ -330,7 +330,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions on local testin
 
 ## Documentation
 
-- **[Complete Overview](docs/planning/POEM.md)** - Full requirements and vision
+- **[Complete Overview](docs/planning/poem-requirements.md)** - Full requirements and vision
 - **[Architecture](docs/planning/system-explorations/)** - System design explorations
 
 ## License
@@ -343,7 +343,7 @@ MIT License - see [LICENSE](LICENSE) for details
 - **Repository**: [github.com/appydave/poem-os](https://github.com/appydave/poem-os)
 - **Issues**: [GitHub Issues](https://github.com/appydave/poem-os/issues)
 - **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md) for developer guide
-- **Publishing**: See [PUBLISHING.md](PUBLISHING.md) for maintainer release process
+- **Publishing**: See [publishing-guide.md](publishing-guide.md) for maintainer release process
 
 ---
 

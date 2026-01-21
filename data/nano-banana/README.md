@@ -36,7 +36,7 @@ Research gathered on JSON prompting, API implementation, and vibe coder workflow
 ```
 data/nano-banana/
 ├── README.md              # This file - project overview and plan
-├── PLAN.md                # 3-step plan with next actions
+├── project-plan.md                # 3-step plan with next actions
 ├── examples/              # Example prompts, shots, outputs
 │   ├── vibe-deck-product-concept.md     # ✅ Project overview
 │   ├── vibe-deck-design-decisions.md    # 🔨 Working doc - fill this in
@@ -47,7 +47,7 @@ data/nano-banana/
     └── vibe-deck-context-engineering-research.md # ✅ Complete (related project)
 ```
 
-**Next Steps**: See `PLAN.md` for the full 3-step process.
+**Next Steps**: See `project-plan.md` for the full 3-step process.
 
 ---
 

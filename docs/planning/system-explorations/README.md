@@ -117,7 +117,7 @@ As you design, consider:
 ## Next Steps for You
 
 1. **Read for context**: Understand our domain and thinking
-2. **Read POEM.md**: Primary requirements document
+2. **Read poem-requirements.md**: Primary requirements document
 3. **Read reference/** files: External knowledge and patterns
 4. **Design freely**: Create the BEST architecture for POEM
 5. **Document your decisions**: In actual architecture documentation

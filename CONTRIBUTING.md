@@ -198,7 +198,7 @@ poem/
 ├── package.json             # Root workspace config
 ├── README.md                # User documentation
 ├── CONTRIBUTING.md          # This file
-├── PUBLISHING.md            # Release process (maintainers)
+├── publishing-guide.md            # Release process (maintainers)
 └── CLAUDE.md                # AI-assisted development guide
 ```
 
@@ -307,7 +307,7 @@ If you're using Claude Code with BMAD agents:
 ## See Also
 
 - **[README.md](README.md)** - User installation and getting started
-- **[PUBLISHING.md](PUBLISHING.md)** - NPM publishing process (maintainers only)
+- **[publishing-guide.md](publishing-guide.md)** - NPM publishing process (maintainers only)
 - **[CLAUDE.md](CLAUDE.md)** - AI-assisted development with Claude Code
 - **[docs/prd.md](docs/prd.md)** - Product requirements
 - **[docs/architecture.md](docs/architecture.md)** - Technical architecture

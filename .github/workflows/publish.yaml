@@ -81,4 +81,4 @@ jobs:
 # 3. Test workflow with manual dispatch
 # 4. Enable tag-based triggers when ready
 #
-# See PUBLISHING.md for complete publishing workflow
+# See publishing-guide.md for complete publishing workflow

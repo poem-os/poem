@@ -122,7 +122,7 @@ When documenting a decision:
    ```
 
 3. Update this README decision log table
-4. Reference in POEM.md if critical
+4. Reference in poem-requirements.md if critical
 
 ---
 
