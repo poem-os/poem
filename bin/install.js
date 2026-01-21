@@ -528,6 +528,19 @@ async function promptForPort(force, targetDir = null) {
     return 9500;
   }
 
+  // Check if stdin is a TTY (interactive terminal)
+  // If not (e.g., piping input or automated scripts), use suggested port without prompting
+  if (!process.stdin.isTTY) {
+    const defaultPort = 9500;
+    const defaultCheck = await validatePortWithConflictCheck(defaultPort);
+    if (!defaultCheck.valid && defaultCheck.error === 'conflict') {
+      const suggestions = await suggestAvailablePorts(9500, 1);
+      log(`   → Using suggested port: ${suggestions[0]}`);
+      return suggestions[0];
+    }
+    return defaultPort;
+  }
+
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -547,40 +560,49 @@ async function promptForPort(force, targetDir = null) {
     }
 
     const askForPort = () => {
-      rl.question('\n? What port should POEM run on? (default: 9500): ', async (answer) => {
-        if (!answer.trim()) {
-          // User pressed enter, use default or first suggestion
-          if (!defaultCheck.valid && defaultCheck.error === 'conflict') {
-            const suggestions = await suggestAvailablePorts(9500, 1);
-            rl.close();
-            resolve(suggestions[0]);
-          } else {
-            rl.close();
-            resolve(9500);
-          }
-          return;
-        }
+      rl.question('\n? What port should POEM run on? (default: 9500): ', (answer) => {
+        // Handle async operations outside the callback to avoid timing issues
+        (async () => {
+          try {
+            if (!answer.trim()) {
+              // User pressed enter, use default or first suggestion
+              if (!defaultCheck.valid && defaultCheck.error === 'conflict') {
+                const suggestions = await suggestAvailablePorts(9500, 1);
+                rl.close();
+                resolve(suggestions[0]);
+              } else {
+                rl.close();
+                resolve(9500);
+              }
+              return;
+            }
 
-        const port = parseInt(answer, 10);
-        const validation = await validatePortWithConflictCheck(port);
+            const port = parseInt(answer, 10);
+            const validation = await validatePortWithConflictCheck(port);
 
-        if (!validation.valid) {
-          if (validation.error === 'invalid_range') {
-            console.error('⚠️  Invalid port. Port must be between 1024 and 65535.');
-            // Don't close rl, ask again
-            return askForPort();
-          } else if (validation.error === 'conflict') {
-            const suggestions = await suggestAvailablePorts(9500, 3);
-            console.error(`\n⚠️  Port ${port} is already allocated to:`);
-            console.error(`   [${validation.installation.id}] ${validation.installation.path}`);
-            console.log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
-            // Don't close rl, ask again
-            return askForPort();
+            if (!validation.valid) {
+              if (validation.error === 'invalid_range') {
+                console.error('⚠️  Invalid port. Port must be between 1024 and 65535.');
+                // Ask again (rl is still open)
+                askForPort();
+              } else if (validation.error === 'conflict') {
+                const suggestions = await suggestAvailablePorts(9500, 3);
+                console.error(`\n⚠️  Port ${port} is already allocated to:`);
+                console.error(`   [${validation.installation.id}] ${validation.installation.path}`);
+                console.log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
+                // Ask again (rl is still open)
+                askForPort();
+              }
+            } else {
+              rl.close();
+              resolve(port);
+            }
+          } catch (error) {
+            console.error(`\n⚠️  Error validating port: ${error.message}`);
+            rl.close();
+            resolve(9500); // Fallback to default
           }
-        } else {
-          rl.close();
-          resolve(port);
-        }
+        })();
       });
     };
 
