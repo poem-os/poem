@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://poem-os.dev/schemas/usage-issues.schema.json",
+  "title": "POEM Usage Issue",
+  "description": "Schema for tracking issues discovered during POEM usage and testing",
+  "type": "object",
+  "required": [
+    "timestamp",
+    "session",
+    "category",
+    "severity",
+    "observation",
+    "context",
+    "expected",
+    "actual",
+    "impact",
+    "tags"
+  ],
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when issue was observed"
+    },
+    "session": {
+      "type": "string",
+      "description": "Session identifier for grouping related observations"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "bug",
+        "missing-feature",
+        "usability",
+        "docs-gap",
+        "architecture",
+        "performance"
+      ],
+      "description": "Type of issue"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low"],
+      "description": "Impact level of the issue"
+    },
+    "observation": {
+      "type": "string",
+      "description": "Detailed description of what was observed"
+    },
+    "context": {
+      "type": "string",
+      "description": "Circumstances under which the issue occurred"
+    },
+    "expected": {
+      "type": "string",
+      "description": "What should have happened"
+    },
+    "actual": {
+      "type": "string",
+      "description": "What actually happened"
+    },
+    "impact": {
+      "type": "string",
+      "description": "Consequences and effects of the issue"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Keywords for categorization and search"
+    },
+    "references": {
+      "type": "object",
+      "description": "Related files, commands, and documentation",
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "docs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "additional_notes": {
+      "type": "string",
+      "description": "Extra context, ideas, or considerations"
+    },
+    "suggestedEpic": {
+      "type": ["string", "null"],
+      "description": "Recommended epic to address this issue"
+    },
+    "suggestedStory": {
+      "type": ["string", "null"],
+      "description": "Recommended story to address this issue"
+    },
+    "epicRationale": {
+      "type": "string",
+      "description": "Reasoning for epic/story suggestion"
+    },
+    "resolution": {
+      "type": "object",
+      "description": "Resolution information for fixed/resolved issues",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["open", "fixed", "resolved", "wont-fix", "duplicate"],
+          "description": "Current status of the issue"
+        },
+        "fixedIn": {
+          "type": "string",
+          "description": "Story, commit, or version that fixed this issue"
+        },
+        "fixedDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the issue was fixed"
+        },
+        "fixDescription": {
+          "type": "string",
+          "description": "How the issue was resolved"
+        },
+        "verifiedBy": {
+          "type": "string",
+          "description": "Who verified the fix"
+        }
+      },
+      "required": ["status"]
+    }
+  }
+}
