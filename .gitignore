@@ -47,6 +47,9 @@ tmp/                    # Temporary/scratch files
 dev-workspace/
 dev-workspace/**
 validation-backups/     # Validation data backups (local only)
+.poem-app/              # Installed runtime (generated during install)
+.poem-core/             # Installed framework (generated during install)
+poem/                   # User workspace (created during install)
 
 # Workflow runtime data (test artifacts, execution state)
 # Ignore all JSON files in any workflow-data directory

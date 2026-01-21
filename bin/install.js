@@ -219,7 +219,7 @@ async function getAllFiles(dir, root = dir, files = []) {
   return files;
 }
 
-async function copyDirectory(src, dest, stats = { files: 0, dirs: 0 }, preservationContext = null) {
+async function copyDirectory(src, dest, stats = { files: 0, dirs: 0, preserved: [], skipped: [] }, preservationContext = null) {
   // Create destination directory
   await fs.mkdir(dest, { recursive: true });
   stats.dirs++;
@@ -232,7 +232,10 @@ async function copyDirectory(src, dest, stats = { files: 0, dirs: 0 }, preservat
 
     // Check if should be excluded
     if (EXCLUDE_PATTERNS.includes(entry.name)) {
-      logVerbose(`Skipping: ${entry.name}`);
+      stats.skipped = stats.skipped || [];
+      if (!stats.skipped.includes(entry.name)) {
+        stats.skipped.push(entry.name);
+      }
       continue;
     }
 
@@ -243,13 +246,15 @@ async function copyDirectory(src, dest, stats = { files: 0, dirs: 0 }, preservat
 
       // Check if preserved by rules
       if (preservationContext.isPreserved(normalizedPath, preservationContext.rules)) {
-        logVerbose(`Preserved: ${normalizedPath}`);
+        stats.preserved = stats.preserved || [];
+        stats.preserved.push(normalizedPath);
         continue;
       }
 
       // Check if user workflow
       if (preservationContext.isUserWorkflow(normalizedPath)) {
-        logVerbose(`Preserved (user workflow): ${normalizedPath}`);
+        stats.preserved = stats.preserved || [];
+        stats.preserved.push(`${normalizedPath} (user workflow)`);
         continue;
       }
     }
@@ -259,7 +264,6 @@ async function copyDirectory(src, dest, stats = { files: 0, dirs: 0 }, preservat
     } else {
       await fs.copyFile(srcPath, destPath);
       stats.files++;
-      logVerbose(`Copied: ${entry.name}`);
     }
   }
 
@@ -347,7 +351,22 @@ async function installCore(targetDir, preservationContext = null) {
   }
 
   log('Installing .poem-core/ (framework documents)...');
-  const stats = await copyDirectory(srcDir, destDir, { files: 0, dirs: 0 }, preservationContext);
+  if (verboseMode) {
+    logVerbose(`Copying from ${srcDir}...`);
+  }
+
+  const stats = await copyDirectory(srcDir, destDir, { files: 0, dirs: 0, preserved: [], skipped: [] }, preservationContext);
+
+  // Show grouped verbose info
+  if (verboseMode) {
+    if (stats.preserved && stats.preserved.length > 0) {
+      stats.preserved.forEach(item => logVerbose(`Preserved: ${item}`));
+    }
+    if (stats.skipped && stats.skipped.length > 0) {
+      logVerbose(`Skipped: ${stats.skipped.join(', ')}`);
+    }
+  }
+
   log(`   ✓ Copied ${stats.files} files in ${stats.dirs} directories`);
 
   return stats;
@@ -364,6 +383,16 @@ async function installApp(targetDir, preservationContext = null) {
   log('Installing .poem-app/ (runtime server)...');
   const stats = await copyDirectory(srcDir, destDir, { files: 0, dirs: 0 }, preservationContext);
   log(`   ✓ Copied ${stats.files} files in ${stats.dirs} directories`);
+
+  // Show grouped verbose info after copying
+  if (verboseMode) {
+    if (stats.preserved && stats.preserved.length > 0) {
+      stats.preserved.forEach(item => logVerbose(`Preserved: ${item}`));
+    }
+    if (stats.skipped && stats.skipped.length > 0) {
+      logVerbose(`Skipped: ${stats.skipped.join(', ')}`);
+    }
+  }
 
   return stats;
 }
@@ -451,6 +480,16 @@ async function installCommands(targetDir) {
   const stats = await copyDirectory(srcDir, destDir);
   log(`   ✓ Copied ${stats.files} files in ${stats.dirs} directories`);
 
+  // Show grouped verbose info after copying
+  if (verboseMode) {
+    if (stats.preserved && stats.preserved.length > 0) {
+      stats.preserved.forEach(item => logVerbose(`Preserved: ${item}`));
+    }
+    if (stats.skipped && stats.skipped.length > 0) {
+      logVerbose(`Skipped: ${stats.skipped.join(', ')}`);
+    }
+  }
+
   return stats;
 }
 
@@ -528,13 +567,15 @@ async function promptForPort(force, targetDir = null) {
         if (!validation.valid) {
           if (validation.error === 'invalid_range') {
             console.error('⚠️  Invalid port. Port must be between 1024 and 65535.');
-            askForPort(); // Ask again
+            // Don't close rl, ask again
+            return askForPort();
           } else if (validation.error === 'conflict') {
             const suggestions = await suggestAvailablePorts(9500, 3);
             console.error(`\n⚠️  Port ${port} is already allocated to:`);
             console.error(`   [${validation.installation.id}] ${validation.installation.path}`);
             console.log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
-            askForPort(); // Ask again
+            // Don't close rl, ask again
+            return askForPort();
           }
         } else {
           rl.close();
