@@ -366,4 +366,56 @@ approval:
     - "QA: Re-review after fixes, update gate status"
     - "Team: Discuss if CONCERNS waived for v0.1.0 or if fixes required"
 
+# ==============================================================================
+# Post-Implementation Updates
+# ==============================================================================
+
+post_implementation_fixes:
+  - date: "2026-01-22"
+    version: "1.2.1"
+    issue_ids: ["#11", "#12"]
+    category: "field-usage-discovery"
+    description: |
+      Enhanced checkPortConflict() to validate installation directory existence
+      before reporting conflicts. Prevents stale registry entries from blocking
+      port reuse when installations are manually deleted.
+
+    technical_details:
+      - location: "bin/utils.js:287-305"
+      - change: "Added existsSync() check for .poem-app/ before returning conflict"
+      - impact: "Resolves both registry pollution (Issue #11) and port reuse blocking (Issue #12)"
+
+    validation:
+      - "Stale registry entries automatically ignored during port selection"
+      - "Users can reuse ports from deleted installations without manual cleanup"
+      - "Registry display automatically filters out missing installations"
+
+    notes: |
+      This fix was implemented as a quick fix rather than a full story because:
+      1. Single function modification (<5 lines)
+      2. No breaking changes to API or behavior
+      3. Improves existing functionality without adding new features
+      4. Addresses edge case discovered in field usage
+
+  - date: "2026-01-22"
+    version: "1.2.2"
+    category: "ux-enhancement"
+    description: |
+      Added visual indicators for stale registry entries in port conflict display.
+      When registry is shown during port selection, entries for missing installations
+      are displayed with yellow port numbers, dimmed text, and warning symbol (⚠).
+
+      Enhances user awareness of stale entries without requiring manual registry inspection.
+
+    technical_details:
+      - location: "bin/install.js:241-289"
+      - change: "Added displayRegistryInstallations() helper function"
+      - styling: "Yellow port numbers, dim text, ⚠ symbol for missing installations"
+      - locations_updated: "promptForPort (2 places), handleConfig (1 place)"
+
+    user_benefit: |
+      Users can now immediately see which registry entries are stale when reviewing
+      port conflicts. Subtle visual cues (yellow + dimmed) provide awareness without
+      being intrusive. Includes helpful note: "(⚠ = installation directory not found)"
+
 ---

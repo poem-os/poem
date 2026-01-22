@@ -284,13 +284,19 @@ describe('Installation Registry Integration', () => {
     const backupInstallations = [...currentRegistry.installations];
 
     try {
+      // Create test installation directories with .poem-app folders
+      const conflictPath1 = path.join(testDir, 'conflict-test-1');
+      const conflictPath2 = path.join(testDir, 'conflict-test-2');
+      await fs.mkdir(path.join(conflictPath1, '.poem-app'), { recursive: true });
+      await fs.mkdir(path.join(conflictPath2, '.poem-app'), { recursive: true });
+
       // Create test installations with specific ports
       const testRegistry = {
         version: '1.0',
         installations: [
           {
             id: 'test-conflict-1',
-            path: path.join(testDir, 'conflict-test-1'),
+            path: conflictPath1,
             port: 9500,
             installedAt: '2025-01-15T10:00:00.000Z',
             lastChecked: '2025-01-15T10:00:00.000Z',
@@ -307,7 +313,7 @@ describe('Installation Registry Integration', () => {
           },
           {
             id: 'test-conflict-2',
-            path: path.join(testDir, 'conflict-test-2'),
+            path: conflictPath2,
             port: 9510,
             installedAt: '2025-01-15T11:00:00.000Z',
             lastChecked: '2025-01-15T11:00:00.000Z',
@@ -343,8 +349,57 @@ describe('Installation Registry Integration', () => {
       expect(noConflict.installation).toBeUndefined();
 
       // Test: Exclude path parameter works
-      const excludeConflict = await checkPortConflict(9500, path.join(testDir, 'conflict-test-1'));
+      const excludeConflict = await checkPortConflict(9500, conflictPath1);
       expect(excludeConflict.conflict).toBe(false);
+    } finally {
+      // Restore original registry
+      await writeRegistry({
+        version: '1.0',
+        installations: backupInstallations
+      });
+    }
+  });
+
+  it('should ignore stale registry entries for missing installations (Issue #11, #12)', async () => {
+    const { checkPortConflict, writeRegistry, readRegistry } = await import('../../bin/utils.js');
+
+    // Backup current registry
+    const currentRegistry = await readRegistry();
+    const backupInstallations = [...currentRegistry.installations];
+
+    try {
+      // Create test registry with entry for non-existent installation
+      const testRegistry = {
+        version: '1.0',
+        installations: [
+          {
+            id: 'stale-entry',
+            path: '/nonexistent/deleted/installation',
+            port: 9530,
+            installedAt: '2025-01-15T10:00:00.000Z',
+            lastChecked: '2025-01-15T10:00:00.000Z',
+            version: '0.1.0',
+            mode: 'production',
+            currentWorkflow: null,
+            gitBranch: 'main',
+            status: 'active',
+            metadata: {
+              lastServerRun: null,
+              workflowCount: 0,
+              promptCount: 0
+            }
+          }
+        ]
+      };
+
+      await writeRegistry(testRegistry);
+
+      // Test: Port 9530 should NOT have conflict (installation directory doesn't exist)
+      const result = await checkPortConflict(9530);
+      expect(result.conflict).toBe(false);
+      expect(result.installation).toBeUndefined();
+
+      // This allows port reuse without manual 'registry --cleanup'
     } finally {
       // Restore original registry
       await writeRegistry({
@@ -461,13 +516,19 @@ describe('Installation Registry Integration', () => {
     const backupInstallations = [...currentRegistry.installations];
 
     try {
+      // Create test installation directories with .poem-app folders
+      const configPath1 = path.join(testDir, 'config-test-1');
+      const configPath2 = path.join(testDir, 'config-test-2');
+      await fs.mkdir(path.join(configPath1, '.poem-app'), { recursive: true });
+      await fs.mkdir(path.join(configPath2, '.poem-app'), { recursive: true });
+
       // Create test registry with two installations
       const testRegistry = {
         version: '1.0',
         installations: [
           {
             id: 'test-config-1',
-            path: path.join(testDir, 'config-test-1'),
+            path: configPath1,
             port: 9500,
             installedAt: '2025-01-15T10:00:00.000Z',
             lastChecked: '2025-01-15T10:00:00.000Z',
@@ -484,7 +545,7 @@ describe('Installation Registry Integration', () => {
           },
           {
             id: 'test-config-2',
-            path: path.join(testDir, 'config-test-2'),
+            path: configPath2,
             port: 9510,
             installedAt: '2025-01-15T11:00:00.000Z',
             lastChecked: '2025-01-15T11:00:00.000Z',
@@ -505,16 +566,16 @@ describe('Installation Registry Integration', () => {
       await writeRegistry(testRegistry);
 
       // Test: Installation 2 tries to change port to 9500 (conflict with installation 1)
-      const conflict1 = await checkPortConflict(9500, path.join(testDir, 'config-test-2'));
+      const conflict1 = await checkPortConflict(9500, configPath2);
       expect(conflict1.conflict).toBe(true);
       expect(conflict1.installation.id).toBe('test-config-1');
 
       // Test: Installation 2 can change to its own current port (no conflict with self)
-      const noConflict = await checkPortConflict(9510, path.join(testDir, 'config-test-2'));
+      const noConflict = await checkPortConflict(9510, configPath2);
       expect(noConflict.conflict).toBe(false);
 
       // Test: Installation 2 can change to an available port (no conflict)
-      const noConflict2 = await checkPortConflict(9520, path.join(testDir, 'config-test-2'));
+      const noConflict2 = await checkPortConflict(9520, configPath2);
       expect(noConflict2.conflict).toBe(false);
     } finally {
       // Restore original registry

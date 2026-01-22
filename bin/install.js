@@ -239,6 +239,55 @@ function logError(message, context = {}) {
 }
 
 // ============================================================================
+// Registry Display Utility
+// ============================================================================
+
+/**
+ * Displays registered POEM installations with visual indicators for stale entries
+ * @param {Array} installations - Array of installation objects from registry
+ * @param {Function} logFn - Logging function to use (log or console.log)
+ */
+function displayRegistryInstallations(installations, logFn = log) {
+  const allPorts = installations
+    .filter(i => i.port !== null)
+    .map(i => ({ port: i.port, id: i.id, path: i.path }))
+    .sort((a, b) => a.port - b.port);
+
+  if (allPorts.length === 0) {
+    return;
+  }
+
+  logFn(`\n   Registered POEM installations:`);
+
+  // Calculate max ID length for alignment
+  const maxIdLen = Math.max(...allPorts.map(i => i.id.length));
+
+  let hasStaleEntries = false;
+
+  for (const { port, id, path: installPath } of allPorts) {
+    const paddedId = id.padEnd(maxIdLen);
+
+    // Check if installation directory still exists
+    const poemAppPath = path.join(installPath, '.poem-app');
+    const exists = existsSync(poemAppPath);
+
+    if (!exists) {
+      // Stale entry - use dim yellow color and indicator
+      logFn(`   ${yellow(port)}  ${dim(paddedId)}  ${dim(installPath)} ${yellow('⚠')}`);
+      hasStaleEntries = true;
+    } else {
+      // Valid entry - normal display
+      logFn(`   ${port}  ${paddedId}  ${installPath}`);
+    }
+  }
+
+  // Add helpful note if there are stale entries
+  if (hasStaleEntries) {
+    logFn(`   ${dim('(⚠ = installation directory not found)')}`);
+  }
+}
+
+// ============================================================================
 // Directory Copy Utility
 // ============================================================================
 
@@ -573,21 +622,8 @@ async function promptForPort(force, targetDir = null) {
 
       log(`\n⚠️  Port ${defaultPort} is already in use.`);
 
-      // Show all registered installations with consistent format: port, name, path
-      const allPorts = registry.installations
-        .filter(i => i.port !== null)
-        .map(i => ({ port: i.port, id: i.id, path: i.path }))
-        .sort((a, b) => a.port - b.port);
-
-      if (allPorts.length > 0) {
-        log(`\n   Registered POEM installations:`);
-        // Calculate max ID length for alignment
-        const maxIdLen = Math.max(...allPorts.map(i => i.id.length));
-        for (const { port, id, path: installPath } of allPorts) {
-          const paddedId = id.padEnd(maxIdLen);
-          log(`   ${port}  ${paddedId}  ${installPath}`);
-        }
-      }
+      // Show all registered installations with stale indicators
+      displayRegistryInstallations(registry.installations, log);
 
       log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
     }
@@ -625,20 +661,8 @@ async function promptForPort(force, targetDir = null) {
 
                 console.error(`\n⚠️  Port ${port} is already in use.`);
 
-                // Show all registered installations with consistent format: port, name, path
-                const allPorts = registry.installations
-                  .filter(i => i.port !== null)
-                  .map(i => ({ port: i.port, id: i.id, path: i.path }))
-                  .sort((a, b) => a.port - b.port);
-
-                if (allPorts.length > 0) {
-                  console.log(`\n   Registered POEM installations:`);
-                  const maxIdLen = Math.max(...allPorts.map(i => i.id.length));
-                  for (const { port: p, id, path: installPath } of allPorts) {
-                    const paddedId = id.padEnd(maxIdLen);
-                    console.log(`   ${p}  ${paddedId}  ${installPath}`);
-                  }
-                }
+                // Show all registered installations with stale indicators
+                displayRegistryInstallations(registry.installations, console.log);
 
                 console.log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
                 // Ask again (rl is still open)
@@ -1429,20 +1453,8 @@ async function handleConfig(flags) {
 
       console.error(`\n⚠️  Port ${portNum} is already in use.`);
 
-      // Show all registered installations with consistent format
-      const allPorts = registry.installations
-        .filter(i => i.port !== null)
-        .map(i => ({ port: i.port, id: i.id, path: i.path }))
-        .sort((a, b) => a.port - b.port);
-
-      if (allPorts.length > 0) {
-        console.log(`\n   Registered POEM installations:`);
-        const maxIdLen = Math.max(...allPorts.map(i => i.id.length));
-        for (const { port, id, path: installPath } of allPorts) {
-          const paddedId = id.padEnd(maxIdLen);
-          console.log(`   ${port}  ${paddedId}  ${installPath}`);
-        }
-      }
+      // Show all registered installations with stale indicators
+      displayRegistryInstallations(registry.installations, console.log);
 
       console.log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
       process.exit(1);

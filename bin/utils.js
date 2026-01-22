@@ -294,6 +294,14 @@ export async function checkPortConflict(port, excludePath = null) {
     }
 
     if (installation.port === port) {
+      // Verify installation still exists before reporting conflict
+      // This prevents stale registry entries from blocking port reuse
+      const poemAppPath = path.join(installation.path, '.poem-app');
+      if (!existsSync(poemAppPath)) {
+        // Installation missing - not a real conflict, skip this entry
+        continue;
+      }
+
       return {
         conflict: true,
         installation
