@@ -73,16 +73,16 @@ When Lisa runs `*curate` on Story 4.3, the section would be updated to:
 <!-- Lisa (Librarian) updates this section during knowledge curation -->
 
 **Patterns Created**:
-- [Schema-Based Mock Data Generation](../kdd/patterns/4-schema-based-mock-data-generation.md)
+- [Schema-Based Mock Data Generation](../kdd/patterns/4-schema-based-mock-data-generation.md) *(actual example)*
 
 **Learnings Documented**:
-- [Array Type Override in Mock Data Generation](../kdd/learnings/epic4-array-type-override-bug.md)
+- [Array Type Override in Mock Data Generation](../kdd/learnings/epic4-array-type-override-bug.md) *(actual example)*
 
 **Decisions (ADRs)**:
-- [ADR-005: Mock Data Generation with Faker.js](../kdd/decisions/adr-005-mock-data-generation-fakerjs.md)
+- [ADR-005: Mock Data Generation with Faker.js](../kdd/decisions/adr-005-mock-data-generation-fakerjs.md) *(actual example)*
 
 **Examples Created**:
-- [Schema-Based Mock Generation Example](../examples/epic4-schema-based-mock-generation/README.md)
+- (None in this story)
 
 **Knowledge Extraction Status**: Curated on 2026-01-19
 ```
@@ -313,6 +313,8 @@ Standardized metadata enables:
 Metadata enables rich queries:
 
 ```bash
+# Example queries (illustrative - patterns may vary based on actual content)
+
 # Find all patterns in "testing" domain
 grep -r "^domain: \"testing\"" docs/kdd/patterns/
 
@@ -376,10 +378,9 @@ Metadata enables automated validation:
    - **Decision**: Choose Faker.js over alternatives
    - **Example**: Working implementation with test fixtures
 3. Creates KDD documents:
-   - `docs/kdd/patterns/4-schema-based-mock-data-generation.md`
-   - `docs/kdd/learnings/epic4-array-type-override-bug.md`
-   - `docs/kdd/decisions/adr-005-mock-data-generation-fakerjs.md`
-   - `docs/examples/epic4-schema-based-mock-generation/README.md`
+   - `docs/kdd/patterns/4-schema-based-mock-data-generation.md` *(actual file)*
+   - `docs/kdd/learnings/epic4-array-type-override-bug.md` *(actual file)*
+   - `docs/kdd/decisions/adr-005-mock-data-generation-fakerjs.md` *(actual file)*
 4. Updates story file:
    - Adds links to "Knowledge Assets" section
    - Sets status: "Curated on 2026-01-19"

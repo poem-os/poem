@@ -93,8 +93,8 @@ KDD uses **4 document types**, each with specific purpose, structure, and lifecy
 **Location**: `docs/kdd/patterns/`
 
 **Filename Format**: `{domain}-{topic}-pattern.md`
-- Example: `password-validation-pattern.md`
-- Example: `error-handling-pattern.md`
+- Example (illustrative): `password-validation-pattern.md`
+- Example (illustrative): `error-handling-pattern.md`
 
 **When to Create**:
 - Pattern used in 3+ stories (evidence-based promotion threshold)
@@ -145,8 +145,8 @@ Use this pattern when implementing password validation for user registration or 
 **Location**: `docs/kdd/learnings/`
 
 **Filename Format**: `{topic}-{issue}-kdd.md`
-- Example: `cors-issue-kdd.md`
-- Example: `timeout-error-kdd.md`
+- Example (illustrative): `cors-issue-kdd.md`
+- Example (illustrative): `timeout-error-kdd.md`
 
 **When to Create**:
 - Issue/bug discovered during development
@@ -208,8 +208,8 @@ Production environment missing CORS configuration in Nginx...
 **Location**: `docs/kdd/decisions/`
 
 **Filename Format**: `adr-{NNN}-{decision-name}.md`
-- Example: `adr-001-use-jwt-authentication.md`
-- Example: `adr-042-migrate-to-typescript.md`
+- Example (illustrative): `adr-001-use-jwt-authentication.md`
+- Example (illustrative): `adr-042-migrate-to-typescript.md`
 
 **When to Create**:
 - Significant architectural decision made
