@@ -264,6 +264,35 @@ Ongoing maintenance, bug fixes, technical debt, developer experience improvement
 
 ---
 
+#### Story 0.3: Create Lisa (Librarian) Agent for KDD Documentation Curation
+
+**As a** BMAD developer,
+**I want** a Librarian agent (Lisa) that curates Knowledge-Driven Development (KDD) documentation after QA passes,
+**so that** I can prevent documentation maintenance burden, broken topology links, code pattern inconsistencies, and knowledge extraction gaps across projects.
+
+**Acceptance Criteria**:
+
+1. Agent definition created in `.bmad-core/agents/librarian.md` (Lisa's persona, commands, dependencies)
+2. CLI wrapper created in `.claude/commands/BMad/agents/librarian.md`
+3. Task created: `.bmad-core/tasks/extract-knowledge-from-story.md` (8-step extraction workflow)
+4. Task created: `.bmad-core/tasks/validate-kdd-topology.md` (link validation, structure checks)
+5. Task created: `.bmad-core/tasks/generate-indexes.md` (auto-generate index.md files)
+6. Task created: `.bmad-core/tasks/detect-semantic-duplicates.md` (keyword-based similarity)
+7. Task created: `.bmad-core/tasks/detect-recurring-issues.md` (recurrence detection for lessons)
+8. Template created: `.bmad-core/templates/pattern-tmpl.md`
+9. Template created: `.bmad-core/templates/learning-tmpl.md`
+10. Template created: `.bmad-core/templates/decision-adr-tmpl.md`
+11. Template created: `.bmad-core/templates/example-tmpl.md`
+12. Template created: `.bmad-core/templates/health-report-tmpl.md`
+13. Checklist created: `.bmad-core/checklists/knowledge-curation-checklist.md`
+14. Data file created: `.bmad-core/data/kdd-taxonomy.yaml` (document type definitions)
+15. Data file created: `.bmad-core/data/validation-rules.yaml` (link validation, duplication thresholds)
+16. AppyDave workflow integration: Update `.bmad-core/tasks/execute-appydave-workflow.md` (add Step 7: Lisa curation)
+17. Documentation: Update POEM's `CLAUDE.md` with Lisa usage instructions
+18. Documentation: Create `docs/guides/kdd-workflow-guide.md` (how agents use Lisa's docs)
+
+---
+
 ### Epic 1: Foundation & Monorepo Setup
 
 Establish project infrastructure with monorepo structure, NPX installer, and basic `.poem-core/` + `.poem-app/` scaffolding that copies to user projects.

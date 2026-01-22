@@ -1,0 +1,349 @@
+# KDD (Knowledge-Driven Development) Taxonomy
+#
+# Defines document types, required sections, filename formats, locations,
+# and promotion criteria for knowledge assets created by Lisa (Librarian).
+#
+# Last updated: 2026-01-22
+# Version: 1.0.0
+
+taxonomy:
+  version: "1.0.0"
+  last_updated: "2026-01-22"
+  maintained_by: "Lisa (Librarian)"
+
+# Document Types
+document_types:
+  # Pattern Documents - Reusable code/architectural patterns
+  pattern:
+    description: "Reusable architectural patterns, coding conventions, and design patterns"
+    location: "docs/kdd/patterns/"
+    filename_format: "{domain}-{topic}-pattern.md"
+    filename_examples:
+      - "password-validation-pattern.md"
+      - "email-validation-pattern.md"
+      - "auth-flow-pattern.md"
+      - "error-handling-pattern.md"
+
+    required_metadata:
+      - "domain"        # e.g., authentication, validation, deployment
+      - "topic"         # e.g., password-validation, email-validation
+      - "status"        # Active | Deprecated | Under Review
+      - "created"       # YYYY-MM-DD
+      - "story_reference" # Story X.Y
+      - "pattern_type"  # Code Pattern | Architectural Pattern | Validation Pattern
+
+    required_sections:
+      - "Context"                    # When to use this pattern
+      - "Implementation"             # How to implement (code structure, steps)
+      - "Examples"                   # Working code examples
+      - "Rationale"                  # Why this approach (benefits, trade-offs)
+      - "Related Patterns"           # Cross-references to related patterns
+
+    optional_sections:
+      - "Testing Considerations"     # How to test implementations
+      - "Common Variations"          # Alternative implementations
+      - "References"                 # Links to stories, architecture docs
+
+    promotion_criteria:
+      description: "When to promote learning to pattern"
+      rules:
+        - "Used in 3+ stories (evidence-based threshold)"
+        - "Demonstrates reusable solution to recurring problem"
+        - "Has clear implementation steps and examples"
+        - "Approved by team for standardization"
+
+    subdirectories:
+      enabled: true
+      trigger: 20  # Create subdirectories when >20 patterns exist
+      suggested:
+        - "backend/"
+        - "frontend/"
+        - "security/"
+        - "performance/"
+        - "integration/"
+
+  # Learning Documents - Story-specific insights, incidents, debugging sessions
+  learning:
+    description: "Story-specific insights, debugging sessions, incidents, and lessons learned"
+    location: "docs/kdd/learnings/"
+    filename_format: "{topic}-{issue}-kdd.md"
+    filename_examples:
+      - "cors-issue-kdd.md"
+      - "timeout-error-kdd.md"
+      - "deployment-failure-kdd.md"
+      - "validation-bug-kdd.md"
+
+    required_metadata:
+      - "topic"                # e.g., deployment, debugging, testing
+      - "issue"                # e.g., cors-error, timeout-issue
+      - "created"              # YYYY-MM-DD
+      - "story_reference"      # Story X.Y
+      - "category"             # deployment | debugging | testing | ai-integration | validation
+      - "severity"             # Low | Medium | High | Critical
+      - "status"               # Active | Resolved | Recurring
+      - "recurrence_count"     # Number of times issue appeared
+
+    required_sections:
+      - "Problem Signature"          # Symptoms, error messages, triggering conditions
+      - "Root Cause"                 # Technical analysis of why issue occurred
+      - "Solution"                   # Resolution steps, code changes, verification
+      - "Prevention"                 # How to prevent in future stories
+      - "Related Incidents"          # Previous occurrences, similar issues
+
+    optional_sections:
+      - "Lessons Learned"            # Key takeaways
+      - "Impact Assessment"          # Time lost, scope, preventability
+      - "References"                 # Links to stories, patterns, commits
+
+    recurrence_tracking:
+      enabled: true
+      threshold: 3  # Promote to pattern if issue recurs 3+ times
+      signature_match: 0.60  # 60% signature similarity to detect recurrence (VAL-006)
+
+    subdirectories:
+      enabled: true
+      trigger: 15  # Create subdirectories when >15 learnings exist
+      suggested:
+        - "deployment/"
+        - "debugging/"
+        - "testing/"
+        - "ai-integration/"
+        - "validation/"
+        - "performance/"
+        - "security/"
+
+  # Decision Documents - Architecture Decision Records (ADRs)
+  decision:
+    description: "Architecture Decision Records (ADRs) documenting significant technical decisions"
+    location: "docs/kdd/decisions/"
+    filename_format: "adr-{NNN}-{decision-name}.md"
+    filename_examples:
+      - "adr-001-use-jwt-authentication.md"
+      - "adr-042-adopt-microservices.md"
+      - "adr-123-migrate-to-typescript.md"
+
+    required_metadata:
+      - "adr_number"         # Sequential: 001, 002, 003, etc.
+      - "title"              # Short decision title
+      - "status"             # Proposed | Accepted | Deprecated | Superseded
+      - "created"            # YYYY-MM-DD
+      - "decision_date"      # When decision was accepted (blank if Proposed)
+      - "story_reference"    # Story that triggered decision (if applicable)
+      - "authors"            # List of decision makers
+
+    required_sections:
+      - "Status"                     # Proposed | Accepted | Deprecated | Superseded
+      - "Context"                    # Background, problem statement, forces, assumptions
+      - "Decision"                   # What we will do (concise statement + details)
+      - "Alternatives"               # Options considered and why not chosen
+      - "Rationale"                  # Why this decision (criteria, alignment, risk)
+      - "Consequences"               # Positive/negative consequences, reversibility
+
+    optional_sections:
+      - "Implementation"             # Affected components, timeline, success criteria
+      - "Related Decisions"          # Links to related ADRs or patterns
+      - "References"                 # External resources, RFCs, standards
+
+    numbering:
+      format: "adr-{NNN}"            # Zero-padded 3-digit number
+      sequential: true               # ADRs numbered sequentially
+      start: 1                       # Start at ADR-001
+
+    subdirectories:
+      enabled: true
+      trigger: 20  # Create subdirectories when >20 ADRs exist
+      suggested:
+        - "by-year/"                 # Group by year (2025/, 2026/)
+        - "by-component/"            # Group by system component
+
+  # Example Documents - Working code demonstrations
+  example:
+    description: "Working code demonstrations and reference implementations"
+    location: "docs/examples/"
+    filename_format: "{example-name}.md"  # Or {example-name}/README.md for complex examples
+    filename_examples:
+      - "auth-flow-example.md"
+      - "api-integration-example.md"
+      - "testing-setup-example.md"
+      - "component-library/"        # Complex example with subdirectory
+
+    required_metadata:
+      - "title"                      # Example title
+      - "purpose"                    # Brief purpose description
+      - "category"                   # Code | Configuration | Integration | Workflow
+      - "created"                    # YYYY-MM-DD
+      - "difficulty"                 # Beginner | Intermediate | Advanced
+
+    optional_metadata:
+      - "story_reference"            # Story that created example (if applicable)
+      - "related_patterns"           # List of pattern filenames
+      - "technologies"               # List of technologies used
+
+    required_sections:
+      - "Purpose"                    # What this example demonstrates
+      - "Setup"                      # Prerequisites, installation, configuration
+      - "Implementation"             # Step-by-step code with explanations
+      - "Related Patterns"           # Links to patterns demonstrated
+
+    optional_sections:
+      - "Running the Example"        # Execution steps, expected output
+      - "Variations"                 # Alternative implementations
+      - "Common Issues"              # Troubleshooting
+      - "Extending This Example"     # Ideas for extension
+
+    structure:
+      single_file: true              # Simple examples use single .md file
+      subdirectory: true             # Complex examples use subdirectory with README.md
+
+# Directory Organization Rules
+directory_rules:
+  # Flat directory threshold (VAL-003)
+  flat_directory_limit: 20  # Warn when directory has >20 files
+
+  # Index file requirements
+  index_files:
+    required: true
+    filename: "index.md"
+    auto_generate: true    # Use generate-indexes task to create
+    update_frequency: "After each knowledge curation session"
+
+  # Orphan detection
+  orphan_detection:
+    enabled: true
+    definition: "Document with zero inbound links (not linked from index or other docs)"
+    severity: "warning"    # Orphans are warnings, not errors
+
+# Cross-Referencing Rules
+cross_references:
+  # Pattern → Learning links
+  pattern_to_learning:
+    enabled: true
+    description: "Patterns should reference learnings that led to pattern creation"
+
+  # Learning → Pattern links
+  learning_to_pattern:
+    enabled: true
+    description: "Learnings should link to patterns (if promoted) or related patterns"
+
+  # Decision → Pattern links
+  decision_to_pattern:
+    enabled: true
+    description: "ADRs should link to patterns affected by decision"
+
+  # Example → Pattern links
+  example_to_pattern:
+    required: true
+    description: "Examples must link to patterns demonstrated"
+
+  # Story → KDD links
+  story_to_kdd:
+    enabled: true
+    section: "Knowledge Assets"
+    description: "Stories link to all KDD documents created from that story"
+
+  # Bidirectional links
+  bidirectional:
+    enabled: true
+    description: "All cross-references should be bidirectional when possible"
+
+# Knowledge Asset Lifecycle
+lifecycle:
+  # Learning → Pattern promotion
+  learning_promotion:
+    enabled: true
+    criteria:
+      - "Issue recurs 3+ times (recurrence_count >= 3)"
+      - "Solution is reusable across multiple stories"
+      - "Team approves pattern standardization"
+    process:
+      - "Run detect-recurring-issues task to identify candidates"
+      - "Human approval required for promotion"
+      - "Create pattern document from learning template"
+      - "Update learning document with link to promoted pattern"
+
+  # Pattern deprecation
+  pattern_deprecation:
+    enabled: true
+    criteria:
+      - "Pattern no longer follows current best practices"
+      - "Pattern superseded by better approach"
+      - "Technology deprecated"
+    process:
+      - "Update pattern status to 'Deprecated'"
+      - "Add deprecation notice with migration guidance"
+      - "Link to superseding pattern (if applicable)"
+
+  # ADR supersession
+  adr_supersession:
+    enabled: true
+    fields:
+      - "supersedes: adr-XXX"      # ADR this decision supersedes
+      - "superseded_by: adr-XXX"   # ADR that supersedes this decision
+    process:
+      - "Update superseded ADR status to 'Superseded'"
+      - "Add reference to new ADR"
+      - "Maintain historical context"
+
+# Validation Integration
+validation:
+  # Link validation (VAL-001)
+  link_validation:
+    enabled: true
+    rule: "VAL-001"
+    scope: "All KDD documents"
+
+  # Duplicate detection (VAL-002)
+  duplicate_detection:
+    enabled: true
+    rule: "VAL-002"
+    scope: "All KDD documents"
+
+  # Directory structure (VAL-003)
+  directory_structure:
+    enabled: true
+    rule: "VAL-003"
+    scope: "All KDD directories"
+
+  # Metadata completeness (VAL-005)
+  metadata_completeness:
+    enabled: true
+    rule: "VAL-005"
+    scope: "All KDD documents"
+
+  # Recurrence detection (VAL-006)
+  recurrence_detection:
+    enabled: true
+    rule: "VAL-006"
+    scope: "Learning documents"
+
+# Success Metrics
+metrics:
+  # Pattern documentation rate
+  pattern_documentation:
+    target: "100% critical patterns documented"
+    baseline: "0 (SupportSignal)"
+    owner: "Lisa"
+
+  # Pattern consistency
+  pattern_consistency:
+    target: "95%+ (Quinn enforces)"
+    baseline: "25% (1/4 implementations, SupportSignal)"
+    owner: "Quinn"
+
+  # Link health
+  link_health:
+    target: "95%+ valid links"
+    baseline: "70% (30% broken, SupportSignal)"
+    owner: "Lisa"
+
+  # Documentation maintenance burden
+  maintenance_burden:
+    target: "<1 hour/month"
+    baseline: "7.4 hours/month (SupportSignal)"
+    owner: "Lisa"
+
+  # Knowledge extraction rate
+  extraction_rate:
+    target: "100% stories"
+    baseline: "~40% (SupportSignal)"
+    owner: "Lisa"

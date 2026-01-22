@@ -1,0 +1,395 @@
+# KDD Validation Rules
+#
+# Defines validation rules for KDD (Knowledge-Driven Development) topology health.
+# Rules VAL-001 through VAL-006 enforce documentation quality, discoverability,
+# and maintainability standards.
+#
+# Last updated: 2026-01-22
+# Version: 1.0.0
+
+validation_rules:
+  version: "1.0.0"
+  last_updated: "2026-01-22"
+  maintained_by: "Lisa (Librarian)"
+
+rules:
+  # VAL-001: Link Health
+  - id: "VAL-001"
+    name: "Link Health"
+    description: "Validate all internal links in KDD documents are not broken"
+    trigger: "document_save"
+    severity: "error"      # In theory error, but Lisa treats as warning (graceful degradation)
+    threshold: 0           # 0 broken links is the target
+    scope:
+      - "docs/kdd/patterns/"
+      - "docs/kdd/learnings/"
+      - "docs/kdd/decisions/"
+      - "docs/examples/"
+      - "docs/stories/" # Story links to knowledge assets
+
+    validation:
+      check_type: "link_validation"
+      checks:
+        - "Check all relative links (../path/file.md) exist"
+        - "Check anchor links (#section) exist in target document"
+        - "Skip external URLs (http/https) unless validation enabled"
+        - "Report broken links with source and target path"
+
+    thresholds:
+      healthy: "0 broken links (100% link health)"
+      warning: "1-5 broken links (>95% link health)"
+      critical: "6+ broken links (<95% link health)"
+
+    evidence:
+      source: "SupportSignal git analysis"
+      baseline: "30%+ broken links"
+      impact: "30% of KDD links broken, causing knowledge discoverability issues"
+
+    remediation:
+      actions:
+        - "Run validate-kdd-topology task to identify broken links"
+        - "Fix relative paths or update cross-references"
+        - "Remove links to deleted documents"
+        - "Run regenerate-indexes if index links broken"
+      automation: "Automated detection via validate-kdd-topology task"
+
+    graceful_degradation:
+      enabled: true
+      behavior: "Report as warnings, not errors (advisory only)"
+      rationale: "Links may break temporarily during refactoring; don't block workflow"
+
+  # VAL-002: Semantic Similarity (Duplicate Detection)
+  - id: "VAL-002"
+    name: "Semantic Similarity"
+    description: "Detect duplicate or highly similar KDD documents"
+    trigger: "document_create"
+    severity: "warning"
+    threshold: 0.70        # 70% keyword similarity triggers warning
+    scope:
+      - "docs/kdd/patterns/"
+      - "docs/kdd/learnings/"
+      - "docs/kdd/decisions/"
+      - "docs/examples/"
+
+    validation:
+      check_type: "keyword_similarity"
+      algorithm: "Jaccard similarity (keyword-based, no RAG/embeddings)"
+      checks:
+        - "Extract keywords from document (title, content, code)"
+        - "Compute pairwise similarity for all documents in scope"
+        - "Flag pairs with similarity >= 70%"
+        - "Suggest consolidation opportunities"
+
+    thresholds:
+      healthy: "<30% average duplication"
+      warning: "30-50% average duplication"
+      critical: ">50% average duplication"
+
+    similarity_levels:
+      exact_duplicate: ">=90% similarity (merge recommended)"
+      high_overlap: "70-89% similarity (consider merging or cross-linking)"
+      partial_overlap: "50-69% similarity (cross-reference suggested)"
+
+    evidence:
+      source: "SupportSignal KDD analysis"
+      baseline: "80% overlap (worst case, password validation)"
+      impact: "Duplicate documentation causes confusion, maintenance burden"
+
+    remediation:
+      actions:
+        - "Run detect-semantic-duplicates task to find duplicate pairs"
+        - "Human review required for consolidation decisions"
+        - "Merge exact duplicates (>=90% similarity)"
+        - "Cross-link related documents (70-89% similarity)"
+        - "Run *consolidate command (requires human approval)"
+      automation: "Automated detection, human-approved consolidation"
+
+    graceful_degradation:
+      enabled: true
+      behavior: "Advisory warnings only, no auto-merge"
+      rationale: "Consolidation requires human judgment, not automatable"
+
+  # VAL-003: Directory Limit (Flat Directory Structure)
+  - id: "VAL-003"
+    name: "Directory Limit"
+    description: "Detect directories with too many files (>20 files)"
+    trigger: "document_create"
+    severity: "warning"
+    threshold: 20          # Warn when directory has >20 files
+    scope:
+      - "docs/kdd/patterns/"
+      - "docs/kdd/learnings/"
+      - "docs/kdd/decisions/"
+      - "docs/examples/"
+
+    validation:
+      check_type: "directory_file_count"
+      checks:
+        - "Count files in each KDD subdirectory"
+        - "Flag directories with >20 files"
+        - "Suggest subdirectory organization"
+
+    suggested_subdirectories:
+      "docs/kdd/learnings/":
+        - "deployment/"
+        - "debugging/"
+        - "testing/"
+        - "ai-integration/"
+        - "validation/"
+      "docs/kdd/patterns/":
+        - "backend/"
+        - "frontend/"
+        - "security/"
+        - "performance/"
+      "docs/kdd/decisions/":
+        - "by-year/2025/"
+        - "by-year/2026/"
+        - "by-component/"
+
+    thresholds:
+      healthy: "All directories <20 files"
+      warning: "1-2 directories >20 files"
+      critical: "3+ directories >20 files"
+
+    evidence:
+      source: "SupportSignal KDD analysis"
+      baseline: "27 files in flat learnings/ directory"
+      impact: "Flat directories reduce discoverability, increase cognitive load"
+
+    remediation:
+      actions:
+        - "Run validate-kdd-topology task to identify over-threshold directories"
+        - "Run *suggest-structure command for reorganization recommendations"
+        - "Create subdirectories and move files manually (human approval)"
+        - "Update index.md files after reorganization"
+      automation: "Automated detection and suggestions, manual reorganization"
+
+    graceful_degradation:
+      enabled: true
+      behavior: "Advisory warnings only, no forced reorganization"
+      rationale: "Directory structure is subjective, requires human design"
+
+  # VAL-004: Story File Size
+  - id: "VAL-004"
+    name: "Story File Size"
+    description: "Detect story files exceeding 300 lines"
+    trigger: "story_completion"
+    severity: "error"      # In theory error, but treated as warning
+    threshold: 300         # 300 lines per story file
+    scope:
+      - "docs/stories/"
+
+    validation:
+      check_type: "line_count"
+      checks:
+        - "Count lines in story file"
+        - "Flag stories with >300 lines"
+        - "Suggest splitting story or moving content to KDD docs"
+
+    thresholds:
+      healthy: "<300 lines"
+      warning: "300-400 lines"
+      critical: ">400 lines"
+
+    evidence:
+      source: "SupportSignal story analysis"
+      baseline: "400-800 lines per story (bloated)"
+      impact: "Large story files indicate missing knowledge extraction"
+
+    remediation:
+      actions:
+        - "Extract Dev Notes, learnings, patterns to separate KDD documents"
+        - "Move debugging logs to learning documents"
+        - "Move pattern details to pattern documents"
+        - "Keep story file focused on user story, AC, tasks only"
+      automation: "Manual extraction via Lisa's *curate command"
+
+    graceful_degradation:
+      enabled: true
+      behavior: "Warning during story review, not blocking"
+      rationale: "Story size varies based on complexity; advisory only"
+
+  # VAL-005: Metadata Completeness
+  - id: "VAL-005"
+    name: "Metadata Completeness"
+    description: "Validate KDD documents have required metadata fields"
+    trigger: "document_create"
+    severity: "warning"
+    threshold: null        # All required fields must be present
+    scope:
+      - "docs/kdd/patterns/"
+      - "docs/kdd/learnings/"
+      - "docs/kdd/decisions/"
+      - "docs/examples/"
+
+    validation:
+      check_type: "metadata_validation"
+      checks:
+        - "Check frontmatter YAML exists"
+        - "Verify all required fields present (from kdd-taxonomy.yaml)"
+        - "Validate field formats (dates, status values, etc.)"
+        - "Flag incomplete or malformed metadata"
+
+    required_fields_by_type:
+      pattern:
+        - "domain"
+        - "topic"
+        - "status"
+        - "created"
+        - "story_reference"
+        - "pattern_type"
+      learning:
+        - "topic"
+        - "issue"
+        - "created"
+        - "story_reference"
+        - "category"
+        - "severity"
+        - "status"
+        - "recurrence_count"
+      decision:
+        - "adr_number"
+        - "title"
+        - "status"
+        - "created"
+        - "decision_date"
+      example:
+        - "title"
+        - "purpose"
+        - "category"
+        - "created"
+        - "difficulty"
+
+    thresholds:
+      healthy: "95%+ documents with complete metadata"
+      warning: "80-94% complete"
+      critical: "<80% complete"
+
+    evidence:
+      source: "SupportSignal KDD analysis"
+      baseline: "Inconsistent metadata (no formal schema)"
+      impact: "Missing metadata reduces discoverability, breaks index generation"
+
+    remediation:
+      actions:
+        - "Run validate-kdd-topology task to identify incomplete metadata"
+        - "Update documents with missing fields"
+        - "Use templates to ensure metadata completeness for new docs"
+      automation: "Automated detection, manual completion"
+
+    graceful_degradation:
+      enabled: true
+      behavior: "Use fallback values (filename as title, etc.)"
+      rationale: "Partial metadata better than no metadata; don't block curation"
+
+  # VAL-006: Recurrence Detection (Recurring Issues)
+  - id: "VAL-006"
+    name: "Recurrence Detection"
+    description: "Detect recurring issues in learning documents"
+    trigger: "lesson_create"
+    severity: "info"       # Informational, not error
+    threshold: 0.60        # 60% signature match to detect recurrence
+    scope:
+      - "docs/kdd/learnings/"
+
+    validation:
+      check_type: "signature_matching"
+      algorithm: "Keyword-based signature similarity (problem keywords + components + tech)"
+      checks:
+        - "Extract problem signature from learning documents"
+        - "Compute signature similarity for all learning pairs"
+        - "Flag pairs with >=60% signature match"
+        - "Track recurrence count per issue"
+        - "Recommend pattern promotion for 3+ recurrences"
+
+    signature_components:
+      - "Error keywords (e.g., 'CORS', '401', 'timeout')"
+      - "Affected components (e.g., 'authentication', 'API')"
+      - "Technology stack (e.g., 'Node.js', 'React')"
+      - "Triggering conditions (e.g., 'on deployment', 'during login')"
+
+    recurrence_thresholds:
+      single: "1 occurrence (not recurring yet)"
+      monitor: "2 occurrences (watch for third)"
+      promote: "3+ occurrences (pattern promotion candidate)"
+
+    evidence:
+      source: "SupportSignal KDD analysis"
+      baseline: "0% recurrence detection (no tracking)"
+      impact: "Recurring issues not detected, patterns not created"
+
+    remediation:
+      actions:
+        - "Run detect-recurring-issues task to identify recurring problems"
+        - "Promote learnings with 3+ recurrences to patterns"
+        - "Update Quinn's review checklist with new patterns"
+        - "Archive or cross-reference related learning documents"
+      automation: "Automated detection, human-approved promotion"
+
+    graceful_degradation:
+      enabled: true
+      behavior: "Advisory recommendations only, no forced promotion"
+      rationale: "Pattern promotion requires team approval and standardization"
+
+# Global Validation Settings
+global_settings:
+  # Graceful degradation
+  graceful_degradation:
+    enabled: true
+    description: "All validation rules provide warnings/recommendations, not blocking errors"
+    rationale: "Documentation quality should improve incrementally, not block workflows"
+
+  # Advisory mode
+  advisory_mode:
+    enabled: true
+    description: "Lisa suggests improvements, does not enforce compliance"
+    rationale: "Lisa is librarian (curator), Quinn is enforcer (validator)"
+
+  # Human-in-loop
+  human_approval:
+    required_for:
+      - "Document consolidation (VAL-002)"
+      - "Pattern promotion (VAL-006)"
+      - "Directory reorganization (VAL-003)"
+    description: "Critical decisions require human judgment, not automated"
+
+# Validation Execution
+execution:
+  # When to run validation
+  triggers:
+    document_save: ["VAL-001", "VAL-005"]
+    document_create: ["VAL-002", "VAL-003", "VAL-005"]
+    story_completion: ["VAL-004"]
+    lesson_create: ["VAL-006"]
+    manual: ["All rules via *validate-topology command"]
+
+  # Validation frequency
+  frequency:
+    per_story: "VAL-001, VAL-005 (during knowledge curation)"
+    per_epic: "VAL-002, VAL-003, VAL-006 (after epic completion)"
+    monthly: "All rules (topology health check)"
+
+  # Reporting
+  reporting:
+    format: "KDD Health Report (health-report-tmpl.md)"
+    metrics:
+      - "Link health score (VAL-001)"
+      - "Duplication rate (VAL-002)"
+      - "Directory structure health (VAL-003)"
+      - "Story file size compliance (VAL-004)"
+      - "Metadata completeness (VAL-005)"
+      - "Recurrence detection rate (VAL-006)"
+
+# Integration with Lisa's Commands
+lisa_integration:
+  # Commands that use validation rules
+  commands:
+    "*validate-topology": ["VAL-001", "VAL-003", "VAL-005"]
+    "*search-similar": ["VAL-002"]
+    "*detect-recurrence": ["VAL-006"]
+    "*health-dashboard": ["All rules for metrics"]
+    "*curate": ["VAL-001", "VAL-005 (post-curation)"]
+
+  # Workflow integration
+  workflow_step: "Step 7 (Lisa curation after QA passes)"
+  validation_timing: "After knowledge extraction, before workflow end"

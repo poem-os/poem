@@ -19,6 +19,7 @@ This project uses **BMAD Method v4.44.3** - a comprehensive AI-assisted developm
 - **SM (Bob)** - Scrum Master: Creates detailed user stories from epics
 - **Dev (James)** - Developer: Implements stories with tests
 - **QA (Quinn)** - Test Architect: Reviews code quality, creates quality gates
+- **Librarian (Lisa)** - Documentation Curator: Extracts knowledge, maintains KDD documentation (Step 7 of AppyDave workflow)
 - **Architect** - Designs system architecture
 - **PM** - Product Manager: Creates PRDs
 - **PO** - Product Owner: Validates alignment
@@ -36,6 +37,7 @@ Access BMAD agents and tasks via Claude Code slash commands:
 /BMad/agents/sm         # Scrum Master (story creation)
 /BMad/agents/dev        # Developer (implementation)
 /BMad/agents/qa         # Test Architect (quality review)
+/BMad/agents/librarian  # Librarian (knowledge curation - Step 7)
 /BMad/agents/architect  # System design
 /BMad/agents/pm         # Product planning
 
@@ -50,8 +52,9 @@ Access BMAD agents and tasks via Claude Code slash commands:
 ### BMAD Workflow Overview
 
 1. **Planning** (Web/IDE): PM creates PRD → Architect designs → PO validates → Shard documents
-2. **Development** (IDE): SM drafts story → Dev implements → QA reviews → Commit
+2. **Development** (IDE): SM drafts story → Dev implements → QA reviews → Lisa curates knowledge → Commit
 3. **Quality Gates**: QA provides PASS/CONCERNS/FAIL decisions (advisory, not blocking)
+4. **Knowledge Curation** (Step 7): Lisa extracts learnings, creates KDD documentation, maintains topology
 
 **Critical Files**:
 
@@ -303,6 +306,82 @@ docs/qa/gates/          # Quality gate decisions (.yml)
 - Acceptance Criteria
 - Testing sections
 - Other agents' sections
+
+### Librarian Agent (Lisa) Integration
+
+Lisa (Librarian) is the FINAL agent in AppyDave workflow (Step 7), responsible for Knowledge-Driven Development (KDD) documentation curation after Quinn passes QA review.
+
+**When to Use Lisa**:
+- After Quinn's QA review passes
+- Story status is "Done"
+- Step 7 of AppyDave workflow
+- Never during active development or before QA
+
+**Lisa's Core Role**:
+- Extract learnings from Dev Agent Record, SAT results, and QA feedback
+- Create KDD documentation using templates (patterns, learnings, decisions, examples)
+- Maintain documentation topology (indexes, cross-links, validation)
+- Update story file with knowledge asset links
+- Prevent documentation rot and knowledge decay
+
+**Lisa's Commands**:
+```bash
+# Load Lisa agent
+/BMad/agents/librarian
+
+# Core commands
+*curate {story}           # Extract knowledge from story (8-step workflow)
+*validate-topology        # Check KDD structure health (links, orphans, directories)
+*search-similar {doc}     # Find duplicate documents (70% similarity threshold)
+*regenerate-indexes       # Auto-generate all index.md files
+*detect-recurrence        # Identify recurring issues (pattern promotion)
+*health-dashboard         # Generate KDD health metrics report
+*exit                     # Exit Librarian persona
+```
+
+**KDD Document Types** (created by Lisa):
+1. **Pattern** (`docs/kdd/patterns/`) - Reusable code/architectural patterns (promoted after 3+ uses)
+2. **Learning** (`docs/kdd/learnings/`) - Story-specific insights, debugging sessions, incidents
+3. **Decision** (`docs/kdd/decisions/`) - Architecture Decision Records (ADRs)
+4. **Example** (`docs/examples/`) - Working code demonstrations
+
+**How Other Agents Use Lisa's Docs**:
+- **Quinn (QA)**: Validates code against documented patterns, flags pattern violations
+- **James (Dev)**: Self-checks against patterns before marking story ready for review
+- **Sarah (PO)**: References ADRs and architectural decisions during story validation
+- **Bob (SM)**: Uses patterns and learnings to inform story requirements
+
+**Lisa's Permissions**:
+
+Lisa can ONLY update:
+- "Knowledge Assets" section of story files (adds links to created KDD docs)
+
+Lisa CANNOT modify:
+- Story Status, Description, Acceptance Criteria, Tasks, Dev Agent Record, QA Results
+
+**Validation Rules** (VAL-001 through VAL-006):
+- VAL-001: Link Health (0 broken links target)
+- VAL-002: Semantic Similarity (70% threshold for duplicates)
+- VAL-003: Directory Limit (20 files per directory)
+- VAL-004: Story File Size (300 lines target)
+- VAL-005: Metadata Completeness (required frontmatter fields)
+- VAL-006: Recurrence Detection (60% signature match for recurring issues)
+
+**Success Metrics** (evidence-based targets):
+| Metric | Baseline (SupportSignal) | Target | Owner |
+|--------|--------------------------|--------|-------|
+| Pattern Documentation | 0 | 100% critical patterns | Lisa |
+| Pattern Consistency | 25% (1/4 implementations) | 95%+ | Quinn |
+| Link Health | 70% (30% broken) | 95%+ valid links | Lisa |
+| Documentation Maintenance | 7.4 hours/month | <1 hour/month | Lisa |
+| Knowledge Extraction | ~40% stories | 100% stories | Lisa |
+
+**Workflow Position**:
+```
+Step 6: Quinn (QA) → Step 7: Lisa (Librarian) → [WORKFLOW END]
+```
+
+Lisa is the FINAL agent. After knowledge curation, the story workflow is complete.
 
 ## Capability Progression Validation (Victor Agent)
 

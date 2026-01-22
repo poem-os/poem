@@ -325,10 +325,12 @@ When all tests are complete and results documented, type 'go' for QA review.
 - Completion timestamp added ✅
 - Story file saved ✅
 
-Would you like to:
-1. Start next story workflow (type 'next')
-2. Exit workflow (type 'exit')
+Type 'go' to proceed to knowledge curation (Step 7).
 ```
+
+**User Response Options**:
+
+- If PASS: `go` → Proceed to Step 7 (Knowledge Curation)
 
 **HALT POINT (If FAIL)**:
 
@@ -345,20 +347,91 @@ Please address these issues. Options:
 
 **User Response Options**:
 
-- If PASS: `next` → Loop back to Step 1 for next story
-- If PASS: `exit` → Exit workflow
 - If FAIL: `dev` → Return to Step 4 (Development)
 - If FAIL: `exit` → Exit workflow
+
+---
+
+### Step 7: Knowledge Curation (Librarian Agent)
+
+**Agent Context**: Load Librarian (Lisa) agent context and capabilities
+
+**Objective**: Extract learnings, create KDD documentation, maintain topology, and preserve knowledge from completed story
+
+**Pre-Check**:
+
+1. Read story file and verify Status = "Done"
+2. If NOT done: HALT with error "Story status is not 'Done'. Knowledge curation should only happen after QA passes."
+
+**Actions**:
+
+1. Execute the `extract-knowledge-from-story.md` task for story `{storyNum}`
+2. Analyze story sections:
+   - Dev Agent Record (Completion Notes, Debug Log, File List)
+   - QA Results (pattern violations, quality concerns)
+   - SAT Results (acceptance test findings)
+3. Create KDD documentation using templates:
+   - Pattern documents (if reusable patterns identified)
+   - Learning documents (if issues/insights discovered)
+   - Decision documents/ADRs (if architectural decisions made)
+   - Example documents (if working examples worth preserving)
+4. Maintain topology:
+   - Update index.md files
+   - Validate links (VAL-001)
+   - Check for duplicates (VAL-002)
+5. Update story file with "Knowledge Assets" section linking to created docs
+6. Run knowledge-curation-checklist to validate process
+7. Display curation summary
+
+**Output**: KDD documents created, topology maintained, story updated with knowledge asset links
+
+**HALT POINT**:
+
+```
+✅ Knowledge curation complete for Story {storyNum}!
+
+📚 Knowledge Assets Created:
+- Patterns: {count} document(s)
+- Learnings: {count} document(s)
+- Decisions (ADRs): {count} document(s)
+- Examples: {count} document(s)
+
+📊 Topology Health:
+- Links validated: {broken-count} broken links (VAL-001)
+- Duplication rate: {percentage}% (VAL-002)
+- Directory structure: {warning-count} warnings (VAL-003)
+
+🔄 WORKFLOW: Quinn (QA) → LISA (LIBRARIAN) → [WORKFLOW END]
+
+✅ Story workflow finished.
+
+Would you like to:
+1. Start next story workflow (type 'next')
+2. Exit workflow (type 'exit')
+```
+
+**User Response Options**:
+
+- `next` → Loop back to Step 0 for next story
+- `exit` → Exit workflow
 
 ---
 
 ## Workflow State Transitions
 
 ```
-Draft → Ready → In Progress → Review → Done
-  ↑       ↑          ↑           ↑        ↑
-Step 1  Step 3     Step 4       Step 4   Step 6
- (SM)   (Human)     (Dev)        (Dev)    (QA)
+Draft → Ready → In Progress → Review → Done → [KDD Curation]
+  ↑       ↑          ↑           ↑        ↑         ↑
+Step 1  Step 3     Step 4       Step 4   Step 6   Step 7
+ (SM)   (Human)     (Dev)        (Dev)    (QA)    (Lisa)
+```
+
+## Workflow Agent Handoff Chain
+
+```
+Bob (SM) → Sarah (PO) → James (Dev) → Taylor (SAT) → Quinn (QA) → Lisa (Librarian) → [END]
+  Creates     Validates    Implements    Tests         Reviews      Curates
+  Story       Story        Code          Manual        Quality      Knowledge
 ```
 
 ## Error Handling
