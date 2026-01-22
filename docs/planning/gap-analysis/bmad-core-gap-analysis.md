@@ -874,7 +874,7 @@ Analyzing context...
 
 **Documentation**:
 - `docs/workflows/triage-guide.md` - User guide (200 lines)
-- `docs/prd/epic-0.md` - Quick Fixes vs Epic 0 Stories section
+- `docs/prd/epic-0-process.md` - Quick Fixes vs Epic 0 Stories section
 - `docs/stories/0.1.story.md` - Implementation story
 
 **Supporting Files**:

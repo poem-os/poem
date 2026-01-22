@@ -150,7 +150,7 @@ implementation:
     - ".bmad-core/core-config.yaml"
     - ".bmad-core/agents/sm.md"
     - ".bmad-core/agents/po.md"
-    - "docs/prd/epic-0.md"
+    - "docs/prd/epic-0-process.md"
     - "docs/planning/gap-analysis/bmad-core-gap-analysis.md"
 
   files_renamed:
