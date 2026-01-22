@@ -157,7 +157,8 @@ export class HelperWatcher {
       const fileUrl = pathToFileURL(absolutePath).href + `?t=${Date.now()}`;
 
       // Dynamic import with cache busting
-      const helperModule = await import(fileUrl);
+      // @vite-ignore is intentional - we dynamically load helper files at runtime
+      const helperModule = await import(/* @vite-ignore */ fileUrl);
       const helperFn = helperModule.default as HelperFunction & {
         description?: string;
         example?: string;

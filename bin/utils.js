@@ -205,6 +205,7 @@ export async function writeRegistry(registry) {
  * Examples:
  *   /clients/supportsignal/prompt.supportsignal.com.au → ss-prompt
  *   /ad/flivideo/vibedeck → vibedeck
+ *   /ad/poem-os/poem → poem-os (uses parent when last part is 'poem')
  *   /some/path → installation-{timestamp}
  * @param {string} installPath - Installation path
  * @returns {string} - Short installation ID
@@ -213,10 +214,16 @@ export function generateInstallationId(installPath) {
   const parts = installPath.split(path.sep).filter(Boolean);
 
   // Try to extract meaningful name from last part of path
-  const lastPart = parts[parts.length - 1];
+  let lastPart = parts[parts.length - 1];
+
+  // If last part is 'poem' or '.poem-app', use the parent directory instead
+  // (e.g., /ad/poem-os/poem → poem-os)
+  if ((lastPart === 'poem' || lastPart === '.poem-app') && parts.length >= 2) {
+    lastPart = parts[parts.length - 2];
+  }
 
   // Check for common patterns
-  if (lastPart.includes('.')) {
+  if (lastPart && lastPart.includes('.')) {
     // Extract domain-like names (e.g., prompt.supportsignal.com.au → ss-prompt)
     const domainParts = lastPart.split('.');
     if (domainParts.length >= 2) {
@@ -226,7 +233,7 @@ export function generateInstallationId(installPath) {
     }
   }
 
-  // Use last directory name if it's meaningful
+  // Use directory name if it's meaningful
   if (lastPart && lastPart !== 'poem' && lastPart !== '.poem-app') {
     return lastPart.toLowerCase().replace(/[^a-z0-9-]/g, '-');
   }

@@ -566,10 +566,29 @@ async function promptForPort(force, targetDir = null) {
     const defaultCheck = await validatePortWithConflictCheck(defaultPort);
 
     if (!defaultCheck.valid && defaultCheck.error === 'conflict') {
-      // Default port has conflict, show suggestions
+      // Default port has conflict, show all registered ports and suggestions
+      const { readRegistry } = await import('./utils.js');
+      const registry = await readRegistry();
       const suggestions = await suggestAvailablePorts(9500, 3);
-      log(`\n⚠️  Port ${defaultPort} is already allocated to:`);
-      log(`   [${defaultCheck.installation.id}] ${defaultCheck.installation.path}`);
+
+      log(`\n⚠️  Port ${defaultPort} is already in use.`);
+
+      // Show all registered installations with consistent format: port, name, path
+      const allPorts = registry.installations
+        .filter(i => i.port !== null)
+        .map(i => ({ port: i.port, id: i.id, path: i.path }))
+        .sort((a, b) => a.port - b.port);
+
+      if (allPorts.length > 0) {
+        log(`\n   Registered POEM installations:`);
+        // Calculate max ID length for alignment
+        const maxIdLen = Math.max(...allPorts.map(i => i.id.length));
+        for (const { port, id, path: installPath } of allPorts) {
+          const paddedId = id.padEnd(maxIdLen);
+          log(`   ${port}  ${paddedId}  ${installPath}`);
+        }
+      }
+
       log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
     }
 
@@ -600,9 +619,27 @@ async function promptForPort(force, targetDir = null) {
                 // Ask again (rl is still open)
                 askForPort();
               } else if (validation.error === 'conflict') {
+                const { readRegistry } = await import('./utils.js');
+                const registry = await readRegistry();
                 const suggestions = await suggestAvailablePorts(9500, 3);
-                console.error(`\n⚠️  Port ${port} is already allocated to:`);
-                console.error(`   [${validation.installation.id}] ${validation.installation.path}`);
+
+                console.error(`\n⚠️  Port ${port} is already in use.`);
+
+                // Show all registered installations with consistent format: port, name, path
+                const allPorts = registry.installations
+                  .filter(i => i.port !== null)
+                  .map(i => ({ port: i.port, id: i.id, path: i.path }))
+                  .sort((a, b) => a.port - b.port);
+
+                if (allPorts.length > 0) {
+                  console.log(`\n   Registered POEM installations:`);
+                  const maxIdLen = Math.max(...allPorts.map(i => i.id.length));
+                  for (const { port: p, id, path: installPath } of allPorts) {
+                    const paddedId = id.padEnd(maxIdLen);
+                    console.log(`   ${p}  ${paddedId}  ${installPath}`);
+                  }
+                }
+
                 console.log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
                 // Ask again (rl is still open)
                 askForPort();
@@ -1386,11 +1423,28 @@ async function handleConfig(flags) {
     const { conflict, installation } = await checkPortConflict(portNum, path.resolve(targetDir));
 
     if (conflict) {
+      const { readRegistry } = await import('./utils.js');
+      const registry = await readRegistry();
       const suggestions = await suggestAvailablePorts(9500, 3);
-      console.error(`\n⚠️  Port ${portNum} is already allocated to:`);
-      console.error(`   [${installation.id}] ${installation.path}`);
+
+      console.error(`\n⚠️  Port ${portNum} is already in use.`);
+
+      // Show all registered installations with consistent format
+      const allPorts = registry.installations
+        .filter(i => i.port !== null)
+        .map(i => ({ port: i.port, id: i.id, path: i.path }))
+        .sort((a, b) => a.port - b.port);
+
+      if (allPorts.length > 0) {
+        console.log(`\n   Registered POEM installations:`);
+        const maxIdLen = Math.max(...allPorts.map(i => i.id.length));
+        for (const { port, id, path: installPath } of allPorts) {
+          const paddedId = id.padEnd(maxIdLen);
+          console.log(`   ${port}  ${paddedId}  ${installPath}`);
+        }
+      }
+
       console.log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
-      console.log('   Override with: npx poem-os config --port XXXX\n');
       process.exit(1);
     }
 
