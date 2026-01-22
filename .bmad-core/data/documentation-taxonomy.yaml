@@ -1,0 +1,458 @@
+# Documentation Taxonomy
+#
+# Defines ALL documentation structures in docs/ folder for comprehensive topology management.
+# Maintained by Lisa (Librarian) - Master Documentation Librarian.
+#
+# Last updated: 2026-01-22
+# Version: 1.0.0
+
+taxonomy:
+  version: "1.0.0"
+  last_updated: "2026-01-22"
+  maintained_by: "Lisa (Librarian)"
+  scope: "docs/ folder (complete tree)"
+
+# Known Documentation Categories
+categories:
+
+  # ============================================================================
+  # BMAD Workflow Documentation
+  # ============================================================================
+  bmad:
+    description: "BMAD methodology artifacts (PRD, architecture, stories, QA)"
+    owner: "BMAD agents (SM, Dev, QA, PO, Architect)"
+    location: "docs/"
+
+    required_folders:
+      - path: "prd/"
+        purpose: "Product Requirements Document (sharded)"
+        created_by: "PM agent"
+
+      - path: "architecture/"
+        purpose: "Technical architecture (sharded)"
+        created_by: "Architect agent"
+
+      - path: "stories/"
+        purpose: "Story files (X.Y.story.md format)"
+        created_by: "SM agent, updated by Dev/QA/Lisa"
+
+      - path: "qa/"
+        purpose: "QA assessments and gates"
+        created_by: "QA agent (Quinn)"
+
+      - path: "backlog/"
+        purpose: "Quick fixes and tech debt (<1hr, no ceremony)"
+        created_by: "Any agent, tracked by SM"
+
+    optional_folders:
+      - path: "planning/"
+        purpose: "Historical pre-BMAD exploration (BA/PM work)"
+        status: "legacy"
+        note: "Reference only, not actively maintained"
+
+      - path: "planning/brief.md"
+        purpose: "Original project brief (v1.0, 2025-11-22)"
+        status: "historical"
+        note: "Predates PRD, kept for context"
+
+    validation_rules:
+      story_format:
+        pattern: "^[0-9]+\\.[0-9]+\\.story(-SAT)?\\.md$"
+        location: "stories/"
+        example: "3.4.story.md, 3.4.story-SAT.md"
+
+      qa_gates:
+        pattern: ".*\\.yml$"
+        location: "qa/gates/"
+        example: "3.4-gate.yml"
+
+      architecture_shards:
+        location: "architecture/"
+        required_index: true
+
+      prd_shards:
+        location: "prd/"
+        required_index: true
+
+  # ============================================================================
+  # Knowledge-Driven Development (KDD)
+  # ============================================================================
+  kdd:
+    description: "Developer knowledge (patterns, learnings, decisions, examples)"
+    owner: "Lisa (Librarian)"
+    location: "docs/kdd/"
+    taxonomy_file: ".bmad-core/data/kdd-taxonomy.yaml"
+
+    required_folders:
+      - path: "kdd/"
+        purpose: "Master KDD folder with indexes and guides"
+
+      - path: "kdd/patterns/"
+        purpose: "Reusable code/architectural patterns (promoted after 3+ uses)"
+
+      - path: "kdd/learnings/"
+        purpose: "Story-specific insights, debugging sessions, incidents"
+
+      - path: "kdd/decisions/"
+        purpose: "Architecture Decision Records (ADRs)"
+
+    validation_rules:
+      pattern_naming:
+        pattern: "^[a-z0-9]+-[a-z0-9-]+-pattern\\.md$"
+        location: "kdd/patterns/"
+        example: "password-validation-pattern.md"
+
+      learning_naming:
+        pattern: "^[a-z0-9]+-[a-z0-9-]+-kdd\\.md$"
+        location: "kdd/learnings/"
+        example: "cors-issue-kdd.md"
+
+      decision_naming:
+        pattern: "^adr-[0-9]{3}-[a-z0-9-]+\\.md$"
+        location: "kdd/decisions/"
+        example: "adr-001-unified-schema-structure.md"
+
+      required_indexes:
+        - "kdd/index.md"
+        - "kdd/patterns/index.md"
+        - "kdd/learnings/index.md"
+        - "kdd/decisions/index.md"
+
+  # ============================================================================
+  # POEM Product Documentation
+  # ============================================================================
+  poem:
+    description: "End-user documentation for POEM product features"
+    owner: "POEM Documentation Team"
+    location: "docs/poem/"
+
+    required_folders:
+      - path: "poem/"
+        purpose: "Master POEM documentation folder"
+
+      - path: "poem/user-guide/"
+        purpose: "Getting started and user guides"
+
+    optional_folders:
+      - path: "poem/examples/"
+        purpose: "Working examples of POEM product features"
+        owner: "POEM Documentation Team"
+        note: "Demonstrates how to use POEM (epic4-*, multi-workflow-setup, etc.)"
+
+      - path: "poem/api-reference/"
+        purpose: "API documentation (future)"
+        status: "planned"
+
+      - path: "poem/tutorials/"
+        purpose: "Step-by-step tutorials (future)"
+        status: "planned"
+
+    validation_rules:
+      required_index:
+        - "poem/index.md"
+        - "poem/user-guide/index.md"
+
+      user_guides_location:
+        location: "poem/user-guide/"
+        note: "User guides must be in user-guide subfolder"
+
+      feature_documentation:
+        location: "poem/"
+        note: "Victor, Triage, Workflow guides at poem/ level"
+
+  # ============================================================================
+  # Shared / Cross-Cutting
+  # ============================================================================
+  shared:
+    description: "Documentation that spans multiple categories"
+
+    master_index:
+      path: "docs/index.md"
+      purpose: "Master navigation hub for all documentation"
+      required: true
+      maintained_by: "Lisa (Librarian)"
+
+# ============================================================================
+# Violation Detection Rules
+# ============================================================================
+violation_detection:
+
+  unknown_folders:
+    enabled: true
+    severity: "error"
+    action: "block_commit"
+    message: |
+      Unknown folder detected: {path}
+
+      This folder is not in the known documentation taxonomy.
+
+      Suggestions:
+      - Is this a BMAD artifact? → Check docs/prd/, docs/architecture/, docs/stories/, docs/qa/, docs/backlog/
+      - Is this developer knowledge? → Should be in docs/kdd/patterns/, learnings/, or decisions/
+      - Is this POEM product documentation? → Should be in docs/poem/ or docs/poem/user-guide/
+      - Is this transient/temporary? → Should be in dev-workspace/ (not docs/)
+      - Is this historical? → Could go in docs/planning/
+
+      Run `*suggest-location {path}` for Lisa's recommendation.
+
+      To add this folder to the taxonomy:
+      1. Edit .bmad-core/data/documentation-taxonomy.yaml
+      2. Add folder to appropriate category (bmad/kdd/poem)
+      3. Document purpose and owner
+
+  unknown_files:
+    enabled: true
+    severity: "warning"
+    action: "report_only"
+    message: "File created outside known structure: {path}. Review placement."
+    exceptions:
+      - "index.md"
+      - "INDEX.md"
+      - "README.md"
+      - ".gitkeep"
+
+  naming_violations:
+    enabled: true
+    severity: "warning"
+    action: "report_only"
+    rules:
+      - name: "kebab-case"
+        pattern: "^[a-z0-9]+(-[a-z0-9]+)*\\.md$"
+        message: "Markdown files should use kebab-case"
+        exceptions:
+          - "README.md"
+          - "CLAUDE.md"
+          - "CONTRIBUTING.md"
+          - "LICENSE.md"
+          - "CHANGELOG.md"
+          - "CODE_OF_CONDUCT.md"
+
+  missing_indexes:
+    enabled: true
+    severity: "warning"
+    action: "report_only"
+    message: "Folder missing index.md: {path}. Run `*regenerate-indexes` to auto-create."
+    trigger: "directory with >3 markdown files"
+
+  broken_links:
+    enabled: true
+    severity: "warning"
+    action: "report_only"
+    message: "Broken link detected: {link} in {file}"
+    scope: "all docs/"
+
+# ============================================================================
+# Health Metrics (Holistic)
+# ============================================================================
+health_metrics:
+
+  # BMAD Workflow Health
+  bmad_health:
+    - metric: "prd_currency"
+      target: "Updated within last 30 days when epics change"
+
+    - metric: "architecture_currency"
+      target: "Updated within last 30 days when architecture changes"
+
+    - metric: "story_completion_rate"
+      target: "80%+ stories completed per epic"
+
+    - metric: "qa_gate_pass_rate"
+      target: "90%+ gates pass on first review"
+
+  # KDD Health (Lisa's specialty)
+  kdd_health:
+    - metric: "pattern_documentation_rate"
+      target: "100% critical patterns documented"
+      baseline: "0 (SupportSignal)"
+
+    - metric: "pattern_consistency"
+      target: "95%+ implementations follow patterns"
+      baseline: "25% (SupportSignal)"
+
+    - metric: "link_health"
+      target: "95%+ valid links"
+      baseline: "70% (SupportSignal)"
+
+    - metric: "knowledge_extraction_rate"
+      target: "100% stories"
+      baseline: "40% (SupportSignal)"
+
+    - metric: "documentation_maintenance_burden"
+      target: "<1 hour/month"
+      baseline: "7.4 hours/month (SupportSignal)"
+
+  # POEM Product Documentation Health
+  poem_health:
+    - metric: "user_guide_completeness"
+      target: "All core features documented"
+
+    - metric: "feature_documentation_coverage"
+      target: "Victor, Triage, Workflows, Core API"
+
+    - metric: "navigation_currency"
+      target: "Index files current (updated when structure changes)"
+
+  # Topology Health (NEW - Lisa's expanded role)
+  topology_health:
+    - metric: "unknown_folders"
+      target: "0 violations"
+      severity: "error"
+
+    - metric: "unknown_files"
+      target: "0 violations"
+      severity: "warning"
+
+    - metric: "naming_violations"
+      target: "0 violations"
+      severity: "warning"
+
+    - metric: "orphaned_documents"
+      target: "0 documents with zero inbound links"
+      severity: "warning"
+
+    - metric: "global_broken_links"
+      target: "0 broken links across ALL docs/"
+      severity: "warning"
+
+    - metric: "missing_indexes"
+      target: "0 folders without index.md"
+      severity: "warning"
+
+# ============================================================================
+# Pre-Commit Hook Integration
+# ============================================================================
+pre_commit_hook:
+  enabled: true
+  hook_name: "validate-documentation-taxonomy"
+  script: ".bmad-core/utils/validate-docs-taxonomy.sh"
+
+  checks:
+    - check: "unknown_folders"
+      severity: "error"
+      blocking: true
+
+    - check: "unknown_files"
+      severity: "warning"
+      blocking: false
+
+    - check: "naming_violations"
+      severity: "warning"
+      blocking: false
+
+    - check: "missing_indexes"
+      severity: "warning"
+      blocking: false
+
+  bypass:
+    command: "git commit --no-verify"
+    note: "Use only when intentionally adding new taxonomy category"
+
+# ============================================================================
+# Lisa's Expanded Responsibilities
+# ============================================================================
+lisa_responsibilities:
+
+  primary:
+    role: "KDD Curator (Step 7 of AppyDave workflow)"
+    tasks:
+      - "Extract knowledge from completed stories"
+      - "Create patterns, learnings, decisions, examples"
+      - "Maintain KDD topology (links, indexes, organization)"
+      - "Enforce pattern consistency via Quinn integration"
+
+  secondary:
+    role: "Master Documentation Librarian (Whole-repository)"
+    tasks:
+      - "Audit docs/ tree for topology violations"
+      - "Detect documentation created outside taxonomy"
+      - "Report holistic documentation health (BMAD + KDD + POEM)"
+      - "Validate links across ALL documentation"
+      - "Maintain documentation-taxonomy.yaml"
+      - "Block commits with unknown folders (via pre-commit hook)"
+
+# ============================================================================
+# Success Metrics (Evidence-Based)
+# ============================================================================
+success_metrics:
+
+  kdd_metrics:
+    pattern_documentation:
+      target: "100% critical patterns"
+      baseline: "0 (SupportSignal)"
+      owner: "Lisa"
+
+    pattern_consistency:
+      target: "95%+"
+      baseline: "25% (1/4 implementations, SupportSignal)"
+      owner: "Quinn enforces, Lisa documents"
+
+    link_health:
+      target: "95%+ valid"
+      baseline: "70% (30% broken, SupportSignal)"
+      owner: "Lisa"
+
+    maintenance_burden:
+      target: "<1 hour/month"
+      baseline: "7.4 hours/month (SupportSignal)"
+      owner: "Lisa"
+
+    extraction_rate:
+      target: "100% stories"
+      baseline: "~40% (SupportSignal)"
+      owner: "Lisa"
+
+  topology_metrics:
+    unknown_folders:
+      target: "0 violations"
+      current: "TBD"
+      owner: "Lisa"
+
+    global_broken_links:
+      target: "0 broken links"
+      current: "TBD"
+      owner: "Lisa"
+
+    documentation_currency:
+      target: "Indexes updated within 7 days of structure changes"
+      current: "TBD"
+      owner: "Lisa"
+
+---
+
+# Quick Reference for Lisa
+
+## When a Folder is Created in docs/
+
+**Step 1**: Check if it's in `categories.bmad.required_folders`, `categories.kdd.required_folders`, or `categories.poem.required_folders`
+
+**Step 2**: If NOT found → **VIOLATION DETECTED**
+
+**Step 3**: Generate warning message with suggestions
+
+**Step 4**: Block commit (pre-commit hook returns exit code 1)
+
+**Step 5**: Report violation in `*audit-docs` output
+
+## When Running *health-full
+
+Report metrics across:
+1. **BMAD Health** (story completion, QA pass rate, document currency)
+2. **KDD Health** (pattern docs, link health, extraction rate)
+3. **POEM Health** (user guide completeness, feature coverage)
+4. **Topology Health** (unknown folders, broken links, naming violations)
+
+## When Running *audit-docs
+
+Scan `docs/` for:
+- Unknown folders (ERROR - blocks commit)
+- Unknown files (WARNING - report only)
+- Naming violations (WARNING - report only)
+- Missing indexes (WARNING - report only)
+- Broken links (WARNING - report only)
+
+---
+
+**Taxonomy maintained by**: Lisa (Librarian)
+**Last reviewed**: 2026-01-22
+**Next review**: When new documentation categories emerge

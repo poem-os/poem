@@ -14,8 +14,8 @@ SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // "unknown"')
 CWD=$(echo "$INPUT" | jq -r '.cwd // "unknown"')
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# Log directory
-LOG_DIR="/Users/davidcruwys/dev/ad/poem-os/poem/docs/workflow-logs"
+# Log directory (transient development artifacts)
+LOG_DIR="/Users/davidcruwys/dev/ad/poem-os/poem/dev-workspace/workflow-logs"
 
 # Try to detect current story from recent file operations or session
 # Look for story files in the session's working directory
@@ -28,7 +28,7 @@ detect_story_number() {
   fi
 
   # Check for most recently modified story file
-  local latest=$(ls -t "$CWD/docs/stories/"*.story.md 2>/dev/null | head -1)
+  local latest=$(ls -t "$CWD/docs/stories/"*.story.md 2>/dev/null | head -1 || true)
   if [[ -n "$latest" ]]; then
     echo "$latest" | grep -oE '[0-9]+\.[0-9]+' | head -1
     return

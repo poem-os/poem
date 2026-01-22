@@ -1,189 +1,195 @@
-# POEM Documentation Index
+# POEM Documentation
 
-Welcome to the POEM (Prompt Orchestration and Engineering Method) documentation.
-
-## Quick Start
-
-- **[CLAUDE.md](../CLAUDE.md)** - Project overview and AI assistant instructions
-- **[Getting Started with Workflows](./user-guide/getting-started-with-workflows.md)** ⭐ - Post-installation onboarding guide
-- **[PRD](./prd.md)** - Product requirements (consolidated)
-- **[Architecture](./architecture.md)** - Technical architecture (consolidated)
+Documentation hub for POEM (Prompt Orchestration and Engineering Method).
 
 ---
 
-## Product Requirements (PRD)
+## 🎯 Quick Start
 
-**Consolidated**: [prd.md](./prd.md)
-
-**Sharded**: [prd/](./prd/)
-- Goals and background
-- Requirements
-- Epic list (Epics 1-8)
-- Epic details
-- Technical assumptions
-- Next steps
+**New to POEM?** Start here:
+- **[Getting Started with Workflows](./poem/user-guide/getting-started-with-workflows.md)** - Learn POEM workflows
+- **[PRD](./prd.md)** - Product requirements and feature epics
+- **[Architecture](./architecture.md)** - Technical architecture and design
 
 ---
 
-## Architecture
+## 📚 Documentation Categories
 
-**Consolidated**: [architecture.md](./architecture.md)
+### POEM Product Documentation
 
-**Sharded**: [architecture/](./architecture/)
-- Introduction
-- High-level architecture
-- Components
-- Data models
-- Core workflows
-- API specification
-- Tech stack
-- Coding standards
-- Testing strategy
-- Unified project structure
-- CI/CD strategy
-- Next steps
+**Location**: `docs/poem/`
+
+Documentation for **users of POEM** - people building prompts, workflows, and integrations.
+
+- **[POEM Index](./poem/index.md)** - Product features and guides
+  - Getting Started with Workflows
+  - Workflow Validation (Victor agent)
+  - Triage System
+  - User guides
+
+**Audience**: POEM users, integrators, prompt engineers
 
 ---
 
-## Stories
+### Knowledge-Driven Development (KDD)
 
-**Location**: [stories/](./stories/)
+**Location**: `docs/kdd/`
 
-Current epic: Epic 3 (Prompt Engineering)
+Documentation for **developers building POEM** - patterns, learnings, and decisions from story development.
 
-**Stories Completed**: 3.1, 3.2, 3.3
-**Stories In Progress**: 3.4
-**Stories Pending**: 3.5
+- **[KDD Index](./kdd/index.md)** - Knowledge curation system
+  - **[KDD Workflow Guide](./kdd/kdd-workflow-guide.md)** - Lisa's Step 7 curation process
+  - **[Patterns](./kdd/patterns/)** - Reusable code patterns (15+ documented)
+  - **[Learnings](./kdd/learnings/)** - Story-specific insights (10+ captured)
+  - **[Decisions](./kdd/decisions/)** - ADRs (8 documented)
 
-Each story includes:
-- Story description and acceptance criteria
-- Dev agent record
-- QA results
-- SAT (System Acceptance Testing) file
+**Audience**: BMAD agents (Lisa, Quinn, James), contributors, maintainers
 
 ---
 
-## Guides
+### BMAD Workflow Documentation
 
-**Location**: [guides/](./guides/)
+**Location**: `docs/` (top-level, planned future: `docs/bmad/`)
 
-### Capability Progression Validation
+Documentation for **BMAD methodology** - PRD, architecture, stories, QA.
 
-**[Workflow Validation Guide](./guides/workflow-validation-guide.md)** - Complete guide for using Victor (Workflow Validator agent)
+#### Product Requirements
 
-**What**: Product-level QA that validates capabilities across stories, not just in isolation
+- **[PRD](./prd.md)** - Consolidated product requirements (48KB)
+- **[PRD Sharded](./prd/)** - Sharded PRD documents
+  - Goals and background
+  - Requirements and epics
+  - Technical assumptions
 
-**When to use**: After story completion, before merge
+#### Architecture
 
-**Agent**: `/poem/agents/victor`
+- **[Architecture](./architecture.md)** - Consolidated architecture (86KB)
+- **[Architecture Sharded](./architecture/)** - Sharded architecture documents
+  - High-level architecture
+  - Components and data models
+  - Tech stack and coding standards
+  - Testing strategy
 
----
+#### Story Development
 
-## Planning (Historical)
+- **[Stories](./stories/)** - Story files (65 stories)
+  - X.Y.story.md - Story specifications
+  - X.Y.story-SAT.md - System Acceptance Tests
 
-**Location**: [planning/](./planning/)
+#### Quality Assurance
 
-**Note**: Pre-BMAD brainstorming and exploration. Reference only.
+- **[QA](./qa/)** - QA assessments and gates
+  - Risk profiles
+  - Test designs
+  - Requirements tracing
+  - Quality gates
 
-**System Explorations** (5 files):
-- Mapping framework
-- Mapping system design
-- Prompt engineer
-- Skills system
+#### Maintenance
 
-**Decisions** (open questions):
-- Handlebars vs templating
-- Schema alternatives
-- Data dictionary patterns
+- **[Backlog](./backlog/)** - Quick fixes and tech debt
+  - Infrastructure updates
+  - Documentation fixes
+  - Bug fixes (<1 hour, no ceremony)
 
-**Reference Materials**:
-- BMAD methodology
-- SupportSignal examples
+#### Historical
 
----
+- **[Planning](./planning/)** - Pre-BMAD exploration and business analysis
+  - Historical brainstorming
+  - Requirements exploration
+  - Original research
 
-## Future Enhancements
-
-**[future-enhancements.md](./future-enhancements.md)** - High-visibility tracking for future work
-
-**Highlights**:
-- 🎯 **Epic 8**: BMAD Integration - Capability Validation Pattern (requirements complete!)
-- Automated regression testing
-- Visual progress dashboards
-- Multi-dataset validation
-- AI-powered failure analysis
-
----
-
-## BMAD Integration
-
-**Location**: [planning/bmad-integration/](./planning/bmad-integration/)
-
-**[Capability Validation Requirements](./planning/bmad-integration/capability-validation-requirements.md)** - Requirements for generalizing POEM's workflow validation pattern to BMAD core
-
-**Status**: 📋 Requirements Complete, Proof of Concept Validated
-**Target**: BMAD v5.0.0 (Q2 2026)
-**Effort**: 32-46 hours (4-6 full days)
-
-**Applicable To**: Klueless, appydave-tools, BMAD itself, any framework/tooling project
+**Audience**: SM (Bob), Dev (James), QA (Quinn), PO (Sarah), Architect
 
 ---
 
-## QA Assessments & Gates
+### Examples
 
-**Location**: [qa/](./qa/)
-- Quality assessments
-- Gate decisions
+**Location**: `docs/examples/`
 
----
+Working code demonstrations and reference implementations.
 
-## Data & Examples
-
-**Location**: [data/](../data/)
-- SupportSignal examples
-- Storyline examples
-- YouTube Launch Optimizer (54 prompts)
+**Audience**: Both developers and users
 
 ---
 
-## Development Workspace
+## 📂 Transient Artifacts (Not in Git)
 
-**Location**: `dev-workspace/` (gitignored, transient)
+**Location**: `dev-workspace/` (gitignored)
 
-**Purpose**: User-generated content and validation artifacts during development
+Runtime artifacts and workflow logs - not committed to Git.
 
-**Contains**:
-- Test prompts, schemas, mock data
-- Validation reports and snapshots (Victor agent)
-- Integration matrix
-- Feedback log
-
-**See**: `dev-workspace/README.md` (regenerated by `./scripts/dev-setup.sh`)
-
-**Documentation**: All guides and docs are in `docs/` (permanent), not `dev-workspace/` (transient)
+- **workflow-logs/** - BMAD workflow audit trails (JSONL format)
+- **handovers/** - Story-specific handover prompts
+- **workflow-data/** - Workflow execution state
 
 ---
 
-## Project Structure Summary
+## 🗺️ Directory Structure
 
 ```
 docs/
-├── index.md                  # This file
-├── prd.md                    # Product requirements (consolidated)
-├── architecture.md           # Technical architecture (consolidated)
-├── future-enhancements.md    # Future work tracking
+├── index.md                      # This file - master navigation
 │
-├── prd/                      # Sharded PRD
-├── architecture/             # Sharded architecture
-├── stories/                  # User stories
-├── guides/                   # How-to guides (Capability Progression Validation)
-├── qa/                       # Quality assessments
-└── planning/                 # Historical brainstorming
-    └── bmad-integration/     # BMAD generalization requirements
+├── poem/                         # POEM Product Documentation ⭐
+│   ├── index.md
+│   ├── user-guide/
+│   ├── workflow-validation-guide.md
+│   ├── triage-guide.md
+│   └── backing-up-validation-data.md
+│
+├── kdd/                          # Knowledge-Driven Development 📚
+│   ├── index.md
+│   ├── kdd-workflow-guide.md
+│   ├── knowledge-traceability-guide.md
+│   ├── patterns/
+│   ├── learnings/
+│   └── decisions/
+│
+├── prd/                          # BMAD: Product Requirements
+├── architecture/                 # BMAD: Technical Architecture
+├── stories/                      # BMAD: Story Files (65)
+├── qa/                           # BMAD: QA Assessments & Gates
+├── backlog/                      # BMAD: Quick Fixes & Tech Debt
+├── planning/                     # BMAD: Historical (Pre-BMAD BA work)
+│
+└── examples/                     # Working Code Demonstrations
 ```
 
 ---
 
-**Last Updated**: 2026-01-09
-**Current Epic**: Epic 3 (Prompt Engineering - 60% complete)
-**Next Milestone**: Story 3.4 (Handlebars Integration)
+## 🎯 Navigation by Role
+
+### I'm a POEM User
+→ Start: [POEM Index](./poem/index.md)
+→ Learn: [Getting Started with Workflows](./poem/user-guide/getting-started-with-workflows.md)
+→ Reference: [Triage Guide](./poem/triage-guide.md), [Victor Guide](./poem/workflow-validation-guide.md)
+
+### I'm a Developer (BMAD Workflow)
+→ Requirements: [PRD](./prd.md)
+→ Architecture: [Architecture](./architecture.md)
+→ Coding Standards: [Coding Standards](./architecture/coding-standards.md)
+→ Knowledge: [KDD Index](./kdd/index.md)
+
+### I'm Lisa (Librarian Agent)
+→ Workflow: [KDD Workflow Guide](./kdd/kdd-workflow-guide.md)
+→ Taxonomy: `.bmad-core/data/kdd-taxonomy.yaml`
+→ Commands: *curate, *validate-topology, *health-dashboard
+
+### I'm Quinn (QA Agent)
+→ Review: [Testing Strategy](./architecture/testing-strategy.md)
+→ Patterns: [KDD Patterns](./kdd/patterns/)
+→ Gates: [QA Gates](./qa/gates/)
+
+---
+
+## 📖 Related Documentation
+
+- **[CLAUDE.md](../CLAUDE.md)** - Project overview for Claude Code
+- **[README.md](../README.md)** - Project setup and installation
+- **[.bmad-core/user-guide.md](../.bmad-core/user-guide.md)** - BMAD methodology guide
+
+---
+
+**Last Updated**: 2026-01-22
+**Maintained By**: Lisa (Librarian), POEM Documentation Team
+**Version**: 2.0 (Post-reorganization)

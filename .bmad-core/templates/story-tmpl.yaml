@@ -136,3 +136,28 @@ sections:
     instruction: Results from QA Agent QA review of the completed story implementation
     owner: qa-agent
     editors: [qa-agent]
+
+  - id: knowledge-assets
+    title: Knowledge Assets
+    instruction: |
+      Links to KDD (Knowledge-Driven Development) documents created from this story.
+      This section is populated by Lisa (Librarian) during knowledge curation (Step 7 of AppyDave workflow).
+      Provides bidirectional traceability between stories and extracted knowledge.
+    owner: librarian
+    editors: [librarian]
+    template: |
+      <!-- Lisa (Librarian) updates this section during knowledge curation -->
+
+      **Patterns Created**:
+      - (None yet)
+
+      **Learnings Documented**:
+      - (None yet)
+
+      **Decisions (ADRs)**:
+      - (None yet)
+
+      **Examples Created**:
+      - (None yet)
+
+      **Knowledge Extraction Status**: Not yet curated
