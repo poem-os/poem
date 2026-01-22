@@ -123,7 +123,7 @@ Epic 0 provides a dedicated home for all non-feature work, ensuring maintenance 
 **Examples**:
 - Optimize template rendering for large schemas (>100 fields)
 - Reduce Astro server startup time from 3s to <1s
-- Cache compiled Handlebars templates to avoid repeated parsing
+- Cache compiled Handlebars templates to avoid repeated parsing (potential future story)
 
 **Typical Priority**: P1-P2 (unless performance issue blocks adoption)
 
@@ -284,12 +284,68 @@ Epic 0 stories use **lighter ceremony** than feature stories:
 
 ---
 
+### Story 0.3: Create Lisa (Librarian) Agent for KDD Documentation Curation
+
+**As a** BMAD developer,
+**I want** a Librarian agent (Lisa) that curates Knowledge-Driven Development (KDD) documentation after QA passes,
+**so that** I can systematically extract and maintain architectural patterns, learnings, and decisions from completed stories to prevent knowledge decay and documentation rot.
+
+**Acceptance Criteria**:
+
+1. Create Lisa (Librarian) agent at `.bmad-core/agents/librarian.md` with persona, commands, and dependencies
+2. Create CLI wrapper at `.claude/commands/BMad/agents/librarian.md` for `/BMad/agents/librarian` command
+3. Implement 8-step knowledge extraction workflow task (`.bmad-core/tasks/extract-knowledge-from-story.md`) as Lisa's `*curate` command
+4. Create 4 KDD document templates: Pattern (`pattern-tmpl.md`), Learning (`learning-tmpl.md`), Decision/ADR (`decision-adr-tmpl.md`), Example (`example-tmpl.md`)
+5. Implement topology validation task (`.bmad-core/tasks/validate-kdd-topology.md`) as Lisa's `*validate-topology` command with 3 checks: link health, directory limits, index completeness
+6. Implement semantic duplicate detection task (`.bmad-core/tasks/detect-semantic-duplicates.md`) as Lisa's `*search-similar` command using keyword-based similarity (70% threshold)
+7. Implement auto-index generation task (`.bmad-core/tasks/generate-indexes.md`) as Lisa's `*regenerate-indexes` command using frontmatter metadata
+8. Implement recurrence detection task (`.bmad-core/tasks/detect-recurring-issues.md`) as Lisa's `*detect-recurrence` command for pattern promotion
+9. Create KDD taxonomy data file (`.bmad-core/data/kdd-taxonomy.yaml`) defining document types, required sections, filename formats, promotion criteria
+10. Create validation rules data file (`.bmad-core/data/validation-rules.yaml`) defining VAL-001 through VAL-006 with thresholds and remediation
+11. Create knowledge curation checklist (`.bmad-core/checklists/knowledge-curation-checklist.md`) with 8 validation sections
+12. Create comprehensive KDD workflow guide (`docs/guides/kdd-workflow-guide.md`) with 10 sections including examples and agent integration
+13. Integrate Lisa as Step 7 in AppyDave workflow (`.bmad-core/tasks/execute-appydave-workflow.md`) after Quinn's QA review passes
+14. Update CLAUDE.md with Lisa documentation, commands reference, workflow integration, validation rules, and success metrics
+15. Lisa updates "Knowledge Assets" section in story files with links to created KDD documents (4 categories: Patterns, Learnings, Decisions, Examples)
+16. Quinn (QA) validates code against Lisa's documented patterns and flags pattern violations during review
+17. Knowledge extraction status tracked in story files: "Not yet curated" → "Curated ({date})"
+18. All tasks use imperative/infinitive form following BMAD command conventions
+
+---
+
+### Story 0.4: Field Testing System with External POEM Project Integration
+
+**As a** POEM developer using POEM in external projects (v-voz, prompt-supportsignal, v-appydave),
+**I want** a field testing system that allows me to log blockers and observations from external projects and submit them to central POEM for processing,
+**so that** I can track usage issues across multiple projects, link related problems, and enhance POEM's central issue tracker with multi-project context without tight coupling.
+
+**Acceptance Criteria**:
+
+1. Create Field Testing Agent at `packages/poem-core/agents/field-tester.md` with persona "Field Testing Observer" and commands: `*log-blocker`, `*log-session`, `*log-status`
+2. Create CLI wrapper at `.claude/commands/poem/agents/field-tester.md` for `/poem/agents/field-tester` command
+3. Create directory structure for external projects: `docs/field-testing/blockers/` (JSONL logs), `docs/field-testing/sessions/` (markdown notes)
+4. Define client blocker schema (v1.0): `submissionId` ({project}-{sequence}), `timestamp`, `project` object, `blocker` object, `status` (pending/submitted/linked/resolved), `poemIssueRef`, `submittedTo` path
+5. Create Inbox Bridge Skill at `packages/poem-core/skills/poem-inbox-bridge/` following Anthropic skill-creator patterns: YAML frontmatter (`name`, comprehensive `description`), concise body (<500 lines), progressive disclosure
+6. Inbox Bridge Skill writes submissions to `/Users/davidcruwys/dev/ad/poem-os/poem/docs/planning/gap-analysis/inbox/{submissionId}.json` (direct file write, no sync command)
+7. Extend Triage task at `.bmad-core/tasks/triage-work.md` with Mode E: Inbox Processing triggered by `/triage inbox`
+8. Triage Mode E: Scan `docs/planning/gap-analysis/inbox/*.json` for `status: "pending"`, list submissions, prompt user to select, search existing POEM issues for similarity (>80%)
+9. If match found: Link submission to existing issue, enhance issue with new project perspective; If no match: Prompt to create new POEM issue
+10. Update POEM issue schema to v2.1 with optional `reportedBy` array field (backward compatible): `{submissionId, project, timestamp, projectSpecificDetails}`
+11. Update submission status after processing: `"pending"` → `"linked"`, add `poemIssueRef: "issue-{N}"`
+12. Create inbox directory `docs/planning/gap-analysis/inbox/` with `.gitignore` pattern for `inbox/*.json` (transient submissions)
+13. Create Field Testing Guide at `docs/planning/gap-analysis/field-testing-guide.md` with architecture overview, usage instructions, workflow examples, schema documentation, troubleshooting
+14. Update Triage Guide at `docs/workflows/triage-guide.md` with Mode E section: `/triage inbox` usage, examples of linking/creating issues
+
+---
+
 ## Example Stories
+
+These are hypothetical examples showing the Epic 0 story format. See the **Stories** section above for actual completed/in-progress stories.
 
 ### Example 1: Bug Fix (P0)
 
 ```markdown
-### Story 0.1: Bug Fix: NPX Installer Crashes on Windows with Spaces in Path
+### Story 0.X: Bug Fix: NPX Installer Crashes on Windows with Spaces in Path
 
 **Priority**: P0
 
@@ -313,7 +369,7 @@ Epic 0 stories use **lighter ceremony** than feature stories:
 ### Example 2: Technical Debt (P1)
 
 ```markdown
-### Story 0.2: Technical Debt: Extract Schema Validation into Shared Utility
+### Story 0.X: Technical Debt: Extract Schema Validation into Shared Utility
 
 **Priority**: P1
 
@@ -339,7 +395,7 @@ Epic 0 stories use **lighter ceremony** than feature stories:
 ### Example 3: Performance (P2)
 
 ```markdown
-### Story 0.3: Performance: Cache Compiled Handlebars Templates
+### Story 0.X: Performance: Cache Compiled Handlebars Templates
 
 **Priority**: P2
 
@@ -356,7 +412,7 @@ Epic 0 stories use **lighter ceremony** than feature stories:
 4. Cache size limited to prevent memory issues (e.g., max 100 templates, LRU eviction)
 5. Performance test confirms 10x speedup for cached templates
 
-**Notes**: Medium effort (~4 hours), high impact for developer experience during iterative testing.
+**Notes**: Medium effort (~4 hours), high impact for developer experience during iterative testing. This is a potential future Epic 0 story that has not yet been implemented.
 ```
 
 ---
@@ -364,7 +420,7 @@ Epic 0 stories use **lighter ceremony** than feature stories:
 ### Example 4: Documentation (P2)
 
 ```markdown
-### Story 0.4: Documentation: Add Troubleshooting Section to README
+### Story 0.X: Documentation: Add Troubleshooting Section to README
 
 **Priority**: P2
 
@@ -437,14 +493,19 @@ Epic 0 stories still go through **QA (Quinn) agent** review, but with adjusted f
 
 ### Tracking
 
-Epic 0 stories tracked in `docs/stories/epic-0/` directory:
+Epic 0 stories tracked in `docs/stories/` directory with `0.X` prefix:
 ```
-docs/stories/epic-0/
-├── story-0.1-bug-fix-installer-windows-spaces.md
-├── story-0.2-tech-debt-schema-validation-utility.md
-├── story-0.3-performance-cache-handlebars-templates.md
-└── story-0.4-docs-troubleshooting-readme.md
+docs/stories/
+├── 0.1.story.md                # Work Intake Triage System (Done)
+├── 0.1.story-SAT.md            # SAT guide for Story 0.1
+├── 0.2.story.md                # Triage and Issue Logger Normalization (Done)
+├── 0.2.story-SAT.md            # SAT guide for Story 0.2
+├── 0.3.story.md                # Create Lisa (Librarian) Agent for KDD (Done)
+├── 0.3.story-SAT.md            # SAT guide for Story 0.3
+└── 0.4.story.md                # Field Testing System (Draft)
 ```
+
+**Note**: Epic 0 stories are co-located with feature epic stories (1.X, 2.X, etc.) in `docs/stories/` rather than a separate subdirectory. The `0.X` numbering scheme clearly identifies them as Epic 0 (maintenance/process) stories.
 
 ---
 
@@ -458,4 +519,4 @@ docs/stories/epic-0/
 
 ---
 
-**Last Updated**: 2026-01-20
+**Last Updated**: 2026-01-22

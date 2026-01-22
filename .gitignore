@@ -44,8 +44,9 @@ Thumbs.db
 data/                   # Example data (may contain proprietary info)
 tmp/                    # Temporary/scratch files
 .claude/commands/poem/
-dev-workspace/
 dev-workspace/**
+!dev-workspace/workflow-data/
+!dev-workspace/workflow-data/.gitkeep
 validation-backups/     # Validation data backups (local only)
 .poem-app/              # Installed runtime (generated during install)
 .poem-core/             # Installed framework (generated during install)

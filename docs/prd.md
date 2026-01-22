@@ -293,6 +293,31 @@ Ongoing maintenance, bug fixes, technical debt, developer experience improvement
 
 ---
 
+#### Story 0.4: Field Testing System with External POEM Project Integration
+
+**As a** POEM developer using POEM in external projects (v-voz, prompt-supportsignal, v-appydave),
+**I want** a field testing system that allows me to log blockers and observations from external projects and submit them to central POEM for processing,
+**so that** I can track usage issues across multiple projects, link related problems, and enhance POEM's central issue tracker with multi-project context without tight coupling.
+
+**Acceptance Criteria**:
+
+1. Create Field Testing Agent at `packages/poem-core/agents/field-tester.md` with persona "Field Testing Observer" and commands: `*log-blocker`, `*log-session`, `*log-status`
+2. Create CLI wrapper at `.claude/commands/poem/agents/field-tester.md` for `/poem/agents/field-tester` command
+3. Create directory structure for external projects: `docs/field-testing/blockers/` (JSONL logs), `docs/field-testing/sessions/` (markdown notes)
+4. Define client blocker schema (v1.0): `submissionId` ({project}-{sequence}), `timestamp`, `project` object, `blocker` object, `status` (pending/submitted/linked/resolved), `poemIssueRef`, `submittedTo` path
+5. Create Inbox Bridge Skill at `packages/poem-core/skills/poem-inbox-bridge/` following Anthropic skill-creator patterns: YAML frontmatter (`name`, comprehensive `description`), concise body (<500 lines), progressive disclosure
+6. Inbox Bridge Skill writes submissions to `/Users/davidcruwys/dev/ad/poem-os/poem/docs/planning/gap-analysis/inbox/{submissionId}.json` (direct file write, no sync command)
+7. Extend Triage task at `.bmad-core/tasks/triage-work.md` with Mode E: Inbox Processing triggered by `/triage inbox`
+8. Triage Mode E: Scan `docs/planning/gap-analysis/inbox/*.json` for `status: "pending"`, list submissions, prompt user to select, search existing POEM issues for similarity (>80%)
+9. If match found: Link submission to existing issue, enhance issue with new project perspective; If no match: Prompt to create new POEM issue
+10. Update POEM issue schema to v2.1 with optional `reportedBy` array field (backward compatible): `{submissionId, project, timestamp, projectSpecificDetails}`
+11. Update submission status after processing: `"pending"` → `"linked"`, add `poemIssueRef: "issue-{N}"`
+12. Create inbox directory `docs/planning/gap-analysis/inbox/` with `.gitignore` pattern for `inbox/*.json` (transient submissions)
+13. Create Field Testing Guide at `docs/planning/gap-analysis/field-testing-guide.md` with architecture overview, usage instructions, workflow examples, schema documentation, troubleshooting
+14. Update Triage Guide at `docs/workflows/triage-guide.md` with Mode E section: `/triage inbox` usage, examples of linking/creating issues
+
+---
+
 ### Epic 1: Foundation & Monorepo Setup
 
 Establish project infrastructure with monorepo structure, NPX installer, and basic `.poem-core/` + `.poem-app/` scaffolding that copies to user projects.
