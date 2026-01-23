@@ -7,8 +7,10 @@ This folder contains learnings, decisions, and insights gathered during developm
 ```
 kdd/
 ├── index.md                           # This file - navigation and overview
-├── kdd-workflow-guide.md              # Complete KDD workflow documentation
-├── knowledge-traceability-guide.md    # Knowledge tracing and topology maintenance
+├── meta/                              # Meta-documentation about the KDD system itself
+│   ├── kdd-workflow-guide.md          # Complete KDD workflow documentation
+│   ├── knowledge-traceability-guide.md # Knowledge tracing and topology maintenance
+│   └── lisa-precommit-setup.md        # LISA automation setup
 ├── learnings/                         # Insights discovered during development
 │   └── *.md                           # Individual learning documents
 ├── decisions/                         # Architecture Decision Records (ADRs)
@@ -21,7 +23,7 @@ kdd/
 
 ### KDD Workflow Guide
 
-**[KDD Workflow Guide](./kdd-workflow-guide.md)** ⭐ **START HERE**
+**[KDD Workflow Guide](./meta/kdd-workflow-guide.md)** ⭐ **START HERE**
 
 Complete guide for Lisa (Librarian agent) on knowledge curation in Step 7 of the AppyDave workflow.
 
@@ -34,13 +36,22 @@ Complete guide for Lisa (Librarian agent) on knowledge curation in Step 7 of the
 
 ### Knowledge Traceability
 
-**[Knowledge Traceability Guide](./knowledge-traceability-guide.md)**
+**[Knowledge Traceability Guide](./meta/knowledge-traceability-guide.md)**
 
 How to maintain bidirectional links between stories, KDD documents, and validation artifacts.
 
 ---
 
 ## Categories
+
+### Meta Documentation (`meta/`)
+Documentation about the KDD system itself - workflows, processes, and infrastructure for knowledge curation. This is meta-documentation (documentation about documentation).
+
+**Contents:**
+- KDD workflow guides and processes
+- Knowledge traceability and topology maintenance
+- LISA (Librarian agent) automation setup
+- Validation rules and health metrics
 
 ### Learnings (`learnings/`)
 Story-specific insights, debugging sessions, and incidents. Things we learned that weren't obvious from docs.
@@ -54,6 +65,7 @@ Reusable code patterns or approaches that work well in this codebase. Promoted a
 ## Naming Convention
 
 Files use kebab-case with a category prefix:
+- `meta/kdd-workflow-guide.md`
 - `learnings/hot-reload-production-mode.md`
 - `decisions/adr-001-chokidar-over-fs-watch.md`
 - `patterns/singleton-service-pattern.md`
@@ -101,4 +113,4 @@ Some knowledge applies to both domains (e.g., Handlebars template patterns). Whe
 ---
 
 **Created:** 2025-12-29
-**Updated:** 2026-01-22 - Reorganized documentation structure, added KDD workflow guide
+**Updated:** 2026-01-23 - Created meta/ subfolder for KDD system documentation
