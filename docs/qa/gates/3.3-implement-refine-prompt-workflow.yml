@@ -27,11 +27,11 @@ acceptance_criteria:
     description: "Workflow defined in `.poem-core/workflows/refine-prompt.yaml`"
     status: PASS
     evidence:
-      - "File created at packages/poem-core/workflows/refine-prompt.yaml"
+      - "File created at packages/poem-core/tasks/refine-prompt.yaml"
       - "Tests A, B, C, D validate file existence, parsing, metadata, path resolution"
       - "YAML structure validated by 31 passing unit tests"
     traceability:
-      implementation: "packages/poem-core/workflows/refine-prompt.yaml:1-523"
+      implementation: "packages/poem-core/tasks/refine-prompt.yaml:1-523"
       tests:
         - "packages/poem-app/tests/workflows/refine-prompt.test.ts:23-63 (YAML Structure)"
         - "docs/stories/3.3.story-SAT.md:36-60 (Test A - file exists)"
@@ -45,7 +45,7 @@ acceptance_criteria:
       - "Validates file existence with error handling"
       - "Stores promptPath, promptName, workspaceMode"
     traceability:
-      implementation: "packages/poem-core/workflows/refine-prompt.yaml:47-92"
+      implementation: "packages/poem-core/tasks/refine-prompt.yaml:47-92"
       tests:
         - "packages/poem-app/tests/workflows/refine-prompt.test.ts:130-137 (select-prompt step)"
         - "docs/stories/3.3.story-SAT.md:166-204 (Test E - required steps)"
@@ -58,7 +58,7 @@ acceptance_criteria:
       - "Checks for optional schema file"
       - "Displays formatted template with metadata"
     traceability:
-      implementation: "packages/poem-core/workflows/refine-prompt.yaml:96-144"
+      implementation: "packages/poem-core/tasks/refine-prompt.yaml:96-144"
       tests:
         - "packages/poem-app/tests/workflows/refine-prompt.test.ts:139-144 (load-template step)"
         - "docs/stories/3.3.story-SAT.md:105-135 (Test C - metadata)"
@@ -72,7 +72,7 @@ acceptance_criteria:
       - "Calls POST /api/prompt/render with data"
       - "Displays rendered output with timing"
     traceability:
-      implementation: "packages/poem-core/workflows/refine-prompt.yaml:148-204"
+      implementation: "packages/poem-core/tasks/refine-prompt.yaml:148-204"
       tests:
         - "packages/poem-app/tests/workflows/refine-prompt.test.ts:146-153 (render-current step)"
 
@@ -85,7 +85,7 @@ acceptance_criteria:
       - "Inline editing accepts multi-line input"
       - "File editing waits for user confirmation"
     traceability:
-      implementation: "packages/poem-core/workflows/refine-prompt.yaml:208-276"
+      implementation: "packages/poem-core/tasks/refine-prompt.yaml:208-276"
       tests:
         - "packages/poem-app/tests/workflows/refine-prompt.test.ts:155-171 (modification steps)"
 
@@ -98,7 +98,7 @@ acceptance_criteria:
       - "Step 7 (confirm-save) elicits save decision"
       - "Shows character count, line count, time deltas"
     traceability:
-      implementation: "packages/poem-core/workflows/refine-prompt.yaml:280-375"
+      implementation: "packages/poem-core/tasks/refine-prompt.yaml:280-375"
       tests:
         - "packages/poem-app/tests/workflows/refine-prompt.test.ts:173-185 (re-render and confirm-save)"
 
@@ -111,7 +111,7 @@ acceptance_criteria:
       - "Creates timestamped backup files"
       - "Optional refine-history.json log"
     traceability:
-      implementation: "packages/poem-core/workflows/refine-prompt.yaml:379-424"
+      implementation: "packages/poem-core/tasks/refine-prompt.yaml:379-424"
       tests:
         - "packages/poem-app/tests/workflows/refine-prompt.test.ts:187-193 (track-iteration)"
         - "docs/stories/3.3.story-SAT.md:208-240 (Test F - optional step)"

@@ -12,8 +12,8 @@ CRITICAL: Read the full YAML BLOCK that FOLLOWS IN THIS FILE to understand your 
 IDE-FILE-RESOLUTION:
   - FOR LATER USE ONLY - NOT FOR ACTIVATION, when executing commands that reference dependencies
   - Dependencies map to .poem-core/{type}/{name}
-  - type=folder (workflows|skills|templates|data|etc...), name=file-name
-  - Example: new-prompt.yaml -> .poem-core/workflows/new-prompt.yaml
+  - type=folder (tasks|skills|templates|data|etc...), name=file-name
+  - Example: new-prompt.yaml -> .poem-core/tasks/new-prompt.yaml
   - IMPORTANT: Only load these files when user requests specific command execution
 REQUEST-RESOLUTION: Match user requests to your commands/dependencies flexibly (e.g., "create prompt"->"*new", "check my template"->"*validate", "test with data"->"*test"), ALWAYS ask for clarification if no clear match.
 activation-instructions:
@@ -54,10 +54,10 @@ commands:
   - help: Show numbered list of the following commands to allow selection
   - list: List all available prompts in current workflow with rich metadata (usage: *list or *list --shared)
   - view: Display a specific prompt template with rich metadata (usage: *view <prompt-name>)
-  - new: Execute workflow new-prompt.yaml to create a new prompt with schema in current workflow
-  - refine: Execute workflow refine-prompt.yaml to iteratively improve an existing prompt
-  - test: Execute workflow test-prompt.yaml to test a prompt with mock or provided data
-  - validate: Execute workflow validate-prompt.yaml to validate prompt structure and quality
+  - new: Execute task new-prompt.yaml to create a new prompt with schema in current workflow
+  - refine: Execute task refine-prompt.yaml to iteratively improve an existing prompt
+  - test: Execute task test-prompt.yaml to test a prompt with mock or provided data
+  - validate: Execute task validate-prompt.yaml to validate prompt structure and quality
   - workflows: List all available workflows in workspace (usage: *workflows or *workflows --verbose) [Story 3.8]
   - switch: Change to a different workflow context (usage: *switch <workflow-name>) [Story 3.8]
   - context: Show current workflow information, reference materials, and paths (usage: *context, *context --reference, *context --sections) [Stories 3.8, 4.9]
@@ -67,7 +67,7 @@ commands:
 #   Story 4.9: Enhanced commands (--verbose, --reference, --sections, --shared)
 #   Configuration: packages/poem-core/poem-core-config.yaml
 dependencies:
-  workflows:
+  tasks:
     - new-prompt.yaml
     - refine-prompt.yaml
     - test-prompt.yaml

@@ -1,3 +1,4 @@
+NOTE: This doc refers to agent procedures (now renamed from 'workflows' to 'tasks' in Story 0.5)
 # Agent Workflows vs BMAD Tasks
 
 **Status**: ⚠️ Divergent (Requires Future Alignment)

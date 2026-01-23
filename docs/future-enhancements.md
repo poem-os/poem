@@ -132,7 +132,7 @@ vs
 
 **Tracking**:
 - Decision: `docs/planning/decisions/agent-workflows-vs-bmad-tasks.md`
-- POEM Agent Tasks: `packages/poem-core/workflows/*.yaml` (Epic 3)
+- POEM Agent Tasks: `packages/poem-core/tasks/*.yaml` (Epic 3)
 - BMAD Tasks: `.bmad-core/tasks/*.md`
 
 **Next Steps**:

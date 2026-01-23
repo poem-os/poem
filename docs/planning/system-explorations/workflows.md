@@ -1,3 +1,4 @@
+NOTE: This doc refers to agent procedures (now renamed from 'workflows' to 'tasks' in Story 0.5)
 # POEM Core Workflows
 
 **Extracted from**: current-thinking-prompt-os.md

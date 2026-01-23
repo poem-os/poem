@@ -1,0 +1,585 @@
+# Test Prompt Workflow
+# Validates prompt behavior with various test data and multiple scenarios
+#
+# Executed by: Prompt Engineer agent (Penny) via *test command
+# Execution model: Agent-interpreted (steps guide agent behavior, not automated)
+#
+# Path resolution: Inherited from poem-core-config.yaml
+# DO NOT add a paths: section - config service is the source of truth
+# See: packages/poem-core/tasks/README.md for the pattern
+
+id: test-prompt
+name: Test Prompt with Data
+version: "1.0.0"
+author: POEM Framework
+lastUpdated: "2026-01-11"
+
+# Path resolution mode - indicates this workflow uses config for paths
+pathResolution: config
+
+description: |
+  Guides users through testing Handlebars prompt templates with various data sources:
+  - Load existing prompt from workspace
+  - Choose data source (mock file, inline, or file-based)
+  - Render template and display output with metrics
+  - Validate against schema if present
+  - Report warnings, errors, and validation results
+  - Support multiple test scenarios in sequence
+  - Save aggregated results to file
+
+  Follows BMAD elicitation patterns for user interaction.
+
+  **Path Resolution:**
+  Workspace paths are inherited from poem-core-config.yaml (loaded by config service).
+  - Development (POEM_DEV=true): dev-workspace/prompts/, dev-workspace/schemas/, etc.
+  - Production: poem/prompts/, poem/schemas/, etc.
+  The agent detects mode by checking for packages/poem-core/ (dev) vs .poem-core/ (prod).
+
+# Error handling defaults
+fallback:
+  onMissingInput: prompt-again
+  onApiError: show-error-and-retry
+  onFileConflict: warn-and-confirm
+
+steps:
+  # ============================================================================
+  # STEP 1: Select Prompt to Test (Elicitation)
+  # ============================================================================
+  - id: select-prompt
+    name: Select Prompt to Test
+    type: elicit
+    elicit: true
+    prompt: |
+      Which prompt would you like to test?
+
+      **Options:**
+      1. Enter the prompt name (e.g., `generate-titles`)
+      2. Enter the full path to the template file
+
+      **Note:** The prompt should exist in your workspace:
+      - Development mode: `dev-workspace/prompts/`
+      - Production mode: `poem/prompts/`
+
+      ---
+      Enter prompt name or path:
+    validation:
+      required: true
+      minLength: 1
+    stores: promptName
+    instruction: |
+      Wait for user to provide prompt name or path.
+
+      1. **Parse input:**
+         - If input contains `.hbs` extension, treat as full path
+         - Otherwise, treat as prompt name (e.g., "generate-titles")
+
+      2. **Detect workspace mode:**
+         - Check if `packages/poem-core/` exists → Development mode
+         - Otherwise → Production mode
+
+      3. **Build file path:**
+         - Development: `dev-workspace/prompts/{promptName}.hbs`
+         - Production: `poem/prompts/{promptName}.hbs`
+         - If full path provided, use as-is
+
+      4. **Validate file exists:**
+         - Read file to verify it exists
+         - If not found, display error:
+           "Prompt not found: {expectedPath}"
+           "Available prompts: [list .hbs files in prompts directory]"
+           Prompt user again
+
+      5. **Store results:**
+         - `promptPath`: Full path to template file
+         - `promptName`: Base name without extension
+         - `workspaceMode`: "development" or "production"
+
+  # ============================================================================
+  # STEP 2: Choose Data Source (Elicitation)
+  # ============================================================================
+  - id: choose-data-source
+    name: Choose Test Data Source
+    type: elicit
+    elicit: true
+    prompt: |
+      How would you like to provide test data?
+
+      **Options:**
+      1. **Use mock data file** - Load from {promptName}.json in mock-data/
+      2. **Load data from file** - Specify a JSON file path
+      3. **Enter data inline** - Paste JSON data directly
+      4. **Run multiple scenarios** - Test with multiple data sets in sequence
+
+      ---
+      Choose data source (1-4):
+    validation:
+      required: true
+      pattern: "^[1-4]$"
+      patternDescription: "Enter 1, 2, 3, or 4"
+    stores: dataSourceChoice
+    instruction: |
+      Wait for user to select data source option (1-4).
+
+      Parse choice:
+      - "1" or "mock" → Use mock data file
+      - "2" or "file" → Load from file
+      - "3" or "inline" → Inline JSON entry
+      - "4" or "multiple" → Multiple scenarios
+
+      If choice is "1" (mock data):
+      - Check for mock data file: {workspace}/mock-data/{promptName}.json
+      - If not found, display warning:
+        "Mock data file not found: {expectedPath}"
+        "Would you like to: (a) Enter inline data, (b) Specify file path, (c) Cancel"
+        Store fallback choice
+
+      If choice is "2" (file):
+      - Store dataSourceChoice as "file"
+        (Next step will prompt for file path)
+
+      If choice is "3" (inline):
+      - Store dataSourceChoice as "inline"
+        (Next step will prompt for JSON)
+
+      If choice is "4" (multiple):
+      - Store dataSourceChoice as "multiple"
+        - Set scenarioCount = 0
+        - Initialize testResults = []
+        (Will loop through data gathering)
+
+  # ============================================================================
+  # STEP 3: Load or Gather Test Data (Action/Conditional)
+  # ============================================================================
+  - id: load-test-data
+    name: Load or Gather Test Data
+    type: action
+    action: conditional-data-load
+    stores: testData
+    instruction: |
+      Based on dataSourceChoice from previous step, gather test data.
+
+      **If dataSourceChoice = "mock":**
+      1. Read file: {workspace}/mock-data/{promptName}.json
+      2. Parse JSON
+      3. If parse error, display:
+         "Invalid JSON in mock data file: {error}"
+         "Please fix the file or choose inline data entry"
+         HALT and prompt again
+      4. Store as testData
+
+      **If dataSourceChoice = "file":**
+      1. Prompt user: "Enter path to JSON data file:"
+      2. Read file from user-specified path
+      3. Parse JSON
+      4. If file not found or parse error:
+         Display error with context
+         Prompt again
+      5. Store as testData
+
+      **If dataSourceChoice = "inline":**
+      1. Prompt user:
+         "Paste JSON test data below (valid JSON object or array):"
+      2. Wait for user to paste JSON
+      3. Parse and validate JSON structure
+      4. If parse error:
+         "JSON parse error: {error}"
+         "Please check syntax and try again"
+         Prompt again
+      5. Store as testData
+
+      **If dataSourceChoice = "multiple":**
+      1. Increment scenarioCount
+      2. Display: "Scenario #{scenarioCount}"
+      3. Prompt user:
+         "Choose data source for this scenario:
+         (a) Mock file, (b) File path, (c) Inline JSON"
+      4. Gather data based on sub-choice
+      5. Store as testData for current scenario
+
+      Display confirmation:
+      "Test data loaded successfully ({dataSize} bytes)"
+
+  # ============================================================================
+  # STEP 4: Load Output Schema (Optional) (Action)
+  # ============================================================================
+  - id: load-output-schema
+    name: Load Output Schema for Validation (Optional)
+    type: action
+    action: load-file
+    stores: outputSchemaContent
+    instruction: |
+      Check for output schema file for validating AI responses.
+
+      1. **Build output schema path:**
+         - {workspace}/schemas/{promptName}-output.json
+
+      2. **Check if output schema exists:**
+         - Try to read output schema file
+         - If found:
+           * Parse JSON schema
+           * Store as outputSchemaContent
+           * Display: "Output schema loaded: {schemaPath}"
+                      "AI response validation will be performed"
+         - If not found:
+           * Store outputSchemaContent = null
+           * Display: "No output schema found (validation will be skipped)"
+                      "Note: Output schemas are optional. To add one, include <!-- Expected Output: ... --> in template."
+
+      3. **If output schema parse error:**
+         - Display: "Output schema file contains invalid JSON: {error}"
+         - Store outputSchemaContent = null
+         - Continue without validation
+
+      **Note:** We load the OUTPUT schema (not input schema) because this workflow
+      validates the rendered AI response, not the input data going into the template.
+
+  # ============================================================================
+  # STEP 5: Render Template with Data (Action)
+  # ============================================================================
+  - id: render-template
+    name: Render Template with Test Data
+    type: action
+    action: api-call
+    stores: rendered
+    instruction: |
+      Call the render API to compile and render the template.
+
+      1. **Prepare API request:**
+         ```json
+         POST /api/prompt/render
+         {
+           "template": "{promptPath}",
+           "data": {testData},
+           "isRawTemplate": false
+         }
+         ```
+
+      2. **Call API and capture response:**
+         ```json
+         {
+           "rendered": "...",
+           "renderTimeMs": 45,
+           "warnings": ["Missing field: subtitle"],
+           "templatePath": "dev-workspace/prompts/..."
+         }
+         ```
+
+      3. **Handle API errors:**
+         - If 404: "Template file not found: {promptPath}"
+         - If 400: "Render error: {error.message}"
+                   "Context: {error.details}"
+         - Offer to retry or cancel
+
+      4. **Display output:**
+         ```
+         ========================================
+         RENDERED OUTPUT
+         ========================================
+         {rendered content}
+         ========================================
+
+         Metrics:
+         - Render Time: {renderTimeMs}ms
+         - Output Length: {charCount} characters, {lineCount} lines
+         - Warnings: {warnings.length}
+         ```
+
+      5. **Display warnings if present:**
+         ```
+         Warnings:
+         - {warning1}
+         - {warning2}
+         ```
+
+      6. **Store results:**
+         - rendered (full output)
+         - renderTimeMs
+         - outputLength: {chars, lines}
+         - warnings: array
+
+  # ============================================================================
+  # STEP 6: Validate Against Output Schema (Conditional Action)
+  # ============================================================================
+  - id: validate-output
+    name: Validate AI Response Against Output Schema
+    type: action
+    action: conditional-validation
+    stores: validationResult
+    instruction: |
+      If output schema exists, validate rendered AI response against it.
+
+      **If outputSchemaContent is null:**
+      - Display: "Output schema validation skipped (no output schema file found)"
+      - Display: "Output schemas are optional but enable AI response validation"
+      - Store validationResult = {skipped: true}
+      - Continue to next step
+
+      **If outputSchemaContent exists:**
+      1. **Prepare validation request:**
+         ```json
+         POST /api/schema/validate
+         {
+           "schema": {outputSchemaContent},
+           "data": {parse rendered as JSON if possible}
+         }
+         ```
+
+      2. **Handle non-JSON output:**
+         - If rendered output is not valid JSON:
+           * Display: "Output is not JSON (schema validation requires JSON output)"
+           * Store validationResult = {skipped: true, reason: "non-json-output"}
+           * Continue
+
+      3. **Call validation API:**
+         Response:
+         ```json
+         {
+           "valid": true/false,
+           "errors": [
+             {"field": "title", "message": "Required field missing"},
+             {"field": "count", "message": "Must be a number"}
+           ]
+         }
+         ```
+
+      4. **Display validation results:**
+         ```
+         ========================================
+         SCHEMA VALIDATION
+         ========================================
+         Status: {PASS ✓ or FAIL ✗}
+
+         {if FAIL, list errors:}
+         Errors:
+         - Field 'title': Required field missing
+         - Field 'count': Must be a number
+         ```
+
+      5. **Store results:**
+         - validationResult: {valid, errors[], errorCount}
+
+  # ============================================================================
+  # STEP 7: Collect Test Results (Action)
+  # ============================================================================
+  - id: collect-results
+    name: Collect Test Results
+    type: action
+    action: aggregate
+    stores: currentScenarioResult
+    instruction: |
+      Aggregate all results for current test scenario.
+
+      1. **Create result object:**
+         ```json
+         {
+           "promptName": "{promptName}",
+           "scenarioNumber": {scenarioCount or 1},
+           "testData": {testData},
+           "rendered": "{rendered}",
+           "renderTimeMs": {renderTimeMs},
+           "outputLength": {
+             "characters": {charCount},
+             "lines": {lineCount}
+           },
+           "warnings": {warnings[]},
+           "warningsCount": {warnings.length},
+           "validationResult": {validationResult},
+           "validationStatus": "PASS" | "FAIL" | "SKIPPED",
+           "timestamp": "{ISO date}"
+         }
+         ```
+
+      2. **Calculate additional metrics:**
+         - errorsCount = warnings with severity "error"
+         - hasErrors = (errorsCount > 0 or validationResult.valid === false)
+
+      3. **Store currentScenarioResult**
+
+      4. **If multiple scenarios mode:**
+         - Append currentScenarioResult to testResults[]
+         - Display: "Scenario #{scenarioCount} complete"
+
+  # ============================================================================
+  # STEP 8: Offer Multiple Scenarios (Conditional Elicitation)
+  # ============================================================================
+  - id: run-another-scenario
+    name: Run Another Test Scenario
+    type: elicit
+    elicit: true
+    prompt: |
+      Run another test scenario? (yes/no)
+    validation:
+      required: true
+      pattern: "^(yes|no|y|n)$"
+      patternDescription: "Enter yes or no"
+    stores: continueTestingChoice
+    instruction: |
+      Ask user if they want to run additional test scenarios.
+
+      **If user says "yes" (or "y"):**
+      1. Increment scenarioCount
+      2. Display: "Starting scenario #{scenarioCount}..."
+      3. Loop back to step "load-test-data" (Step 3)
+         - User will choose data source again
+         - All steps 3-7 repeat
+         - Results append to testResults[]
+
+      **If user says "no" (or "n"):**
+      1. Display: "Testing complete. {scenarioCount} scenario(s) executed."
+      2. Continue to step "test-summary" (Step 9)
+
+      **Note:** This step only runs if user chose single scenario mode initially.
+      If dataSourceChoice was "multiple", this step is skipped after first scenario
+      and loop happens automatically until user explicitly stops.
+
+  # ============================================================================
+  # STEP 9: Display Test Summary (Output)
+  # ============================================================================
+  - id: test-summary
+    name: Display Test Summary
+    type: output
+    instruction: |
+      Display comprehensive summary of all test scenarios.
+
+      1. **Calculate aggregate metrics:**
+         - totalScenarios = testResults.length (or 1 if single scenario)
+         - totalRenderTime = sum of all renderTimeMs
+         - averageRenderTime = totalRenderTime / totalScenarios
+         - totalWarnings = sum of all warnings counts
+         - totalErrors = sum of validation errors across scenarios
+         - passedScenarios = count where validationStatus = "PASS" or "SKIPPED"
+         - failedScenarios = count where validationStatus = "FAIL"
+
+      2. **Display summary:**
+         ```
+         ========================================
+         TEST SUMMARY
+         ========================================
+         Prompt: {promptName}
+         Scenarios Executed: {totalScenarios}
+
+         Performance:
+         - Total Render Time: {totalRenderTime}ms
+         - Average Render Time: {averageRenderTime}ms
+
+         Quality:
+         - Total Warnings: {totalWarnings}
+         - Total Validation Errors: {totalErrors}
+
+         Results:
+         - Passed: {passedScenarios}
+         - Failed: {failedScenarios}
+
+         {if failedScenarios > 0:}
+         ✗ {failedScenarios} test(s) failed
+         {else:}
+         ✓ All tests passed
+         ```
+
+      3. **Display scenario breakdown:**
+         ```
+         Scenario Details:
+         1. {scenario1 summary} - {PASS/FAIL}
+         2. {scenario2 summary} - {PASS/FAIL}
+         ...
+         ```
+
+      4. **Display validation summary (if schemas used):**
+         ```
+         Validation Summary:
+         - Scenarios with schema: {count}
+         - Validation passed: {passCount}
+         - Validation failed: {failCount}
+         ```
+
+  # ============================================================================
+  # STEP 10: Save Results to File (Elicitation + Action)
+  # ============================================================================
+  - id: save-results
+    name: Save Test Results to File
+    type: elicit
+    elicit: true
+    prompt: |
+      Save test results to file? (yes/no)
+    validation:
+      required: true
+      pattern: "^(yes|no|y|n)$"
+      patternDescription: "Enter yes or no"
+    stores: saveResultsChoice
+    instruction: |
+      Ask user if they want to save test results to file.
+
+      **If user says "no" (or "n"):**
+      - Display: "Test complete. Results not saved."
+      - Continue to step "complete" (Step 11)
+
+      **If user says "yes" (or "y"):**
+      1. **Prompt for filename:**
+         "Enter output filename (default: {promptName}-test-results.json):"
+
+      2. **User provides filename or presses enter for default**
+
+      3. **Build output path:**
+         - {workspace}/{filename}
+         - If workspace is dev-workspace: dev-workspace/{filename}
+         - If workspace is poem: poem/{filename}
+
+      4. **Write results to file:**
+         ```json
+         {
+           "prompt": "{promptName}",
+           "testDate": "{ISO timestamp}",
+           "totalScenarios": {count},
+           "summary": {aggregate metrics},
+           "scenarios": [
+             {scenario1 result object},
+             {scenario2 result object},
+             ...
+           ]
+         }
+         ```
+
+      5. **Display confirmation:**
+         ```
+         ✓ Test results saved to: {fullPath}
+         File size: {fileSize} bytes
+         ```
+
+  # ============================================================================
+  # STEP 11: Workflow Complete (Output)
+  # ============================================================================
+  - id: complete
+    name: Testing Complete
+    type: output
+    instruction: |
+      Display final workflow completion message.
+
+      1. **Summary:**
+         ```
+         ========================================
+         TESTING COMPLETE
+         ========================================
+         Prompt Tested: {promptName}
+         Total Scenarios: {scenarioCount}
+         Overall Status: {PASS ✓ or FAIL ✗}
+         ```
+
+      2. **Artifacts created:**
+         ```
+         Artifacts:
+         {if results saved:}
+         - Test Results: {resultsFilePath}
+         ```
+
+      3. **Suggested next steps:**
+         ```
+         Next Steps:
+         {if any failures:}
+         - Run *refine to update the prompt template
+         - Fix validation errors in output schema
+         {else:}
+         - Run *validate to check prompt quality
+         - Deploy prompt with confidence
+         ```
+
+      4. **Workflow complete** - Return control to user

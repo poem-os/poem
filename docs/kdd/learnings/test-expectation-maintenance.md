@@ -93,7 +93,7 @@ expect(workflow.steps[6].name).toBe('validate-output-schema'); // New step
 
 **Added to checklist**:
 
-**When Modifying Workflow Files** (`packages/poem-core/workflows/*.yaml`):
+**When Modifying Workflow Files** (`packages/poem-core/tasks/*.yaml`):
 - [ ] Update workflow YAML
 - [ ] Update corresponding test file in `tests/workflows/`
 - [ ] Run workflow tests: `npm test workflows/`

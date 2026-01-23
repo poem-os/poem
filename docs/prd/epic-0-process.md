@@ -338,6 +338,32 @@ Epic 0 stories use **lighter ceremony** than feature stories:
 
 ---
 
+### Story 0.5: Rename POEM Core Workflows Directory to Tasks for BMAD Alignment
+
+**As a** POEM developer and user,
+**I want** the POEM core agent procedure directory renamed from `workflows/` to `tasks/` to match BMAD terminology,
+**so that** the codebase uses consistent terminology (agents execute "tasks", not "workflows") and eliminates confusion between agent procedures and user workspace projects.
+
+**Acceptance Criteria**:
+
+1. Directory renamed: `packages/poem-core/tasks/` → `packages/poem-core/tasks/`
+2. All YAML files moved to new location (new-prompt.yaml, refine-prompt.yaml, test-prompt.yaml, validate-prompt.yaml)
+3. README.md in tasks/ updated to reflect "tasks" terminology
+4. CLAUDE.md updated with correct paths and terminology
+5. README.md (project root) updated with correct paths
+6. Architecture docs updated (unified-project-structure.md, index.md, high-level-architecture.md)
+7. Agent definitions updated (prompt-engineer.md - lines referencing workflows/)
+8. Test files updated to reference tasks/ instead of workflows/
+9. Installation scripts updated (bin/preservation.js if applicable)
+10. Installed structure documented correctly (.poem-core/tasks/ after install)
+11. No references to packages/poem-core/tasks/ remain in active documentation
+12. Planning/exploration docs updated or marked as historical (low priority)
+13. All tests pass after rename
+14. Git history preserved (use `git mv` for directory rename)
+15. No broken links or references in documentation
+
+---
+
 ## Example Stories
 
 These are hypothetical examples showing the Epic 0 story format. See the **Stories** section above for actual completed/in-progress stories.

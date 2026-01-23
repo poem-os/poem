@@ -629,18 +629,18 @@ dev-workspace/
 
 ### Config Source-of-Truth
 
-The config service (`packages/poem-app/src/services/config/poem-config.ts`) is the **single source of truth** for workspace paths. Workflows should NOT duplicate path definitions - they inherit from config.
+The config service (`packages/poem-app/src/services/config/poem-config.ts`) is the **single source of truth** for workspace paths. Tasks should NOT duplicate path definitions - they inherit from config.
 
 **Key files**:
 - `packages/poem-core/poem-core-config.yaml` - Defines workspace paths
-- `packages/poem-core/workflows/README.md` - Documents the pattern for workflows
+- `packages/poem-core/tasks/README.md` - Documents the pattern for tasks
 
-**Pattern for workflows**:
+**Pattern for tasks**:
 ```yaml
 # CORRECT - Reference config for paths
 pathResolution: config
 
-# WRONG - Never duplicate paths in workflows
+# WRONG - Never duplicate paths in tasks
 paths:
   development:
     prompts: dev-workspace/prompts  # DON'T DO THIS

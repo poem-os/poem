@@ -218,7 +218,7 @@ compliance:
   architecture:
     compliant: true
     notes:
-      - "pathResolution: config pattern (per packages/poem-core/workflows/README.md)"
+      - "pathResolution: config pattern (per packages/poem-core/tasks/README.md)"
       - "Agent-interpreted execution model (per docs/architecture.md)"
       - "Sequential step execution (Epic 3 scope)"
 
@@ -269,7 +269,7 @@ recommendations:
 # Artifacts
 artifacts:
   created:
-    - path: "packages/poem-core/workflows/test-prompt.yaml"
+    - path: "packages/poem-core/tasks/test-prompt.yaml"
       description: "Main workflow definition (523 lines)"
 
     - path: "packages/poem-app/tests/workflows/test-prompt.test.ts"
