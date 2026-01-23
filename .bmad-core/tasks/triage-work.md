@@ -47,6 +47,70 @@ Determine which triage mode to use:
 - Display: "✓ Planning document found: [filename]"
 - If plan file not found or unreadable: Gracefully fall back to Mode A
 
+**Mode E: Inbox Processing** (Field Testing Submissions)
+- User types `/triage inbox`
+- Scan `docs/planning/gap-analysis/inbox/` for `*.json` files
+- Filter for submissions with `status: "pending"`
+- If no pending submissions: Display "✅ Inbox empty - no pending submissions" and exit
+- If pending submissions found:
+  - List submissions with numbers (1, 2, 3, ...)
+  - Display submission metadata table:
+    ```
+    📬 Field Testing Inbox - {N} pending submission(s)
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    ┌────┬─────────────┬──────────────────────────┬──────────┬────────┐
+    │ #  │ Submission  │ Description              │ Project  │ Date   │
+    ├────┼─────────────┼──────────────────────────┼──────────┼────────┤
+    │ 1  │ v-voz-001   │ Multi-workflow switchi...│ v-voz    │ Jan 22 │
+    │ 2  │ prompt-ss...│ Schema validation fail...│ prompt-..│ Jan 23 │
+    └────┴─────────────┴──────────────────────────┴──────────┴────────┘
+
+    Type a number to process, 'all' for batch, or 'exit': _
+    ```
+  - Wait for user selection
+- If user selects number or 'all': Proceed to inbox processing workflow (see Mode E Workflow below)
+- If user types 'exit': Exit triage task
+
+**Mode E Workflow** (Inbox Submission Processing):
+1. Load selected submission JSON file(s)
+2. For each submission:
+   - Display submission details (description, context, severity, project details)
+   - Search existing POEM issues in `docs/planning/gap-analysis/usage-issues.jsonl`
+   - Similarity matching:
+     - Compare submission `blocker.description` with issue `observation` field
+     - Use fuzzy text matching (>80% similarity threshold)
+     - Match on keywords, severity, thematic area
+   - If match found (>80% similarity):
+     ```
+     🔗 Similar issue found!
+
+     Issue #{N}: {observation}
+     Severity: {severity} | Category: {category}
+     Epic: {suggestedEpic} | Story: {suggestedStory}
+
+     Link this submission to Issue #{N}? [y/n]: _
+     ```
+     - If yes: Link submission to existing issue (see Step 4: Link Submission)
+     - If no: Continue to create new issue
+   - If no match found (<80% similarity):
+     ```
+     🆕 No similar issue found
+
+     Create new POEM issue for this submission? [y/n]: _
+     ```
+     - If yes: Create new issue (see Step 4: Create New Issue)
+     - If no: Skip submission (keeps status "pending")
+3. After processing all selected submissions: Display summary
+   ```
+   ✅ Inbox processing complete
+
+   Processed: {N} submissions
+   - Linked to existing issues: {N}
+   - Created new issues: {N}
+   - Skipped: {N}
+   ```
+
 ### Step 2: Context Analysis
 
 **Reference Documents**:
@@ -146,6 +210,117 @@ Is this pure maintenance (bug fix, perf, tech debt, security, infra, docs)?
 ├─ YES → Route to Epic 0 Story (Maintenance)
 └─ NO (ambiguous, needs clarification) → Ask user for clarification
 ```
+
+### Step 3.5: Mode E Specific Processing (Inbox Submissions)
+
+**Only execute if Mode E (/triage inbox) was triggered**
+
+For each selected submission from the inbox:
+
+**Step 3.5a: Link to Existing Issue**
+
+If user confirmed linking to existing issue:
+
+1. **Update POEM issue** (`docs/planning/gap-analysis/usage-issues.jsonl`):
+   - Read existing issue line (issue number = line number in file)
+   - Parse JSON object
+   - If `schemaVersion` is not `"2.1"`: Upgrade to v2.1 (add `schemaVersion: "2.1"`)
+   - Add or update `reportedBy` array field:
+     ```json
+     "reportedBy": [
+       {
+         "submissionId": "v-voz-001",
+         "project": "v-voz",
+         "timestamp": "2026-01-22T10:00:00Z",
+         "projectSpecificDetails": {
+           "workflowName": "storyline",
+           "dataLost": "3 character descriptions"
+         }
+       }
+     ]
+     ```
+   - Extract from submission: `submissionId`, `project.name`, `timestamp`, `blocker.projectSpecificDetails`
+   - Append to existing `reportedBy` array (if already exists) or create new array
+   - Write updated issue back to JSONL file (same line number)
+
+2. **Update submission file** (`docs/planning/gap-analysis/inbox/{submissionId}.json`):
+   - Read submission JSON
+   - Update fields:
+     - `status`: `"pending"` → `"linked"`
+     - `poemIssueRef`: `"issue-{N}"` (where N = issue line number)
+   - Write updated submission back to inbox file
+   - Pretty-print JSON (indent 2 spaces)
+
+3. **Display confirmation**:
+   ```
+   ✅ Linked {submissionId} to Issue #{N}
+
+   Updated:
+   - POEM issue reportedBy array (now {count} project(s))
+   - Submission status: pending → linked
+   ```
+
+**Step 3.5b: Create New Issue**
+
+If user confirmed creating new issue:
+
+1. **Create new POEM issue entry**:
+   - Generate new issue from submission data:
+     ```json
+     {
+       "timestamp": "{submission.timestamp}",
+       "session": "field-testing-{project}",
+       "category": "{infer from severity/description}",
+       "severity": "{submission.blocker.severity}",
+       "observation": "{submission.blocker.description}",
+       "context": "{submission.blocker.context}",
+       "expected": "System should maintain state across workflow switches",
+       "actual": "{derived from context}",
+       "impact": "{derived from severity}",
+       "tags": ["{project}", "{workflowName}", "field-testing"],
+       "schemaVersion": "2.1",
+       "estimatedTime": "{infer from severity}",
+       "thematicArea": "{infer from workflowName}",
+       "type": "bug",
+       "suggestedPath": "{compute using Criteria 1-4}",
+       "reportedBy": [
+         {
+           "submissionId": "{submission.submissionId}",
+           "project": "{submission.project.name}",
+           "timestamp": "{submission.timestamp}",
+           "projectSpecificDetails": "{submission.blocker.projectSpecificDetails}"
+         }
+       ]
+     }
+     ```
+   - Inference rules:
+     - `category`: Use `severity` + keywords (critical/high→bug, medium→usability, low→enhancement)
+     - `expected`: Generic statement based on context
+     - `actual`: Extract from context
+     - `impact`: Map severity (critical/high→high, medium→medium, low→low)
+     - `estimatedTime`: Map severity (critical→4-8hr, high→1-4hr, medium→<1hr, low→<1hr)
+     - `thematicArea`: Map workflowName (storyline→workflows, prompt→prompts, etc.)
+   - Append new issue to `docs/planning/gap-analysis/usage-issues.jsonl`
+   - Get new issue number (count lines in file)
+
+2. **Update submission file** (same as Step 3.5a #2)
+
+3. **Display confirmation**:
+   ```
+   ✅ Created Issue #{N} for {submissionId}
+
+   New issue:
+   - Observation: {observation}
+   - Category: {category} | Severity: {severity}
+   - Suggested Path: {suggestedPath}
+   - Submission linked and marked as "linked"
+   ```
+
+**Step 3.5c: Skip Submission**
+
+If user chose not to link or create:
+- Leave submission status as `"pending"`
+- Display: "⏭ Skipped {submissionId} (status remains pending)"
 
 ### Step 4: Generate Routing Recommendation
 

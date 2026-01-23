@@ -141,8 +141,8 @@
     },
     "schemaVersion": {
       "type": "string",
-      "enum": ["1.0", "2.0"],
-      "description": "Schema version identifier (absent = v1.0, present = v2.0)"
+      "enum": ["1.0", "2.0", "2.1"],
+      "description": "Schema version identifier (absent = v1.0, present = v2.0 or v2.1)"
     },
     "estimatedTime": {
       "type": "string",
@@ -166,6 +166,34 @@
     "suggestedPathRationale": {
       "type": "string",
       "description": "2-3 bullet points explaining routing decision (v2.0 field, optional)"
+    },
+    "reportedBy": {
+      "type": "array",
+      "description": "Multi-project tracking - which external POEM installations reported this issue (v2.1 field, optional)",
+      "items": {
+        "type": "object",
+        "required": ["submissionId", "project", "timestamp"],
+        "properties": {
+          "submissionId": {
+            "type": "string",
+            "description": "Submission ID from field testing (e.g., v-voz-001)"
+          },
+          "project": {
+            "type": "string",
+            "description": "Project name (v-voz, prompt-supportsignal, v-appydave)"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this project reported the issue"
+          },
+          "projectSpecificDetails": {
+            "type": "object",
+            "description": "Flexible context object with project-specific information",
+            "additionalProperties": true
+          }
+        }
+      }
     }
   }
 }
