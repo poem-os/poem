@@ -73,13 +73,13 @@ When Lisa runs `*curate` on Story 4.3, the section would be updated to:
 <!-- Lisa (Librarian) updates this section during knowledge curation -->
 
 **Patterns Created**:
-- [Schema-Based Mock Data Generation](../kdd/patterns/4-schema-based-mock-data-generation.md) *(actual example)*
+- [Schema-Based Mock Data Generation](../patterns/4-schema-based-mock-data-generation.md) *(actual example)*
 
 **Learnings Documented**:
-- [Array Type Override in Mock Data Generation](../kdd/learnings/epic4-array-type-override-bug.md) *(actual example)*
+- [Array Type Override in Mock Data Generation](../learnings/epic4-array-type-override-bug.md) *(actual example)*
 
 **Decisions (ADRs)**:
-- [ADR-005: Mock Data Generation with Faker.js](../kdd/decisions/adr-005-mock-data-generation-fakerjs.md) *(actual example)*
+- [ADR-005: Mock Data Generation with Faker.js](../decisions/adr-005-mock-data-generation-fakerjs.md) *(actual example)*
 
 **Examples Created**:
 - (None in this story)

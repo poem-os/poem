@@ -212,7 +212,7 @@ rules:
   # VAL-005: Metadata Completeness
   - id: "VAL-005"
     name: "Metadata Completeness"
-    description: "Validate KDD documents have required metadata fields"
+    description: "Validate KDD documents have required metadata fields (YAML frontmatter OR inline metadata)"
     trigger: "document_create"
     severity: "warning"
     threshold: null        # All required fields must be present
@@ -224,9 +224,12 @@ rules:
 
     validation:
       check_type: "metadata_validation"
+      formats:
+        frontmatter: "YAML frontmatter block (preferred for new documents)"
+        inline: "Inline metadata using bold fields (accepted for existing documents)"
       checks:
-        - "Check frontmatter YAML exists"
-        - "Verify all required fields present (from kdd-taxonomy.yaml)"
+        - "Check YAML frontmatter exists OR inline metadata patterns present"
+        - "Verify all required fields present (from kdd-taxonomy.yaml or inline equivalents)"
         - "Validate field formats (dates, status values, etc.)"
         - "Flag incomplete or malformed metadata"
 
@@ -260,27 +263,90 @@ rules:
         - "created"
         - "difficulty"
 
+    # Inline Metadata Pattern Recognition (Option A)
+    inline_metadata_patterns:
+      description: "Recognize inline metadata using bold field patterns (e.g., **Field**: value)"
+      enabled: true
+      field_mappings:
+        # Common patterns across all document types
+        created:
+          patterns: ["**Created**:", "**Date**:", "**Pattern Established**:"]
+          format: "YYYY-MM-DD or similar date string"
+        story_reference:
+          patterns: ["**Source**:", "**Source Stories**:", "**Story**:"]
+          format: "Story X.Y or 'Stories X.Y, X.Z'"
+        status:
+          patterns: ["**Status**:"]
+          format: "Active | Deprecated | Accepted | Proposed | Resolved | Recurring"
+        topic:
+          patterns: ["# {title}", "H1 heading"]
+          format: "Document title inferred from H1 heading"
+        category:
+          patterns: ["**Category**:"]
+          format: "deployment | debugging | testing | ai-integration | validation"
+        # Pattern-specific
+        domain:
+          patterns: ["**Domain**:"]
+          format: "High-level category (can be inferred from topic)"
+          optional_inline: true  # Domain often implicit in title
+        pattern_type:
+          patterns: ["**Pattern Type**:", "**Type**:"]
+          format: "Code Pattern | Architectural Pattern | Validation Pattern"
+          optional_inline: true  # Can be inferred from content
+        # Learning-specific
+        issue:
+          patterns: ["**Challenge**:", "**Issue**:", "**Problem**:"]
+          format: "Brief issue description"
+        severity:
+          patterns: ["**Impact**:", "**Severity**:"]
+          format: "Low | Medium | High | Critical (may be implicit)"
+          optional_inline: true  # Can be inferred from Impact description
+        recurrence_count:
+          patterns: ["**Recurrence Count**:", "**Occurrences**:"]
+          format: "Integer count"
+          default: 1  # Assume single occurrence if not specified
+        # Decision-specific
+        adr_number:
+          patterns: ["adr-{NNN}-", "# ADR-{NNN}:"]
+          format: "Extracted from filename or H1 heading"
+        decision_date:
+          patterns: ["**Decision Date**:", "**Accepted**:"]
+          format: "YYYY-MM-DD"
+          fallback: "created"  # Use created date if decision_date missing
+
+      validation_strategy:
+        priority: "Check YAML frontmatter first, fall back to inline patterns"
+        completeness_calculation: "Field present if EITHER frontmatter OR inline pattern found"
+        strict_mode: false  # Don't require both formats (one is sufficient)
+
     thresholds:
-      healthy: "95%+ documents with complete metadata"
+      healthy: "95%+ documents with complete metadata (frontmatter OR inline)"
       warning: "80-94% complete"
       critical: "<80% complete"
 
     evidence:
-      source: "SupportSignal KDD analysis"
+      source: "SupportSignal KDD analysis + POEM implementation"
       baseline: "Inconsistent metadata (no formal schema)"
+      poem_baseline: "100% inline metadata format (51% completeness with strict YAML-only check)"
       impact: "Missing metadata reduces discoverability, breaks index generation"
 
     remediation:
       actions:
         - "Run validate-kdd-topology task to identify incomplete metadata"
-        - "Update documents with missing fields"
+        - "Update documents with missing fields (YAML frontmatter OR inline patterns)"
         - "Use templates to ensure metadata completeness for new docs"
-      automation: "Automated detection, manual completion"
+        - "Inline metadata recognized via field_mappings patterns"
+      automation: "Automated detection (dual-format), manual completion"
 
     graceful_degradation:
       enabled: true
-      behavior: "Use fallback values (filename as title, etc.)"
-      rationale: "Partial metadata better than no metadata; don't block curation"
+      behavior: "Accept YAML frontmatter OR inline metadata (not both required)"
+      fallback_values:
+        - "Filename as title if H1 missing"
+        - "Created date from file mtime if not specified"
+        - "Recurrence count defaults to 1"
+        - "Domain/pattern_type inferred from content if missing"
+      rationale: "Dual format support maintains human readability while enabling validation"
 
   # VAL-006: Recurrence Detection (Recurring Issues)
   - id: "VAL-006"

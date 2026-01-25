@@ -40,6 +40,16 @@ Complete guide for Lisa (Librarian agent) on knowledge curation in Step 7 of the
 
 How to maintain bidirectional links between stories, KDD documents, and validation artifacts.
 
+### Validation and Health Tracking
+
+**[VAL-001 Link Health Tracking](./meta/val-001-tracking.md)**
+
+Monitors link health across KDD documentation to prevent broken references and ensure documentation integrity.
+
+**[Link Validation Report](./meta/link-validation-report.md)**
+
+Detailed report from latest link validation run (2026-01-25). Shows improvements after fixing path errors.
+
 ---
 
 ## Categories

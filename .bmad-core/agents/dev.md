@@ -75,6 +75,7 @@ commands:
 
 dependencies:
   checklists:
+    - pre-implementation-kdd-checklist.md
     - story-dod-checklist.md
   tasks:
     - apply-qa-fixes.md
