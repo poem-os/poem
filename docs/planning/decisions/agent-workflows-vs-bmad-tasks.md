@@ -229,7 +229,7 @@ Both guide a single agent through sequential steps. But they use **different for
 
 ---
 
-### Option 3: Propose YAML Task Format to BMAD v5.0
+### Option 3: Propose YAML Task Format to BMAD Community
 **Pros:**
 - ✅ Contribute improvement back to BMAD
 - ✅ Structured format benefits entire ecosystem
@@ -237,7 +237,7 @@ Both guide a single agent through sequential steps. But they use **different for
 
 **Cons:**
 - ❌ Requires BMAD community buy-in
-- ❌ Long timeline (BMAD v5.0 = Q2 2026)
+- ❌ Long timeline (proposal target: Q2 2026)
 - ❌ May not be accepted
 
 **Effort**: 8-12 hours to create RFC + examples + documentation
@@ -275,7 +275,7 @@ Both guide a single agent through sequential steps. But they use **different for
 - 📋 Decide based on community response
 
 **Long-term (POEM v2.0 - Q3 2026)**:
-- 🔮 Align with BMAD v5.0 decision (markdown, YAML, or both)
+- 🔮 Align with BMAD community decision (markdown, YAML, or both)
 - 🔮 Refactor if community adopts YAML task format
 - 🔮 Maintain custom format if BMAD stays markdown-only
 
@@ -329,10 +329,10 @@ Both guide a single agent through sequential steps. But they use **different for
 - ✅ **Working**: POEM agent tasks work well in current form
 - ⚠️ **Divergent**: Not aligned with BMAD v4 task format
 - 📋 **Tracked**: Epic 9 will address long-term alignment
-- 🔄 **Review**: Q2 2026 after BMAD v5.0 direction clarifies
+- 🔄 **Review**: Q2 2026 after BMAD community direction clarifies
 
 ---
 
 **Last Updated**: 2026-01-11
-**Next Review**: After BMAD v5.0 roadmap announced (Q2 2026)
+**Next Review**: After BMAD future roadmap announced (Q2 2026)
 **Decision Owner**: POEM Product Team + BMAD Community

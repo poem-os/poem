@@ -10,7 +10,7 @@
 ### 1. BMAD Integration: Capability Validation Pattern
 
 **Status**: 📋 Requirements Complete, Proof of Concept Validated
-**Target**: BMAD v5.0.0 (Q2 2026)
+**Target**: BMAD community integration (proposal target: Q2 2026)
 **Epic**: Future Epic 8
 
 **What**: Extract POEM's Workflow Validator (Victor) pattern and generalize for BMAD core
@@ -46,7 +46,7 @@
 2. 🔄 Validate pattern through POEM Epic 3-4 - IN PROGRESS
 3. 📊 Collect metrics and learnings
 4. 📝 Refine requirements based on POEM experience
-5. 🚀 Propose to BMAD community for v5.0 integration
+5. 🚀 Propose to BMAD community for future release integration
 
 **Dependencies**:
 - Complete POEM Epic 3 (80% workflow coverage)
@@ -106,22 +106,22 @@ vs
 **Alignment Options**:
 1. **Migrate to BMAD markdown format** (lose structured advantages)
 2. **Keep YAML, document as domain-specific** (permanent divergence)
-3. **Propose YAML task RFC to BMAD v5.0** (contribute improvement)
+3. **Propose YAML task RFC to BMAD community** (contribute improvement)
 4. **Hybrid approach** (support both formats)
 
 **Recommended Path**:
 - ✅ **Short-term**: Keep YAML agent tasks (Epic 3 complete, works well)
 - 📋 **Medium-term**: Propose structured task format RFC to BMAD community
-- 🔮 **Long-term**: Align with BMAD v5.0 decision
+- 🔮 **Long-term**: Align with BMAD community direction
 
 **Key Deliverables**:
 1. Architecture documentation: `docs/architecture/agent-tasks.md`
 2. RFC for BMAD community (structured task format)
-3. Decision on migration vs maintenance based on BMAD v5.0 direction
+3. Decision on migration vs maintenance based on BMAD community direction
 4. Refactor if community adopts YAML (or maintain custom format)
 
 **Dependencies**:
-- BMAD v5.0 roadmap announcement
+- BMAD future roadmap announcement
 - Community feedback on structured task format
 - POEM Epic 3 completion (validates pattern effectiveness)
 
@@ -140,7 +140,7 @@ vs
 2. 📝 Create agent-tasks.md architecture doc
 3. 📋 Propose RFC to BMAD Discord (Q2 2026)
 4. 🔄 Gather community feedback
-5. 🎯 Decide on alignment strategy based on BMAD v5.0
+5. 🎯 Decide on alignment strategy based on BMAD community direction
 
 ---
 
@@ -404,7 +404,7 @@ versions:
 ### 9. Cross-Project Pattern Detection
 
 **Status**: 💡 Idea
-**Target**: BMAD v5.0+
+**Target**: BMAD future release
 
 **What**: Detect similar capability validation patterns across BMAD projects
 

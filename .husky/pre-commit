@@ -4,3 +4,18 @@ gitleaks protect --staged --verbose
 # Run unit tests only (fast, no servers)
 # Use `npm test` for full suite including integration tests
 npm run test:unit
+
+# KDD Topology Validation (Lisa's validation)
+# Only runs if KDD documents were changed in this commit
+if git diff --cached --name-only | grep -q "^docs/kdd/"; then
+  echo ""
+  echo "🔍 Lisa: Validating KDD topology (changed KDD docs detected)..."
+  npm run validate-kdd
+
+  if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌ Commit blocked: Fix broken KDD links before committing"
+    echo "💡 Run 'npm run validate-kdd' to see detailed report"
+    exit 1
+  fi
+fi

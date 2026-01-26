@@ -46,6 +46,10 @@ How to maintain bidirectional links between stories, KDD documents, and validati
 
 Monitors link health across KDD documentation to prevent broken references and ensure documentation integrity.
 
+**[VAL-006 Recurring Issues Tracker](./meta/val-006-recurring-issues.md)**
+
+Tracks recurring issues across the codebase. When an issue recurs 3+ times, it becomes a candidate for pattern promotion (transforming learning → reusable pattern).
+
 **[Link Validation Report](./meta/link-validation-report.md)**
 
 Detailed report from latest link validation run (2026-01-25). Shows improvements after fixing path errors.

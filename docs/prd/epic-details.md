@@ -473,6 +473,29 @@ so that I can manage distinct prompt collections (YouTube Launch, Video Planning
 
 ---
 
+### Story 3.9: Add Capability Explorer Command to Victor Agent
+
+As a prompt engineer, developer, or new POEM user,
+I want to query what POEM can do through a unified interface,
+so that I can discover capabilities without manually searching across multiple documents (Epic Capabilities, Stories, Victor artifacts, KDD docs).
+
+**Acceptance Criteria**:
+
+1. Victor agent gains `*capability-explorer` command that accepts natural language queries
+2. Command queries four data sources: Victor artifacts, Story files, KDD docs, Epic Capabilities
+3. Supports query types: "list all", "can POEM do X?", "find similar to X", "what's blocking story Y?"
+4. Returns results with capability status indicators (✅ Functional, 🔄 In Progress, 📅 Planned, ⚠️ Partial, ❌ Not Available)
+5. Query results include story references, validation status, and KDD documentation links
+6. Command reads Lisa's KDD topology (patterns, learnings, decisions) as additional context source
+7. Results include practical usage information: commands to use, examples, documentation links
+8. Fast query response (<3 seconds for typical queries)
+9. Victor agent definition updated with new command documentation
+10. Technical debt documented: "Extract to Capability Explorer agent if complexity exceeds 20% of Victor's code"
+11. Help system updated to include `*capability-explorer` command description
+12. Query command is optional and does not interfere with Victor's primary validation role
+
+---
+
 ## Epic 4: YouTube Automation Workflow (System Validation)
 
 **Goal**: Validate POEM's core capabilities through the YouTube Launch Optimizer workflow—a real-world, non-trivial multi-prompt pipeline. This epic tests schema extraction, template chaining, mock data generation, Handlebars helpers, progressive data accumulation, and human-in-the-loop patterns using 53 production templates across 11 workflow sections.

@@ -65,7 +65,7 @@ Build the fourth agent with workflows for realistic mock data generation based o
 
 ## Epic 8: BMAD Integration - Capability Validation Pattern (Future)
 
-**Status**: 📋 Requirements Complete, Awaiting BMAD v5.0 Integration
+**Status**: 📋 Requirements Complete, Awaiting BMAD Community Integration
 
 Extract the Workflow Validator (Victor) pattern from POEM and generalize it for BMAD core as a reusable "Capability Validation Pattern" for framework/tooling/DSL projects. This pattern enables product-level QA that validates capabilities across stories, tests against reference workflows, tracks cumulative progress, and generates strategic feedback.
 
@@ -80,7 +80,7 @@ Extract the Workflow Validator (Victor) pattern from POEM and generalize it for 
 - Integration matrix tracking
 - Strategic feedback loop
 
-**Target BMAD Version**: v5.0.0 (Q2 2026)
+**Target**: BMAD community integration (proposal target: Q2 2026)
 
 **Dependencies**: Complete POEM Epic 3-4 validation to prove pattern effectiveness
 

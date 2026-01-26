@@ -84,7 +84,16 @@ Epic 4 established decisions for mock data generation, prompt chaining, helper m
    - **Status**: Accepted (17/17 persistence tests passing)
    - **Alternative Rejected**: SQLite (binary format defeats human-readability)
 
+### Design Decisions (Cross-Epic)
+
+9. **[ADR-009: Fixed KDD Taxonomy for POEM](adr-009-fixed-kdd-taxonomy.md)** (Design decision)
+   - **Decision**: POEM uses fixed four-category taxonomy (pattern/learning/decision/example)
+   - **Rationale**: Evidence-based simplicity, cross-project consistency, sufficient for AI-assisted development
+   - **Status**: Accepted (meta-driven taxonomy deferred to Epic 8/BMAD future integration)
+   - **Key Innovation**: Framework-aware classification rules prevent BMAD path conflicts
+   - **Future**: Meta-driven taxonomy appropriate for Tier 2 architecture or BMAD integration
+
 ---
 
-**Last Updated**: 2026-01-19
+**Last Updated**: 2026-01-25
 **Maintainer**: Dev Agent (updates during KDD task execution)

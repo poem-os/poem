@@ -437,10 +437,10 @@ Victor maintains (in `dev-workspace/`, transient):
 
 ### Future: BMAD Integration (Epic 8)
 
-Victor's pattern will be generalized for BMAD v5.0 as "Capability Validator" agent.
+Victor's pattern will be generalized for BMAD future release as "Capability Validator" agent.
 
 **Requirements**: `docs/planning/bmad-integration/capability-validation-requirements.md`
-**Target**: BMAD v5.0.0 (Q2 2026)
+**Target**: BMAD community integration (proposal target: Q2 2026)
 **Tracking**: `docs/prd/epic-list.md` (Epic 8), `docs/future-enhancements.md`
 
 ---

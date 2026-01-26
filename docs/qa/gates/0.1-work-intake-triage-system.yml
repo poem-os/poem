@@ -126,7 +126,7 @@ recommendations:
 
     - priority: "P1"
       category: "Strategic"
-      description: "BMAD v5.0 proposal to elevate triage pattern to core feature"
+      description: "BMAD community proposal to elevate triage pattern to core feature"
       effort: "See gap analysis document"
 
 sat_summary:
@@ -165,7 +165,7 @@ innovation:
   description: |
     Introduces unified work intake triage system - first systematic approach to workflow routing in BMAD.
     Decision criteria framework is reusable across projects. SupportSignal adoption path documented.
-    Candidate for BMAD v5.0 core feature.
+    Candidate for BMAD future release core feature.
 
   documentation: "docs/planning/gap-analysis/bmad-core-gap-analysis.md"
   adoption_potential: "HIGH"

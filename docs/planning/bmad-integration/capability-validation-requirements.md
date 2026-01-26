@@ -983,7 +983,7 @@ capabilityValidation:
 2. 🔨 **Implement Phase 1** - Core agent & basic validation
 3. 🧪 **Test on 2nd project** - Validate generalization (Klueless or appydave-tools)
 4. 📚 **Write documentation** - Pattern guide, best practices
-5. 🚀 **Release to community** - BMAD v5.0 with Capability Validation
+5. 🚀 **Release to community** - Propose Capability Validation pattern for BMAD future release
 
 ---
 

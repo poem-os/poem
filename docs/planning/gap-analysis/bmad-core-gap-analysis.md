@@ -102,7 +102,7 @@ Both projects run **BMAD v4.44.3** with clean installations and strategic custom
 - Integration matrix
 - Strategic feedback log
 
-**Future Impact**: Pattern being generalized for BMAD v5.0 as "Capability Validator" agent.
+**Future Impact**: Pattern being generalized for BMAD future release as "Capability Validator" agent.
 
 **Reference**:
 - Agent: `.claude/agents/victor.md` (387 lines)
@@ -187,7 +187,7 @@ devLoadAlwaysFiles:
 
 **Why it matters**:
 - Documents innovations for future BMAD versions
-- Clear roadmap for capability validation in BMAD v5.0
+- Clear roadmap for capability validation in BMAD future release
 - Shows path from project-specific to framework-level features
 
 ---
@@ -663,7 +663,7 @@ maintenance:
 - **Minimal Customization** - Strategic changes only (2-3 key modifications)
 - **Lean Context** - Focused devLoadAlwaysFiles (3 files)
 - **Product-Level QA** - Validates cumulative capability, not just per-story
-- **Future-Focused** - Documents innovations for BMAD v5.0 integration
+- **Future-Focused** - Documents innovations for BMAD future release integration
 
 **Archetype**: Experimental, innovative, lean.
 
@@ -717,14 +717,14 @@ Maintenance Backlog (POEM)
 
 **Gap Analysis Verdict**:
 - Neither is "better" - they solve different problems
-- **POEM** shows where BMAD is going (v5.0 capability validation)
+- **POEM** shows where BMAD is going (capability validation innovation)
 - **SupportSignal** shows BMAD at production scale (KDD + patterns + rigor)
 
 **Recommended Exchange**:
 - **POEM adopts**: KDD integration, pattern library, testing infrastructure
 - **SupportSignal adopts**: Victor agent (product-level QA), maintenance backlog
 
-**Future State**: Both projects contribute innovations back to BMAD framework (POEM's Victor → BMAD v5.0, SupportSignal's KDD integration → BMAD expansion pack).
+**Future State**: Both projects contribute innovations back to BMAD framework (POEM's Victor → BMAD future release, SupportSignal's KDD integration → BMAD expansion pack).
 
 ---
 
@@ -850,7 +850,7 @@ Analyzing context...
 
 ### Broader BMAD Community Benefit
 
-**Proposal**: Elevate triage system to **BMAD v5.0 core feature**
+**Proposal**: Elevate triage system to **BMAD future release core feature**
 
 **Rationale**:
 - Every BMAD project faces work routing decisions
@@ -858,7 +858,7 @@ Analyzing context...
 - Reduces cognitive load on developers
 - Improves workflow adoption (clear entry points)
 
-**Requirements for BMAD v5.0**:
+**Requirements for BMAD future release**:
 - Generalize epic theme detection (configurable in core-config.yaml)
 - Add project-specific decision criteria customization
 - Create triage analytics (track routing accuracy, user overrides)

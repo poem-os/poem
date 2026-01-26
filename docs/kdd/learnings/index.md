@@ -75,7 +75,15 @@ Epic 4 revealed insights about type safety in generation, testing workflows, pat
    - **Solution**: Add description/example metadata exports, create `/api/helpers` endpoint
    - **Lesson**: Apply API-First pattern to ALL discoverable resources, not just heavy operations.
 
+### Test Maintenance and Quality
+
+9. **[Workflow Data Test Race Condition](workflow-data-test-race-condition.md)** ⚠️ RECURRING (2/3)
+   - **Challenge**: Flaky test failure - async file write not complete before read (blocks commits)
+   - **Solution**: Verify file exists before load (`fs.promises.access()`), avoid arbitrary delays
+   - **Lesson**: Async filesystem operations need explicit verification in tests, not just `await`
+   - **Status**: Recurring issue - 2 occurrences tracked in [VAL-006](../meta/val-006-recurring-issues.md)
+
 ---
 
-**Last Updated**: 2026-01-19
+**Last Updated**: 2026-01-25
 **Maintainer**: Dev Agent (updates during KDD task execution)

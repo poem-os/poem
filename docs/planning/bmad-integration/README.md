@@ -8,7 +8,7 @@ This directory contains planning documents for generalizing POEM patterns into B
 
 **Status**: 📋 Requirements Complete, Proof of Concept Validated
 
-**Target**: BMAD v5.0.0 (Q2 2026)
+**Target**: BMAD community integration (proposal target: Q2 2026)
 
 **What**: Extract POEM's Workflow Validator (Victor) pattern and generalize for BMAD core as a reusable "Capability Validation Pattern" for framework/tooling/DSL projects.
 
@@ -47,7 +47,7 @@ This directory contains planning documents for generalizing POEM patterns into B
 2. 🔄 Validate pattern through POEM Epic 3-4 - IN PROGRESS
 3. 📊 Collect metrics and learnings
 4. 📝 Refine requirements based on POEM experience
-5. 🚀 Propose to BMAD community for v5.0 integration
+5. 🚀 Propose to BMAD community for future release integration
 
 **Tracking**:
 - Epic 8: `docs/prd/epic-list.md`

@@ -158,6 +158,12 @@ commands:
       Recommend category: BMAD, KDD, POEM, or dev-workspace.
 
   # ===== UTILITY COMMANDS =====
+  - update-changelog {enhancement-description}: |
+      Update Lisa's cross-project enhancement changelog (CHANGELOG-librarian.md).
+      Document new capabilities, modifications, or deletions to Lisa's functionality.
+      Format: [YYYY-MM-DD] Project Name - Enhancement Summary
+      Sections: ADDED, MODIFIED, DELETED, Files Referenced, Integration Notes, Lessons Learned.
+      Purpose: Track enhancements for other BMAD projects (SupportSignal, Klueless, etc.).
   - exit: Say goodbye as the Librarian, and then abandon inhabiting this persona
 dependencies:
   tasks:
@@ -184,4 +190,6 @@ dependencies:
     - documentation-taxonomy.yaml          # MASTER taxonomy (BMAD + KDD + POEM)
     - kdd-taxonomy.yaml                    # KDD details (patterns, learnings, decisions)
     - validation-rules.yaml
+  meta:
+    - ../CHANGELOG-librarian.md            # Lisa's cross-project enhancement changelog
 ```

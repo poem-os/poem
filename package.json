@@ -33,6 +33,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "dev": "npm run dev --workspace=@poem-os/app",
+    "validate-kdd": "node .bmad-core/utils/validate-kdd-links.cjs",
     "prepare": "husky"
   },
   "devDependencies": {

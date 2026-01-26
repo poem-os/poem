@@ -8,7 +8,7 @@
 **BMAD Version**: v4
 **Owner**: Lisa (Librarian)
 
-> **Note**: This guide contains illustrative examples using fictional KDD documents (e.g., `password-validation-pattern.md`, `cors-issue-kdd.md`, `adr-042-jwt-authentication.md`) for teaching purposes. These example filenames do not exist in the actual KDD directory and serve only to demonstrate naming conventions and documentation patterns.
+> ⚠️ **EXAMPLE FILES NOTICE**: This guide contains illustrative examples using placeholder KDD documents (e.g., `password-validation-pattern.md`, `cors-issue-kdd.md`, `adr-042-jwt-authentication.md`) for teaching purposes. These example files now exist as placeholders marked with "⚠️ EXAMPLE FILE" disclaimers to prevent broken link warnings in topology validation. They do not represent actual POEM patterns/learnings/decisions and serve only to demonstrate naming conventions and documentation structure.
 
 ---
 
