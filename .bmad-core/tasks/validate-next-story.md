@@ -83,6 +83,23 @@ To comprehensively validate a story draft before implementation begins, ensuring
 - **Reference accuracy**: Verify all source references are correct and accessible
 - **Fact checking**: Cross-reference claims against epic and architecture documents
 
+### 8.5 PRD-Story Alignment Validation
+
+- **Story number existence in sharded PRD**: Verify story number (e.g., 3.8) exists in sharded PRD at `docs/prd/epic-details.md` in the appropriate epic section
+- **Story number existence in consolidated PRD**: Verify same story number exists in consolidated PRD at `docs/prd.md` in the appropriate epic section
+- **Story description match**: Compare story title/description from story file against both PRD locations - descriptions must match
+- **Epic consistency**: Verify epic number matches story number prefix (e.g., Story 3.8 must be in Epic 3 section)
+- **Consolidated-Sharded sync**: If story exists in sharded PRD but missing from consolidated PRD, flag as **CRITICAL** blocking issue
+- **Source of truth**: Sharded PRD (`docs/prd/epic-details.md`) is authoritative - consolidated PRD must match sharded version
+- **Story numbering sequence**: Check for gaps or duplicates in story numbering within epic (e.g., Epic 3 should not skip from 3.6 to 3.8)
+
+**Validation outputs:**
+- ✅ **PASS**: Story exists in both PRDs with matching description and correct epic placement
+- ⚠️ **CRITICAL**: Story missing from consolidated PRD (PRD sync required before implementation)
+- ❌ **BLOCKING**: Story description mismatch between sharded and consolidated PRDs (requires resolution)
+- ❌ **BLOCKING**: Story number doesn't exist in epic breakdown (invalid story number)
+- ⚠️ **WARNING**: Story numbering has gaps (may indicate missing stories or incorrect numbering)
+
 ### 9. Dev Agent Implementation Readiness
 
 - **Self-contained context**: Can the story be implemented without reading external docs?
@@ -127,6 +144,15 @@ Provide a structured validation report including:
 - Missing source references
 - Inconsistencies with architecture documents
 - Invented libraries, patterns, or standards
+
+#### PRD-Story Alignment Issues
+
+- Story missing from consolidated PRD
+- Story missing from sharded PRD
+- Story description mismatch between PRDs
+- Story number invalid (not in epic breakdown)
+- Story numbering sequence gaps
+- Epic number mismatch (story in wrong epic section)
 
 #### Final Assessment
 

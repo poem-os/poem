@@ -423,7 +423,21 @@ Lisa is the FINAL agent. After knowledge curation, the story workflow is complet
 
 # Epic progress summary (5-10 min)
 *progress-report
+
+# Capability query (Story 3.9) - <3s
+*capability-explorer <query>
 ```
+
+**NEW in Story 3.9**: Victor now includes a capability query system that resolves **Issue #15** (users can't discover what POEM can do).
+
+**Capability Query Examples**:
+- `*capability-explorer list all` - List all capabilities grouped by status
+- `*capability-explorer can POEM chain prompts?` - Check if POEM has a specific capability
+- `*capability-explorer workflow execution` - Find similar capabilities
+- `*capability-explorer what's blocking story 5.1?` - Identify story dependencies
+
+**Query Sources**: Victor artifacts, Story files, KDD docs, Epic Capabilities
+**Response Time**: <3 seconds
 
 ### Validation Artifacts
 

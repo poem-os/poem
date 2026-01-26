@@ -779,33 +779,61 @@ so that I can work efficiently without always invoking full workflows.
 
 ---
 
-#### Story 3.7: Implement Workflow Orchestration System
+#### Story 3.7: Define and Validate Output Schemas
 
-As a developer,
-I want a workflow execution engine that can run multi-step prompt chains,
-so that complex prompt pipelines can be orchestrated systematically.
+> **Note:** This story was initially implemented with separate schema files (input + output), but was corrected in **Story 3.7.1** to use unified schema files with `input` and `output` sections in a single file, aligning with the original 2026-01-07 architecture design.
+
+As a prompt engineer,
+I want to define output schemas for my prompts,
+so that I can validate AI responses and enable type-safe workflow chaining.
 
 **Acceptance Criteria**:
 
-1. Workflow YAML format defined as per `docs/architecture.md` § Workflow Definition Structure:
-   - Required fields: `name`, `description`, `steps`
-   - Optional fields: `sections`
-   - Steps have: `name`, `prompt`, `inputs`, `outputs`, optional `checkpoint`
-2. Workflow loader parses YAML files from `/poem/workflows/`
-3. Data bus (workflow-data) implemented as key-value store for attribute accumulation
-4. Step execution engine:
-   - Loads prompt template from `prompt` path
-   - Fetches input data from data bus using `inputs` array
-   - Renders template with Handlebars service
-   - Stores output in data bus using `outputs` array
-5. Sequential execution: steps run in order, each step can access all prior outputs
-6. Workflow-data persisted to `/poem/workflow-data/{workflow-name}.json` for pause/resume
-7. API endpoint `POST /api/workflow/execute` accepts workflow path and initial data
-8. Workflow execution logs each step: inputs used, outputs generated, render time
-9. Data bus schema auto-derived from union of all step inputs + outputs (validation available)
-10. Checkpoint steps pause execution and wait for human input before continuing
+1. ~~Output schema stored alongside input schema (e.g., `generate-title-output.json`)~~ **Corrected in Story 3.7.1:** Output schema stored within unified schema file with `input` and `output` sections (e.g., `generate-title.json` contains both)
+2. Schema defines expected AI response structure (fields, types, format)
+3. Output schema extraction from prompt "Expected Output" section (optional automation)
+4. API endpoint validates rendered output against output schema
+5. Validation reports missing fields, type mismatches, format errors
+6. Output schemas support both structured (JSON) and unstructured (text) outputs
+7. Prompt Engineer agent workflows handle unified schemas (input + output in one file)
+8. Output schemas optional (prompts can omit `output` section if outputs are purely informational)
 
-**Note**: This story provides the foundation for Epic 4's YouTube workflow validation. Simple workflows (like Epic 3's single-prompt workflows) can use this system or call template render directly.
+**NFR Considerations**:
+- Schema validation completes in <100ms (NFR2)
+- Clear error messages for schema mismatches (NFR6)
+
+---
+
+#### Story 3.8: Multi-Workflow Foundation (Phase 1)
+
+As a prompt engineer,
+I want to work with multiple independent workflows within one POEM workspace,
+so that I can manage distinct prompt collections (YouTube Launch, Video Planning, NanoBanana) with workflow-specific context while sharing common resources.
+
+**Acceptance Criteria**:
+
+1. Workflow-scoped directory structure created in `dev-workspace/workflows/<name>/`
+2. Config system extended to support `currentWorkflow` and workflow definitions
+3. Workflow configuration includes: prompts path, schemas path, reference paths (array)
+4. Config service resolves workflow-scoped paths based on active workflow
+5. Penny gains `*workflows` command to list available workflows
+6. Penny gains `*switch <workflow>` command to change active context
+7. Penny gains `*context` command to show current workflow info
+8. Existing Penny commands (`*list`, `*new`, `*view`) operate in workflow-scoped context
+9. Prompts created in workflow A don't appear when switched to workflow B
+10. Schemas scoped to workflow directories
+11. Can switch between workflows without restarting server or agent
+12. Active workflow persists across Penny sessions
+13. Workflow config supports reference paths as **array** (multiple sources)
+14. Reference path types supported: `local`, `second-brain`
+15. `*context` command displays available reference paths
+16. WorkflowDefinition model documented in architecture
+17. Workflow config structure documented with comments
+18. Phase 1 limitations documented (what's deferred to Phase 2)
+
+**Phase Note**: Phase 1 (4-6 hours) delivers foundation for Epic 4 testing. Phase 2 (Story 4.9) adds polish and integration based on Epic 4 learnings.
+
+**Related**: Course correction `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md`
 
 ---
 

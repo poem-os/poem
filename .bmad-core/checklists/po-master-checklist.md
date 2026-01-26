@@ -293,6 +293,17 @@ Ask the user if they want to work through the checklist:
 - [ ] Performance considerations addressed
 - [ ] [[BROWNFIELD ONLY]] Compatibility requirements met
 
+### 8.4 PRD-Story Documentation Cohesion
+
+- [ ] All drafted stories exist in sharded PRD (docs/prd/epic-details.md)
+- [ ] All drafted stories exist in consolidated PRD (docs/prd.md)
+- [ ] Story descriptions match between sharded and consolidated PRDs
+- [ ] Story numbers align with epic breakdown (no invalid story numbers)
+- [ ] No stories created outside PRD epic breakdown
+- [ ] Consolidated PRD sync status verified when stories added/modified
+- [ ] Story numbering sequence correct within each epic (no gaps, no duplicates)
+- [ ] Epic numbers match story number prefixes (Story 3.8 in Epic 3, etc.)
+
 ## 9. DOCUMENTATION & HANDOFF
 
 [[LLM: Good documentation enables smooth development. For brownfield, documentation of integration points is critical.]]
