@@ -75,9 +75,18 @@ Epic 4 revealed insights about type safety in generation, testing workflows, pat
    - **Solution**: Add description/example metadata exports, create `/api/helpers` endpoint
    - **Lesson**: Apply API-First pattern to ALL discoverable resources, not just heavy operations.
 
+### Quality Gates and BMAD Workflow
+
+9. **[Advisory vs Blocking Quality Gates (Story 1.10)](quality-assurance/advisory-vs-blocking-quality-gates.md)** ⚠️ CRITICAL
+   - **Challenge**: Story 1.10 passed all quality gates (Dev→SAT→QA) with 25 failing tests and runtime errors
+   - **Root Cause**: Advisory instructions ("please test") vs mandatory/blocking requirements
+   - **Solution**: Made test execution MANDATORY and BLOCKING at all gates (Dev/SAT/QA)
+   - **Lesson**: Evidence beats trust. User should never be first tester. Quality gates must actually gate.
+   - **Impact**: Systemic fix affecting all future stories - requires pasted test output as proof
+
 ### Test Maintenance and Quality
 
-9. **[Workflow Data Test Race Condition](workflow-data-test-race-condition.md)** ⚠️ RECURRING (2/3)
+10. **[Workflow Data Test Race Condition](workflow-data-test-race-condition.md)** ⚠️ RECURRING (2/3)
    - **Challenge**: Flaky test failure - async file write not complete before read (blocks commits)
    - **Solution**: Verify file exists before load (`fs.promises.access()`), avoid arbitrary delays
    - **Lesson**: Async filesystem operations need explicit verification in tests, not just `await`
