@@ -58,6 +58,11 @@ This file tracks changes made to BMAD core files for this specific project. Thes
 - `.bmad-core/tasks/create-sat.md`
 - `.bmad-core/tasks/review-story.md`
 
+**Agent-Specific Changelogs** (detailed audit trails):
+- `.bmad-core/dev-CHANGELOG.md` - James's complete enhancement history
+- `.bmad-core/sat-CHANGELOG.md` - Taylor's complete enhancement history
+- `.bmad-core/qa-CHANGELOG.md` - Quinn's complete enhancement history
+
 ---
 
 ### 2026-01-12 - Workflow Agent Handoff Clarity
