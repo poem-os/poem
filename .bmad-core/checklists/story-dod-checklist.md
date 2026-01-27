@@ -43,11 +43,15 @@ The goal is quality delivery, not just checking boxes.]]
 
 3. **Testing:**
 
-   [[LLM: Testing proves your code works. Be honest about test coverage]]
+   [[LLM: MANDATORY - You MUST execute tests and provide proof. This is BLOCKING.]]
    - [ ] All required unit tests as per the story and `Operational Guidelines` Testing Strategy are implemented.
    - [ ] All required integration tests (if applicable) as per the story and `Operational Guidelines` Testing Strategy are implemented.
-   - [ ] All tests (unit, integration, E2E if applicable) pass successfully.
+   - [ ] **MANDATORY TEST EXECUTION**: Executed `npm test` (or equivalent) and pasted full output in Dev Agent Record Debug Log.
+   - [ ] **TEST RESULTS DOCUMENTED**: Documented test results in Dev Agent Record: "Test Execution: X/Y passing, Y skipped, Z failing"
+   - [ ] **BLOCKING REQUIREMENT**: All story-related tests pass successfully (unrelated failures must be documented with explanation).
    - [ ] Test coverage meets project standards (if defined).
+
+   [[LLM: CRITICAL - Cannot mark story complete if story-related tests are failing. Must debug and fix first. Paste actual test output as proof.]]
 
 4. **Functionality & Verification:**
 

@@ -22,7 +22,42 @@ required:
 
 ## Review Process - Adaptive Test Architecture
 
-### 1. Risk Assessment (Determines Review Depth)
+### 1. **MANDATORY FIRST STEP: Execute Full Test Suite**
+
+**BLOCKING REQUIREMENT - Must complete before any code review:**
+
+```bash
+# Run full test suite
+npm test
+
+# Document results
+```
+
+**Document in QA gate file:**
+```yaml
+test_execution:
+  timestamp: "[ISO timestamp]"
+  command: "npm test"
+  results: "X/Y passing, Y skipped, Z failing"
+  story_related_failures: []
+```
+
+**AUTOMATIC GATE DECISIONS:**
+- ❌ **IF any story-related tests failing**:
+  - Gate: **FAIL** (automatic, no discretion)
+  - Quality Score: **N/A** (cannot assess quality of untested code)
+  - Action: Return to Dev (James) with specific test failures
+  - **STOP HERE - Do not proceed to code review**
+
+- ✅ **IF all story tests passing**:
+  - Document test results
+  - Proceed to Step 2 (Risk Assessment)
+
+**Rationale**: Cannot give quality score to code that doesn't pass its own tests. Test execution is the first gate, code review is the second.
+
+---
+
+### 2. Risk Assessment (Determines Review Depth)
 
 **Auto-escalate to deep review when:**
 
@@ -32,7 +67,7 @@ required:
 - Previous gate was FAIL/CONCERNS
 - Story has > 5 acceptance criteria
 
-### 2. Comprehensive Analysis
+### 3. Comprehensive Analysis
 
 **A. Requirements Traceability**
 
@@ -79,7 +114,7 @@ required:
 - Outdated dependencies
 - Architecture violations
 
-### 3. Active Refactoring
+### 4. Active Refactoring
 
 - Refactor code where safe and appropriate
 - Run tests to ensure changes don't break functionality
@@ -87,20 +122,20 @@ required:
 - Do NOT alter story content beyond QA Results section
 - Do NOT change story Status or File List; recommend next status only
 
-### 4. Standards Compliance Check
+### 5. Standards Compliance Check
 
 - Verify adherence to `docs/coding-standards.md`
 - Check compliance with `docs/unified-project-structure.md`
 - Validate testing approach against `docs/testing-strategy.md`
 - Ensure all guidelines mentioned in the story are followed
 
-### 5. Acceptance Criteria Validation
+### 6. Acceptance Criteria Validation
 
 - Verify each AC is fully implemented
 - Check for any missing functionality
 - Validate edge cases are handled
 
-### 6. Documentation and Comments
+### 7. Documentation and Comments
 
 - Verify code is self-documenting where possible
 - Add comments for complex logic if missing
