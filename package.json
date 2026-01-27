@@ -36,6 +36,9 @@
     "validate-kdd": "node .bmad-core/utils/validate-kdd-links.cjs",
     "prepare": "husky"
   },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/node": "^22.0.0",

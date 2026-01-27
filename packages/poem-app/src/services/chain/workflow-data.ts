@@ -2,7 +2,7 @@
  * WorkflowData Service
  *
  * Manages workflow-data persistence and CRUD operations.
- * Stores workflow state as JSON files in dev-workspace/workflow-data/
+ * Stores workflow state as JSON files in dev-workspace/workflow-state/ (Story 1.10: renamed from workflow-data)
  */
 
 import { promises as fs } from "node:fs";
@@ -17,11 +17,11 @@ export class WorkflowDataService {
   private workflowDataDir: string | null = null;
 
   /**
-   * Initialize the service and ensure workflow-data directory exists
+   * Initialize the service and ensure workflow-state directory exists
    */
   async initialize(): Promise<void> {
-    // Resolve workflow-data directory
-    this.workflowDataDir = await resolvePathAsync("workflowData");
+    // Resolve workflow-state directory (Story 1.10: renamed from workflowData)
+    this.workflowDataDir = await resolvePathAsync("workflowState");
 
     // Ensure directory exists
     await fs.mkdir(this.workflowDataDir, { recursive: true });

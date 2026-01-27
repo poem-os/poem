@@ -12,7 +12,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { loadPoemConfig, getProjectRoot, isDevelopmentMode, resetConfig } from "../../../src/services/config/poem-config.js";
+import { loadPoemConfig, getProjectRoot, isDevelopmentMode, resetConfig, resolvePathAsync } from "../../../src/services/config/poem-config.js";
 import { WorkflowDataService } from "../../../src/services/chain/workflow-data.js";
 import { promises as fs } from "node:fs";
 
@@ -45,7 +45,7 @@ describe("Path Resolution Verification (Regression Test)", () => {
       const config = await loadPoemConfig();
 
       expect(config.isDevelopment).toBe(true);
-      expect(config.workspace.workflowData).toBe('dev-workspace/workflow-data');
+      expect(config.workspace.workflowState).toBe('dev-workspace/workflow-state');
       expect(config.workspace.prompts).toBe('dev-workspace/prompts');
       expect(config.workspace.schemas).toBe('dev-workspace/schemas');
       expect(config.workspace.mockData).toBe('dev-workspace/mock-data');
@@ -53,8 +53,8 @@ describe("Path Resolution Verification (Regression Test)", () => {
     });
   });
 
-  describe("Workflow Data File Location", () => {
-    it("should create files in dev-workspace/workflow-data/", async () => {
+  describe("Workflow State File Location", () => {
+    it("should create files in dev-workspace/workflow-state/", async () => {
       const service = new WorkflowDataService();
       await service.initialize();
 
@@ -63,10 +63,10 @@ describe("Path Resolution Verification (Regression Test)", () => {
         purpose: "verify path resolution fix"
       });
 
-      // Get absolute path from config
-      const config = await loadPoemConfig();
+      // Get absolute path using resolvePathAsync (handles both flat and workflow modes)
       const path = require("node:path");
-      const expectedPath = path.join(config.projectRoot, config.workspace.workflowData, `${workflowData.id}.json`);
+      const workflowStateDir = await resolvePathAsync("workflowState");
+      const expectedPath = path.join(workflowStateDir, `${workflowData.id}.json`);
 
       // File should exist at expected location
       await expect(fs.access(expectedPath)).resolves.toBeUndefined();
@@ -79,14 +79,16 @@ describe("Path Resolution Verification (Regression Test)", () => {
       expect(parsed.data.testType).toBe("regression");
 
       // Verify path contains dev-workspace (not packages/poem-app/poem)
-      expect(expectedPath).toContain('dev-workspace/workflow-data');
-      expect(expectedPath).not.toContain('packages/poem-app/poem/workflow-data');
+      // Note: In multi-workflow mode, path will be dev-workspace/workflows/<name>/workflow-state
+      expect(expectedPath).toContain('dev-workspace');
+      expect(expectedPath).toContain('workflow-state');
+      expect(expectedPath).not.toContain('packages/poem-app/poem');
 
       // Cleanup
       await service.delete(workflowData.id);
     });
 
-    it("should NOT create files in packages/poem-app/poem/workflow-data/", async () => {
+    it("should NOT create files in packages/poem-app/poem/workflow-state/", async () => {
       const service = new WorkflowDataService();
       await service.initialize();
 
@@ -94,7 +96,7 @@ describe("Path Resolution Verification (Regression Test)", () => {
 
       // Calculate wrong path (relative to cwd which is packages/poem-app)
       const path = require("node:path");
-      const wrongPath = path.join(process.cwd(), "poem/workflow-data", `${workflowData.id}.json`);
+      const wrongPath = path.join(process.cwd(), "poem/workflow-state", `${workflowData.id}.json`);
 
       // File should NOT exist at wrong location
       await expect(fs.access(wrongPath)).rejects.toThrow();
@@ -105,15 +107,15 @@ describe("Path Resolution Verification (Regression Test)", () => {
   });
 
   describe("Directory Structure", () => {
-    it("packages/poem-app/poem/workflow-data/ should not exist", async () => {
+    it("packages/poem-app/poem/workflow-state/ should not exist", async () => {
       // This directory is for source code structure, not runtime data
       const path = require("node:path");
-      const wrongDir = path.join(process.cwd(), "poem/workflow-data");
+      const wrongDir = path.join(process.cwd(), "poem/workflow-state");
 
       try {
         await fs.access(wrongDir);
         // If we reach here, the directory exists - bad!
-        expect.fail("packages/poem-app/poem/workflow-data/ should not exist in development mode");
+        expect.fail("packages/poem-app/poem/workflow-state/ should not exist in development mode");
       } catch (error) {
         // Directory doesn't exist - good!
         expect((error as NodeJS.ErrnoException).code).toBe('ENOENT');

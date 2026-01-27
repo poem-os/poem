@@ -22,6 +22,8 @@ import * as readline from 'readline';
 import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
 import { existsSync } from 'fs';
+import { runInit } from './commands/init.js';
+import { runAddWorkflow } from './commands/add-workflow.js';
 
 // Get the directory where this script is located
 const __filename = fileURLToPath(import.meta.url);
@@ -70,6 +72,7 @@ function parseArgs() {
   let list = false;
   let health = false;
   let cleanup = false;
+  let workflow = null; // Story 1.10: --workflow flag
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -81,6 +84,14 @@ function parseArgs() {
     // Handle --port XXXX format
     else if (arg === '--port' && i + 1 < args.length) {
       port = args[i + 1];
+    }
+    // Story 1.10: Handle --workflow=name format
+    else if (arg.startsWith('--workflow=')) {
+      workflow = arg.substring(11);
+    }
+    // Story 1.10: Handle --workflow name format
+    else if (arg === '--workflow' && i + 1 < args.length) {
+      workflow = args[i + 1];
     }
     // Handle --list flag
     else if (arg === '--list') {
@@ -105,10 +116,13 @@ function parseArgs() {
       'skip-deps': args.includes('--skip-deps'),
       verbose: args.includes('--verbose') || args.includes('-v'),
       help: args.includes('--help') || args.includes('-h'),
+      init: args.includes('--init'), // Story 1.10
+      workflow, // Story 1.10
       port,
       list,
       health,
       cleanup,
+      _: args, // Store all args for add-workflow command
     },
   };
 }
@@ -122,18 +136,22 @@ Usage:
   npx poem-os <command> [options]
 
 Commands:
-  install     Install POEM into the current directory
-  start       Start the POEM server
-  config      Configure POEM settings
-  registry    Manage POEM installations registry
+  install         Install POEM into the current directory
+  init            Create workspace folders (poem/config/, poem/shared/)
+  add-workflow    Create workflow-specific folders
+  start           Start the POEM server
+  config          Configure POEM settings
+  registry        Manage POEM installations registry
 
 Install Options:
-  --core      Install only .poem-core/ (framework documents)
-  --app       Install only .poem-app/ (runtime server)
-  --force     Skip overwrite prompts (overwrite existing files)
-  --skip-deps Skip automatic dependency installation (for offline/air-gapped environments)
-  --verbose   Show detailed logging output
-  --help, -h  Show this help message
+  --core          Install only .poem-core/ (framework documents)
+  --app           Install only .poem-app/ (runtime server)
+  --init          Create workspace folders after installation
+  --workflow=NAME Create workspace and add first workflow
+  --force         Skip overwrite prompts (overwrite existing files)
+  --skip-deps     Skip automatic dependency installation (for offline/air-gapped environments)
+  --verbose       Show detailed logging output
+  --help, -h      Show this help message
 
 Start Options:
   --port=XXXX Override server port temporarily
@@ -1072,27 +1090,30 @@ function showSuccessMessage(results, targetDir) {
 
   log('\n' + bold('Next steps:'));
 
+  // Story 1.10: Add workspace initialization step
+  log('  1. ' + cyan('poem-os init') + '              ' + dim('(create workspace folders)'));
+
   // Show appropriate next steps based on dependency installation status
   if (installedDependencies) {
     // Dependencies installed successfully - ready to go
-    log('  1. npx poem-os start              (start the server)');
-    log('  2. In Claude Code: /poem/agents/prompt-engineer');
+    log('  2. npx poem-os start              (start the server)');
+    log('  3. In Claude Code: /poem/agents/prompt-engineer');
   } else if (skippedDependencies || dependencyError) {
     // Dependencies not installed - manual steps required
-    log('  1. cd .poem-app && npm install    (install dependencies)');
-    log('  2. cd ..                          (return to project root)');
-    log('  3. npx poem-os start              (start the server)');
-    log('  4. In Claude Code: /poem/agents/prompt-engineer');
+    log('  2. cd .poem-app && npm install    (install dependencies)');
+    log('  3. cd ..                          (return to project root)');
+    log('  4. npx poem-os start              (start the server)');
+    log('  5. In Claude Code: /poem/agents/prompt-engineer');
 
     if (dependencyError) {
       log('\n⚠️  Dependencies were not installed automatically.');
-      log('   Complete step 1 manually before starting the server.');
+      log('   Complete step 2 manually before starting the server.');
     }
   } else {
     // App not installed or core-only install
-    log('  1. cd .poem-app && npm install');
-    log('  2. npm run dev');
-    log('  3. In Claude Code: /poem/agents/prompt-engineer');
+    log('  2. cd .poem-app && npm install');
+    log('  3. npm run dev');
+    log('  4. In Claude Code: /poem/agents/prompt-engineer');
   }
 
   log(`\nVersion: ${VERSION}`);
@@ -1239,10 +1260,12 @@ async function handleInstall(flags) {
       results.installedCommands = true;
     }
 
-    if (shouldCreateWorkspace) {
-      await createWorkspace(targetDir);
-      results.createdWorkspace = true;
-    }
+    // Story 1.10: Bare installation - workspace creation removed
+    // Workspace creation moved to `poem-os init` command
+    // if (shouldCreateWorkspace) {
+    //   await createWorkspace(targetDir);
+    //   results.createdWorkspace = true;
+    // }
 
     // Create preservation file for fresh installs
     // (For reinstallations, it was already created/migrated before analysis)
@@ -1317,10 +1340,107 @@ async function handleInstall(flags) {
     const elapsed = Date.now() - startTime;
     logVerbose(`Installation completed in ${elapsed}ms`);
 
+    // Story 1.10: Handle --init and --workflow flags
+    if (flags.workflow) {
+      // --workflow implies --init (create workspace first)
+      log('\n' + cyan('Running workspace initialization...'));
+      await runInit(targetDir);
+      log(cyan('Creating workflow...'));
+      await runAddWorkflow(targetDir, flags.workflow);
+      results.createdWorkspace = true;
+    } else if (flags.init) {
+      log('\n' + cyan('Running workspace initialization...'));
+      await runInit(targetDir);
+      results.createdWorkspace = true;
+    }
+
     // Show success message
     showSuccessMessage(results, targetDir);
+
+    // Interactive prompts for workspace setup (only for bare installations in TTY mode)
+    if (!flags.init && !flags.workflow && process.stdin.isTTY) {
+      log(''); // Blank line before prompts
+
+      // Prompt 1: Initialize workspace
+      const shouldInit = await prompt(
+        'Would you like to ' + cyan('initialize your workspace') + ' now?\n' +
+        dim('  (Creates poem/config/ and poem/shared/ folders for your prompts and schemas)') + '\n' +
+        '  [y/N]: '
+      );
+
+      if (shouldInit.toLowerCase() === 'y' || shouldInit.toLowerCase() === 'yes') {
+        log(''); // Blank line
+        log(cyan('Initializing workspace...'));
+        await runInit(targetDir);
+        results.createdWorkspace = true;
+
+        // Prompt 2: Add first workflow
+        const shouldAddWorkflow = await prompt(
+          '\nWould you like to ' + cyan('add your first workflow') + ' now?\n' +
+          dim('  (Creates workflow-specific folders: prompts/, schemas/, mock-data/, workflow-state/)') + '\n' +
+          '  [y/N]: '
+        );
+
+        if (shouldAddWorkflow.toLowerCase() === 'y' || shouldAddWorkflow.toLowerCase() === 'yes') {
+          const workflowName = await prompt(
+            '\n' + cyan('Workflow name') + dim(' (alphanumeric, dash, underscore only)') + ': '
+          );
+
+          if (workflowName.trim()) {
+            log(''); // Blank line
+            log(cyan(`Creating workflow '${workflowName.trim()}'...`));
+            await runAddWorkflow(targetDir, workflowName.trim());
+          } else {
+            log(yellow('\n⚠️  Skipped: No workflow name provided.'));
+            log(dim('   You can add workflows later with: ') + cyan('poem-os add-workflow <name>'));
+          }
+        } else {
+          log(dim('\nSkipped workflow creation. Add workflows later with: ') + cyan('poem-os add-workflow <name>'));
+        }
+      } else {
+        log(dim('\nSkipped workspace initialization. Run later with: ') + cyan('poem-os init'));
+      }
+
+      log(''); // Final blank line
+    }
   } catch (error) {
     logError(error.message, { path: error.path, code: error.code });
+    process.exit(1);
+  }
+}
+
+async function handleInit(flags) {
+  const targetDir = process.cwd();
+
+  try {
+    await runInit(targetDir);
+  } catch (error) {
+    console.error('\n❌ Failed to initialize workspace:', error.message);
+    process.exit(1);
+  }
+}
+
+async function handleAddWorkflow(flags) {
+  const targetDir = process.cwd();
+  const workflowName = flags._[1]; // Get workflow name from arguments
+
+  if (!workflowName) {
+    console.error('\n❌ Workflow name required.');
+    console.error('   Usage: poem-os add-workflow <name>');
+    console.error('');
+    console.error('   Example: poem-os add-workflow youtube-launch');
+    console.error('   Creates:');
+    console.error('     - poem/workflows/youtube-launch/prompts/');
+    console.error('     - poem/workflows/youtube-launch/schemas/');
+    console.error('     - poem/workflows/youtube-launch/mock-data/');
+    console.error('     - poem/workflows/youtube-launch/workflow-state/\n');
+    process.exit(1);
+  }
+
+  try {
+    await runAddWorkflow(targetDir, workflowName);
+  } catch (error) {
+    console.error('\n❌ Failed to add workflow:', error.message);
     process.exit(1);
   }
 }
@@ -1658,6 +1778,12 @@ async function main() {
   switch (cmd) {
     case 'install':
       await handleInstall(flags);
+      break;
+    case 'init':
+      await handleInit(flags);
+      break;
+    case 'add-workflow':
+      await handleAddWorkflow(flags);
       break;
     case 'start':
       await handleStart(flags);

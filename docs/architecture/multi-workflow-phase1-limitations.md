@@ -15,14 +15,15 @@ Story 3.8 delivers the **foundation** for multi-workflow support, enabling users
 ## Phase 1: What's Implemented ✅
 
 ### Directory Structure
-- ✅ Workflow-scoped directories: `dev-workspace/workflows/<name>/`
-- ✅ Each workflow has: `prompts/`, `schemas/`, `mock-data/`
+- ✅ Workflow-scoped directories: `dev-workspace/workflows/<name>/` (dev) or `poem/workflows/<name>/` (prod)
+- ✅ Each workflow has: `prompts/`, `schemas/`, `mock-data/`, `workflow-state/` (Story 1.10: renamed from workflow-data)
 - ✅ Two example workflows: `youtube-launch-optimizer`, `nano-banana`
-- ✅ Directories are gitignored (transient development workspace)
+- ✅ Directories are gitignored in dev mode (transient development workspace)
+- ✅ Selective creation (Story 1.10): Folders created on-demand via `poem-os add-workflow <name>`
 
 ### Configuration System
 - ✅ Config schema extended with `currentWorkflow` and `workflows` map
-- ✅ Workflow config includes: `prompts`, `schemas`, `mockData`, `reference` (array)
+- ✅ Workflow config includes: `prompts`, `schemas`, `mockData`, `workflowState` (Story 1.10: renamed from workflowData), `reference` (array)
 - ✅ Reference path types: `local`, `second-brain`
 - ✅ Inline comments in `poem-core-config.yaml` explaining all fields
 - ✅ Backward compatibility: flat structure still works if no workflows defined
@@ -57,6 +58,7 @@ Story 3.8 delivers the **foundation** for multi-workflow support, enabling users
 - ✅ `*view` - Searches workflow-scoped prompts first
 - ✅ Schema generation saves to workflow-scoped schemas directory
 - ✅ Workflow context displayed in command output headers
+- ✅ Workflow state files saved to `workflow-state/` directory (Story 1.10: renamed from workflow-data)
 
 ### Isolation
 - ✅ Prompts created in workflow A don't appear in workflow B
@@ -138,7 +140,7 @@ Story 3.8 delivers the **foundation** for multi-workflow support, enabling users
 Phase 1 maintains full backward compatibility:
 
 - ✅ If `currentWorkflow` not set, POEM operates in flat mode
-- ✅ Flat paths still work: `dev-workspace/prompts/`, `dev-workspace/schemas/`
+- ✅ Flat paths still work: `dev-workspace/prompts/`, `dev-workspace/schemas/`, `dev-workspace/workflow-state/` (Story 1.10: renamed from workflow-data)
 - ✅ Existing prompts continue to function without changes
 - ✅ Config service falls back to flat paths if no workflow active
 

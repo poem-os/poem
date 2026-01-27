@@ -38,8 +38,8 @@ export interface WorkflowConfig {
   schemas: string;
   /** Path to workflow-specific mock data directory */
   mockData: string;
-  /** Path to workflow-specific execution state directory */
-  workflowData: string;
+  /** Path to workflow-specific execution state directory (Story 1.10: renamed from workflowData) */
+  workflowState: string;
   /** Reference material sources (array) */
   reference?: ReferenceConfig[];
 }
@@ -52,7 +52,7 @@ export interface WorkspacePaths {
   schemas: string;
   mockData: string;
   config: string;
-  workflowData: string;
+  workflowState: string;
 }
 
 /**
@@ -85,7 +85,7 @@ const DEV_DEFAULTS: WorkspacePaths = {
   schemas: 'dev-workspace/schemas',
   mockData: 'dev-workspace/mock-data',
   config: 'dev-workspace/config',
-  workflowData: 'dev-workspace/workflow-data',
+  workflowState: 'dev-workspace/workflow-state',
 };
 
 /**
@@ -97,7 +97,7 @@ const PROD_DEFAULTS: WorkspacePaths = {
   schemas: 'poem/schemas',
   mockData: 'poem/mock-data',
   config: 'poem/config',
-  workflowData: 'poem/workflow-data',
+  workflowState: 'poem/workflow-state',
 };
 
 /**
@@ -164,7 +164,7 @@ export async function loadPoemConfig(): Promise<PoemConfig> {
       schemas: (workspaceConfig.schemas as string) || defaults.schemas,
       mockData: (workspaceConfig.mockData as string) || defaults.mockData,
       config: (workspaceConfig.config as string) || defaults.config,
-      workflowData: (workspaceConfig.workflowData as string) || defaults.workflowData,
+      workflowState: (workspaceConfig.workflowState as string) || defaults.workflowState,
     };
 
     // Extract multi-workflow configuration (Story 3.8)
@@ -260,12 +260,27 @@ export function getPoemConfigSync(): PoemConfig {
 /**
  * Resolve a workspace path to an absolute path
  *
- * @param type - The workspace path type (prompts, schemas, mockData, config, workflowData)
+ * IMPORTANT: This function supports both flat and multi-workflow modes.
+ * When currentWorkflow is set, it uses workflow-specific paths.
+ * Otherwise, it falls back to the flat workspace structure.
+ *
+ * @param type - The workspace path type (prompts, schemas, mockData, config, workflowState)
  * @param relativePath - Optional relative path within the workspace directory
  * @returns Absolute path to the resolved location
  */
 export function resolvePath(type: WorkspacePathType, relativePath: string = ''): string {
   const config = getPoemConfigSync();
+
+  // Check if workflow-scoped paths should be used (Story 3.8)
+  if (config.currentWorkflow && config.workflows) {
+    const workflow = config.workflows[config.currentWorkflow];
+    if (workflow && workflow[type]) {
+      const basePath = path.join(config.projectRoot, workflow[type]);
+      return relativePath ? path.join(basePath, relativePath) : basePath;
+    }
+  }
+
+  // Fall back to flat structure
   const basePath = path.join(config.projectRoot, config.workspace[type]);
 
   if (relativePath) {
@@ -277,10 +292,33 @@ export function resolvePath(type: WorkspacePathType, relativePath: string = ''):
 
 /**
  * Async version of resolvePath that loads config if needed
+ *
+ * IMPORTANT: This function supports both flat and multi-workflow modes.
+ * When currentWorkflow is set, it uses workflow-specific paths.
+ * Otherwise, it falls back to the flat workspace structure.
  */
 export async function resolvePathAsync(type: WorkspacePathType, relativePath: string = ''): Promise<string> {
   const config = await getPoemConfig();
-  const basePath = path.join(config.projectRoot, config.workspace[type]);
+
+  // Check if workflow-scoped paths should be used (Story 3.8)
+  if (config.currentWorkflow && config.workflows) {
+    const workflow = config.workflows[config.currentWorkflow];
+    // Note: config workspace might not have the property if using workflow-specific paths
+    if (workflow && workflow[type]) {
+      const basePath = path.join(config.projectRoot, workflow[type]);
+      return relativePath ? path.join(basePath, relativePath) : basePath;
+    }
+  }
+
+  // Fall back to flat structure
+  const workspacePath = config.workspace[type];
+  if (!workspacePath) {
+    throw new Error(
+      `[POEM] Workspace path type "${type}" not found in config. ` +
+      `Available types: ${Object.keys(config.workspace).join(', ')}`
+    );
+  }
+  const basePath = path.join(config.projectRoot, workspacePath);
 
   if (relativePath) {
     return path.join(basePath, relativePath);
@@ -323,12 +361,12 @@ export function listWorkflows(): string[] {
  * 2. Otherwise:
  *    - Fall back to flat structure path
  *
- * @param resourceType - The resource type (prompts, schemas, mockData, workflowData)
+ * @param resourceType - The resource type (prompts, schemas, mockData, workflowState)
  * @param relativePath - Optional relative path within the resource directory
  * @returns Absolute path to the resolved location
  */
 export function getWorkflowPath(
-  resourceType: 'prompts' | 'schemas' | 'mockData' | 'workflowData',
+  resourceType: 'prompts' | 'schemas' | 'mockData' | 'workflowState',
   relativePath: string = ''
 ): string {
   const config = getPoemConfigSync();

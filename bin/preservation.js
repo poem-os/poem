@@ -34,8 +34,10 @@ export const DEFAULT_PRESERVATION_RULES = `# .poem-preserve
 # Format: One file/folder path per line (relative to project root)
 # Comments start with # and blank lines are ignored
 
-# User workspace - always preserved
-poem/
+# User workspace - always preserved (Story 1.10: selective workspace)
+poem/config/
+poem/shared/
+poem/workflows/
 
 # Dev workspace - always preserved (if exists)
 dev-workspace/
@@ -176,7 +178,8 @@ export async function createPreservationFile(targetDir) {
     }
 
     // File exists - check if it needs migration (missing default rules)
-    const requiredRules = ['poem/', 'dev-workspace/', '.poem-app/.env'];
+    // Story 1.10: Updated rules to reflect selective workspace structure
+    const requiredRules = ['poem/config/', 'poem/shared/', 'poem/workflows/', 'dev-workspace/', '.poem-app/.env'];
     const missingRules = [];
 
     for (const rule of requiredRules) {
@@ -209,7 +212,9 @@ export async function createPreservationFile(targetDir) {
 
       // Add missing rules with labels
       const ruleLabels = {
-        'poem/': '# User workspace - always preserved',
+        'poem/config/': '# User workspace - always preserved (Story 1.10)',
+        'poem/shared/': '# Shared resources - always preserved',
+        'poem/workflows/': '# Workflow folders - always preserved',
         'dev-workspace/': '# Dev workspace - always preserved (if exists)',
         '.poem-app/.env': '# User configuration - always preserved',
       };
@@ -229,7 +234,9 @@ export async function createPreservationFile(targetDir) {
       const afterCustom = lines.slice(customSectionIndex);
 
       const ruleLabels = {
-        'poem/': '# User workspace - always preserved',
+        'poem/config/': '# User workspace - always preserved (Story 1.10)',
+        'poem/shared/': '# Shared resources - always preserved',
+        'poem/workflows/': '# Workflow folders - always preserved',
         'dev-workspace/': '# Dev workspace - always preserved (if exists)',
         '.poem-app/.env': '# User configuration - always preserved',
       };

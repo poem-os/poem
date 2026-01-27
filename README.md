@@ -22,12 +22,38 @@
 
 ## Installation
 
-Install POEM into your project using npx:
+### Quick Start
 
 ```bash
-# Full installation (framework + runtime)
+# 1. Install POEM framework and runtime
 npx poem-os install
 
+# 2. Create workspace folders
+poem-os init
+
+# 3. (Optional) Create your first workflow
+poem-os add-workflow youtube-launch
+```
+
+### Installation Options
+
+**Bare Installation** (framework + runtime only):
+```bash
+npx poem-os install
+```
+
+**Install with Workspace** (one command):
+```bash
+npx poem-os install --init
+```
+
+**Install with Workflow** (workspace + first workflow):
+```bash
+npx poem-os install --workflow youtube-launch
+```
+
+**Advanced Options**:
+```bash
 # Framework only (agents, workflows, skills)
 npx poem-os install --core
 
@@ -47,6 +73,20 @@ npx poem-os install --verbose
 - `.poem-core/` - Framework documents (agents, workflows, skills)
 - `.poem-app/` - Runtime server (Astro, Handlebars, APIs)
 - `.claude/commands/poem/` - Claude Code slash commands
+
+### Workspace Management
+
+**Create workspace folders**:
+```bash
+poem-os init
+```
+Creates `poem/config/` and `poem/shared/` directories.
+
+**Add a workflow**:
+```bash
+poem-os add-workflow <name>
+```
+Creates workflow-specific folders: `poem/workflows/<name>/prompts/`, `schemas/`, `mock-data/`, `workflow-state/`.
 - `poem/` - Your workspace (prompts, schemas, config)
 
 **After Installation**:

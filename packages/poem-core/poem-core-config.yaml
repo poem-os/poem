@@ -34,8 +34,8 @@ workspace:
       schemas: dev-workspace/workflows/youtube-launch-optimizer/schemas
       # Path to workflow-specific mock data directory
       mockData: dev-workspace/workflows/youtube-launch-optimizer/mock-data
-      # Path to workflow-specific execution state directory
-      workflowData: dev-workspace/workflows/youtube-launch-optimizer/workflow-data
+      # Path to workflow-specific execution state directory (Story 1.10: renamed from workflowData)
+      workflowState: dev-workspace/workflows/youtube-launch-optimizer/workflow-state
       # Reference materials (array of sources)
       reference:
         - path: data/youtube-launch-optimizer/  # Local project reference materials
@@ -51,7 +51,7 @@ workspace:
       prompts: dev-workspace/workflows/nano-banana/prompts
       schemas: dev-workspace/workflows/nano-banana/schemas
       mockData: dev-workspace/workflows/nano-banana/mock-data
-      workflowData: dev-workspace/workflows/nano-banana/workflow-data
+      workflowState: dev-workspace/workflows/nano-banana/workflow-state
       reference:
         - path: data/nano-banana/reference/
           type: local
@@ -73,8 +73,8 @@ workspace:
   mockData: dev-workspace/mock-data
   # User configuration files (providers, settings)
   config: dev-workspace/config
-  # Persisted workflow execution state
-  workflowData: dev-workspace/workflow-data
+  # Persisted workflow execution state (Story 1.10: renamed from workflowData)
+  workflowState: dev-workspace/workflow-state
 
   # ============================================================================
   # SHARED RESOURCES (Phase 2 - Story 4.9)

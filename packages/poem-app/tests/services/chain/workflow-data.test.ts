@@ -15,7 +15,7 @@ describe("WorkflowDataService", () => {
     await service.initialize();
 
     // Get workflow-data directory for cleanup
-    workflowDataDir = await resolvePathAsync("workflowData");
+    workflowDataDir = await resolvePathAsync("workflowState");
   });
 
   afterEach(async () => {

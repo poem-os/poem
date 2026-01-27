@@ -165,7 +165,7 @@ poem-os/poem/
 
 ## Installed Structure (User Project)
 
-After running `npx poem-os install`:
+After running `npx poem-os install` (bare installation):
 
 ```
 user-project/
@@ -189,18 +189,41 @@ user-project/
 │       └── poem/
 │           └── agents/
 │
-├── poem/                             # User workspace (created by installer)
-│   ├── prompts/
-│   ├── schemas/
-│   │   └── dictionaries/
-│   ├── mock-data/
-│   │   └── scenarios/
-│   ├── workflow-data/
-│   └── config/
-│       ├── providers/
-│       └── poem.yaml
-│
 └── [existing project files]
+```
+
+**Note (Story 1.10)**: User workspace (`poem/`) is NOT created during bare installation. Use `poem-os init` to create workspace, then `poem-os add-workflow <name>` to create workflow-specific folders.
+
+### Two-Tier Workspace Architecture
+
+After running `poem-os init`:
+
+```
+user-project/
+├── poem/                             # User workspace (created on-demand)
+│   ├── config/                       # Root: Global POEM settings
+│   │   └── poem.yaml                 # Workflow definitions
+│   └── shared/                       # Root: Cross-workflow resources
+│       ├── prompts/                  # Shared prompt templates
+│       └── schemas/                  # Shared schemas
+```
+
+After running `poem-os add-workflow youtube-launch`:
+
+```
+user-project/
+├── poem/
+│   ├── config/
+│   │   └── poem.yaml                 # Updated with workflow definition
+│   ├── shared/
+│   │   ├── prompts/
+│   │   └── schemas/
+│   └── workflows/                    # Workflow-specific folders
+│       └── youtube-launch/
+│           ├── prompts/              # Workflow prompts
+│           ├── schemas/              # Workflow schemas
+│           ├── mock-data/            # Test data
+│           └── workflow-state/       # Execution state (renamed from workflow-data)
 ```
 
 ## Key Directories Explained

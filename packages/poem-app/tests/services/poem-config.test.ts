@@ -171,7 +171,13 @@ describe('POEM Configuration Service', () => {
       const resolved = resolvePath('prompts', 'test.hbs');
       const config = getPoemConfigSync();
 
-      expect(resolved).toBe(path.join(config.projectRoot, config.workspace.prompts, 'test.hbs'));
+      // In multi-workflow mode, use workflow-specific path (Story 3.8)
+      // In flat mode, use workspace.prompts
+      const expectedBasePath = config.currentWorkflow && config.workflows
+        ? config.workflows[config.currentWorkflow].prompts
+        : config.workspace.prompts;
+
+      expect(resolved).toBe(path.join(config.projectRoot, expectedBasePath, 'test.hbs'));
     });
 
     it('should resolve schemas path', async () => {
@@ -181,7 +187,12 @@ describe('POEM Configuration Service', () => {
       const resolved = resolvePath('schemas', 'test.json');
       const config = getPoemConfigSync();
 
-      expect(resolved).toBe(path.join(config.projectRoot, config.workspace.schemas, 'test.json'));
+      // In multi-workflow mode, use workflow-specific path (Story 3.8)
+      const expectedBasePath = config.currentWorkflow && config.workflows
+        ? config.workflows[config.currentWorkflow].schemas
+        : config.workspace.schemas;
+
+      expect(resolved).toBe(path.join(config.projectRoot, expectedBasePath, 'test.json'));
     });
 
     it('should resolve mockData path', async () => {
@@ -191,7 +202,12 @@ describe('POEM Configuration Service', () => {
       const resolved = resolvePath('mockData', 'test.json');
       const config = getPoemConfigSync();
 
-      expect(resolved).toBe(path.join(config.projectRoot, config.workspace.mockData, 'test.json'));
+      // In multi-workflow mode, use workflow-specific path (Story 3.8)
+      const expectedBasePath = config.currentWorkflow && config.workflows
+        ? config.workflows[config.currentWorkflow].mockData
+        : config.workspace.mockData;
+
+      expect(resolved).toBe(path.join(config.projectRoot, expectedBasePath, 'test.json'));
     });
 
     it('should resolve config path', async () => {
@@ -201,6 +217,7 @@ describe('POEM Configuration Service', () => {
       const resolved = resolvePath('config', 'settings.yaml');
       const config = getPoemConfigSync();
 
+      // config is NOT workflow-specific, so always use workspace.config
       expect(resolved).toBe(path.join(config.projectRoot, config.workspace.config, 'settings.yaml'));
     });
 
@@ -211,7 +228,12 @@ describe('POEM Configuration Service', () => {
       const resolved = resolvePath('prompts');
       const config = getPoemConfigSync();
 
-      expect(resolved).toBe(path.join(config.projectRoot, config.workspace.prompts));
+      // In multi-workflow mode, use workflow-specific path (Story 3.8)
+      const expectedBasePath = config.currentWorkflow && config.workflows
+        ? config.workflows[config.currentWorkflow].prompts
+        : config.workspace.prompts;
+
+      expect(resolved).toBe(path.join(config.projectRoot, expectedBasePath));
     });
   });
 
@@ -250,7 +272,7 @@ describe('POEM Configuration Service', () => {
       expect(config.workspace.schemas).toBe('poem/schemas');
       expect(config.workspace.mockData).toBe('poem/mock-data');
       expect(config.workspace.config).toBe('poem/config');
-      expect(config.workspace.workflowData).toBe('poem/workflow-data');
+      expect(config.workspace.workflowState).toBe('poem/workflow-state');
 
       warnSpy.mockRestore();
     });
@@ -266,7 +288,7 @@ describe('POEM Configuration Service', () => {
       expect(config.workspace.schemas).toBe('dev-workspace/schemas');
       expect(config.workspace.mockData).toBe('dev-workspace/mock-data');
       expect(config.workspace.config).toBe('dev-workspace/config');
-      expect(config.workspace.workflowData).toBe('dev-workspace/workflow-data');
+      expect(config.workspace.workflowState).toBe('dev-workspace/workflow-state');
     });
 
     it('should resolve to poem/ paths in prod mode', async () => {
@@ -282,7 +304,7 @@ describe('POEM Configuration Service', () => {
       expect(config.workspace.schemas).toBe('poem/schemas');
       expect(config.workspace.mockData).toBe('poem/mock-data');
       expect(config.workspace.config).toBe('poem/config');
-      expect(config.workspace.workflowData).toBe('poem/workflow-data');
+      expect(config.workspace.workflowState).toBe('poem/workflow-state');
 
       warnSpy.mockRestore();
     });
@@ -293,7 +315,9 @@ describe('POEM Configuration Service', () => {
 
       const promptsPath = resolvePath('prompts', 'my-prompt.hbs');
 
-      expect(promptsPath).toContain('dev-workspace/prompts');
+      // Should contain dev-workspace (either flat or workflow-specific)
+      expect(promptsPath).toContain('dev-workspace');
+      expect(promptsPath).toContain('prompts');
       expect(promptsPath).toContain('my-prompt.hbs');
     });
   });

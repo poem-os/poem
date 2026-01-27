@@ -551,6 +551,25 @@ so that I can safely run `npx poem-os install` to get the latest POEM version wi
 
 ---
 
+#### Story 1.10: Selective Workspace Creation
+
+As a POEM user,
+I want to create workspace folders only when I need them,
+so that I don't have empty folders cluttering my project and can organize by workflow.
+
+**Acceptance Criteria**:
+
+1. `npx poem-os install` creates ONLY `.poem-core/` and `.poem-app/` directories (no `poem/` folder)
+2. `poem-os init` creates root-level folders: `poem/config/` with default `poem.yaml`, `poem/shared/prompts/`, `poem/shared/schemas/`; command is idempotent
+3. `poem-os add-workflow <name>` creates workflow-specific folders with validated names (alphanumeric, dash, underscore); creates/updates `poem/config/poem.yaml`
+4. Installation flags: `--init` and `--workflow <name>` enable one-command setup
+5. Rename terminology everywhere: `workflow-data/` → `workflow-state/`, `workflowData` → `workflowState` in config/TypeScript
+6. `poem/config/poem.yaml` created with default structure (version, currentWorkflow, workflows map)
+7. Update `.poem-preserve` rules to protect new folder structure (`poem/config/`, `poem/shared/`, `poem/workflows/`)
+8. Update documentation (README, architecture docs) with new installation workflow and two-tier folder architecture
+
+---
+
 ### Epic 2: Astro Runtime & Handlebars Engine
 
 **Goal**: Build the `.poem-app/` Astro server with Handlebars template engine, enabling template rendering via API endpoints. This provides the runtime foundation for all template-based operations.
