@@ -364,6 +364,42 @@ Epic 0 stories use **lighter ceremony** than feature stories:
 
 ---
 
+### Story 0.6: Fix Integration Test Infrastructure & Stabilize Test Suite
+
+**As a** POEM developer,
+**I want** the integration test infrastructure stabilized and all pre-existing test failures resolved,
+**so that** I can reliably run tests without flaky failures or confusion about which errors are expected.
+
+**Acceptance Criteria**:
+
+1. Fix 10 pre-existing test failures (chain-execute: 6 failures, watcher: 4 failures, path-resolution: 1 intermittent)
+2. Add missing explicit dependencies to prevent `undefined` errors
+3. Zero tolerance for skipped tests - investigate all 60+ skipped tests
+4. Reduce error noise (target: <5 non-critical errors during normal operation)
+5. Document server start workflow for integration tests
+6. Organize unit vs integration tests into separate directories
+7. Create test suite health monitoring script
+
+---
+
+### Story 0.7: Complete Test Infrastructure Improvements from Story 0.6
+
+**As a** POEM developer,
+**I want** the remaining test infrastructure improvements from Story 0.6 completed (test organization, documentation, server error reduction, 66 skipped tests),
+**so that** I have a fully organized, documented, and reliable test suite with zero tolerance for skipped/flaky tests and clear error signals for debugging.
+
+**Acceptance Criteria**:
+
+1. Organize unit vs integration tests (create test/unit/, test/integration/ directories, update npm scripts)
+2. Document server start workflow (update CLAUDE.md, README.md, integration-test-setup.md with monorepo server start command)
+3. Reduce server error flood (P1 CRITICAL - investigate and categorize server errors, target: <5 non-critical errors during normal operation)
+4. Establish test suite health monitoring (create test:health script, update DOD checklist)
+5. Integration test infrastructure improvements (add pre-test validation, document AI workflow for running integration tests)
+6. Investigate and resolve 66 skipped tests - Zero tolerance policy (fix OR remove each skipped test, no skips allowed)
+7. Final verification (run all test variations, confirm no regressions, achieve 872/872 passing)
+
+---
+
 ## Example Stories
 
 These are hypothetical examples showing the Epic 0 story format. See the **Stories** section above for actual completed/in-progress stories.

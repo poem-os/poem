@@ -1,5 +1,35 @@
 # Epic Details
 
+## Epic 0: Maintenance & Continuous Improvement
+
+**Status**: 🔄 Perpetual (Never Completes)
+
+Ongoing maintenance, bug fixes, technical debt, developer experience improvements, performance optimizations, security patches, infrastructure updates, and documentation refinements that emerge during and after feature development.
+
+**Note**: Epic 0 stories are created on-demand as infrastructure issues arise. Only completed stories are documented below.
+
+---
+
+### Story 0.6: Fix Integration Test Infrastructure & Stabilize Test Suite
+
+**As a** POEM developer,
+**I want** the integration test infrastructure stabilized and all pre-existing test failures resolved,
+**so that** the test suite provides reliable feedback and I can confidently validate story implementations without infrastructure noise.
+
+**Acceptance Criteria**:
+
+1. All 10 pre-existing test failures resolved (target: 872/872 tests passing)
+2. Separate unit tests from integration tests (different npm scripts: `test:unit`, `test:integration`, `test`)
+3. Document server start location & prerequisites in `docs/guides/integration-test-setup.md`
+4. Reduce server error flood (target: <5 non-critical errors during normal operation)
+5. Establish test suite health monitoring (`docs/testing/test-suite-baseline.md`, `npm run test:health`)
+6. Integration test infrastructure improvements (pre-test validation, clear error messages)
+
+**Category**: Developer Experience + Infrastructure
+**Priority**: P1 (High)
+
+---
+
 ## Epic 1: Foundation & Monorepo Setup
 
 **Goal**: Establish the project infrastructure with monorepo structure, NPX installer, and basic scaffolding that enables all subsequent development. Users should be able to install POEM into their projects.

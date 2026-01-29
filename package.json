@@ -30,9 +30,11 @@
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces --if-present",
     "test:unit": "npm run test:unit --workspaces --if-present",
+    "test:health": "npm test && echo '\n✅ Test suite healthy: All tests passing'",
     "lint": "eslint .",
     "format": "prettier --write .",
     "dev": "npm run dev --workspace=@poem-os/app",
+    "server": "npm run dev --workspace=@poem-os/app",
     "validate-kdd": "node .bmad-core/utils/validate-kdd-links.cjs",
     "prepare": "husky"
   },

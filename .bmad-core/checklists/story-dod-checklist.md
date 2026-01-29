@@ -47,6 +47,7 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] All required unit tests as per the story and `Operational Guidelines` Testing Strategy are implemented.
    - [ ] All required integration tests (if applicable) as per the story and `Operational Guidelines` Testing Strategy are implemented.
    - [ ] **MANDATORY TEST EXECUTION**: Executed `npm test` (or equivalent) and pasted full output in Dev Agent Record Debug Log.
+   - [ ] **TEST HEALTH CHECK**: Run `npm run test:health` and confirm 100% passing (or document pre-existing failures).
    - [ ] **TEST RESULTS DOCUMENTED**: Documented test results in Dev Agent Record: "Test Execution: X/Y passing, Y skipped, Z failing"
    - [ ] **BLOCKING REQUIREMENT**: All story-related tests pass successfully (unrelated failures must be documented with explanation).
    - [ ] Test coverage meets project standards (if defined).

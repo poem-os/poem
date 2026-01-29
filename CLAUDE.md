@@ -699,11 +699,52 @@ POEM uses a hybrid path resolution approach:
 
 ### Starting the Development Server
 
+**CRITICAL**: Start server from **monorepo root**, NOT from `packages/poem-app/`.
+
 ```bash
-cd packages/poem-app
-npm run dev
+# From monorepo root
+npm run server
 # Server starts at http://localhost:9500
 ```
+
+**Configuration**:
+- Port: 9500 (default, set in `packages/poem-app/.env`)
+- Environment: `POEM_DEV=true` (required for development)
+- Health check: `http://localhost:9500/api/health`
+
+**Why from root?**: The root script uses npm workspaces to target the correct package with relative paths (works on any machine).
+
+### Integration Test Guidance
+
+**For AI Agents**: Before running integration tests, follow this workflow:
+
+1. **Check if server running**: `curl -s http://localhost:9500/api/health`
+2. **If NOT running, ASK human**: "Integration tests require POEM server. Can you run: npm run server?"
+3. **Wait for human response**
+4. **If human says "you do it"**: Run `npm run server` from monorepo root
+5. **Wait for health check**: Poll `/api/health` until 200 OK
+6. **Run tests**: `npm run test:integration`
+
+**CRITICAL**: Never run integration tests without asking human first. Server startup can interfere with other work.
+
+**Prerequisites**:
+- POEM server running on port 9500
+- `POEM_DEV=true` in `packages/poem-app/.env`
+- `PORT=9500` in `packages/poem-app/.env`
+
+**Test Commands**:
+```bash
+# Run all tests (unit + integration)
+npm test
+
+# Run unit tests only (fast, no server required)
+npm run test:unit
+
+# Run integration tests only (requires server)
+npm run test:integration
+```
+
+**See**: `docs/guides/integration-test-setup.md` for complete integration test setup guide.
 
 ### Testing POEM Agents
 

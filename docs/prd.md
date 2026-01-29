@@ -344,6 +344,26 @@ Ongoing maintenance, bug fixes, technical debt, developer experience improvement
 
 ---
 
+#### Story 0.6: Fix Integration Test Infrastructure & Stabilize Test Suite
+
+**As a** POEM developer,
+**I want** the integration test infrastructure stabilized and all pre-existing test failures resolved,
+**so that** the test suite provides reliable feedback and I can confidently validate story implementations without infrastructure noise.
+
+**Acceptance Criteria**:
+
+1. All 10 pre-existing test failures resolved (target: 872/872 tests passing)
+2. Separate unit tests from integration tests (different npm scripts: `test:unit`, `test:integration`, `test`)
+3. Document server start location & prerequisites in `docs/guides/integration-test-setup.md`
+4. Reduce server error flood (target: <5 non-critical errors during normal operation)
+5. Establish test suite health monitoring (`docs/testing/test-suite-baseline.md`, `npm run test:health`)
+6. Integration test infrastructure improvements (pre-test validation, clear error messages)
+
+**Category**: Developer Experience + Infrastructure
+**Priority**: P1 (High)
+
+---
+
 ### Epic 1: Foundation & Monorepo Setup
 
 Establish project infrastructure with monorepo structure, NPX installer, and basic `.poem-core/` + `.poem-app/` scaffolding that copies to user projects.

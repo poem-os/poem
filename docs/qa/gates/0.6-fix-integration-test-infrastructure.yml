@@ -1,0 +1,92 @@
+schema: 1
+story: "0.6"
+story_title: "Fix Integration Test Infrastructure & Stabilize Test Suite"
+gate: WAIVED
+status_reason: "Core objective achieved (10 pre-existing failures fixed via Zod dependency). Remaining issues (1 failing test, 66 skipped tests, Tasks 4-9) moved to Story 0.7. Team decision: Accept partial completion and extract knowledge before continuing."
+reviewer: "Quinn (Test Architect)"
+updated: "2026-01-29T16:58:00Z"
+
+top_issues:
+  - severity: high
+    category: test-failure
+    title: "watcher.test.ts test regression"
+    description: "Test 'should detect new helper files and register them' is failing despite Dev Agent claiming 18/18 passing in isolation. This is a story-related test (Task 2) that must pass."
+    refs:
+      - "packages/poem-app/tests/services/handlebars/watcher.test.ts"
+    suggested_owner: dev
+
+  - severity: high
+    category: incomplete-requirements
+    title: "AC #1 'Zero Tolerance' policy not achieved"
+    description: "Story targets 872/872 passing, 0 skipped. Actual: 799/872 passing, 66 skipped. Dev Agent marked story 'PARTIALLY COMPLETE' but set status to 'Ready for Review' - contradictory."
+    refs:
+      - "docs/stories/0.6.story.md:56"
+    suggested_owner: dev
+
+  - severity: high
+    category: incomplete-requirements
+    title: "AC #2-7 incomplete (6 ACs)"
+    description: "Tasks 4-9 incomplete: test organization, documentation, server error reduction, health monitoring, integration infrastructure. These are required acceptance criteria, not optional enhancements."
+    refs:
+      - "docs/stories/0.6.story.md:67-127"
+    suggested_owner: dev
+
+waiver:
+  active: true
+  reason: "Core objective achieved. Remaining work (watcher test fix, 66 skipped tests, documentation) moved to Story 0.7 per team decision. Story 0.6 closes with Zod dependency fix that resolved 10 pre-existing failures."
+  approver: "Product Owner (via workflow orchestrator)"
+  approved_date: "2026-01-29T16:58:00Z"
+
+quality_score: N/A
+
+evidence:
+  tests_reviewed: 872
+  story_related_tests_passing: 23/24
+  story_related_tests_failing: 1/24
+  risks_identified: 3
+  trace:
+    ac_covered: [] # Cannot trace ACs without passing tests
+    ac_gaps: [1, 2, 3, 4, 5, 6, 7]
+
+test_execution:
+  timestamp: "2026-01-29T16:46:30Z"
+  command: "npm test"
+  results: "799/872 passing (91.6%), 7 failing (0.8%), 66 skipped (7.6%)"
+  duration: "12.48 seconds"
+  story_related_failures:
+    - file: "tests/services/handlebars/watcher.test.ts"
+      test: "should detect new helper files and register them"
+      status: "FAIL"
+      note: "Dev Agent claimed 18/18 passing consistently in isolation (line 621), but test is failing in full suite"
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: "Zod dependency added is well-vetted library with no known vulnerabilities"
+  performance:
+    status: PASS
+    notes: "Test suite runs in 12.48s (acceptable). No performance regressions introduced."
+  reliability:
+    status: FAIL
+    notes: "Test suite reliability compromised by flaky watcher test. Dev Agent acknowledged 'test isolation issues' but marked as Ready for Review."
+  maintainability:
+    status: CONCERNS
+    notes: "Partial implementation with 6/7 ACs incomplete creates maintenance debt. Story should either be split or completed."
+
+recommendations:
+  immediate:
+    - action: "Fix watcher.test.ts failing test or investigate why it passes in isolation but fails in full suite"
+      refs: ["packages/poem-app/tests/services/handlebars/watcher.test.ts"]
+
+    - action: "Decide story scope: Either (1) complete all 7 ACs or (2) split story and remove incomplete ACs from this story"
+      refs: ["docs/stories/0.6.story.md"]
+
+    - action: "If continuing with partial completion, update story Status from 'Ready for Review' to 'Done' only for completed ACs, create follow-up story for remaining work"
+      refs: ["docs/stories/0.6.story.md"]
+
+  future:
+    - action: "Create Story 0.7 for remaining work: Tasks 4-9 (test organization, documentation, monitoring, 60 skipped tests)"
+      refs: ["docs/stories/0.6.story.md:630-643"]
+
+    - action: "Investigate why watcher tests are flaky in full suite vs. isolation - potential test isolation or cleanup issue"
+      refs: ["packages/poem-app/tests/services/handlebars/watcher.test.ts"]
