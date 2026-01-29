@@ -454,3 +454,191 @@ export function setCurrentWorkflow(workflowName: string): void {
 export function resetConfig(): void {
   configInstance = null;
 }
+
+/**
+ * Clear user config cache (useful for testing Story 1.11 features)
+ */
+export function clearConfigCache(): void {
+  userConfigCache = null;
+  userConfigPath = null;
+}
+
+// ============================================================================
+// Story 1.11: Central POEM Path & Port Configuration
+// ============================================================================
+
+/**
+ * User workspace configuration interface (poem/config/poem.yaml)
+ */
+export interface UserPoemConfig {
+  version: string;
+  server?: {
+    port: number;
+  };
+  centralPoemPath?: string | null;
+  currentWorkflow?: string | null;
+  workflows?: Record<string, unknown>;
+}
+
+/**
+ * Cached user config
+ */
+let userConfigCache: UserPoemConfig | null = null;
+let userConfigPath: string | null = null;
+
+/**
+ * Get path to user's poem.yaml configuration file
+ */
+function getUserConfigPath(): string {
+  const root = getProjectRoot();
+  return path.join(root, 'poem', 'config', 'poem.yaml');
+}
+
+/**
+ * Load user configuration from poem/config/poem.yaml
+ * Returns null if file doesn't exist (graceful fallback)
+ */
+async function loadUserConfig(): Promise<UserPoemConfig | null> {
+  const configPath = getUserConfigPath();
+  userConfigPath = configPath;
+
+  try {
+    const configContent = await fs.readFile(configPath, 'utf-8');
+    const parsed = yaml.load(configContent) as UserPoemConfig;
+    userConfigCache = parsed;
+    return parsed;
+  } catch (error) {
+    const err = error as NodeJS.ErrnoException;
+
+    if (err.code === 'ENOENT') {
+      // File doesn't exist - not an error (poem.yaml is optional)
+      return null;
+    }
+
+    // Other errors (permissions, YAML parse) - log warning and return null
+    console.warn(`[POEM] Error loading poem/config/poem.yaml: ${err.message}`);
+    return null;
+  }
+}
+
+/**
+ * Get cached user config or load if not cached
+ */
+async function getUserConfig(): Promise<UserPoemConfig | null> {
+  if (!userConfigCache) {
+    await loadUserConfig();
+  }
+  return userConfigCache;
+}
+
+/**
+ * Get server port from poem.yaml (for tool discovery, NOT used by Astro)
+ * @returns Port number from poem.yaml, or 9500 if not configured
+ */
+export async function getServerPort(): Promise<number> {
+  const userConfig = await getUserConfig();
+
+  if (userConfig?.server?.port) {
+    return userConfig.server.port;
+  }
+
+  // Fallback
+  return 9500;
+}
+
+/**
+ * Get central POEM path from poem.yaml or environment variable
+ * @returns Central POEM path, or null if not configured
+ */
+export async function getCentralPoemPath(): Promise<string | null> {
+  // Step 1: Check environment variable (highest priority, for multi-machine setups)
+  if (process.env.POEM_CENTRAL_PATH) {
+    return process.env.POEM_CENTRAL_PATH;
+  }
+
+  // Step 2: Read from poem.yaml
+  const userConfig = await getUserConfig();
+
+  if (userConfig?.centralPoemPath) {
+    return userConfig.centralPoemPath;
+  }
+
+  // Step 3: Not configured
+  return null;
+}
+
+/**
+ * Get full user poem.yaml configuration (for testing)
+ * @returns User config object, or null if not found
+ */
+export async function getUserPoemConfig(): Promise<UserPoemConfig | null> {
+  return await getUserConfig();
+}
+
+/**
+ * Update poem.yaml configuration
+ * @param updates - Partial configuration to merge
+ */
+export async function updatePoemConfig(updates: Partial<UserPoemConfig>): Promise<void> {
+  const configPath = getUserConfigPath();
+
+  // Load existing config or create new one
+  let config = await getUserConfig();
+
+  if (!config) {
+    // Create new config with defaults
+    config = {
+      version: '1.0',
+      server: { port: 9500 },
+      centralPoemPath: null,
+      currentWorkflow: null,
+      workflows: {},
+    };
+  }
+
+  // Merge updates
+  config = { ...config, ...updates };
+
+  // Deep merge server config if needed
+  if (updates.server) {
+    config.server = { ...config.server, ...updates.server };
+  }
+
+  // Write to file
+  const yamlContent = yaml.dump(config);
+  await fs.writeFile(configPath, yamlContent, 'utf-8');
+
+  // Update cache
+  userConfigCache = config;
+}
+
+/**
+ * Sync port from .env to poem.yaml
+ * Called on server startup (AC: 11)
+ * @param envPort - Port from process.env.PORT
+ */
+export async function syncPortToConfig(envPort: number): Promise<void> {
+  const userConfig = await getUserConfig();
+
+  // Skip if poem.yaml doesn't exist (not initialized yet)
+  if (!userConfig) {
+    return;
+  }
+
+  const currentPort = userConfig.server?.port;
+
+  // Only sync if different
+  if (currentPort !== envPort) {
+    const timestamp = new Date().toISOString();
+
+    // Update poem.yaml
+    await updatePoemConfig({
+      server: { port: envPort },
+    });
+
+    console.log(`ℹ  Port synced: .env (${envPort}) → poem.yaml (was ${currentPort || 'undefined'})`);
+
+    // Note: Comment append is handled by init.js when writing the file
+    // Auto-sync doesn't modify comments (YAML library doesn't preserve comments well)
+  }
+}

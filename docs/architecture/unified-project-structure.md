@@ -236,4 +236,64 @@ user-project/
 | `/poem/`                                     | User workspace                                  | **Yes** (all user content)          |
 | `.claude/commands/poem/`                     | Slash command wrappers                          | No                                  |
 
+## poem.yaml Configuration Schema
+
+The `poem/config/poem.yaml` file stores POEM configuration and workflow definitions.
+
+**Location**: `poem/config/poem.yaml` (created by `poem-os init`)
+
+**Schema** (v1.1):
+
+```yaml
+# POEM Configuration
+version: 1.0
+
+# Server Configuration (for port discovery by tools)
+server:
+  port: 9500  # 1024-65535, mirrors .env for tool discovery
+
+# Central POEM Path (optional - for contributors/developers)
+centralPoemPath: null  # absolute path or null
+
+# Active workflow
+currentWorkflow: null
+
+# Workflow definitions
+workflows:
+  <workflow-name>:
+    prompts: poem/workflows/<name>/prompts
+    schemas: poem/workflows/<name>/schemas
+    mockData: poem/workflows/<name>/mock-data
+    workflowState: poem/workflows/<name>/workflow-state
+```
+
+**Field Descriptions**:
+
+| Field | Type | Purpose | Source of Truth |
+|-------|------|---------|-----------------|
+| `version` | string | Schema version (currently 1.0) | Static |
+| `server.port` | number | POEM server port (1024-65535) | **Mirrors** `.poem-app/.env` PORT value |
+| `centralPoemPath` | string\|null | Absolute path to central POEM dev clone | User configuration OR convention (`~/dev/ad/poem-os/poem`) OR null |
+| `currentWorkflow` | string\|null | Active workflow name | User workflow switching |
+| `workflows` | object | Workflow folder definitions | Created by `poem-os add-workflow` |
+
+**Port Sync Flow** (Story 1.11):
+- `.poem-app/.env` → Source of truth (Astro reads `process.env.PORT`)
+- `poem.yaml` → Mirror for tool discovery (CLIs, Victor, monitoring)
+- Sync happens: During `poem-os init`, on server startup (auto), via `poem-os config set port`
+
+**Central Path Resolution** (Story 1.11):
+- Priority order:
+  1. Environment variable `POEM_CENTRAL_PATH` (highest priority, machine-specific override)
+  2. `poem.yaml` → `centralPoemPath` field (committed to version control)
+  3. Convention: `~/dev/ad/poem-os/poem` (if exists)
+  4. Null (local-only mode)
+- **Why committed**: `poem.yaml` contains workflow definitions, so it must be version controlled
+- **Multi-machine workaround**: Use `POEM_CENTRAL_PATH` env var to override per-machine
+
+**Environment Variable Override**:
+```bash
+export POEM_CENTRAL_PATH=~/dev/ad/poem-os/poem  # Overrides poem.yaml value
+```
+
 ---

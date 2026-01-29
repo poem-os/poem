@@ -24,6 +24,7 @@ import { spawn } from 'child_process';
 import { existsSync } from 'fs';
 import { runInit } from './commands/init.js';
 import { runAddWorkflow } from './commands/add-workflow.js';
+import { runConfig } from './commands/config.js';
 
 // Get the directory where this script is located
 const __filename = fileURLToPath(import.meta.url);
@@ -170,8 +171,9 @@ Examples:
   npx poem-os install --core         # Install framework only
   npx poem-os start                  # Start server on configured port
   npx poem-os start --port=3000      # Start on port 3000
-  npx poem-os config --list          # View configuration
-  npx poem-os config --port 8080     # Set port to 8080
+  npx poem-os config list            # View configuration
+  npx poem-os config set port 8080   # Set port to 8080
+  npx poem-os migrate-config         # Migrate old config format to v1.1
   npx poem-os registry --list        # List all installations
   npx poem-os registry --health      # Check installation health
   npx poem-os registry --cleanup     # Clean up missing installations
@@ -1412,8 +1414,13 @@ async function handleInstall(flags) {
 async function handleInit(flags) {
   const targetDir = process.cwd();
 
+  // Parse flags for init command
+  const options = {
+    skipCentralPath: flags['skip-central-path'] || false
+  };
+
   try {
-    await runInit(targetDir);
+    await runInit(targetDir, options);
   } catch (error) {
     console.error('\n❌ Failed to initialize workspace:', error.message);
     process.exit(1);
@@ -1517,107 +1524,32 @@ async function handleStart(flags) {
 }
 
 async function handleConfig(flags) {
-  // Validate POEM is installed
-  if (!existsSync('.poem-app')) {
-    console.error('\n❌ POEM is not installed in this directory.');
-    console.error('   Run: npx poem-os install\n');
+  const targetDir = process.cwd();
+
+  // Parse subcommand and arguments
+  // poem-os config <subcommand> [args...]
+  const args = flags._;
+  const subcommand = args[1]; // args[0] is 'config'
+  const subcommandArgs = args.slice(2);
+
+  try {
+    await runConfig(targetDir, subcommand, subcommandArgs);
+  } catch (error) {
+    console.error('\n❌ Failed to run config command:', error.message);
     process.exit(1);
   }
+}
 
-  const envFile = path.join(process.cwd(), '.poem-app', '.env');
+async function handleMigrateConfig(flags) {
+  const targetDir = process.cwd();
 
-  // Handle --list flag
-  if (flags.list) {
-    let config = {};
-    try {
-      const content = await fs.readFile(envFile, 'utf-8');
-      const lines = content.split('\n');
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (trimmed && !trimmed.startsWith('#')) {
-          const [key, ...values] = trimmed.split('=');
-          if (key) {
-            config[key] = values.join('=');
-          }
-        }
-      }
-    } catch {
-      // .env file doesn't exist, use defaults
-    }
-
-    log('\nCurrent POEM Configuration:');
-    log(`  PORT: ${config.PORT || '4321 (default)'}`);
-    log(`  POEM_DEV: ${config.POEM_DEV || 'false (default)'}\n`);
-    process.exit(0);
+  try {
+    const { runMigration } = await import('./commands/migrate-config.js');
+    await runMigration(targetDir);
+  } catch (error) {
+    console.error('\n❌ Failed to migrate config:', error.message);
+    process.exit(1);
   }
-
-  // Handle --port flag
-  if (flags.port) {
-    const { checkPortConflict, suggestAvailablePorts } = await import('./utils.js');
-
-    const portNum = parseInt(flags.port, 10);
-    if (isNaN(portNum) || portNum < 1024 || portNum > 65535) {
-      console.error(`\n❌ Invalid port: ${flags.port}`);
-      console.error('   Port must be between 1024 and 65535.\n');
-      process.exit(1);
-    }
-
-    // Check for port conflicts (exclude current installation)
-    const targetDir = process.cwd();
-    const { conflict, installation } = await checkPortConflict(portNum, path.resolve(targetDir));
-
-    if (conflict) {
-      const { readRegistry } = await import('./utils.js');
-      const registry = await readRegistry();
-      const suggestions = await suggestAvailablePorts(9500, 3);
-
-      console.error(`\n⚠️  Port ${portNum} is already in use.`);
-
-      // Show all registered installations with stale indicators
-      displayRegistryInstallations(registry.installations, console.log);
-
-      console.log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
-      process.exit(1);
-    }
-
-    // Read existing .env file
-    let config = {};
-    try {
-      const content = await fs.readFile(envFile, 'utf-8');
-      const lines = content.split('\n');
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (trimmed && !trimmed.startsWith('#')) {
-          const [key, ...values] = trimmed.split('=');
-          if (key) {
-            config[key] = values.join('=');
-          }
-        }
-      }
-    } catch {
-      // .env file doesn't exist, will create it
-    }
-
-    // Update PORT
-    config.PORT = portNum.toString();
-
-    // Write back to .env
-    const lines = Object.entries(config).map(([key, value]) => `${key}=${value}`);
-    await fs.writeFile(envFile, lines.join('\n') + '\n', 'utf-8');
-
-    // Update registry with new port
-    await registerInstallation(targetDir, portNum);
-
-    log(`\n✅ Port updated to ${portNum}`);
-    log('   Restart POEM for changes to take effect:');
-    log('   npx poem-os start\n');
-    process.exit(0);
-  }
-
-  // No valid flags provided
-  console.error('\n❌ Invalid usage.');
-  console.error('   Usage: npx poem-os config --list | --port XXXX\n');
-  process.exit(1);
 }
 
 async function handleRegistry(flags) {
@@ -1790,6 +1722,9 @@ async function main() {
       break;
     case 'config':
       await handleConfig(flags);
+      break;
+    case 'migrate-config':
+      await handleMigrateConfig(flags);
       break;
     case 'registry':
       await handleRegistry(flags);

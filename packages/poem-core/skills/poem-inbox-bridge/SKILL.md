@@ -71,10 +71,22 @@ Expects a **Client Blocker** object with:
    - Submission ID format: `{project}-{sequence}` (e.g., `v-voz-001`)
    - Timestamp: ISO 8601 format
 
-2. **Write to POEM inbox**:
-   - **Target path** (hardcoded MVP): `/Users/davidcruwys/dev/ad/poem-os/poem/docs/planning/gap-analysis/inbox/{submissionId}.json`
+2. **Resolve central POEM path and write to inbox**:
+   - **Path resolution** (dynamic, in priority order):
+     1. Check environment variable `POEM_CENTRAL_PATH` (highest priority)
+     2. Read `centralPoemPath` from `poem/config/poem.yaml` (if exists)
+     3. Try convention: Check if `~/dev/ad/poem-os/poem` exists
+     4. If not found: Error with helpful message
+   - **Target path**: `{centralPoemPath}/docs/planning/gap-analysis/inbox/{submissionId}.json`
    - **Format**: Pretty-printed JSON (indent 2 spaces)
    - **Overwrite behavior**: Error if file already exists (duplicate submission ID)
+   - **Error if path not configured**:
+     ```
+     ❌ Cannot submit to central POEM inbox.
+
+     Central POEM path not configured. Set it with:
+     poem-os config set central-path /path/to/poem
+     ```
 
 3. **Update submission object**:
    - Set `submittedTo` field to inbox file path
@@ -113,7 +125,9 @@ Given blocker data from Field Testing Agent:
 }
 ```
 
-**Action**: Write to `/Users/davidcruwys/dev/ad/poem-os/poem/docs/planning/gap-analysis/inbox/v-voz-001.json`
+**Action**:
+1. Resolve central POEM path (e.g., `~/dev/ad/poem-os/poem`)
+2. Write to `{centralPoemPath}/docs/planning/gap-analysis/inbox/v-voz-001.json`
 
 **Output**:
 ```json
@@ -136,11 +150,15 @@ Given blocker data from Field Testing Agent:
   },
   "status": "pending",
   "poemIssueRef": null,
-  "submittedTo": "/Users/davidcruwys/dev/ad/poem-os/poem/docs/planning/gap-analysis/inbox/v-voz-001.json"
+  "submittedTo": "{centralPoemPath}/docs/planning/gap-analysis/inbox/v-voz-001.json"
 }
 ```
 
 ## Error Handling
+
+**Central POEM path not configured**:
+- Error: "❌ Cannot submit to central POEM inbox. Central POEM path not configured. Set it with: poem-os config set central-path /path/to/poem"
+- User must configure central path before submission
 
 **Directory doesn't exist**:
 - Create inbox directory if missing
@@ -157,6 +175,11 @@ Given blocker data from Field Testing Agent:
 **Invalid submission data**:
 - Error: "Missing required field: {fieldName}"
 - Validate before write attempt
+
+**Stale central path** (directory moved/deleted):
+- Detect on path resolution
+- Warn user: "⚠ Central POEM not found at {path}. Update with: poem-os config set central-path <new-path>"
+- Fail submission with clear error
 
 ## Processing in POEM
 
@@ -201,10 +224,23 @@ After submission:
 
 ## Configuration
 
-**Hardcoded paths (MVP)**:
-- Central POEM inbox: `/Users/davidcruwys/dev/ad/poem-os/poem/docs/planning/gap-analysis/inbox/`
+**Dynamic path resolution** (Story 1.11):
+- Central POEM path is resolved dynamically in priority order:
+  1. Environment variable: `POEM_CENTRAL_PATH`
+  2. Config file: `poem/config/poem.yaml` → `centralPoemPath` field
+  3. Convention: `~/dev/ad/poem-os/poem` (if exists)
+  4. If not found: Error with configuration instructions
 
-**Future enhancement**: Make path configurable via environment variable or config file.
+**Setting central path**:
+```bash
+# Option 1: Via config command
+poem-os config set central-path ~/dev/ad/poem-os/poem
+
+# Option 2: Via environment variable (for multi-machine scenarios)
+export POEM_CENTRAL_PATH=~/dev/ad/poem-os/poem
+```
+
+**Target inbox directory**: `{centralPoemPath}/docs/planning/gap-analysis/inbox/`
 
 ## Integration Notes
 

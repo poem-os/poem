@@ -3,6 +3,7 @@ import { logStartup, setupShutdownHandlers, logPortConflict, setHelpersLoadedCou
 import { initHandlebarsService } from '../services/handlebars/index.js';
 import { loadHelpers } from '../services/handlebars/loader.js';
 import { getHelperWatcher } from '../services/handlebars/watcher.js';
+import { syncPortToConfig } from '../services/config/poem-config.js';
 
 /**
  * POEM Server Integration
@@ -16,6 +17,10 @@ export function poemServer(): AstroIntegration {
     hooks: {
       'astro:config:setup': async () => {
         startTime = Date.now();
+
+        // Sync port from .env to poem.yaml (Story 1.11)
+        const envPort = parseInt(process.env.PORT || '9500', 10);
+        await syncPortToConfig(envPort);
 
         // Initialize Handlebars service and load helpers
         const handlebarsService = initHandlebarsService();

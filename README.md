@@ -98,10 +98,10 @@ npx poem-os start
 npx poem-os start --port=3000
 
 # View current configuration
-npx poem-os config --list
+npx poem-os config list
 
 # Change port permanently
-npx poem-os config --port 8080
+npx poem-os config set port 8080
 
 # Activate Prompt Engineer agent in Claude Code
 /poem/agents/prompt-engineer
@@ -135,19 +135,38 @@ npx poem-os start --port=3000
 
 ### Configuration Management
 
-View your current POEM configuration:
+POEM configuration is stored in `poem/config/poem.yaml` and can be managed via the `poem-os config` command.
+
+**View all configuration**:
 
 ```bash
-npx poem-os config --list
+npx poem-os config list
 ```
 
-Change the server port permanently:
+**Get a specific value**:
 
 ```bash
-npx poem-os config --port 8080
+npx poem-os config get port
+npx poem-os config get central-path
+```
+
+**Set configuration values**:
+
+```bash
+# Change server port (updates both poem.yaml and .poem-app/.env)
+npx poem-os config set port 8080
+
+# Configure central POEM path (for contributors/developers)
+npx poem-os config set central-path ~/dev/ad/poem-os/poem
 ```
 
 **Port Requirements**: Port numbers must be between 1024 and 65535.
+
+**Central POEM Path** (Optional for Contributors):
+- Most users don't need this - only contributors and framework developers
+- Enables agents (Victor, Felix) to query central POEM capabilities
+- When configured, POEM agents can answer "what can POEM do?" from central documentation
+- For multi-machine scenarios with different paths, use `POEM_CENTRAL_PATH` environment variable to override `poem.yaml` value
 
 ### Installation Registry Management
 
@@ -301,7 +320,7 @@ npx poem-os install
 # Solution: Use a different port
 npx poem-os start --port=9510
 # Or permanently change it
-npx poem-os config --port 9510
+npx poem-os config set port 9510
 ```
 
 **Running multiple POEM instances**
@@ -312,9 +331,49 @@ npx poem-os start  # Port 9500
 
 # Terminal 2 (project B)
 cd ~/projects/project-b
-npx poem-os config --port 9510
+npx poem-os config set port 9510
 npx poem-os start  # Port 9510
 ```
+
+**Victor says "Running in local-only mode"**
+
+This means Victor (Workflow Validator agent) can't find the central POEM development source. This is normal for most users.
+
+**For contributors/developers**: If you have the POEM development clone and want Victor to query central capabilities:
+```bash
+# Configure central POEM path
+npx poem-os config set central-path ~/dev/ad/poem-os/poem
+
+# Verify configuration
+npx poem-os config get central-path
+```
+
+**For end users**: You can ignore this message - Victor will work in local-only mode using installed framework files.
+
+**Felix can't submit to inbox - path not configured**
+
+The Felix agent needs the central POEM path to submit blockers to the central issue inbox.
+
+**Solution**: Configure central POEM path (contributors only):
+```bash
+npx poem-os config set central-path ~/dev/ad/poem-os/poem
+```
+
+**Multi-machine setup with different central paths**
+
+If you work across multiple machines with different directory structures (e.g., laptop vs desktop), use the `POEM_CENTRAL_PATH` environment variable instead of `poem.yaml`:
+
+```bash
+# On laptop
+export POEM_CENTRAL_PATH=~/dev/poem-os/poem
+
+# On desktop
+export POEM_CENTRAL_PATH=/Users/work/projects/poem
+
+# This overrides the value in poem/config/poem.yaml
+```
+
+**Note**: `poem/config/poem.yaml` is committed to version control (not gitignored) because it contains workflow definitions. The environment variable allows machine-specific overrides.
 
 ## What is POEM?
 

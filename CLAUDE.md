@@ -383,6 +383,35 @@ Step 6: Quinn (QA) → Step 7: Lisa (Librarian) → [WORKFLOW END]
 
 Lisa is the FINAL agent. After knowledge curation, the story workflow is complete.
 
+## POEM Agents
+
+POEM includes specialized agents that extend beyond the standard BMAD framework:
+
+| Agent | Persona | Role | Primary Use |
+|-------|---------|------|-------------|
+| **victor** | Victor | Workflow Tester + Capability Query | After each story: tests B72 YouTube workflow end-to-end, prevents regressions, tracks automation progress. Also answers "what can POEM do?" via `*capability-explorer` |
+| **penny** | Penny | AI Prompt Assistant | Create, refine, test, and validate AI prompts. Generates schemas, creates mock data, validates prompt structure |
+| **felix** | Felix | Cross-Project Bug Reporter | When using POEM in other projects (v-voz, etc.): logs bugs with full context and submits them back to central POEM for triage |
+
+**Access**: `/poem/agents/{agent-name}`
+
+### Agent Details
+
+**Victor (Workflow Tester + Capability Query)** - See dedicated section below for full capabilities.
+- **When to use**: After completing a story, run `*validate` to test B72 workflow end-to-end
+- **Also provides**: `*capability-explorer` to query "what can POEM do?" (answers in <3 seconds)
+- **Key commands**: `*validate`, `*regression`, `*progress-report`, `*capability-explorer`
+
+**Penny (AI Prompt Assistant)** - Helps you build AI prompts the right way.
+- **When to use**: Creating new prompts, refining existing ones, testing with mock data
+- **What it does**: Guides you through prompt creation with schemas, generates test data, validates structure
+- **Key commands**: `*new`, `*refine`, `*test`, `*validate`
+
+**Felix (Cross-Project Bug Reporter)** - Reports issues from external POEM installations.
+- **When to use**: Testing POEM in other projects (v-voz, prompt-supportsignal, etc.) and hitting blockers
+- **What it does**: Captures project context automatically, creates structured bug reports, submits to central POEM inbox
+- **Key commands**: `*log-blocker`, `*log-session`, `*log-status`
+
 ## Capability Progression Validation (Victor Agent)
 
 ### NEW: Product-Level QA System

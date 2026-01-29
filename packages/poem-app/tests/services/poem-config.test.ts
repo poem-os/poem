@@ -14,6 +14,10 @@ import {
   getWorkflowPath,
   getReferencePaths,
   setCurrentWorkflow,
+  getCentralPoemPath,
+  getServerPort,
+  getUserPoemConfig,
+  clearConfigCache,
   type PoemConfig,
 } from '../../src/services/config/poem-config.js';
 
@@ -501,6 +505,73 @@ describe('POEM Configuration Service', () => {
         if (config.currentWorkflow && config.workflows) {
           expect(config.workflows).toHaveProperty(config.currentWorkflow);
         }
+      });
+    });
+  });
+
+  // ============================================================================
+  // Story 1.11: Central POEM Path & Port Configuration Tests
+  // ============================================================================
+
+  describe('Story 1.11: Central POEM Path & Server Port Configuration', () => {
+    let originalEnv: NodeJS.ProcessEnv;
+
+    beforeEach(() => {
+      originalEnv = { ...process.env };
+      clearConfigCache();
+      delete process.env.POEM_CENTRAL_PATH;
+    });
+
+    afterEach(() => {
+      process.env = originalEnv;
+    });
+
+    describe('getCentralPoemPath', () => {
+      it('returns path from POEM_CENTRAL_PATH environment variable (highest priority)', async () => {
+        const envPath = '/env/override/path';
+        process.env.POEM_CENTRAL_PATH = envPath;
+
+        const result = await getCentralPoemPath();
+        expect(result).toBe(envPath);
+      });
+
+      it('returns null when not configured', async () => {
+        const result = await getCentralPoemPath();
+        expect(result).toBeNull();
+      });
+
+      it('environment variable overrides poem.yaml value', async () => {
+        const envPath = '/env/path';
+        process.env.POEM_CENTRAL_PATH = envPath;
+
+        const result = await getCentralPoemPath();
+        expect(result).toBe(envPath);
+      });
+    });
+
+    describe('getServerPort', () => {
+      it('returns 9500 as default fallback', async () => {
+        const result = await getServerPort();
+        expect(result).toBe(9500);
+      });
+
+      it('falls back to 9500 when poem.yaml does not exist', async () => {
+        const result = await getServerPort();
+        expect(result).toBe(9500);
+      });
+    });
+
+    describe('clearConfigCache', () => {
+      it('clears user config cache', async () => {
+        // First call
+        await getServerPort();
+
+        // Clear cache
+        clearConfigCache();
+
+        // Should work without errors after cache clear
+        const port = await getServerPort();
+        expect(port).toBe(9500);
       });
     });
   });

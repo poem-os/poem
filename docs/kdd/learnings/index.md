@@ -84,6 +84,13 @@ Epic 4 revealed insights about type safety in generation, testing workflows, pat
    - **Lesson**: Evidence beats trust. User should never be first tester. Quality gates must actually gate.
    - **Impact**: Systemic fix affecting all future stories - requires pasted test output as proof
 
+11. **[Dev Workflow Process Violation (Story 1.11)](dev-workflow-process-violation-kdd.md)** ⚠️ HIGH SEVERITY
+   - **Challenge**: Dev marked tasks complete WITHOUT writing required unit tests (AC #9 violation)
+   - **Root Cause**: Tunnel vision on features, misapplied "deferred" pattern, skipped instruction checkpoint
+   - **Solution**: Self-corrected - wrote 6 unit tests (49/49 passing), updated Debug Log with analysis
+   - **Lesson**: "Ready for Review" requires TESTS PASSING, not just code written. Order-of-execution is non-negotiable.
+   - **Status**: Resolved (self-identified during pre-review checkpoint)
+
 ### Test Maintenance and Quality
 
 10. **[Workflow Data Test Race Condition](workflow-data-test-race-condition.md)** ⚠️ RECURRING (2/3)
@@ -91,6 +98,13 @@ Epic 4 revealed insights about type safety in generation, testing workflows, pat
    - **Solution**: Verify file exists before load (`fs.promises.access()`), avoid arbitrary delays
    - **Lesson**: Async filesystem operations need explicit verification in tests, not just `await`
    - **Status**: Recurring issue - 2 occurrences tracked in [VAL-006](../meta/val-006-recurring-issues.md)
+
+12. **[Testing Infrastructure Challenges (Story 1.11)](testing-infrastructure-challenges-kdd.md)** ⚠️ ACTIVE
+   - **Challenge**: 8-10 pre-existing integration test failures + manual SAT incomplete (0/11 human tests)
+   - **Root Cause**: Integration tests depend on unstable server infrastructure, manual SAT requires external resources
+   - **Solution**: Document pre-existing failures, separate story tests from infrastructure tests, create follow-up story
+   - **Lesson**: Infrastructure debt compounds. Story tests (49/49 passing) vs infrastructure tests must be separated.
+   - **Status**: Active (user creating dedicated infrastructure remediation story)
 
 ---
 

@@ -202,6 +202,27 @@ so that I don't have empty folders cluttering my project and can organize by wor
 
 ---
 
+### Story 1.11: Central POEM Path Configuration & Port Sync
+
+As a POEM contributor/developer,
+I want the installer to configure central POEM path and sync port settings to poem.yaml,
+so that agents (Victor, Felix) can query cross-repository capabilities and tools can discover the POEM server port.
+
+**Acceptance Criteria**:
+
+1. `poem/config/poem.yaml` includes new `server` section with `port` field (default: 9500) and new `centralPoemPath` field (default: `null`)
+2. `poem-os init` reads port from `.poem-app/.env` file (if exists) or `PORT` environment variable (default: 9500), writes `server.port` to `poem/config/poem.yaml`; Astro config unchanged (continues reading `process.env.PORT`)
+3. `poem-os init` detects if `~/dev/ad/poem-os/poem` exists; if yes, prompts user to configure central POEM path; prompt skippable with `--skip-central-path` flag
+4. New command `poem-os config set <key> <value>` supports keys: `port` (updates both poem.yaml and .env), `central-path` (updates poem.yaml); new commands: `poem-os config get <key>`, `poem-os config list`
+5. Config service (`packages/poem-app/src/services/config/poem-config.ts`) adds `getCentralPoemPath()` and `getServerPort()` methods for tool queries (NOT used by Astro)
+6. Victor agent (`packages/poem-core/agents/workflow-validator.md`) updated with path resolution: reads `centralPoemPath` from poem.yaml, falls back to convention `~/dev/ad/poem-os/poem`; `*capability-explorer` queries both local context (.poem-core/) and central context (docs/stories/, docs/prd/, docs/kdd/)
+7. Felix/Inbox Bridge (`packages/poem-core/skills/poem-inbox-bridge/SKILL.md`) removes hardcoded path, uses path resolution logic with helpful error if central path not configured
+8. CLI routing in `bin/install.js` for `poem-os config` command with subcommands: set, get, list
+9. Unit tests for config service; integration tests for init command; manual SAT for Victor cross-repo queries, Felix inbox submission, and port sync
+10. Documentation updates: README (config command, gitignore policy), architecture docs (poem.yaml schema), Victor's guide (troubleshooting); document that `poem/config/poem.yaml` should be committed (not gitignored), already protected by `.poem-preserve`; for multi-machine scenarios, use `POEM_CENTRAL_PATH` env var override
+
+---
+
 ## Epic 2: Astro Runtime & Handlebars Engine
 
 **Goal**: Build the `.poem-app/` Astro server with Handlebars template engine, enabling template rendering via API endpoints. This provides the runtime foundation for all template-based operations.

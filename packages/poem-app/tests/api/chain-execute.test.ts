@@ -2,18 +2,22 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { promises as fs } from "node:fs";
 import { join } from "node:path";
 import type { ChainDefinition } from "../../src/services/chain/types.js";
-import { resolvePathAsync } from "../../src/services/config/poem-config.js";
+import { resolvePathAsync, getServerPort } from "../../src/services/config/poem-config.js";
 import { WorkflowDataService } from "../../src/services/chain/workflow-data.js";
 
 // Note: These tests require the Astro dev server to be running
-// or use a test server setup
-const BASE_URL = "http://localhost:4321";
+// Port is dynamically discovered from poem.yaml (Story 1.11)
+let BASE_URL: string;
 
 describe("POST /api/chain/execute", () => {
   let workflowDataService: WorkflowDataService;
   let createdWorkflowIds: string[] = [];
 
   beforeAll(async () => {
+    // Discover server port from config (Story 1.11)
+    const port = await getServerPort();
+    BASE_URL = `http://localhost:${port}`;
+
     workflowDataService = new WorkflowDataService();
     await workflowDataService.initialize();
 
