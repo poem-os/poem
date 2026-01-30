@@ -19,25 +19,34 @@ Documentation of story-specific insights, debugging sessions, incidents, and les
    - **Key Lesson**: Zero-tolerance means DELETE, not document or mark as "acceptable"
    - **Pattern**: [Zero-Tolerance Testing Pattern](../patterns/testing-zero-tolerance-pattern.md) (to be created)
 
+3. **[Testing - Real Data vs Mock Data](./testing-real-data-vs-mock-data-kdd.md)** - Story 1.12
+   - **Issue**: Mock data tests passed but real user data exposed function bug
+   - **Severity**: Medium
+   - **Status**: Resolved
+   - **Key Lesson**: Test against real user directories with messy/legacy data, not just perfect mock data
+
 ## Learnings by Category
 
-### Testing (2)
+### Testing (3)
 - [Testing - Missing Dependency](./testing-missing-dependency-kdd.md)
 - [Testing - Zero-Tolerance Enforcement](./testing-zero-tolerance-enforcement-kdd.md)
+- [Testing - Real Data vs Mock Data](./testing-real-data-vs-mock-data-kdd.md)
 
 ## Learnings by Severity
 
 ### High (1)
 - [Testing - Zero-Tolerance Enforcement](./testing-zero-tolerance-enforcement-kdd.md)
 
-### Medium (1)
+### Medium (2)
 - [Testing - Missing Dependency](./testing-missing-dependency-kdd.md)
+- [Testing - Real Data vs Mock Data](./testing-real-data-vs-mock-data-kdd.md)
 
 ## Learnings by Status
 
-### Resolved (2)
+### Resolved (3)
 - [Testing - Missing Dependency](./testing-missing-dependency-kdd.md)
 - [Testing - Zero-Tolerance Enforcement](./testing-zero-tolerance-enforcement-kdd.md)
+- [Testing - Real Data vs Mock Data](./testing-real-data-vs-mock-data-kdd.md)
 
 ## Pattern Promotion Candidates
 
@@ -46,6 +55,7 @@ Documentation of story-specific insights, debugging sessions, incidents, and les
 
 ### Monitoring (Recurrence Count = 1, not yet promoted)
 - [Testing - Missing Dependency](./testing-missing-dependency-kdd.md)
+- [Testing - Real Data vs Mock Data](./testing-real-data-vs-mock-data-kdd.md) ← **Pattern candidate if recurs 2+ more times**
 
 ---
 
