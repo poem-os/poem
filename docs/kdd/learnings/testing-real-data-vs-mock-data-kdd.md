@@ -165,7 +165,7 @@ if (existsSync(workflowsDir)) {
 - ✅ Require field testing against real project directories for installation stories
 
 ### Recommended Patterns
-- Consider creating: [Filesystem-First Discovery Pattern](../patterns/filesystem-first-discovery-pattern.md)
+- Consider creating: Filesystem-First Discovery Pattern (not yet promoted)
 - If this pattern recurs 3+ times, promote to reusable pattern
 
 ### Tests Added

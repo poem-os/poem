@@ -23,7 +23,7 @@ import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
 import { existsSync } from 'fs';
 import { runInit } from './commands/init.js';
-import { runAddWorkflow } from './commands/add-workflow.js';
+import { runAddWorkflow, listWorkflows } from './commands/add-workflow.js';
 import { runConfig } from './commands/config.js';
 
 // Get the directory where this script is located
@@ -140,6 +140,7 @@ Commands:
   install         Install POEM into the current directory
   init            Create workspace folders (poem/config/, poem/shared/)
   add-workflow    Create workflow-specific folders
+  list-workflows  List all existing workflows
   start           Start the POEM server
   config          Configure POEM settings
   registry        Manage POEM installations registry
@@ -167,16 +168,19 @@ Registry Options:
   --cleanup   Remove missing installations from registry
 
 Examples:
-  npx poem-os install                # Full installation
-  npx poem-os install --core         # Install framework only
-  npx poem-os start                  # Start server on configured port
-  npx poem-os start --port=3000      # Start on port 3000
-  npx poem-os config list            # View configuration
-  npx poem-os config set port 8080   # Set port to 8080
-  npx poem-os migrate-config         # Migrate old config format to v1.1
-  npx poem-os registry --list        # List all installations
-  npx poem-os registry --health      # Check installation health
-  npx poem-os registry --cleanup     # Clean up missing installations
+  npx poem-os install                  # Full installation
+  npx poem-os install --core           # Install framework only
+  npx poem-os init                     # Create workspace folders
+  npx poem-os add-workflow my-flow     # Add a new workflow
+  npx poem-os list-workflows           # List existing workflows
+  npx poem-os start                    # Start server on configured port
+  npx poem-os start --port=3000        # Start on port 3000
+  npx poem-os config list              # View configuration
+  npx poem-os config set port 8080     # Set port to 8080
+  npx poem-os migrate-config           # Migrate old config format to v1.1
+  npx poem-os registry --list          # List all installations
+  npx poem-os registry --health        # Check installation health
+  npx poem-os registry --cleanup       # Clean up missing installations
 `);
 }
 
@@ -415,6 +419,45 @@ function prompt(question) {
   });
 }
 
+/**
+ * Gets list of existing workflows from filesystem and poem.yaml
+ * @param {string} targetDir - Project root directory
+ * @returns {Promise<{workflows: string[], currentWorkflow: string | null}>}
+ */
+async function getExistingWorkflows(targetDir) {
+  const workflowsDir = path.join(targetDir, 'poem', 'workflows');
+  const configFile = path.join(targetDir, 'poem', 'config', 'poem.yaml');
+
+  let currentWorkflow = null;
+  let workflows = [];
+
+  // Check filesystem for workflow directories
+  if (existsSync(workflowsDir)) {
+    try {
+      const entries = await fs.readdir(workflowsDir, { withFileTypes: true });
+      workflows = entries
+        .filter(entry => entry.isDirectory())
+        .map(entry => entry.name);
+    } catch (error) {
+      // Ignore errors reading workflow directory
+    }
+  }
+
+  // Try to get current workflow from config
+  if (existsSync(configFile)) {
+    try {
+      const yaml = await import('js-yaml');
+      const configContent = await fs.readFile(configFile, 'utf-8');
+      const config = yaml.load(configContent);
+      currentWorkflow = config.currentWorkflow || null;
+    } catch (error) {
+      // Ignore config read errors
+    }
+  }
+
+  return { workflows, currentWorkflow };
+}
+
 async function checkExistingInstallation(targetDir, flags) {
   const checks = [
     { path: path.join(targetDir, '.poem-core'), name: '.poem-core' },
@@ -634,18 +677,22 @@ async function promptForPort(force, targetDir = null) {
     const defaultPort = 9500;
     const defaultCheck = await validatePortWithConflictCheck(defaultPort);
 
-    if (!defaultCheck.valid && defaultCheck.error === 'conflict') {
-      // Default port has conflict, show all registered ports and suggestions
-      const { readRegistry } = await import('./utils.js');
-      const registry = await readRegistry();
-      const suggestions = await suggestAvailablePorts(9500, 3);
+    // Always show registry if installations exist (Bug #6 fix)
+    const { readRegistry } = await import('./utils.js');
+    const registry = await readRegistry();
 
-      log(`\n⚠️  Port ${defaultPort} is already in use.`);
-
+    if (registry.installations && registry.installations.length > 0) {
       // Show all registered installations with stale indicators
       displayRegistryInstallations(registry.installations, log);
 
-      log(`\n   Suggested available ports: ${suggestions.join(', ')}`);
+      // Show suggested next port
+      const suggestions = await suggestAvailablePorts(9500, 3);
+      log(`\n   Next suggested port: ${suggestions[0]} (following increment-of-10 convention)`);
+    }
+
+    // If default port has conflict, show warning
+    if (!defaultCheck.valid && defaultCheck.error === 'conflict') {
+      log(`\n⚠️  Port ${defaultPort} is already in use.`);
     }
 
     const askForPort = () => {
@@ -1118,6 +1165,12 @@ function showSuccessMessage(results, targetDir) {
     log('  4. In Claude Code: /poem/agents/prompt-engineer');
   }
 
+  log('\n' + bold('📝 POEM Agent Documentation') + '\n');
+  log('   To help Claude understand POEM agents, view:');
+  log('   ' + cyan('.poem-core/docs/claude-md-guide.md'));
+  log('');
+  log('   This file contains a ready-to-use section for your CLAUDE.md');
+
   log(`\nVersion: ${VERSION}`);
   log(`Location: ${targetDir}\n`);
 }
@@ -1376,9 +1429,25 @@ async function handleInstall(flags) {
         await runInit(targetDir);
         results.createdWorkspace = true;
 
-        // Prompt 2: Add first workflow
+        // Check for existing workflows
+        const { workflows, currentWorkflow } = await getExistingWorkflows(targetDir);
+
+        // Show existing workflows if any
+        if (workflows.length > 0) {
+          log('\n' + bold('📁 Existing workflows:'));
+          workflows.forEach((wf, idx) => {
+            const marker = wf === currentWorkflow ? ' ' + green('✓ (current)') : '';
+            log(`  ${idx + 1}. ${wf}${marker}`);
+          });
+        }
+
+        // Prompt 2: Add workflow (text changes based on whether workflows exist)
+        const workflowPromptText = workflows.length > 0
+          ? '\nWould you like to ' + cyan('add another workflow') + ' now?\n'
+          : '\nWould you like to ' + cyan('add your first workflow') + ' now?\n';
+
         const shouldAddWorkflow = await prompt(
-          '\nWould you like to ' + cyan('add your first workflow') + ' now?\n' +
+          workflowPromptText +
           dim('  (Creates workflow-specific folders: prompts/, schemas/, mock-data/, workflow-state/)') + '\n' +
           '  [y/N]: '
         );
@@ -1399,6 +1468,13 @@ async function handleInstall(flags) {
         } else {
           log(dim('\nSkipped workflow creation. Add workflows later with: ') + cyan('poem-os add-workflow <name>'));
         }
+
+        // Final reminder about CLAUDE.md documentation (Story 1.12)
+        log('\n' + dim('━'.repeat(60)));
+        log('\n' + bold('📝 Don\'t forget!') + ' To help Claude Code understand POEM agents:');
+        log('   View: ' + cyan('.poem-core/docs/claude-md-guide.md'));
+        log('   Copy the agent section into your project\'s ' + cyan('CLAUDE.md'));
+        log(dim('\n━'.repeat(60)));
       } else {
         log(dim('\nSkipped workspace initialization. Run later with: ') + cyan('poem-os init'));
       }
@@ -1440,7 +1516,9 @@ async function handleAddWorkflow(flags) {
     console.error('     - poem/workflows/youtube-launch/prompts/');
     console.error('     - poem/workflows/youtube-launch/schemas/');
     console.error('     - poem/workflows/youtube-launch/mock-data/');
-    console.error('     - poem/workflows/youtube-launch/workflow-state/\n');
+    console.error('     - poem/workflows/youtube-launch/workflow-state/');
+    console.error('');
+    console.error('   List existing workflows: poem-os list-workflows\n');
     process.exit(1);
   }
 
@@ -1448,6 +1526,17 @@ async function handleAddWorkflow(flags) {
     await runAddWorkflow(targetDir, workflowName);
   } catch (error) {
     console.error('\n❌ Failed to add workflow:', error.message);
+    process.exit(1);
+  }
+}
+
+async function handleListWorkflows(flags) {
+  const targetDir = process.cwd();
+
+  try {
+    await listWorkflows(targetDir);
+  } catch (error) {
+    console.error('\n❌ Failed to list workflows:', error.message);
     process.exit(1);
   }
 }
@@ -1716,6 +1805,9 @@ async function main() {
       break;
     case 'add-workflow':
       await handleAddWorkflow(flags);
+      break;
+    case 'list-workflows':
+      await handleListWorkflows(flags);
       break;
     case 'start':
       await handleStart(flags);

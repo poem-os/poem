@@ -156,6 +156,7 @@ When adding a new resource type:
 
 - **Source**: `docs/stories/3.2.5.story.md` (Config Service Paths - initial pattern)
 - **Extension**: `docs/stories/3.8.story.md` (Multi-Workflow Foundation - multi-workflow support)
+- **Epic 1 Application**: Story 1.10 (Selective Workspace Creation), Story 1.11 (Central POEM Path Configuration)
 - **Config File**: `packages/poem-core/poem-core-config.yaml` (configuration examples)
 - **Implementation**: `packages/poem-app/src/services/config/poem-config.ts` (config service code)
 - **Documentation**: `packages/poem-core/workflows/README.md` (workflow path resolution guide)
@@ -164,4 +165,5 @@ When adding a new resource type:
 
 **Pattern Established**: Story 3.2.5 (2026-01-10)
 **Extended**: Story 3.8 (2026-01-12)
-**Last Updated**: 2026-01-16
+**Applied in Epic 1**: Story 1.10, Story 1.11 (2026-01-30)
+**Last Updated**: 2026-01-30

@@ -42,7 +42,7 @@
 
 ### Bugs
 
-- [ ] (none currently)
+- [x] **Bug #6: Port Registry Hidden During Clean Install** - Port registry display (`displayRegistryInstallations()`) only shows when there's a conflict, not during normal installation. Users miss: (a) existing port allocations, (b) next suggested port, (c) increment-of-10 convention, (d) installation ecosystem overview. Fix: Move registry display OUTSIDE conflict check (lines 680-692 in `bin/install.js`), always show if ANY installations exist, suggest next port based on highest allocated. Impact: Medium-High UX issue - users don't know what ports are taken and may choose conflicting ports. Context: User discovered this on 2026-01-30, ports 9500-9540 allocated, next should be 9550. **Status**: Fixed - registry now displays for all installations regardless of conflict state, shows next suggested port with increment-of-10 convention hint. (Awaiting human validation)
 
 ---
 

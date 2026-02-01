@@ -387,6 +387,7 @@ workflows/nano-banana/prompts/process-order.hbs
 
 - **Discovery**: `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md` (genesis of pattern)
 - **Story**: `docs/stories/3.8.story.md` (Phase 1 implementation)
+- **Epic 1 Application**: Story 1.10 (Selective Workspace Creation - only create workflow folders when workflows added)
 - **Config Service**: `packages/poem-app/src/services/config/poem-config.ts` (workflow path resolution)
 - **Persistence**: `packages/poem-app/src/services/config/workflow-persistence.ts` (state management)
 - **Agent**: `packages/poem-core/agents/prompt-engineer.md` (workflow commands)
@@ -396,6 +397,7 @@ workflows/nano-banana/prompts/process-order.hbs
 ---
 
 **Pattern Established**: Story 3.8 (2026-01-12)
+**Applied in Epic 1**: Story 1.10 (2026-01-30)
 **Phase 1 Status**: Complete
 **Phase 2 Story**: 4.9 (planned)
-**Last Updated**: 2026-01-16
+**Last Updated**: 2026-01-30

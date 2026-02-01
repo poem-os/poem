@@ -87,6 +87,9 @@ export class WorkflowDataService {
 
     const filePath = join(this.workflowDataDir!, `${workflowData.id}.json`);
 
+    // Ensure directory exists (defensive check for nested paths)
+    await fs.mkdir(this.workflowDataDir!, { recursive: true });
+
     // Pretty-print JSON for human readability
     const content = JSON.stringify(workflowData, null, 2);
 
