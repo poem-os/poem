@@ -42,7 +42,10 @@ async function promptMigration() {
  * @returns {boolean} True if migration needed
  */
 function needsMigration(config) {
-  return !config.server || config.centralPoemPath === undefined;
+  return !config.server ||
+         config.centralPoemPath === undefined ||
+         !config.workflows ||
+         config.currentWorkflow === undefined;
 }
 
 /**
@@ -81,6 +84,12 @@ export async function runMigration(targetDir) {
     if (config.centralPoemPath === undefined) {
       console.log('  - Missing: centralPoemPath field (will add default: null)');
     }
+    if (!config.workflows) {
+      console.log('  - Missing: workflows field (will add default: {})');
+    }
+    if (config.currentWorkflow === undefined) {
+      console.log('  - Missing: currentWorkflow field (will add default: null)');
+    }
 
     // Prompt for confirmation
     const confirmed = await promptMigration();
@@ -102,6 +111,16 @@ export async function runMigration(targetDir) {
       migratedConfig.centralPoemPath = null;
     }
 
+    // Ensure workflows object exists (Bug Fix: Cannot set properties of undefined)
+    if (!migratedConfig.workflows) {
+      migratedConfig.workflows = {};
+    }
+
+    // Ensure currentWorkflow exists
+    if (migratedConfig.currentWorkflow === undefined) {
+      migratedConfig.currentWorkflow = null;
+    }
+
     // Generate migrated YAML with comment
     const timestamp = new Date().toISOString();
     const migratedYaml = yaml.dump(migratedConfig, {
@@ -121,6 +140,11 @@ export async function runMigration(targetDir) {
     console.log('\nMigrated schema:');
     console.log('- server.port:', migratedConfig.server.port);
     console.log('- centralPoemPath:', migratedConfig.centralPoemPath ?? 'null');
+    if (migratedConfig.centralPoemPath === null) {
+      console.log('  Hint: ~/dev/ad/poem-os/poem (convention for contributors)');
+    }
+    console.log('- workflows:', Object.keys(migratedConfig.workflows).length > 0 ? Object.keys(migratedConfig.workflows).join(', ') : '{}');
+    console.log('- currentWorkflow:', migratedConfig.currentWorkflow ?? 'null');
     console.log('\nConfig file: poem/config/poem.yaml');
   } catch (error) {
     console.error('\n❌ Migration failed:', error.message);

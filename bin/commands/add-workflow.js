@@ -66,6 +66,26 @@ export async function runAddWorkflow(targetDir, workflowName) {
   if (existsSync(configFile)) {
     const configContent = await fs.readFile(configFile, 'utf-8');
     config = yaml.load(configContent);
+
+    // Ensure workflows object exists (Bug Fix: Cannot set properties of undefined after migration)
+    if (!config.workflows) {
+      config.workflows = {};
+    }
+
+    // Check if workflow name already exists in config (Bug Fix: No duplicate detection in config)
+    if (config.workflows[workflowName]) {
+      console.log(`ℹ  Workflow '${workflowName}' already exists in config. Skipped.`);
+
+      // Show existing workflows
+      const existingWorkflows = Object.keys(config.workflows);
+      console.log('\nExisting workflows:');
+      existingWorkflows.forEach((wf, idx) => {
+        const marker = wf === config.currentWorkflow ? '(current)' : '';
+        console.log(`  ${idx + 1}. ${wf} ${marker}`);
+      });
+
+      return { created: false, reason: 'already_exists_in_config' };
+    }
   }
 
   // Add workflow definition
@@ -95,5 +115,46 @@ export async function runAddWorkflow(targetDir, workflowName) {
   console.log(`   Created: poem/workflows/${workflowName}/mock-data/`);
   console.log(`   Created: poem/workflows/${workflowName}/workflow-state/`);
 
+  // Show all workflows
+  const allWorkflows = Object.keys(config.workflows);
+  if (allWorkflows.length > 1) {
+    console.log('\nAll workflows:');
+    allWorkflows.forEach((wf, idx) => {
+      const marker = wf === config.currentWorkflow ? '(current)' : '';
+      console.log(`  ${idx + 1}. ${wf} ${marker}`);
+    });
+  }
+
   return { created: true };
+}
+
+/**
+ * Lists all existing workflows in poem.yaml
+ * @param {string} targetDir - Project root directory
+ * @returns {Promise<void>}
+ */
+export async function listWorkflows(targetDir) {
+  const configFile = path.join(targetDir, 'poem', 'config', 'poem.yaml');
+
+  if (!existsSync(configFile)) {
+    console.log('❌ No poem.yaml found. Run "poem-os init" first.');
+    return;
+  }
+
+  const configContent = await fs.readFile(configFile, 'utf-8');
+  const config = yaml.load(configContent);
+
+  if (!config.workflows || Object.keys(config.workflows).length === 0) {
+    console.log('ℹ  No workflows created yet.');
+    console.log('   Create one with: poem-os add-workflow <name>');
+    return;
+  }
+
+  const workflows = Object.keys(config.workflows);
+  console.log('\n📁 Existing workflows:');
+  workflows.forEach((wf, idx) => {
+    const marker = wf === config.currentWorkflow ? '✓ (current)' : '';
+    console.log(`  ${idx + 1}. ${wf} ${marker}`);
+  });
+  console.log('');
 }
