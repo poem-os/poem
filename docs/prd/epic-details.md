@@ -253,6 +253,24 @@ so that agents (Victor, Felix) can query cross-repository capabilities and tools
 
 ---
 
+### Story 1.12: Post-Install CLAUDE.md Documentation Helper
+
+As a user installing POEM in a project,
+I want to see clear instructions for documenting POEM agents in my project's CLAUDE.md,
+so that Claude Code can provide context-aware assistance about available POEM agents.
+
+**Acceptance Criteria**:
+
+1. After installation, user sees post-install message with path to agent documentation
+2. Documentation file exists at `.poem-core/docs/claude-md-guide.md` in installed project
+3. File contains clear descriptions of all 3 POEM agents (Victor, Penny, Felix)
+4. Each agent includes: name, persona, role, when to use, key commands
+5. Format is ready to copy-paste into CLAUDE.md
+6. Works for both fresh installs and updates
+7. Message is clear and non-intrusive
+
+---
+
 ## Epic 2: Astro Runtime & Handlebars Engine
 
 **Goal**: Build the `.poem-app/` Astro server with Handlebars template engine, enabling template rendering via API endpoints. This provides the runtime foundation for all template-based operations.
