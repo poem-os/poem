@@ -27,7 +27,7 @@
 
 - [ ] Add GitHub Actions CI pipeline (Story 2.1 mentioned CI in architecture but not implemented)
 - [ ] Configure Dependabot for dependency updates
-- [ ] **VAL-004 Story File Size Threshold**: Increase from 300 → 500 lines (BMAD comprehensive stories with 6 agents naturally exceed 300). Update `.bmad-core/data/validation-rules.yaml` thresholds. Context: Story 1.12 = 851 lines (6 agents contributing), stories are audit trails not minimal docs. Consider: (a) suffix pattern for external docs (.SAT proven, gate .yml works), (b) Pre-Curation Findings lifecycle (historical evidence vs KDD extraction), (c) QA Results placement (inline vs summary+link). Reference: Lisa knowledge curation discussion 2026-01-30
+- [x] **VAL-004 Story File Size Threshold**: Increase from 300 → 500 lines (BMAD comprehensive stories with 6 agents naturally exceed 300). Update `.bmad-core/data/validation-rules.yaml` thresholds. Context: Story 1.12 = 851 lines (6 agents contributing), stories are audit trails not minimal docs. Consider: (a) suffix pattern for external docs (.SAT proven, gate .yml works), (b) Pre-Curation Findings lifecycle (historical evidence vs KDD extraction), (c) QA Results placement (inline vs summary+link). Reference: Lisa knowledge curation discussion 2026-01-30. **COMPLETED 2026-02-02**: Threshold updated to 500, documented suffix pattern, added summary+link guidance
 
 ### Tech Debt
 

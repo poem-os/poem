@@ -4,12 +4,12 @@
 # Rules VAL-001 through VAL-006 enforce documentation quality, discoverability,
 # and maintainability standards.
 #
-# Last updated: 2026-01-22
-# Version: 1.0.0
+# Last updated: 2026-02-02 (VAL-004 threshold adjusted)
+# Version: 1.0.1
 
 validation_rules:
-  version: "1.0.0"
-  last_updated: "2026-01-22"
+  version: "1.0.1"
+  last_updated: "2026-02-02"
   maintained_by: "Lisa (Librarian)"
 
 rules:
@@ -172,10 +172,10 @@ rules:
   # VAL-004: Story File Size
   - id: "VAL-004"
     name: "Story File Size"
-    description: "Detect story files exceeding 300 lines"
+    description: "Detect story files exceeding 500 lines"
     trigger: "story_completion"
     severity: "error"      # In theory error, but treated as warning
-    threshold: 300         # 300 lines per story file
+    threshold: 500         # 500 lines per story file (updated 2026-02-02 for BMAD multi-agent reality)
     scope:
       - "docs/stories/"
 
@@ -183,31 +183,41 @@ rules:
       check_type: "line_count"
       checks:
         - "Count lines in story file"
-        - "Flag stories with >300 lines"
-        - "Suggest splitting story or moving content to KDD docs"
+        - "Flag stories with >500 lines"
+        - "Suggest extracting Pre-Curation Findings and QA Results to KDD docs or external files"
 
     thresholds:
-      healthy: "<300 lines"
-      warning: "300-400 lines"
-      critical: ">400 lines"
+      healthy: "<500 lines"
+      warning: "500-700 lines"
+      critical: ">700 lines"
 
     evidence:
-      source: "SupportSignal story analysis"
-      baseline: "400-800 lines per story (bloated)"
-      impact: "Large story files indicate missing knowledge extraction"
+      source: "POEM Story 1.12 analysis (2026-01-30)"
+      baseline: "851 lines with 6 agents (Bob, James, Tyler, Quinn, Lisa, + bonus work)"
+      rationale: "BMAD comprehensive stories are audit trails with multiple agent contributions, naturally larger than minimal stories"
+      impact: "Stories are comprehensive records, not minimal docs; 500-line threshold reflects multi-agent reality"
+
+    suffix_pattern:
+      description: "External file pattern for story-related content that doesn't belong inline"
+      examples:
+        - ".story-SAT.md - Story Acceptance Tests (Tyler's testing guide)"
+        - ".yml - QA gate files (Quinn's comprehensive review)"
+      benefit: "Keeps story file focused while preserving detailed content in linked files"
 
     remediation:
       actions:
-        - "Extract Dev Notes, learnings, patterns to separate KDD documents"
-        - "Move debugging logs to learning documents"
-        - "Move pattern details to pattern documents"
-        - "Keep story file focused on user story, AC, tasks only"
+        - "Extract Pre-Curation Findings to KDD learnings with summary+link in story"
+        - "Replace comprehensive QA Results with summary+link to gate file"
+        - "Move debugging logs to learning documents (link from story)"
+        - "Move pattern details to pattern documents (link from story)"
+        - "Summary+link approach: Keep 2-3 sentence summary with context + link to full content"
       automation: "Manual extraction via Lisa's *curate command"
+      link_guidance: "When replacing content with links, include brief summary explaining what the link contains (helps readers decide if they need to follow it)"
 
     graceful_degradation:
       enabled: true
       behavior: "Warning during story review, not blocking"
-      rationale: "Story size varies based on complexity; advisory only"
+      rationale: "Story size varies based on complexity and agent count; advisory only"
 
   # VAL-005: Metadata Completeness
   - id: "VAL-005"
