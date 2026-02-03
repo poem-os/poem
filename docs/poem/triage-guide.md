@@ -122,9 +122,9 @@ The triage system supports four input modes:
 - **Epic 2**: Prompt management, schemas, validation
 - **Epic 3**: Mock data generation, faker
 - **Epic 4**: Workflow orchestration, chains
-- **Epic 5**: External provider integrations
-- **Epic 6**: Web visualization, dashboards
-- **Epic 7**: CLI commands, developer tools
+- **Epic 5**: Workflow Orchestration Agents
+- **Epic 6**: System Agent & Helper Generation
+- **Epic 7**: Integration Agent & Provider Pattern
 
 **If match found** → Route to Feature Epic Story
 **If no match** → Continue to Epic 0 check
@@ -339,9 +339,9 @@ The Triage System uses a shared vocabulary defined in `.bmad-core/vocabularies/w
 - **Epic 2**: Prompt management, schemas, validation
 - **Epic 3**: Mock data generation
 - **Epic 4**: Workflow orchestration, chains
-- **Epic 5**: Provider integrations
-- **Epic 6**: Web visualization, dashboards
-- **Epic 7**: CLI commands, developer tools
+- **Epic 5**: Workflow Orchestration Agents
+- **Epic 6**: System Agent & Helper Generation
+- **Epic 7**: Integration Agent & Provider Pattern
 - **Epic 0**: Maintenance, bugs, tech debt, docs, performance
 
 **Reference**: See `.bmad-core/vocabularies/work-item-taxonomy.yaml` for complete taxonomy and `.bmad-core/utils/triage-logic.md` for decision rules.
@@ -391,7 +391,7 @@ Analyzing context...
 
 Analyzing context...
 ✓ Found: Add React dashboard for workflow visualization
-✓ Area: Web visualization (Epic 6)
+✓ Area: Web visualization (Epic 7)
 ✓ Estimate: 8 hours
 ✓ Impact: High
 ✓ Type: feature
@@ -400,12 +400,12 @@ Analyzing context...
 📋 Routing Decision
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-✅ RECOMMENDED: Epic 6 Story (Path #2)
-   Create new story in Epic 6: Web Visualization
+✅ RECOMMENDED: Epic 7 Story (Path #2)
+   Create new story in Epic 7: Web Visualization
    Work fits theme: Interactive UI for workflow monitoring
 
    Reason:
-   - Clear alignment with Epic 6 goals (visualization)
+   - Clear alignment with Epic 7 goals (visualization)
    - High impact feature requiring full ceremony
    - Multi-day effort with testing needs
 

@@ -209,7 +209,7 @@ Lisa **adds links** to story file (updates "Knowledge Assets" section), but **do
 
 **Future Scenarios** where POEM should reconsider meta-driven taxonomy:
 
-### Scenario 1: BMAD Future Integration (Epic 8)
+### Scenario 1: BMAD Future Integration (Epic 9)
 
 **Trigger**: BMAD framework adopts configurable KDD taxonomy in `bmad-core-config.yaml`
 
@@ -220,7 +220,7 @@ Lisa **adds links** to story file (updates "Knowledge Assets" section), but **do
 - Fall back to POEM's fixed taxonomy if BMAD not configured
 - Validate BMAD categories include at minimum: pattern, learning, decision
 
-**Tracking**: `docs/future-enhancements.md` (Epic 8 - BMAD Integration)
+**Tracking**: `docs/future-enhancements.md` (Epic 9 - BMAD Integration)
 
 ### Scenario 2: Tier 2 Architecture (ADR-002 Phase 2)
 
@@ -291,7 +291,7 @@ Lisa **adds links** to story file (updates "Knowledge Assets" section), but **do
    - **Mitigation**: Lisa's brownfield workflow (`.bmad-core/working-in-the-brownfield.md`) provides migration guide
 
 3. **BMAD alignment dependency** - If BMAD adopts meta-driven taxonomy, POEM must update
-   - **Mitigation**: Epic 8 tracks BMAD integration. Fixed taxonomy is temporary until BMAD stabilizes.
+   - **Mitigation**: Epic 9 tracks BMAD integration. Fixed taxonomy is temporary until BMAD stabilizes.
 
 4. **Potential for future breaking change** - If meta-driven taxonomy added in v2.0, projects may need config updates
    - **Mitigation**: Graceful migration path (v2.0 auto-generates config from v1.0 directory structure)
@@ -301,7 +301,7 @@ Lisa **adds links** to story file (updates "Knowledge Assets" section), but **do
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
 | Custom categories needed | Low | Medium | Subdirectories within fixed categories |
-| BMAD taxonomy conflict | Medium | High | Epic 8 tracks alignment (planned Q2 2026) |
+| BMAD taxonomy conflict | Medium | High | Epic 9 tracks alignment (planned Q2 2026) |
 | Brownfield migration friction | Medium | Medium | Migration guide in `.bmad-core/working-in-the-brownfield.md` |
 | Breaking change in v2.0 | Low | Medium | Auto-migration tool for v1.0 → v2.0 |
 
@@ -335,7 +335,7 @@ Lisa enforces fixed taxonomy via validation rules:
 
 ### Future Refactoring Path
 
-If meta-driven taxonomy becomes necessary (Epic 8 or Tier 2 architecture):
+If meta-driven taxonomy becomes necessary (Epic 9 or Tier 2 architecture):
 
 1. **Add configuration layer** - Define categories in `poem-core-config.yaml`:
    ```yaml
@@ -356,12 +356,12 @@ If meta-driven taxonomy becomes necessary (Epic 8 or Tier 2 architecture):
 
 4. **Provide migration tool** - Auto-generate config from v1.0 directory structure
 
-**Tracking**: `docs/future-enhancements.md` (Epic 8 - BMAD Integration)
+**Tracking**: `docs/future-enhancements.md` (Epic 9 - BMAD Integration)
 
 ## Related Decisions
 
 - **ADR-002: Multi-Workflow Architecture** - Taxonomy scoping per workflow ecosystem (Phase 2 deferred)
-- **Epic 8: BMAD Integration** - BMAD future release may define meta-driven taxonomy
+- **Epic 9: BMAD Integration** - BMAD future release may define meta-driven taxonomy
 - **VAL-006: Recurrence Detection** - Pattern promotion depends on fixed pattern/learning distinction
 
 ## References
@@ -370,10 +370,10 @@ If meta-driven taxonomy becomes necessary (Epic 8 or Tier 2 architecture):
 - `.bmad-core/data/validation-rules.yaml`: VAL-001 through VAL-006 definitions
 - `.bmad-core/data/kdd-taxonomy.yaml`: Metadata templates for fixed categories
 - `.bmad-core/working-in-the-brownfield.md`: Brownfield KDD migration workflow
-- `docs/future-enhancements.md`: Epic 8 - BMAD Integration tracking
+- `docs/future-enhancements.md`: Epic 9 - BMAD Integration tracking
 
 ---
 
 **Decision Maker**: David Cruwys (Product Owner)
 **Consensus**: Lisa (Librarian), Quinn (QA), BMAD community feedback
-**Review Date**: Q2 2026 (during Epic 8 - BMAD Integration planning)
+**Review Date**: Q2 2026 (during Epic 9 - BMAD Integration planning)
