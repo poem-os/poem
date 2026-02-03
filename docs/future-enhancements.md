@@ -11,7 +11,7 @@
 
 **Status**: 📋 Requirements Complete, Proof of Concept Validated
 **Target**: BMAD community integration (proposal target: Q2 2026)
-**Epic**: Future Epic 10
+**Epic**: Future Epic 9
 
 **What**: Extract POEM's Workflow Validator (Victor) pattern and generalize for BMAD core
 

@@ -764,7 +764,7 @@ steps:
 
 **Benefits:** Reduces total execution time when steps have no inter-dependencies.
 
-**Status:** Not in Epic 4. Potentially Epic 7 when performance optimization becomes critical.
+**Status:** Not in Epic 4. Potentially Epic 8 when performance optimization becomes critical.
 
 #### Conditional Execution
 

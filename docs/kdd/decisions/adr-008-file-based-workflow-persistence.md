@@ -151,7 +151,7 @@ Write to temp file (`abc123xyz.json.tmp`), then rename to final name. If crash d
 
 **Future Considerations**:
 - If POEM becomes production service (Story 4.7+): Consider SQLite as upgrade path
-- If query capability needed (Epic 5+): Add indexing layer over files (JSON search)
+- If query capability needed (Epic 6+): Add indexing layer over files (JSON search)
 - For now: YAGNI (You Aren't Gonna Need It)
 
 ## Gap Analysis Impact ⭐
