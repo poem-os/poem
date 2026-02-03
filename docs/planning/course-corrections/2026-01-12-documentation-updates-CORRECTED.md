@@ -124,7 +124,7 @@ so that I can manage distinct prompt collections (YouTube Launch, Video Planning
 ---
 ```
 
-**After Story 4.8** (around line 542, BEFORE "## Epic 5"):
+**After Story 4.8** (around line 542, BEFORE "## Epic 6"):
 
 ```markdown
 ---

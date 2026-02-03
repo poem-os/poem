@@ -114,14 +114,14 @@ YouTube Content Creation Workspace
 | Epic | Title | Impact | Notes |
 |------|-------|--------|-------|
 | **Epic 4** | YouTube Automation Workflow | 🟡 **AFFECTED** | Will need workflow-scoped context for B72 testing. Can workaround with manual subdirectories. |
-| **Epic 5** | System Agent & Helper Generation | 🟢 **LOW** | System Agent operates at framework level, not workflow level |
-| **Epic 6** | Integration Agent & Provider Pattern | 🟡 **AFFECTED** | May need workflow-specific provider configs |
-| **Epic 7** | Mock/Test Data Agent | 🟡 **AFFECTED** | Mock data generation should be workflow-scoped |
-| **Epic 8** | BMAD Integration (Future) | 🟢 **NOT AFFECTED** | Victor pattern already documented, not dependent on multi-workflow |
+| **Epic 6** | System Agent & Helper Generation | 🟢 **LOW** | System Agent operates at framework level, not workflow level |
+| **Epic 7** | Integration Agent & Provider Pattern | 🟡 **AFFECTED** | May need workflow-specific provider configs |
+| **Epic 8** | Mock/Test Data Agent | 🟡 **AFFECTED** | Mock data generation should be workflow-scoped |
+| **Epic 9** | BMAD Integration (Future) | 🟢 **NOT AFFECTED** | Victor pattern already documented, not dependent on multi-workflow |
 
 ### New Epics Needed
 
-✅ **YES** - Propose **Epic 9: Multi-Workflow Support**
+✅ **YES** - Propose **Epic 10: Multi-Workflow Support**
 
 **Justification**:
 - Not part of original PRD scope (focused on single-workflow MVP)
@@ -131,8 +131,8 @@ YouTube Content Creation Workspace
 
 ### Epic Sequence Changes
 
-**Current Sequence**: Epic 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 (BMAD)
-**Proposed Sequence**: Epic 1 → 2 → 3 → 4 → 5 → 6 → 7 → **9 (Multi-Workflow)** → 8 (BMAD)
+**Current Sequence**: Epic 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 (BMAD)
+**Proposed Sequence**: Epic 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → **10 (Multi-Workflow)** → 9 (BMAD)
 
 **Rationale**: Multi-workflow support should come before BMAD integration since it affects core architecture.
 
@@ -155,11 +155,10 @@ YouTube Content Creation Workspace
 
 **File**: `docs/prd/epic-list.md`
 
-**Conflict**: Epic list (1-8) doesn't include multi-workflow support.
+**Conflict**: Epic list (1-9) doesn't include multi-workflow support.
 
 **Required Update**:
-- Add **Epic 9: Multi-Workflow Support** to epic list
-- Update Epic 8 numbering if needed
+- Add **Epic 10: Multi-Workflow Support** to epic list
 
 ---
 
@@ -411,14 +410,14 @@ Below are the specific changes to implement **Option 1** (Document as Gap).
 
 **File**: `docs/prd/epic-list.md`
 
-**Location**: After Epic 7, before Epic 8
+**Location**: After Epic 8, before Epic 9
 
 **Change Type**: Addition
 
 **Proposed Edit**:
 
 ```markdown
-## Epic 9: Multi-Workflow Support
+## Epic 10: Multi-Workflow Support
 
 **Status**: 📋 Planned (Future Enhancement)
 **Target**: POEM v1.1 - v2.0 (Q2-Q3 2026)
@@ -441,7 +440,7 @@ Build workflow-scoped architecture to support multiple independent workflows wit
 - Agency: Multiple client workflows in one POEM instance
 
 **Dependencies**:
-- Epic 7 complete (all agents operational)
+- Epic 8 complete (all agents operational)
 - Validation of pattern through Epic 4 (B72 workflow)
 - Requirements collected from multiple use cases
 
@@ -471,7 +470,7 @@ Build workflow-scoped architecture to support multiple independent workflows wit
 
 **Status**: 💡 Idea → 📋 Requirements Gathering
 **Target**: POEM v1.1 - v2.0 (Q2-Q3 2026)
-**Epic**: Future Epic 9
+**Epic**: Future Epic 10
 **Discovered**: 2026-01-12 (Story 3.7.1 testing with NanoBanana)
 
 **What**: Build workflow-scoped architecture to support multiple independent workflows within a single POEM workspace.
@@ -602,13 +601,13 @@ AppyDave testing NanoBanana:
 - Testing and validation: 8-12 hours
 
 **Tracking**:
-- Epic: `docs/prd/epic-list.md` (Epic 9)
+- Epic: `docs/prd/epic-list.md` (Epic 10)
 - Discovery: Course Correct Task (2026-01-12)
 - Related: NanoBanana Plan (`data/nano-banana/project-plan.md`)
 - Current datasets: `data/youtube-launch-optimizer/`, `data/nano-banana/`, `data/supportsignal/`, `data/storyline/`
 
 **Related Enhancements**:
-- Enhancement #1 (BMAD Integration) - Not affected, Victor pattern independent
+- Enhancement #1 (BMAD Integration - Epic 9) - Not affected, Victor pattern independent
 - Enhancement #2 (Agent Task Format) - May inform workflow definition format
 
 ---

@@ -1,0 +1,60 @@
+=== HANDOVER: Epic Renumbering Task ===
+
+GOAL:
+Insert new Epic 5 (Workflow Orchestration Agents) into POEM roadmap and shift existing Epics 5-9 down to become 6-10.
+
+WHY:
+We identified a critical gap: no conversational interface for creating/executing workflows. Epic 4.6 delivered the technical execution engine, but users can't create workflow YAMLs or run workflows with human-in-the-loop checkpoints through conversation.
+
+Two new agents solve this:
+- Alex (Workflow Architect): Designs and generates workflow YAML definitions
+- Oscar (Workflow Orchestrator): Executes workflows with checkpoint-based human collaboration
+
+TASK:
+Renumber epic references in POEM documentation:
+- Epic 5 (System Agent) → Epic 6
+- Epic 6 (Integration Agent) → Epic 7
+- Epic 7 (Mock Data Agent) → Epic 8
+- Epic 8 (BMAD Integration) → Epic 9
+- Epic 9 (Multi-Workflow Support) → Epic 10
+- INSERT new Epic 5 (Workflow Orchestration Agents)
+
+FILES TO UPDATE:
+1. /Users/davidcruwys/dev/ad/poem-os/poem/docs/prd/epic-list.md
+2. /Users/davidcruwys/dev/ad/poem-os/poem/docs/prd/epic-details.md
+3. /Users/davidcruwys/dev/ad/poem-os/poem/docs/prd.md (consolidated)
+4. /Users/davidcruwys/dev/ad/poem-os/poem/docs/architecture.md
+5. /Users/davidcruwys/dev/ad/poem-os/poem/docs/future-enhancements.md
+6. Any planning docs with epic references
+
+EPIC 5 CONTENT SOURCE:
+/Users/davidcruwys/dev/ad/poem-os/poem/docs/planning/epic-5-workflow-orchestration-agents.md
+
+DETAILED HANDOVER DOC:
+/Users/davidcruwys/dev/ad/poem-os/poem/docs/planning/handover-epic-renumbering.md
+(Contains: search patterns, validation checklist, automation strategies, success criteria)
+
+ESTIMATED EFFORT: 1-2 hours
+
+RECOMMENDED APPROACH:
+1. Read the detailed handover doc first
+2. Use search patterns to find all epic references
+3. Work backwards (Epic 9→10, 8→9, 7→8, 6→7, 5→6) to avoid double-replacement
+4. Extract Epic 5 summary from planning doc and insert into epic-list.md
+5. Validate all changes before committing
+6. Use git commit message from handover doc
+
+VALIDATION CHECKLIST:
+- All epic numbers updated in PRD
+- New Epic 5 content inserted
+- Architecture docs updated
+- No broken cross-references
+- Git diff reviewed
+
+SUCCESS CRITERIA:
+Task complete when POEM documentation reflects new epic structure (6-10 instead of 5-9) with new Epic 5 inserted, all references updated, and changes committed.
+
+WORKING DIRECTORY:
+/Users/davidcruwys/dev/ad/poem-os/poem
+
+Ready to proceed?

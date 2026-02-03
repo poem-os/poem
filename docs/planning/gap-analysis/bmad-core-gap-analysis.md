@@ -183,7 +183,7 @@ devLoadAlwaysFiles:
 **Unique Docs**:
 - `docs/guides/workflow-validation-guide.md` - Victor agent usage
 - `docs/planning/bmad-integration/capability-validation-requirements.md` - Future BMAD integration
-- `docs/future-enhancements.md` - Epic 8 tracking
+- `docs/future-enhancements.md` - Epic 9 (BMAD Integration) tracking
 
 **Why it matters**:
 - Documents innovations for future BMAD versions
@@ -632,10 +632,10 @@ maintenance:
 
 | Priority | Recommendation | Effort | Impact | Timeline |
 |----------|---------------|--------|--------|----------|
-| 🔥 High | Adopt KDD Integration | Medium | ⭐⭐⭐⭐ | Epic 5 |
-| 🔥 High | Create Pattern Library | Medium | ⭐⭐⭐⭐ | Epic 6 |
-| 🟡 Medium | Port Testing Infrastructure Docs | Low-Med | ⭐⭐⭐ | Epic 7 |
-| 🟡 Medium | Conditional Workflow Routing | Low | ⭐⭐ | Epic 8 |
+| 🔥 High | Adopt KDD Integration | Medium | ⭐⭐⭐⭐ | Epic 6 (System Agent) |
+| 🔥 High | Create Pattern Library | Medium | ⭐⭐⭐⭐ | Epic 7 (Integration Agent) |
+| 🟡 Medium | Port Testing Infrastructure Docs | Low-Med | ⭐⭐⭐ | Epic 8 (Mock/Test Data) |
+| 🟡 Medium | Conditional Workflow Routing | Low | ⭐⭐ | Epic 9 (BMAD Integration) |
 | 🟢 Low | Add TestBot Agent | Low | ⭐⭐ | Backlog |
 | 🟢 Low | Add Estimation Guidelines | Very Low | ⭐ | Backlog |
 
