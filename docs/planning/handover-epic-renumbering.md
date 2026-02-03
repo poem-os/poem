@@ -112,11 +112,14 @@ Using decimal numbering (4.5) is awkward and breaks BMAD conventions. Clean inte
   - Update epic references in exploration/decision documents
   - Already created: `epic-5-workflow-orchestration-agents.md` (no changes needed)
 
-### 4. Future Enhancements
+### 4. Ideas Parking Lot
 
 **File**:
-- `/Users/davidcruwys/dev/ad/poem-os/poem/docs/future-enhancements.md`
-  - Update epic tracking references
+- `/Users/davidcruwys/dev/ad/poem-os/poem/docs/planning/ideas-parking-lot.md`
+  - No epic references (ideas only, epics tracked in epic-list.md)
+  - **Action**: No changes needed
+
+**Note**: Old `docs/future-enhancements.md` replaced with `ideas-parking-lot.md` (2026-02-03) to eliminate epic duplication
 
 ### 5. Story Files
 

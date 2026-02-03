@@ -1,7 +1,7 @@
 # Planning Notes
 
 **Status**: ✅ Ready for BMAD Implementation
-**Last Updated**: 2025-11-22
+**Last Updated**: 2026-02-03
 **Purpose**: Navigation and decision tracking for POEM planning documentation
 
 ⚠️ **IMPORTANT**: This is PLANNING-PHASE EXPLORATION, not final specifications.
@@ -85,7 +85,24 @@ docs/planning/
 │   ├── bmad-pattern-example.md     # ✅ MOVED from architecture/
 │   └── examples.md                 # ✅ MOVED from architecture/
 │
-└── archive/                        # ✅ Archived files
+├── epic-5-workflow-orchestration-agents.md  # Epic 5: Workflow Orchestration Agents (Alex + Oscar)
+├── handover-epic-renumbering.md             # Handover: Epic renumbering task (5-9 → 6-10)
+├── ideas-parking-lot.md                     # Enhancement ideas parking lot (governance rules)
+│
+├── course-corrections/         # Mid-project adjustments
+│   ├── README.md               # Course correction index
+│   └── 2026-01-12-*.md         # Documentation and multi-workflow corrections
+│
+├── gap-analysis/               # Gap identification and action items
+│   ├── README.md               # Gap analysis index
+│   └── *.md                    # Various gap analyses
+│
+├── bmad-integration/           # BMAD community integration planning
+│   ├── README.md               # BMAD integration index
+│   ├── capability-validation-requirements.md
+│   └── lisa-agent/             # Lisa agent design and analysis
+│
+└── archive/                    # ✅ Archived files
     ├── 00-original-overview-2025-11-08.md
     └── 01-current-thinking-archive.md
 ```
@@ -112,6 +129,10 @@ docs/planning/
 | 2025-11-21 | **Level 2 Mock Data**: Persistent scenarios, anonymization, workflows | system-explorations/mock-data.md |
 | 2025-11-21 | **TOON Format**: Token-efficient data format option                   | system-explorations/workflows.md |
 | 2025-11-21 | **Folder Reorganization**: architecture/ → system-explorations/       | README.md                        |
+| 2026-01-07 | **Workflow Definition Format**: YAML, sequential execution            | decisions/workflow-definition-format.md |
+| 2026-01-12 | **Multi-Workflow Architecture**: Workspace context architecture       | course-corrections/2026-01-12-multi-workflow-architecture.md |
+| 2026-02-03 | **Epic 5 Insertion**: Workflow Orchestration Agents (Alex + Oscar)   | epic-5-workflow-orchestration-agents.md |
+| 2026-02-03 | **Ideas Governance**: Parking lot with promotion rules                | ideas-parking-lot.md |
 
 ### 🚧 Active Planning Areas (Watch During Implementation)
 
@@ -160,6 +181,12 @@ docs/planning/
 10. **[exploration/brief.md](./exploration/brief.md)** - Original project brief
 11. **[exploration/application-type-README.md](./exploration/application-type-README.md)** - Discovery journey (tool → OS)
 12. **[decisions/\*.md](./decisions/)** - Open questions and alternatives
+
+### Epic Planning & Renumbering
+
+13. **[epic-5-workflow-orchestration-agents.md](./epic-5-workflow-orchestration-agents.md)** - Alex + Oscar agents planning
+14. **[handover-epic-renumbering.md](./handover-epic-renumbering.md)** - Epic renumbering handover task
+15. **[ideas-parking-lot.md](./ideas-parking-lot.md)** - Enhancement ideas (not epics yet)
 
 ### For BMAD Team
 
@@ -213,5 +240,5 @@ docs/planning/
 
 ---
 
-**Last Updated**: 2025-11-22
-**Status**: ✅ Ready for BMAD
+**Last Updated**: 2026-02-03
+**Status**: ✅ Ready for BMAD (Epic 5 planning in progress)
