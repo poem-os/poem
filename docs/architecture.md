@@ -764,7 +764,7 @@ steps:
 
 **Benefits:** Reduces total execution time when steps have no inter-dependencies.
 
-**Status:** Not in Epic 4. Potentially Epic 6 when performance optimization becomes critical.
+**Status:** Not in Epic 4. Potentially Epic 7 when performance optimization becomes critical.
 
 #### Conditional Execution
 
@@ -777,7 +777,7 @@ steps:
     condition: "analyzeContentEssence.complexity > 7"
 ```
 
-**Status:** Not in Epic 4. Potentially Epic 6.
+**Status:** Not in Epic 4. Potentially Epic 7.
 
 #### DTO Mapping (Parameter Translation)
 
@@ -807,7 +807,7 @@ steps:
 - Building a library of reusable prompts across multiple workflows
 - Different workflows use different naming conventions
 
-**Status:** Future implementation, undefined format. Not in Epic 4. Needed when POEM has a substantial library of generic/reusable prompts. Potentially Epic 5.
+**Status:** Future implementation, undefined format. Not in Epic 4. Needed when POEM has a substantial library of generic/reusable prompts. Potentially Epic 6.
 
 **Current Approach:** Prompts reference workflow attributes directly (tight coupling), which is acceptable for workflow-specific prompts like the YouTube Launch Optimizer templates.
 
@@ -825,7 +825,7 @@ sections:
     workflow: workflows/youtube-launch-optimizer.yaml
 ```
 
-**Status:** Design pattern identified but not yet needed. Potentially Epic 7+.
+**Status:** Design pattern identified but not yet needed. Potentially Epic 8+.
 
 ---
 
@@ -3276,7 +3276,7 @@ git push origin main --tags
 
 1. **Add schema extraction algorithm pseudo-code** - Clarify AST traversal approach for Epic 4
 2. **Define workflow-data.json format explicitly** - Support chain pause/resume
-3. **Document provider contract TypeScript interface** - Formal contract before Epic 5
+3. **Document provider contract TypeScript interface** - Formal contract before Epic 6
 
 #### Nice-to-Have Improvements
 

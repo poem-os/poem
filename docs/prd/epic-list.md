@@ -49,21 +49,25 @@ Create the first agent (Prompt Engineer) with workflows for new prompt creation,
 
 Validate POEM's core capabilities through the YouTube Launch Optimizer workflow—a real multi-prompt pipeline that transforms video transcripts into complete launch assets (titles, descriptions, chapters, thumbnails, tags, social posts). This epic tests schema extraction, template chaining, mock data generation, Handlebars helpers, progressive data accumulation, and human-in-the-loop patterns using 53 production templates across 11 workflow sections. **Benefits from multi-workflow support** to test multiple workflows (YouTube Launch vs Video Planning vs NanoBanana) in parallel. **Includes multi-workflow polish (Story 4.9)** to finalize reference integration based on B72 learnings.
 
-## Epic 5: System Agent & Helper Generation
+## Epic 5: Workflow Orchestration Agents
+
+Build conversational AI agents for creating and executing multi-step workflow orchestrations. Alex (Workflow Architect) helps users design workflow YAML definitions through interviews. Oscar (Workflow Orchestrator) executes workflows with human-in-the-loop checkpoint capabilities. Enables non-technical users to leverage POEM's workflow engine through natural conversation.
+
+## Epic 6: System Agent & Helper Generation
 
 Build the System Agent with workflows for creating custom Handlebars helpers on-demand, managing Astro infrastructure, and establishing the provider pattern foundation.
 
-## Epic 6: Integration Agent & Provider Pattern
+## Epic 7: Integration Agent & Provider Pattern
 
 Create the Integration Agent with abstract provider contract, workflows for pulling data dictionaries and publishing prompts to external systems.
 
-## Epic 7: Mock/Test Data Agent & Level 2 Mock Data
+## Epic 8: Mock/Test Data Agent & Level 2 Mock Data
 
 Build the fourth agent with workflows for realistic mock data generation based on provider data dictionaries, entity relationships, and domain-specific scenarios.
 
 ---
 
-## Epic 8: BMAD Integration - Capability Validation Pattern (Future)
+## Epic 9: BMAD Integration - Capability Validation Pattern (Future)
 
 **Status**: 📋 Requirements Complete, Awaiting BMAD Community Integration
 
@@ -88,7 +92,7 @@ Extract the Workflow Validator (Victor) pattern from POEM and generalize it for 
 
 ---
 
-## Epic 9: Multi-Workflow Support (Future)
+## Epic 10: Multi-Workflow Support (Future)
 
 **Status**: 📋 Requirements Complete, Foundation Ready for Drafting
 **Target**: POEM v1.1 - v2.0 (Q2-Q3 2026)

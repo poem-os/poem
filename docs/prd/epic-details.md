@@ -814,13 +814,128 @@ so that Penny can provide context-aware guidance using workflow-specific knowled
 
 ---
 
-## Epic 5: System Agent & Helper Generation
+## Epic 5: Workflow Orchestration Agents
+
+**Goal**: Build conversational AI agents for creating and executing multi-step workflow orchestrations. Alex (Workflow Architect) helps users design workflow YAML definitions through interviews. Oscar (Workflow Orchestrator) executes workflows with human-in-the-loop checkpoint capabilities. Enables non-technical users to leverage POEM's workflow engine through natural conversation.
+
+---
+
+### Story 5.1: Create Alex (Workflow Architect) Agent
+
+As a prompt engineer,
+I want an AI agent that helps me design workflow YAML definitions conversationally,
+so that I can create multi-step orchestrations without manually writing complex YAML.
+
+**Acceptance Criteria**:
+
+1. Agent definition created at `.poem-core/agents/workflow-architect.md`
+2. Alex persona defined: Expert workflow designer who structures multi-step AI orchestrations
+3. Commands implemented: `*design`, `*analyze`, `*generate`, `*validate`, `*refine`, `*exit`
+4. `*design` command conducts workflow design interview (goals, inputs, outputs, checkpoints)
+5. `*analyze <prompts>` analyzes existing prompts and suggests workflow sequences
+6. `*generate` creates workflow YAML with proper structure (name, sections, steps, I/O contracts)
+7. `*validate <workflow>` validates step I/O compatibility and referenced prompts exist
+8. `*refine <workflow>` loads existing workflow and enables iterative improvements
+9. Workflow YAML saved to `poem/workflows/<name>/<name>.workflow.yaml`
+10. Alex integrates with Config Service for path validation
+11. Generated workflows include `checkpoint: true` flags for human-in-the-loop steps
+12. Activation via `/poem/agents/alex` slash command
+
+---
+
+### Story 5.2: Create Oscar (Workflow Orchestrator) Agent
+
+As a prompt engineer,
+I want an AI agent that executes workflows with human-in-the-loop checkpoints,
+so that I can run multi-step orchestrations with decision points requiring human judgment.
+
+**Acceptance Criteria**:
+
+1. Agent definition created at `.poem-core/agents/workflow-orchestrator.md`
+2. Oscar persona defined: Skilled workflow execution specialist for orchestrations
+3. Commands implemented: `*run`, `*resume`, `*status`, `*checkpoint`, `*pause`, `*list`, `*cancel`, `*exit`
+4. `*run <workflow>` executes workflow from start, loading definition and calling chain execution API
+5. Workflow pauses at steps marked `checkpoint: true`
+6. `*checkpoint <decision>` captures user input (selection/freeform/approval) and resumes
+7. `*status` shows workflow progress (completed steps, current step, remaining steps)
+8. `*pause` saves workflow state to `poem/workflow-state/<workflow-id>.json`
+9. `*resume <id>` restores workflow state and continues from checkpoint
+10. `*list` displays all workflow executions (active, paused, completed)
+11. Progress reporting includes: render times, warnings, accumulated workflow-data
+12. Error handling provides context and retry options for failed steps
+13. Activation via `/poem/agents/oscar` slash command
+
+---
+
+### Story 5.3: Implement Human-in-the-Loop Checkpoint Infrastructure
+
+As a workflow execution engine,
+I want technical infrastructure for pausing workflows at checkpoints and capturing human input,
+so that Oscar can orchestrate workflows requiring human decisions.
+
+**Acceptance Criteria**:
+
+1. `CheckpointInfo` type implemented in workflow execution types
+2. Checkpoint types supported: selection, freeform, approval
+3. Workflow execution pauses when encountering `checkpoint: true` step
+4. Checkpoint data stored in workflow state with step ID and prompt
+5. Human input captured and merged into workflow-data for downstream steps
+6. State persistence supports save/resume across sessions
+7. API endpoint `/api/workflow/checkpoint` handles checkpoint interactions
+8. Checkpoint responses validate against expected input types
+9. Workflow resumes from exact checkpoint location after input provided
+10. Checkpoint history logged for audit trail
+
+---
+
+### Story 5.4: Implement Conditional Routing in Workflows
+
+As a workflow architect,
+I want to define conditional steps that execute based on workflow data,
+so that workflows can branch and adapt to different scenarios.
+
+**Acceptance Criteria**:
+
+1. Workflow YAML supports `condition` field on steps with simple boolean expressions
+2. Conditional evaluation engine implemented in workflow execution service
+3. Conditions access workflow-data fields (e.g., `condition: "chapters.length > 20"`)
+4. Steps with false conditions are skipped during execution
+5. Conditional steps log skip reason in execution report
+6. If-then branching documented in workflow definition format
+7. Alex agent generates conditional steps during workflow design
+8. Validation ensures condition references existing workflow-data fields
+9. Performance: conditional evaluation adds <10ms to step execution
+
+---
+
+### Story 5.5: Integrate Alex and Oscar with Multi-Workflow System
+
+As a prompt engineer,
+I want Alex and Oscar to work seamlessly with POEM's multi-workflow context,
+so that workflow orchestration respects workflow-scoped directories and configurations.
+
+**Acceptance Criteria**:
+
+1. Alex resolves paths using Config Service's workflow-scoped path resolution
+2. Oscar loads workflows from active workflow directory
+3. Workflow definitions created in `poem/workflows/<workflow-name>/`
+4. Workflow state saved in `poem/workflow-state/` with workflow name prefix
+5. `*workflows` command in Penny shows which workflows have definitions
+6. Alex and Oscar respect `currentWorkflow` configuration
+7. Cross-workflow orchestration documented (if needed for Epic 9)
+8. Workflow YAML format finalized and documented in architecture
+9. Migration guide for converting flat workspace workflows to structured format
+10. Integration tested with YouTube Launch Optimizer as reference workflow
+
+---
+
+## Epic 6: System Agent & Helper Generation
 
 **Goal**: Build the System Agent that creates custom Handlebars helpers on-demand and manages Astro infrastructure. This enables extensibility without manual coding.
 
 ---
 
-### Story 5.1: Create System Agent Definition
+### Story 6.1: Create System Agent Definition
 
 As a user,
 I want a System Agent that manages POEM infrastructure,
@@ -837,7 +952,7 @@ so that I can extend capabilities without leaving Claude Code.
 
 ---
 
-### Story 5.2: Implement Add Helper Workflow
+### Story 6.2: Implement Add Helper Workflow
 
 As a prompt engineer,
 I want to request new Handlebars helpers by describing what I need,
@@ -855,7 +970,7 @@ so that custom formatting is available without manual JavaScript coding.
 
 ---
 
-### Story 5.3: Implement Server Management Workflow
+### Story 6.3: Implement Server Management Workflow
 
 As a developer,
 I want workflows to manage the Astro server,
@@ -872,7 +987,7 @@ so that I can start, stop, and troubleshoot without leaving Claude Code.
 
 ---
 
-### Story 5.4: Create Provider Pattern Foundation
+### Story 6.4: Create Provider Pattern Foundation
 
 As a developer,
 I want a provider interface pattern established,
@@ -889,7 +1004,7 @@ so that Integration Agent can work with any external system.
 
 ---
 
-### Story 5.5: Implement Create Provider Workflow
+### Story 6.5: Implement Create Provider Workflow
 
 As a developer,
 I want to create new provider implementations via System Agent,
@@ -907,13 +1022,13 @@ so that external integrations are scaffolded correctly.
 
 ---
 
-## Epic 6: Integration Agent & Provider Pattern
+## Epic 7: Integration Agent & Provider Pattern
 
 **Goal**: Create the Integration Agent that connects to external systems via providers, enabling data dictionary pulls and prompt publishing.
 
 ---
 
-### Story 6.1: Create Integration Agent Definition
+### Story 7.1: Create Integration Agent Definition
 
 As a user,
 I want an Integration Agent that manages external system connections,
@@ -930,7 +1045,7 @@ so that I can sync data and publish prompts to production.
 
 ---
 
-### Story 6.2: Implement Pull Dictionary Workflow
+### Story 7.2: Implement Pull Dictionary Workflow
 
 As a prompt engineer,
 I want to pull data dictionaries from external systems,
@@ -948,7 +1063,7 @@ so that I know what fields are available for my prompts.
 
 ---
 
-### Story 6.3: Implement Publish Prompt Workflow
+### Story 7.3: Implement Publish Prompt Workflow
 
 As a prompt engineer,
 I want to publish prompts to external systems,
@@ -966,7 +1081,7 @@ so that tested prompts reach production.
 
 ---
 
-### Story 6.4: Implement Test Connection Workflow
+### Story 7.4: Implement Test Connection Workflow
 
 As a prompt engineer,
 I want to test provider connections,
@@ -984,7 +1099,7 @@ so that I know integrations are working before attempting operations.
 
 ---
 
-### Story 6.5: Create Dictionary Skills
+### Story 7.5: Create Dictionary Skills
 
 As a prompt engineer,
 I want skills that help me work with data dictionaries,
@@ -1001,13 +1116,13 @@ so that I can find fields and validate schemas efficiently.
 
 ---
 
-## Epic 7: Mock/Test Data Agent & Level 2 Mock Data
+## Epic 8: Mock/Test Data Agent & Level 2 Mock Data
 
 **Goal**: Build the fourth agent with workflows for sophisticated mock data generation, including entity relationships and domain-specific scenarios.
 
 ---
 
-### Story 7.1: Create Mock/Test Data Agent Definition
+### Story 8.1: Create Mock/Test Data Agent Definition
 
 As a user,
 I want a Mock/Test Data Agent that generates realistic test data,
@@ -1024,7 +1139,7 @@ so that I can test prompts with production-like scenarios.
 
 ---
 
-### Story 7.2: Implement Level 1 Mock Data Generation
+### Story 8.2: Implement Level 1 Mock Data Generation
 
 As a prompt engineer,
 I want to generate basic mock data from schemas,
@@ -1042,7 +1157,7 @@ so that I can test prompts without external dependencies.
 
 ---
 
-### Story 7.3: Implement Level 2 Mock Data Generation
+### Story 8.3: Implement Level 2 Mock Data Generation
 
 As a prompt engineer,
 I want realistic mock data based on provider dictionaries,
@@ -1060,7 +1175,7 @@ so that test data matches production patterns.
 
 ---
 
-### Story 7.4: Implement Scenario Library Workflow
+### Story 8.4: Implement Scenario Library Workflow
 
 As a prompt engineer,
 I want to create and curate test scenario libraries,
@@ -1078,7 +1193,7 @@ so that edge cases and specific patterns are available for testing.
 
 ---
 
-### Story 7.5: Implement Batch Mock Data Generation
+### Story 8.5: Implement Batch Mock Data Generation
 
 As a prompt engineer,
 I want to generate multiple mock data variations at once,

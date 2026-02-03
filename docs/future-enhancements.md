@@ -11,7 +11,7 @@
 
 **Status**: 📋 Requirements Complete, Proof of Concept Validated
 **Target**: BMAD community integration (proposal target: Q2 2026)
-**Epic**: Future Epic 8
+**Epic**: Future Epic 10
 
 **What**: Extract POEM's Workflow Validator (Victor) pattern and generalize for BMAD core
 
@@ -54,7 +54,7 @@
 - Validate pattern on 2nd project (Klueless or appydave-tools)
 
 **Tracking**:
-- Epic List: `docs/prd/epic-list.md` (Epic 8)
+- Epic List: `docs/prd/epic-list.md` (Epic 9)
 - Requirements: `dev-workspace/GENERALIZED-CAPABILITY-VALIDATION-REQUIREMENTS.md`
 - POEM Implementation: `.claude/commands/poem/agents/victor.md`
 - Guide: `dev-workspace/WORKFLOW-VALIDATION-GUIDE.md`
@@ -65,7 +65,7 @@
 
 **Status**: ⚠️ Divergent (Tracked for Future Resolution)
 **Target**: POEM v1.1 - v2.0 (Q2-Q3 2026)
-**Epic**: Future Epic 9
+**Epic**: Future Epic 10
 
 **What**: Address format divergence between POEM agent tasks (YAML) and BMAD tasks (markdown)
 
@@ -147,7 +147,7 @@ vs
 ### 11. Multi-Workflow Support (Workspace Context Architecture)
 
 **Status**: 🔄 **In Progress** → Story 3.8 (Phase 1) ready for SM drafting, Story 4.9 (Phase 2) after Epic 4
-**Target**: POEM v1.1 (Phase 1+2) → v2.0 (Epic 9 advanced features)
+**Target**: POEM v1.1 (Phase 1+2) → v2.0 (Epic 10 advanced features)
 **Discovered**: 2026-01-12 (Story 3.7.1 testing with NanoBanana)
 **Course Correction**: `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md`
 
@@ -181,7 +181,7 @@ vs
 - 🔮 Context-aware assistance
 - ⏭️ SM will draft after Epic 4 validation complete
 
-**Epic 9 - Future** (Q2-Q3 2026):
+**Epic 10 - Future** (Q2-Q3 2026):
 - 🔮 Visual workflow editor
 - 🔮 Auto-sync from git repositories
 - 🔮 Cross-workflow analytics
@@ -218,11 +218,11 @@ workspace:
 **Effort Estimate**:
 - Phase 1: 4-6 hours
 - Phase 2: 4-6 hours
-- Epic 9: 40-60 hours
+- Epic 10: 40-60 hours
 
 **Tracking**:
 - Stories: `docs/prd/epic-details.md` (Story 3.8, Story 4.9)
-- Epic: `docs/prd/epic-list.md` (Epic 9)
+- Epic: `docs/prd/epic-list.md` (Epic 10)
 - Architecture: `docs/architecture/data-models.md` (WorkflowDefinition model)
 - Course Correction: `docs/planning/course-corrections/2026-01-12-multi-workflow-architecture.md`
 
@@ -233,7 +233,7 @@ workspace:
 ### 3. Automated Regression Testing
 
 **Status**: 💡 Idea
-**Target**: POEM v2.0 or Epic 5-6
+**Target**: POEM v2.0 or Epic 6-7
 
 **What**: Automate Victor's validation workflow in CI/CD pipeline
 
@@ -309,7 +309,7 @@ workspace:
 ### 7. Prompt Version Comparison & Quality Evolution Tracking
 
 **Status**: 💡 Idea (from Victor validation insights)
-**Target**: POEM v1.1 or Epic 5
+**Target**: POEM v1.1 or Epic 6
 **Suggested By**: User testing B72 prompts (2026-01-11)
 
 **What**: Track prompt quality improvements across refinement iterations with version history and quality metrics.
@@ -384,7 +384,7 @@ versions:
 
 **Tracking**:
 - Related to Epic 3 workflows (new-prompt, refine-prompt, test-prompt, validate-prompt)
-- Could become Story 3.6 or part of Epic 5
+- Could become Story 3.6 or part of Epic 6
 
 ---
 
