@@ -62,7 +62,7 @@ Capabilities for prompt engineers working with templates, schemas, data, and wor
 | YouTube-specific mock content | ✅ Available | [Story 4.3](../stories/4.3.story.md) |
 | Reproducible generation (seeded) | ✅ Available | [Story 4.3](../stories/4.3.story.md) |
 | Domain-specific generators | ✅ Available | YouTube implemented, extensible pattern |
-| Generate from provider data dictionary | 📅 Planned | [Epic 7](./epic-list.md#epic-7-mocktest-data-agent--level-2-mock-data) |
+| Generate from provider data dictionary | 📅 Planned | [Epic 8](./epic-list.md#epic-8-mocktest-data-agent--level-2-mock-data) |
 
 **Not available:**
 - AI-powered realistic mock data — 💡 Possible, would use LLM to generate contextual data
@@ -94,11 +94,11 @@ Capabilities for prompt engineers working with templates, schemas, data, and wor
 | Workflow-scoped prompts/schemas | ✅ Available | [Story 3.8](../stories/3.8.story.md) |
 | Reference materials per workflow | 🔜 Coming Soon | [Story 4.9](./epic-details.md#story-49-multi-workflow-polish--integration-phase-2) |
 | Shared prompts across workflows | 🔜 Coming Soon | [Story 4.9](./epic-details.md#story-49-multi-workflow-polish--integration-phase-2) |
-| Visual workflow editor | 📅 Planned | [Epic 9](./epic-list.md#epic-9-multi-workflow-support-future) |
+| Visual workflow editor | 📅 Planned | [Epic 10](./epic-list.md#epic-10-multi-workflow-support-future) |
 
 **Not available:**
 - Workflow marketplace/sharing — 💡 Possible, would need Epic 10+
-- Auto-sync workflows from git repos — 📅 Planned in [Epic 9](./epic-list.md#epic-9-multi-workflow-support-future)
+- Auto-sync workflows from git repos — 📅 Planned in [Epic 10](./epic-list.md#epic-10-multi-workflow-support-future)
 
 ### Template Content
 
@@ -145,7 +145,7 @@ Capabilities for developers working with the runtime, APIs, and integrations.
 | YouTube helpers (gt, truncate, join, formatTimestamp) | ✅ Available | [Story 4.4](../stories/4.4.story.md) |
 | Helper hot-reload in development | ✅ Available | [Story 4.4](../stories/4.4.story.md) |
 | Helper documentation via API | ✅ Available | [Story 4.4](../stories/4.4.story.md) |
-| Create custom helpers on-demand | 📅 Planned | [Epic 5](./epic-list.md#epic-5-system-agent--helper-generation) |
+| Create custom helpers on-demand | 📅 Planned | [Epic 6](./epic-list.md#epic-6-system-agent--helper-generation) |
 
 **Not available:**
 - Helper marketplace/sharing — 💡 Possible, would need Epic for helper ecosystem
@@ -172,10 +172,10 @@ Capabilities for developers working with the runtime, APIs, and integrations.
 
 | Capability | Status | Reference |
 |------------|--------|-----------|
-| Abstract provider contract | 📅 Planned | [Epic 6](./epic-list.md#epic-6-integration-agent--provider-pattern) |
-| Pull data dictionary from provider | 📅 Planned | [Epic 6](./epic-list.md#epic-6-integration-agent--provider-pattern) |
-| Publish prompts to external systems | 📅 Planned | [Epic 6](./epic-list.md#epic-6-integration-agent--provider-pattern) |
-| SupportSignal integration | 📅 Planned | [Epic 6](./epic-list.md#epic-6-integration-agent--provider-pattern) |
+| Abstract provider contract | 📅 Planned | [Epic 7](./epic-list.md#epic-7-integration-agent--provider-pattern) |
+| Pull data dictionary from provider | 📅 Planned | [Epic 7](./epic-list.md#epic-7-integration-agent--provider-pattern) |
+| Publish prompts to external systems | 📅 Planned | [Epic 7](./epic-list.md#epic-7-integration-agent--provider-pattern) |
+| SupportSignal integration | 📅 Planned | [Epic 7](./epic-list.md#epic-7-integration-agent--provider-pattern) |
 
 **Not available:**
 - LangChain integration — 💡 Possible, would need provider implementation
@@ -238,13 +238,13 @@ A: 🔜 Coming soon in [Story 4.7](./epic-details.md#story-47-human-in-the-loop-
 A: 🔜 Coming soon in [Story 4.8](./epic-details.md#story-48-platform-constraint-validation).
 
 **Q: Can I pull schema definitions from an external system like SupportSignal?**
-A: 📅 Planned in [Epic 6](./epic-list.md#epic-6-integration-agent--provider-pattern).
+A: 📅 Planned in [Epic 7](./epic-list.md#epic-7-integration-agent--provider-pattern).
 
 **Q: Can I use a different template engine like Jinja?**
 A: 💡 Not planned, but architecturally possible. Would need an adapter pattern in the template service. Consider Epic 10+ or enhancement to Epic 2.
 
 **Q: Can I deploy prompts to production systems automatically?**
-A: 📅 Planned in [Epic 6](./epic-list.md#epic-6-integration-agent--provider-pattern) via provider publish workflow.
+A: 📅 Planned in [Epic 7](./epic-list.md#epic-7-integration-agent--provider-pattern) via provider publish workflow.
 
 ---
 
@@ -255,11 +255,11 @@ If a capability you need is marked 💡 **Possible** or doesn't exist:
 1. **Check Planning Docs**: [docs/planning/](../planning/) may have exploration notes
 2. **Check Future Enhancements**: [future-enhancements.md](../future-enhancements.md) tracks deferred work
 3. **Determine Epic Fit**:
-   - Prompt/workflow capability → Epic 3-4 or Epic 7
-   - Handlebars/helper capability → Epic 5
-   - External integration → Epic 6
+   - Prompt/workflow capability → Epic 3-4 or Epic 8
+   - Handlebars/helper capability → Epic 6
+   - External integration → Epic 7
    - Infrastructure/tooling → Epic 0-2
-   - New domain entirely → Propose Epic 10+
+   - New domain entirely → Propose Epic 11+
 4. **Draft Story**: Use BMAD SM agent to draft story in appropriate epic
 
 ---

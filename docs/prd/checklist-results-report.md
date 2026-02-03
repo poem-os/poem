@@ -14,7 +14,7 @@
 | Category                         | Status      | Critical Issues                                                         |
 | -------------------------------- | ----------- | ----------------------------------------------------------------------- |
 | 1. Problem Definition & Context  | **PASS**    | None - Clear problem, quantified impact, differentiation documented     |
-| 2. MVP Scope Definition          | **PASS**    | None - Well-defined boundaries, Epic 7 clearly marked post-MVP          |
+| 2. MVP Scope Definition          | **PASS**    | None - Well-defined boundaries, Epic 8 clearly marked post-MVP          |
 | 3. User Experience Requirements  | **PARTIAL** | No visual UI (intentionally skipped - conversation-first product)       |
 | 4. Functional Requirements       | **PASS**    | None - 25 FRs grouped by agent workflows, infrastructure, cross-cutting |
 | 5. Non-Functional Requirements   | **PASS**    | None - 12 NFRs with specific performance targets                        |
@@ -31,7 +31,7 @@
 
 **MEDIUM Priority**:
 
-1. Data dictionary format not fully specified (will emerge during Epic 6)
+1. Data dictionary format not fully specified (will emerge during Epic 7)
 2. Provider contract interface details deferred to implementation
 3. No visual architecture diagram (text descriptions sufficient for now)
 
@@ -45,7 +45,7 @@
 
 **Features That Might Be Cut**:
 
-- Epic 7 (Mock/Test Data Agent Level 2) is already marked post-MVP
+- Epic 8 (Mock/Test Data Agent Level 2) is already marked post-MVP
 - Story 4.8 (Platform Constraint Validation) could be simplified to manual checks initially
 - Story 7.3-7.5 (Level 2 mock data features) already deferred
 
