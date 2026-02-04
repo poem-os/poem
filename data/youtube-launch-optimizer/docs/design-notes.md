@@ -46,7 +46,34 @@
 
 ---
 
-### Decision 2: [Human Feedback] - Hybrid Selection with Human Confirmation
+### Decision 2: [2026-02-04] - Section 3 Workflow DEPRECATED
+
+**Problem:** Section 3 (B-roll Suggestions) represents an old/unusual workflow that is no longer used.
+
+**Decision:** Archive entire Section 3 - move all prompts and analyses to `prompts/archive/3-b-roll-suggestions/`
+
+**Rationale:**
+1. **Workflow Obsolete**: Midjourney style selection → CSV export workflow is deprecated
+2. **Not Current Practice**: User no longer follows this b-roll generation approach
+3. **Historical Value**: Analysis patterns remain valid for understanding workflow evolution
+4. **Clean Active Prompts**: Keep only actively-used prompts in main directory
+
+**Impact:**
+- Section 3 (4 prompts) archived: 3-1 through 3-4
+- All Penny analyses preserved in archive
+- Task #3 marked complete (archived rather than kept active)
+- Continue to Section 4 for active workflow review
+
+**Files Moved:**
+- `3-1-transcript-design-style.hbs` + `.penny.md`
+- `3-2-intro-outro-design-ideas.hbs` + `.penny.md`
+- `3-3-editor-brief.hbs` + `.penny.md`
+- `3-4-transcript-design-ideas.hbs` + `.penny.md`
+- `section-3-overview.md` → `archive/3-b-roll-suggestions/README.md`
+
+---
+
+### Decision 3: [Human Feedback] - Hybrid Selection with Human Confirmation
 
 **Problem:** Decision 1 proposed pure AI selection, but workflow needs human confirmation step.
 

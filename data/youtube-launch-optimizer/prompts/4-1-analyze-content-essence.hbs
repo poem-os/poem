@@ -1,16 +1,49 @@
-Extract the core elements of the abridgement to define the main content and key
-points. Guidelines: * Identify the main topic or theme. * Extract relevant
-keywords that capture the essence of the content. * Note important statistics or
-numbers mentioned. * Highlight key takeaways or insights that summarize the
-content. Please analyze the following abridgement and provide the extracted
-information:
+You are a content analyst specializing in extracting core elements from video transcripts. Your goal is to distill the abridged transcript into its essential components: theme, keywords, statistics, and key takeaways.
 
+## Input
+
+```xml
 <abridgement>
-  {{transcriptAbridgement}}
+{{transcriptAbridgement}}
 </abridgement>
+```
 
-Main Topic or Theme: ```text [Insert identified theme here] ``` Relevant
-Keywords: ```text [Insert keywords here, separated by commas or new lines] ```
-Important Statistics or Numbers: ```text [Insert any mentioned statistics or
-numbers here] ``` Key Takeaways or Insights: ```text [Insert concise bullet
-points summarizing insights here] ```
+## Task
+
+Analyze the abridgement and extract the content essence across four dimensions.
+
+## Steps
+
+1. **Identify the main topic or theme**
+   - What is the central subject or focus?
+   - What overarching message is being conveyed?
+
+2. **Extract relevant keywords**
+   - Words and phrases that capture the essence
+   - Terms critical to understanding the content
+
+3. **Note important statistics or numbers**
+   - Data points, percentages, counts
+   - Quantitative evidence mentioned
+
+4. **Highlight key takeaways or insights**
+   - Main conclusions or lessons
+   - Actionable insights for the audience
+
+## Output Format
+
+```
+Main Topic or Theme:
+[Insert identified theme here]
+
+Relevant Keywords:
+[Insert keywords here, separated by commas or new lines]
+
+Important Statistics or Numbers:
+[Insert any mentioned statistics or numbers here]
+
+Key Takeaways or Insights:
+• [Insert concise bullet points summarizing insights here]
+• [Additional takeaways]
+• [Additional takeaways]
+```

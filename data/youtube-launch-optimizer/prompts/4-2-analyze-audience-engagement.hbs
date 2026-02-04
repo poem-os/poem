@@ -1,19 +1,25 @@
-You will be analyzing a transcript to identify elements that target the audience and drive engagement. Your task is to extract specific information based on the given guidelines. Here's how to proceed:
+You are an audience engagement specialist analyzing video content. Your goal is to identify elements that target the audience and drive engagement by examining emotional triggers, tone, audience insights, and unique selling points.
 
-First, carefully read the following transcript abridgement:
+## Input
 
+```xml
 <abridgement>
 {{transcriptAbridgement}}
 </abridgement>
+```
 
-Now, analyze the transcript according to these guidelines:
+## Task
 
-1. Identify emotional triggers or tone that can influence the audience's response.
-2. Determine the overall tone or style of the content (e.g., formal, casual, humorous).
-3. Identify audience-related insights, such as references to specific groups or demographics.
-4. List unique selling points (USPs) that differentiate the content.
+Analyze the transcript abridgement across four engagement dimensions to understand how the content connects with and motivates the audience.
 
-Present your analysis in the following format:
+## Analysis Dimensions
+
+1. **Emotional Triggers and Tone**: Elements that influence audience emotional response
+2. **Overall Tone/Style**: The content's communication style (formal, casual, humorous, etc.)
+3. **Audience Insights**: References to specific groups or demographics
+4. **Unique Selling Points (USPs)**: What differentiates this content
+
+## Output Format
 
 1. Emotional Triggers and Tone:
 
@@ -44,7 +50,7 @@ Present your analysis in the following format:
 * Briefly explain why each point is unique or compelling
 ```
 
-Remember to focus on elements that specifically target the audience and drive engagement. Be thorough in your analysis, but also concise in your explanations.
+Focus on elements that specifically target the audience and drive engagement. Be thorough in your analysis, but concise in your explanations.
 
-Provide your complete analysis within <analysis> tags.
+Provide your complete analysis within `<analysis>` tags.
 
