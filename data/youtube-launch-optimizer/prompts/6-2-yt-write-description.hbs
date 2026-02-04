@@ -1,48 +1,84 @@
-Craft engaging and informative YouTube video description Specializes in creating
-descriptions for YouTube videos, focusing on SEO, viewer engagement, and
-compliance with YouTube guidelines. Gather information about the video and
-assemble into a captivating descriptions that flows nicely with a scattering of
-emojis Write the output in code block. Sections: - Above the fold (include
-fold_cta at end) - Simple Description - Chapters - Related Videos - Secondary
-CTAs/Affiliate Links - Brand/Social Links - End Note/Closing Statement -
-#Keyword1, #Keyword2 - Legal Disclosure Guidelines: - Incorporate a concise
-introduction that fits above the fold (about 40 words in length), includes the
-primary keyword early, and features a clickable link for the above the fold call
-to action. It is a plain sentence. - Use the simple description in the
-approprate location and maintains an appropriate length and tone, balancing
-informativeness with readability. - The YouTube description outline is a guide,
-not the actual headings that you should use, in keeping with YouTube description
-Best practices, the flow should feel natural, note: YouTube descriptions are not
-the same as articles in their formatting. Use the following inputs:
+Assemble a complete YouTube video description from pre-generated components.
 
-<video_simple_description>
-  {{videoSimpleDescription}}
-</video_simple_description>
+## Purpose
 
-<fold_cta>
-  {{foldCta}}
-</fold_cta>
+This is a PURE ASSEMBLY task. All content has already been generated. Arrange the pieces into a well-formatted YouTube description that's ready to paste.
 
-<primary_cta>
-  {{primaryCta}}
-</primary_cta>
+## Output Format: YouTube-Native
 
-<chapters>
-  {{chapters}}
-</chapters>
+YouTube supports limited formatting:
 
-<brand_information>
-  {{brandInfo}}
-</brand_information>
+- `*text*` = bold (single asterisk, NOT double)
+- `# Heading` = large heading
+- `## Heading` = medium heading
+- `- item` = bullet point
+- Raw URLs auto-link
+- Timestamps like `0:00` auto-link to chapters
 
-<affiliate_cta>
-  {{affiliateCta}}
-</affiliate_cta>
+Output must be ready to paste directly into YouTube. No markdown conversion needed.
 
-<video_related_links>
-  {{videoRelatedLinks}}
-</video_related_links>
+## Section Structure
 
-<video_keywords>
-  {{videoKeywords}}
-</video_keywords>
+```
+1. First Line (SEO hook + Skool CTA) - already complete
+2. Simple Description - already complete
+3. 👉 Primary CTA (short, punchy)
+4. 🎥 Related Videos
+5. 🔗 Tools & Affiliate Links
+6. 🌐 Connect
+7. ⏱️ Chapters (move to position 7 if >20 chapters)
+8. #Hashtags
+9. Legal disclaimer
+```
+
+**Note**: If chapters exceed 20 lines, place them just above hashtags to keep CTAs visible.
+
+## Formatting Guidelines
+
+- Use emoji headers for scannability
+- Keep CTA format short: `👉 Label: URL`
+- Group all affiliate links under one heading
+- One blank line between sections
+- No horizontal rules or decorative elements
+
+## Inputs
+
+**First Line** (paste at top, already complete):
+{{videoDescriptionFirstLine}}
+
+**Simple Description** (paste after first line):
+{{videoSimpleDescription}}
+
+**Primary CTA**:
+👉 {{brandConfig.ctas.primaryCta.label}}: {{brandConfig.ctas.primaryCta.url}}
+
+**Related Videos**:
+{{#each relatedVideos}}
+{{title}}: {{url}}
+{{/each}}
+
+**Affiliate Links**:
+{{#each brandConfig.affiliates}}
+{{#if active}}
+{{name}}: {{url}}
+{{/if}}
+{{/each}}
+
+**Social Links**:
+Website: {{brandConfig.socialLinks.website}}
+Twitter: {{brandConfig.socialLinks.twitter}}
+YouTube: {{brandConfig.socialLinks.youtubeMain}}
+Community: {{brandConfig.socialLinks.skool}}
+
+**Chapters**:
+{{createChapters}}
+
+**Hashtags**:
+{{descriptionHashtags}}
+
+**Legal Disclaimer**:
+{{brandConfig.descriptionTemplate.legalDisclosure}}
+
+## Output
+
+Return the complete YouTube description as plain text with YouTube-native formatting. Ready to paste directly into YouTube.
