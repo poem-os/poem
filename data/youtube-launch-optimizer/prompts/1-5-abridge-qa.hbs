@@ -1,0 +1,113 @@
+You are performing quality assurance on an abridged video transcript by comparing it against the original. Your goal is to validate that all meaningful information was preserved according to the near-lossless compression standards.
+
+## Step 1: Check Preservation Across Categories
+
+For each category below, compare the abridged output to the original transcript:
+
+### Named Entities
+Are all people, tools, technologies, products, and brands from the original present in the abridgement?
+
+### Numbered Items
+Are version numbers, step counts, story numbers, and other numerical references preserved?
+
+### Technical Terms
+Are APIs, frameworks, libraries, file names, and programming concepts retained?
+
+### Problems & Solutions
+Is every bug, error, or issue mentioned along with how it was resolved? (Both parts must be present)
+
+### Demonstrations
+Are all things shown, created, or demonstrated captured in the abridgement?
+
+### Chronological Flow
+Does the abridgement maintain the same sequence of events as the original?
+
+### Quantitative Details
+Are numbers, percentages, counts, and measurements preserved?
+
+### Cause & Effect
+Is the reasoning behind decisions preserved? (Why things were done, not just what was done)
+
+## Step 2: Categorize Findings
+
+For each category, identify:
+- **Present**: Items correctly preserved
+- **Missing**: Items from original not in abridgement
+- **Altered**: Items that changed meaning
+
+## Step 3: Provide Overall Assessment
+
+Calculate and report:
+- Overall preservation estimate (percentage)
+- Critical gaps that would prevent understanding the full video
+- Specific recommendations to improve the abridgement
+
+---
+
+## Output Format
+
+```
+### Named Entities
+- Present: [List items correctly preserved]
+- Missing: [List items not in abridgement]
+- Altered: [List items that changed meaning]
+
+### Numbered Items
+- Present: [List]
+- Missing: [List]
+- Altered: [List]
+
+### Technical Terms
+- Present: [List]
+- Missing: [List]
+- Altered: [List]
+
+### Problems & Solutions
+- Present: [List]
+- Missing: [List]
+- Altered: [List]
+
+### Demonstrations
+- Present: [List]
+- Missing: [List]
+- Altered: [List]
+
+### Chronological Flow
+- Present: [Maintained/Not maintained]
+- Missing: [Any sequence gaps]
+- Altered: [Any reordering issues]
+
+### Quantitative Details
+- Present: [List]
+- Missing: [List]
+- Altered: [List]
+
+### Cause & Effect
+- Present: [List reasoning preserved]
+- Missing: [List missing rationale]
+- Altered: [List changed reasoning]
+
+---
+
+**Overall Preservation Estimate:** X% of meaningful content retained
+
+**Critical Gaps:** [Any omissions that would prevent understanding the full video]
+
+**Recommendations:** [Specific additions or changes to improve the abridgement]
+```
+
+---
+
+## Abridged Output
+
+<abridged>
+{{transcriptAbridgement}}
+</abridged>
+
+---
+
+## Original Transcript
+
+<transcript>
+{{transcript}}
+</transcript>

@@ -1,34 +1,99 @@
-You are creating YouTube chapter timestamps by matching chapter reference text
-to an SRT file. ## Inputs ### SRT File (contains timestamps)
+You are creating YouTube chapter timestamps by matching refined chapter titles to their corresponding timestamps in an SRT subtitle file.
+
+## Step 1: Review Inputs
+
+You have three inputs to work with:
+
+### SRT File (contains timestamps)
 <srt>
-  {{srt}}
+{{srt}}
 </srt>
 
 ### Transcript (cleaner text for context)
 <transcript>
-  {{transcript}}
+{{transcript}}
 </transcript>
 
-### Chapters (title + reference text)
+### Chapters (refined titles with reference text)
 <chapters>
-  {{chapters}}
+{{chapters}}
 </chapters>
 
-## Matching Strategy For each chapter: 1. **Extract key phrase** - Take the
-first 5-10 distinctive words from the reference text 2. **Find in SRT** - Search
-the SRT for that phrase (allow for minor differences like hyphenation,
-punctuation) 3. **Get timestamp** - Extract the START timestamp from the
-matching SRT block 4. **Handle splits** - If text spans multiple SRT blocks, use
-the timestamp of the FIRST block ### SRT Format Reference ``` 1 00:00:00,840 -->
-00:00:05,440 First line of speech 2 00:00:05,440 --> 00:00:09,430 Second line of
-speech ``` Use the START time (before the `-->`), convert to `M:SS` or `H:MM:SS`
-format. ## Rules 1. **First chapter must be 0:00** - Always start at the
-beginning 2. **Chronological order** - Timestamps must increase 3. **No
-duplicates** - Each chapter needs a unique timestamp 4. **All chapters
-included** - Every chapter from the input must appear in output 5. **Title under
-49 chars** - Use the chapter title as-is (already optimized) ## Output Format
-Provide the final chapters in a code block: ``` 0:00 Chapter Title 1:35 Next
-Chapter 3:45 Another Chapter ... ``` ## Handling Issues If you cannot find an
-exact match: - Look for partial phrase matches - Use surrounding context from
-transcript - Note any chapters where matching was uncertain Provide a brief note
-before the output if any matches were difficult or uncertain.
+## Step 2: Match Each Chapter to SRT Timestamp
+
+For each chapter, follow this matching strategy:
+
+1. **Extract key phrase** - Take the first 5-10 distinctive words from the chapter's reference text
+2. **Find in SRT** - Search the SRT file for that phrase (allow minor differences like hyphenation, punctuation)
+3. **Get timestamp** - Extract the START timestamp from the matching SRT block
+4. **Handle splits** - If text spans multiple SRT blocks, use the timestamp of the FIRST block
+
+**SRT Format Reference:**
+```
+1
+00:00:00,840 --> 00:00:05,440
+First line of speech
+
+2
+00:00:05,440 --> 00:00:09,430
+Second line of speech
+```
+
+**Timestamp conversion:**
+- Use the START time (before the `-->`)
+- Convert to `M:SS` or `H:MM:SS` format
+- Example: `00:00:05,440` → `0:05` or `00:01:35,200` → `1:35`
+
+## Step 3: Apply Rules
+
+Ensure your output follows these requirements:
+
+1. **First chapter must be 0:00** - Always start at the beginning
+2. **Chronological order** - Timestamps must increase sequentially
+3. **No duplicates** - Each chapter needs a unique timestamp
+4. **All chapters included** - Every chapter from the input must appear in output
+5. **Title under 49 chars** - Use the chapter title as-is (already optimized in previous step)
+
+## Step 4: Handle Matching Issues
+
+If you cannot find an exact match:
+- Look for partial phrase matches
+- Use surrounding context from transcript
+- Note any chapters where matching was uncertain
+
+If any matches were difficult or uncertain, provide a brief note before the output explaining the issue.
+
+---
+
+## Output Format
+
+```
+0:00 Chapter Title
+1:35 Next Chapter Title
+3:45 Another Chapter Title
+7:20 Final Chapter Title
+```
+
+---
+
+## SRT File
+
+<srt>
+{{srt}}
+</srt>
+
+---
+
+## Transcript
+
+<transcript>
+{{transcript}}
+</transcript>
+
+---
+
+## Chapters
+
+<chapters>
+{{chapters}}
+</chapters>

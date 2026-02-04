@@ -1,22 +1,47 @@
-Identify and list youtube chapters with reference from the transcript included on next line in quote marks.
+You are analyzing a video transcript to identify logical chapters that segment the content into distinct topics or sections.
 
-Chapter names should: "Use simple, general terms; minimize detail"
+## Step 1: Review the Transcript
 
-Put list in code block in markdown format, do not use **bold** and number each chapter
+Read through the transcript and identify natural topic boundaries where the speaker transitions between subjects or completes a distinct section of content.
 
-Here is a (SAMPLE ONLY) format:
+## Step 2: Create Chapter Names
 
+For each identified section, create a chapter name that:
+- Uses simple, general terms
+- Minimizes detail
+- Captures the essence of that section
+
+## Step 3: Extract Reference Quotes
+
+For each chapter, include a representative quote from the transcript that shows where that chapter begins or what it covers.
+
+---
+
+## Output Format
+
+```markdown
 1. Chapter Name
-  "In this video...."
-2 Another Chapter Name
-  "Some information about..."
+   "Representative quote from transcript for this chapter"
 
-<more chapters>
+2. Another Chapter Name
+   "Quote showing what this chapter covers"
 
-5 Last Chapter Name
-  "Whatever was said"
+3. Third Chapter Name
+   "Quote from the start of this section"
 
-Here is the script:
+... (continue for all chapters)
+```
 
+**Important:**
+- Number each chapter sequentially
+- Do NOT use bold formatting
+- Include quotes in quotation marks on the line below each chapter name
+- Put the entire list in a code block
+
+---
+
+## Transcript
+
+<transcript>
 {{transcript}}
-[x-transcript-abridgement]
+</transcript>

@@ -1,0 +1,76 @@
+You are creating YouTube chapter titles for a video. Your goal is to produce titles that are compressed, informative, and scannable.
+
+**Title Requirements:**
+- **Compressed**: Under 49 characters (YouTube hover preview cutoff)
+- **Informative**: Clearly describe what happens in that section
+- **Scannable**: Viewers skim chapters to find what they need
+
+## Step 1: Review AI-Suggested Chapters
+
+Review the preliminary chapter identification from the previous step:
+
+<identify_chapters>
+{{identifyChapters}}
+</identify_chapters>
+
+## Step 2: Review Author's Folder Names
+
+The author has provided folder names that define the authoritative chapter structure:
+
+<chapter_folder_names>
+{{chapterFolderNames}}
+</chapter_folder_names>
+
+**Important:** These folder names are the authoritative structure. You must produce exactly one chapter per folder name in the exact order given.
+
+## Step 3: Match Chapters to Transcript
+
+Review the transcript to find the text that corresponds to each folder/chapter:
+
+<transcript>
+{{transcript}}
+</transcript>
+
+For each folder name:
+1. Identify the corresponding transcript text
+2. Create a compressed title under 49 characters
+3. Extract a reference quote showing what this chapter covers
+
+## Step 4: Create Chapter Titles
+
+For each chapter:
+- Match folder count exactly (one chapter per folder)
+- Preserve folder order (do not add, remove, or reorder)
+- Use folder names as boundary and topic hints
+- Create titles under 49 characters
+- Ensure titles are informative and scannable
+
+---
+
+## Output Format
+
+```
+Chapters:
+
+00. [Title under 49 chars]
+    "[Matching transcript text - first sentence or key quote]"
+
+01. [Title under 49 chars]
+    "[Matching transcript text]"
+
+02. [Title under 49 chars]
+    "[Matching transcript text]"
+
+... (continue for all chapters)
+```
+
+---
+
+## Quality Checklist
+
+Before finalizing, verify:
+- [ ] Each title is under 49 characters
+- [ ] Each chapter has matching reference text from transcript
+- [ ] Folder order is preserved exactly
+- [ ] Titles are informative (viewer knows what section contains)
+- [ ] One chapter per folder name (no additions or omissions)

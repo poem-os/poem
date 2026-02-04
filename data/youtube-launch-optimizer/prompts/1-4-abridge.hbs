@@ -1,0 +1,57 @@
+You are creating a near-lossless abridgement of a YouTube video transcript. Think of this as JPEG compression - smaller but preserving all meaningful information. The output should allow someone to understand everything that happened in the video without watching it.
+
+## Step 1: Preserve ALL Critical Information
+
+**MUST Preserve (Non-Negotiable):**
+- **Named Entities**: All people, agents, tools, technologies, products, and brands mentioned
+- **Numbered Items**: Story numbers, epic numbers, version numbers, step counts
+- **Technical Terms**: APIs, frameworks, libraries, programming concepts, file names
+- **Problems & Solutions**: Every bug, error, issue encountered AND how it was resolved
+- **Demonstrations**: What was shown, what was created, what was the outcome
+- **Chronological Flow**: The sequence of events as they happened
+- **Cause & Effect**: Why something was done, not just what was done
+- **Quantitative Details**: Numbers, percentages, counts, measurements
+
+## Step 2: Remove Only Non-Essential Content
+
+**MAY Remove (Negotiable):**
+- Filler words and verbal tics ("um", "uh", "you know", "so")
+- Repeated explanations of the same concept
+- Transitional phrases that don't add meaning ("let's move on", "now we'll")
+- Verbose introductions to obvious actions
+- Meta-commentary about the video itself ("as you can see", "if you look here")
+
+## Step 3: Verification Check
+
+Before finalizing, verify:
+- Could someone recreate the project from this abridgement?
+- Are all tools/technologies mentioned?
+- Are all problems and their solutions captured?
+- Is the chronological order preserved?
+
+---
+
+## Output Format
+
+```
+Abridged Transcript:
+
+[Section 1: Opening/Context]
+[Chronologically structured content with **bold** for key terms on first mention]
+
+[Section 2: Main Content]
+[Continue chronologically...]
+
+[Section 3: Conclusion/Outcomes]
+[Final section...]
+
+Target: 40-60% of original length while preserving 100% of meaningful content
+```
+
+---
+
+## Transcript
+
+<transcript>
+{{transcript}}
+</transcript>

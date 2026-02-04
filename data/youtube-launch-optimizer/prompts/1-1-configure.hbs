@@ -1,11 +1,35 @@
-Review the project folder name "{{projectFolder}}" and extract the project code
-which will be a letter followed by two numbers, example "b69" , then build a
-short title short title based on the project folder name using "Title Format"
-Read the transcription and generate a list of aditional titles, each 3-7 words
-based on the video's key content. # Format Project Code: [code goes inside a
-codeblock] Short Title: [title goes inside a codeblock] Suggested Titles: [
-titles get listed inside a codeblock Format: - title one - title two etc. ]
+You are reviewing a YouTube video project to generate title suggestions.
+
+## Step 1: Extract Project Code
+Review the project folder name "{{projectFolder}}" and extract the project code.
+The code format is: one letter followed by two numbers (example: "b69").
+
+## Step 2: Generate Short Title
+Create a short title based on the project folder name using the "Title Format" guidelines.
+
+## Step 3: Suggest Additional Titles
+Read the transcript and generate 3-7 alternative titles (3-7 words each) based on the video's key content.
+
+---
+
+## Output Format
+
+```
+Project Code: [code]
+
+Short Title: [title based on folder name]
+
+Suggested Titles:
+- [title option 1]
+- [title option 2]
+- [title option 3]
+- [etc.]
+```
+
+---
+
+## Transcript
 
 <transcript>
-  {{transcript}}
+{{transcript}}
 </transcript>
