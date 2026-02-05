@@ -1,0 +1,53 @@
+{
+  "templateName": "analyze-content-essence",
+  "title": "Analyze Content Essence",
+  "description": "Extract theme, keywords, statistics, and takeaways",
+  "section": "Content Analysis",
+  "input": {
+    "fields": [
+      {
+        "name": "transcriptAbridgement",
+        "required": true,
+        "type": "string",
+        "description": "Compressed transcript (40-60% of original)",
+        "format": "long-text"
+      }
+    ]
+  },
+  "output": {
+    "fields": [
+      {
+        "name": "analyzeContentEssence",
+        "type": "object",
+        "description": "Content essence analysis output",
+        "properties": {
+          "mainTopic": {
+            "type": "string",
+            "description": "Central theme or subject"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Key terms and phrases"
+          },
+          "statistics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Important numbers and data points"
+          },
+          "takeaways": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Key insights and conclusions"
+          }
+        }
+      }
+    ]
+  }
+}

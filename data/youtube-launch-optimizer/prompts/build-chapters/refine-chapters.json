@@ -1,0 +1,33 @@
+{
+  "templateName": "refine-chapters",
+  "title": "Refine Chapters",
+  "description": "Improve chapter titles and boundaries",
+  "section": "Build Chapters",
+  "input": {
+    "fields": [
+      {
+        "name": "identifyChapters",
+        "required": true,
+        "type": "string",
+        "description": "Initial chapter identification output"
+      },
+      {
+        "name": "transcript",
+        "required": true,
+        "type": "string",
+        "description": "Full video transcript text",
+        "format": "long-text"
+      }
+    ]
+  },
+  "output": {
+    "fields": [
+      {
+        "name": "chapters",
+        "type": "string",
+        "description": "Final refined chapters with timestamps",
+        "format": "multi-line"
+      }
+    ]
+  }
+}

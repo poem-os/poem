@@ -1,0 +1,36 @@
+{
+  "templateName": "qa-abridge",
+  "title": "QA Abridgement",
+  "description": "Quality check abridgement against original transcript",
+  "section": "Video Preparation",
+  "input": {
+    "fields": [
+      {
+        "name": "transcript",
+        "required": true,
+        "type": "string",
+        "description": "Full video transcript text",
+        "format": "long-text"
+      },
+      {
+        "name": "transcriptAbridgement",
+        "required": true,
+        "type": "string",
+        "description": "Compressed transcript (40-60% of original)",
+        "format": "long-text"
+      }
+    ]
+  },
+  "output": {
+    "fields": [
+      {
+        "name": "transcriptAbridgementDescrepencies",
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "List of discrepancies found in QA"
+      }
+    ]
+  }
+}

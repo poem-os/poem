@@ -1,0 +1,31 @@
+{
+  "templateName": "separate-intro-outro",
+  "title": "Separate Intro/Outro",
+  "description": "Extract introduction and conclusion sections",
+  "section": "Video Preparation",
+  "input": {
+    "fields": [
+      {
+        "name": "transcript",
+        "required": true,
+        "type": "string",
+        "description": "Full video transcript text",
+        "format": "long-text"
+      }
+    ]
+  },
+  "output": {
+    "fields": [
+      {
+        "name": "transcriptIntro",
+        "type": "string",
+        "description": "Introduction section extracted from transcript"
+      },
+      {
+        "name": "transcriptOutro",
+        "type": "string",
+        "description": "Conclusion section extracted from transcript"
+      }
+    ]
+  }
+}

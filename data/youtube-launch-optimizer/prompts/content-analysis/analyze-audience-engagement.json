@@ -1,0 +1,90 @@
+{
+  "templateName": "analyze-audience-engagement",
+  "title": "Analyze Audience Engagement",
+  "description": "Identify emotional triggers, tone, and USPs",
+  "section": "Content Analysis",
+  "input": {
+    "fields": [
+      {
+        "name": "transcriptAbridgement",
+        "required": true,
+        "type": "string",
+        "description": "Compressed transcript (40-60% of original)",
+        "format": "long-text"
+      }
+    ]
+  },
+  "output": {
+    "fields": [
+      {
+        "name": "analyzeAudienceEngagement",
+        "type": "object",
+        "description": "Audience engagement analysis",
+        "properties": {
+          "emotionalTriggers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "trigger": {
+                  "type": "string"
+                },
+                "influence": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "tone": {
+            "type": "object",
+            "properties": {
+              "style": {
+                "type": "string",
+                "enum": [
+                  "formal",
+                  "casual",
+                  "humorous"
+                ]
+              },
+              "examples": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "audienceInsights": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "group": {
+                  "type": "string",
+                  "description": "Target demographic"
+                },
+                "relevance": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "usps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "point": {
+                  "type": "string"
+                },
+                "explanation": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

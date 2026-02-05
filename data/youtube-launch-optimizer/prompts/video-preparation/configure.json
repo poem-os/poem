@@ -1,0 +1,38 @@
+{
+  "templateName": "configure",
+  "title": "Configure Project",
+  "description": "Set up project metadata and initial titles",
+  "section": "Video Preparation",
+  "input": {
+    "fields": [
+      {
+        "name": "projectFolder",
+        "required": true,
+        "type": "string",
+        "description": "Path to project folder"
+      },
+      {
+        "name": "transcript",
+        "required": true,
+        "type": "string",
+        "description": "Full video transcript text",
+        "format": "long-text"
+      }
+    ]
+  },
+  "output": {
+    "fields": [
+      {
+        "name": "projectCode",
+        "type": "string",
+        "description": "Unique project identifier (e.g., b69)",
+        "pattern": "^[a-z]\\d{2}$"
+      },
+      {
+        "name": "shortTitle",
+        "type": "string",
+        "description": "Brief working title (3-7 words)"
+      }
+    ]
+  }
+}

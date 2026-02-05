@@ -1,0 +1,26 @@
+{
+  "templateName": "summarize",
+  "title": "Summarize Video",
+  "description": "Create condensed summary of full transcript",
+  "section": "Video Preparation",
+  "input": {
+    "fields": [
+      {
+        "name": "transcript",
+        "required": true,
+        "type": "string",
+        "description": "Full video transcript text",
+        "format": "long-text"
+      }
+    ]
+  },
+  "output": {
+    "fields": [
+      {
+        "name": "transcriptSummary",
+        "type": "string",
+        "description": "Condensed summary (100-1000 chars)"
+      }
+    ]
+  }
+}

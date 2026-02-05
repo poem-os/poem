@@ -1,0 +1,33 @@
+{
+  "templateName": "abridge",
+  "title": "Abridge Transcript",
+  "description": "Create abridged version with key points",
+  "section": "Video Preparation",
+  "input": {
+    "fields": [
+      {
+        "name": "transcript",
+        "required": true,
+        "type": "string",
+        "description": "Full video transcript text",
+        "format": "long-text"
+      },
+      {
+        "name": "transcriptSummary",
+        "required": true,
+        "type": "string",
+        "description": "Condensed summary (100-1000 chars)"
+      }
+    ]
+  },
+  "output": {
+    "fields": [
+      {
+        "name": "transcriptAbridgement",
+        "type": "string",
+        "description": "Compressed transcript (40-60% of original)",
+        "format": "long-text"
+      }
+    ]
+  }
+}
