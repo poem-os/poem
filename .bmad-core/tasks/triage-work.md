@@ -384,7 +384,33 @@ Analyzing context...
 Type 'go', '1', or '2': _
 ```
 
-### Step 5: Routing Destinations and Commands
+### Step 5: Pattern Check (Pre-Execution)
+
+Before presenting handoff commands, scan for relevant KDD knowledge:
+
+1. **Scan KDD patterns**: Check `docs/kdd/patterns/` for patterns matching the work area
+2. **Scan KDD learnings**: Check `docs/kdd/learnings/` for prior issues in the same area
+3. **Scan coding standards**: Reference `docs/architecture/coding-standards.md` for the affected domain
+4. **Scan ADRs**: Check `docs/kdd/decisions/` for architectural decisions constraining this area
+
+If relevant knowledge found, append to the routing output:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📚 Relevant Patterns & Knowledge
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Before fixing, review:
+- [Pattern Name](docs/kdd/patterns/xxx.md) — {one-line summary}
+- [Learning: {topic}](docs/kdd/learnings/xxx.md) — {one-line summary}
+- [ADR-{N}](docs/kdd/decisions/xxx.md) — {one-line summary}
+
+⚠️ These constrain how this fix should be implemented.
+```
+
+If no KDD docs exist yet, check coding standards and architecture decisions only.
+
+### Step 6: Routing Destinations and Commands
 
 These are reference templates for populating the table rows. Use user-facing destination names, not internal path numbers.
 
@@ -405,6 +431,7 @@ These are reference templates for populating the table rows. Use user-facing des
 - **Agent & Command**: SM (Bob) → `/BMad/agents/sm` then `*add-fix {category} "{description}"`
 - **Categories**: infrastructure, tech-debt, documentation, bugs
 - **When**: <1 hour scope AND no ceremony needed (no tests, simple correction)
+- **Pre-check**: Review relevant `docs/kdd/` patterns and `docs/architecture/coding-standards.md` before fixing
 - **Why**: Direct fix more efficient than story overhead, logged in backlog for tracking
 
 **Epic 0 Story (Maintenance)**
@@ -420,7 +447,7 @@ These are reference templates for populating the table rows. Use user-facing des
 - **When**: Triaging from `usage-issues.jsonl` file
 - **Note**: Apply decision criteria to determine which of the above 4 routes to use
 
-### Step 6: Present Alternatives
+### Step 7: Present Alternatives
 
 For every recommended path, suggest 1-2 alternatives:
 
@@ -439,7 +466,7 @@ For every recommended path, suggest 1-2 alternatives:
 **If recommending AppyDave Workflow**, suggest:
 1. New story (if existing story scope has drifted)
 
-### Step 7: Wait for User Confirmation
+### Step 8: Wait for User Confirmation
 
 HALT and wait for user input:
 - `'go'` or `Enter` → Proceed with recommended path (inform user they should execute the command)
@@ -448,7 +475,7 @@ HALT and wait for user input:
 
 **Important**: Triage DOES NOT auto-execute the handoff command. It provides routing guidance. User must execute the command sequence themselves.
 
-### Step 8: Handle Edge Cases
+### Step 9: Handle Edge Cases
 
 **No Clear Context**:
 ```

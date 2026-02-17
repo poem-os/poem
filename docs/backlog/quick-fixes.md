@@ -12,6 +12,7 @@
 
 **Working items:**
 - Pick from Pending when you have 15-60 min between stories
+- **Check patterns first**: Scan `docs/kdd/patterns/`, `docs/kdd/learnings/`, and `docs/architecture/coding-standards.md` for relevant constraints
 - Fix it, mark done with commit reference
 - No story, no QA gate, no ceremony
 
