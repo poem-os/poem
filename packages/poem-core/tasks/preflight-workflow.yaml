@@ -1,0 +1,461 @@
+# Preflight Workflow
+# Builds and validates an execution plan from workflow YAML + actual data
+# before any step executes. Prevents Oscar from improvising during execution.
+#
+# Executed by: Workflow Orchestrator agent (Oscar) via *preflight or *run command
+# Execution model: Agent-interpreted (steps guide agent behavior, not automated)
+#
+# Path resolution: Inherited from poem-core-config.yaml
+# DO NOT add a paths: section - config service is the source of truth
+
+id: preflight-workflow
+name: Preflight — Build and Validate Execution Plan
+version: "1.0.0"
+author: POEM Framework
+lastUpdated: "2026-02-19"
+
+pathResolution: config
+
+description: |
+  Reads an entire workflow YAML and actual input data to build a concrete
+  execution plan BEFORE any step runs. The plan specifies:
+  - Which steps will run, skip, or be gated
+  - Exact inputs and outputs for every step
+  - Where each input comes from (field name + producing step)
+  - Checkpoints requiring human decisions
+  - Risks and ambiguities
+
+  After building the plan, validates it against schemas and data availability.
+  Only after validation passes and the user commits does execution begin.
+
+  This workflow has two phases:
+  1. *preflight — Build the execution plan (Steps 0-5)
+  2. *validate-plan — Cross-check the plan against schemas (Steps 6-10)
+
+  Key Principle: Oscar must understand the full contract before starting.
+  A failed preflight that reports its failures is more valuable than a
+  "successful" run with fabricated data.
+
+fallback:
+  onMissingInput: halt-and-report
+  onApiError: show-error-and-retry
+  onFileConflict: warn-and-confirm
+
+steps:
+  # ============================================================================
+  # PHASE 1: PREFLIGHT — BUILD EXECUTION PLAN
+  # ============================================================================
+
+  # --------------------------------------------------------------------------
+  # STEP 0: LOAD CONFIGURATION AND DETECT ENVIRONMENT
+  # --------------------------------------------------------------------------
+  - id: load-config
+    name: Load Configuration and Detect Environment
+    type: action
+    action: validate-prerequisites
+    stores: config
+    instruction: |
+      Load POEM configuration and detect environment.
+
+      1. **Detect environment:**
+         - Check if `packages/poem-core/` exists → DEVELOPMENT mode
+         - Otherwise check `.poem-core/` exists → PRODUCTION mode
+         - If neither exists, HALT: "No POEM core found."
+         - Load poem-core-config.yaml if available
+
+      2. **Locate target workflow:**
+         - If workflow was specified (via argument or prior selection), use it
+         - Otherwise scan `poem/workflows/` for available workflows
+         - If only one workflow exists, auto-select it
+         - If multiple, present list and ask user to select
+
+      3. **Report:**
+         ```
+         Preflight: Loading configuration
+         ─────────────────────────────────
+         Environment:  {DEVELOPMENT | PRODUCTION}
+         Workflow:     {workflow-name} v{version}
+         Location:     {path-to-workflow-yaml}
+         ─────────────────────────────────
+         ```
+
+  # --------------------------------------------------------------------------
+  # STEP 1: LOAD COMPLETE WORKFLOW YAML
+  # --------------------------------------------------------------------------
+  - id: load-workflow
+    name: Load and Parse Complete Workflow YAML
+    type: action
+    action: analyze
+    stores: workflowDefinition
+    instruction: |
+      Read the ENTIRE workflow YAML into memory. Do NOT read step-by-step.
+
+      Parse and store the complete structure:
+
+      1. **All steps and substeps:**
+         - id, name, type, action, inputs, outputs, stores
+         - active/disabled status
+         - skipIf conditions
+         - Prompt file references (.hbs paths)
+         - Schema file references (.json paths)
+
+      2. **All gates:**
+         - id, checks (field + condition), onPass, onFail
+
+      3. **All checkpoints:**
+         - id, type (selection, freeform, approval), options
+
+      4. **All parallel groups:**
+         - Which substeps run in parallel
+         - Conditions for conditional-parallel steps
+
+      5. **Workflow metadata:**
+         - id, name, version, description
+         - Input schema references
+         - Output expectations
+
+      If the YAML has parse errors, HALT:
+      "Workflow YAML has parse errors: {details}. Fix before proceeding."
+
+      Also load the usage guide ({workflow-name}.usage.md) if it exists.
+
+  # --------------------------------------------------------------------------
+  # STEP 2: LOAD INPUT DATA
+  # --------------------------------------------------------------------------
+  - id: load-input-data
+    name: Load and Inventory Input Data
+    type: action
+    action: analyze
+    stores: dataInventory
+    instruction: |
+      Load the input data that will be used for execution. Understand what
+      data ALREADY EXISTS vs what needs to be generated.
+
+      1. **Locate data source:**
+         - Check workflow-data/ for existing execution state
+         - Check mock-data/ for test data
+         - If user specified a data file, locate that specific file
+
+      2. **Inventory available fields:**
+         For each data element, record:
+         - Field name
+         - Status: EXISTS (data present) | EMPTY (field exists but no data) | MISSING (field not present)
+         - Size: count of items where applicable (e.g., "5 items", "4 phases")
+
+      3. **Build data inventory table:**
+         ```
+         Data Inventory: {workflow-name}
+         ─────────────────────────────────────────────────────
+         Field                | Status  | Details
+         ─────────────────────────────────────────────────────
+         {field1}             | EXISTS  | {description}
+         {field2}             | EXISTS  | {description}
+         {field3}             | MISSING | (needs generation)
+         ...
+         ─────────────────────────────────────────────────────
+         ```
+
+      This inventory is the foundation for resolving the execution path.
+
+  # --------------------------------------------------------------------------
+  # STEP 3: RESOLVE EXECUTION PATH
+  # --------------------------------------------------------------------------
+  - id: resolve-execution-path
+    name: Resolve Execution Path
+    type: action
+    action: analyze
+    stores: executionPath
+    instruction: |
+      Walk through every step in the workflow and determine what will happen,
+      given the data that already exists.
+
+      For each step, determine its execution status:
+
+      1. **SKIP** — Step will be skipped because:
+         - Data it would produce already exists (pre-loaded)
+         - skipIf condition evaluates to true
+         - Step is disabled (active: false)
+
+      2. **RUN** — Step will execute because:
+         - Its outputs are needed and don't yet exist
+         - No skip conditions apply
+
+      3. **GATE** — Gate evaluation:
+         - If gate fields already exist, pre-evaluate: PASS or FAIL
+         - If gate depends on outputs from a RUN step, mark as PENDING
+         - Record onPass/onFail targets
+
+      4. **CHECKPOINT** — Requires human input:
+         - Record checkpoint type and options
+         - Note any recommendations based on available data
+
+      5. **CONDITIONAL** — Cannot determine until runtime:
+         - Depends on output from a RUN step
+         - Record the condition and what it depends on
+         - Estimate: "N-M of N substeps will run based on typical results"
+
+      Build execution path as ordered list:
+      ```
+      [SKIP]        Step 1: {name} — data pre-loaded
+      [RUN]         Step 2: {name}
+      [GATE:PASS]   Gate: {name} — {field} exists
+      [CHECKPOINT]  Step 3: {name} — recommendation: {advice}
+      [GATE:PENDING] Gate: {name}
+      [RUN]         Step 4: {name} (parallel, N substeps)
+      [CONDITIONAL] Step 5: {name} (depends on Step 4 results)
+      ```
+
+  # --------------------------------------------------------------------------
+  # STEP 4: BUILD INPUT/OUTPUT MAP
+  # --------------------------------------------------------------------------
+  - id: build-io-map
+    name: Build Input/Output Map for Every Running Step
+    type: action
+    action: analyze
+    stores: ioMap
+    instruction: |
+      For every step with status RUN or CONDITIONAL, build a precise I/O map.
+
+      For each step:
+
+      1. **Inputs — what it needs:**
+         - Read the step's .json schema (co-located with the .hbs prompt)
+         - List every required input field
+         - Map each input to its SOURCE:
+           - Pre-loaded data (from data inventory)
+           - Output of a previous step (field name + step ID)
+           - User input (from a checkpoint)
+         - Flag any input with NO SOURCE as a DATA GAP
+
+      2. **Outputs — what it produces:**
+         - Read the step's stores/outputs configuration
+         - List every output field name
+         - Map each output to its CONSUMERS:
+           - Which downstream steps use this output?
+           - Which gates check this field?
+           - Which conditions reference this field?
+
+      Build I/O map table for each running step:
+      ```
+      Step N: {step name}
+      ─────────────────────────────────
+      INPUTS:
+        {inputField}  ← {source}  [{EXISTS | MISSING}]
+
+      OUTPUTS:
+        {outputField} → {consumer steps}
+      ─────────────────────────────────
+      ```
+
+      Also build a summary:
+      - Total inputs across all running steps
+      - Inputs from pre-loaded data vs from previous steps
+      - Any DATA GAPS (inputs with no source)
+
+  # --------------------------------------------------------------------------
+  # STEP 5: PRESENT EXECUTION PLAN
+  # --------------------------------------------------------------------------
+  - id: present-plan
+    name: Present Execution Plan for User Commitment
+    type: elicit
+    elicit: true
+    stores: planCommitment
+    prompt: |
+      Review the execution plan and decide whether to proceed.
+    instruction: |
+      Compile everything from Steps 1-4 into a clear execution plan and
+      present it to the user.
+
+      Format:
+      ```
+      ══════════════════════════════════════════
+      Execution Plan: {workflow-name} v{version}
+      ══════════════════════════════════════════
+
+      Pre-loaded data: {list of existing fields}
+      Missing data: {list of fields to be generated, or "none"}
+      Data gaps: {fields with no source — ERRORS}
+
+      Execution Path ({N} steps, {M} gates):
+
+        {ordered execution path from Step 3}
+
+      Input/Output Summary:
+        Total inputs: {count} ({N} pre-loaded, {M} from prior steps)
+        Total LLM calls: {count} ({breakdown})
+        Checkpoints: {count} ({list})
+        Data gaps: {count}
+
+      Estimated: {time estimate}
+      ══════════════════════════════════════════
+
+      Proceed? [yes / modify / abort]
+      ```
+
+      If there are DATA GAPS, warn prominently:
+      ```
+      ⚠ DATA GAPS DETECTED — {count} inputs have no source:
+        - {field} needed by {step} — no step produces this
+      These will cause execution failures. Fix the workflow YAML first.
+      ```
+
+      Wait for user decision:
+      - **yes** → Continue to validate-plan phase, then execute
+      - **modify** → Ask what to change (skip steps, provide manual data, etc.)
+      - **abort** → Stop preflight, return to Oscar prompt
+
+  # ============================================================================
+  # PHASE 2: VALIDATE PLAN — CROSS-CHECK AGAINST SCHEMAS
+  # ============================================================================
+
+  # --------------------------------------------------------------------------
+  # STEP 6: SCHEMA CROSS-REFERENCE
+  # --------------------------------------------------------------------------
+  - id: validate-schema-inputs
+    name: Validate Schema Inputs Against Plan
+    type: action
+    action: analyze
+    stores: schemaValidation
+    instruction: |
+      For every step in the plan that will RUN:
+
+      1. Locate the step's .json schema file (co-located with .hbs prompt)
+      2. Read the schema's `properties` and `required` arrays
+      3. For every required schema input:
+         - Does the plan's I/O map provide a source for this input?
+         - Is the source field type compatible with what the schema expects?
+      4. For every optional schema input:
+         - Is data available? If yes, is it being passed?
+
+      Report per step:
+      | Schema Input | Required? | Plan Source | Compatible? | Status |
+      |-------------|-----------|-------------|-------------|--------|
+
+      Status values:
+      - WIRED: Required input has a mapped, compatible source
+      - MISSING-REQUIRED: Required input has no source (ERROR)
+      - MISSING-OPTIONAL: Optional input available but not mapped (WARNING)
+      - TYPE-MISMATCH: Source exists but type doesn't match schema (ERROR)
+
+  # --------------------------------------------------------------------------
+  # STEP 7: DATA AVAILABILITY WALK
+  # --------------------------------------------------------------------------
+  - id: validate-data-availability
+    name: Validate Data Availability in Execution Order
+    type: action
+    action: analyze
+    stores: availabilityValidation
+    instruction: |
+      Walk the execution plan IN ORDER. At each step, verify every input is
+      available from either pre-loaded data or a completed prior step.
+
+      For each step in order:
+      1. List all inputs needed
+      2. Check: is this input available RIGHT NOW?
+         - From pre-loaded data? → AVAILABLE
+         - From a prior step that has already run? → AVAILABLE
+         - From a later step? → ORDERING ERROR
+         - From a skipped/disabled step? → UNAVAILABLE ERROR
+         - From a conditional step? → CONDITIONAL WARNING
+
+      Report any ordering issues or unavailable inputs.
+
+      This catches the class of bug where step N needs data from step N+2,
+      or where a disabled step's outputs are still referenced.
+
+  # --------------------------------------------------------------------------
+  # STEP 8: GATE CONSISTENCY CHECK
+  # --------------------------------------------------------------------------
+  - id: validate-gates
+    name: Validate Gate Consistency
+    type: action
+    action: analyze
+    stores: gateValidation
+    instruction: |
+      For every gate in the execution plan:
+
+      1. Does each checks[].field exist in the data model at gate evaluation time?
+      2. Are onPass/onFail targets valid step IDs in the workflow?
+      3. Will the gate field be populated by the time the gate runs?
+
+      Report:
+      | Gate ID | Checks Field | Available? | Target Valid? | Status |
+      |---------|-------------|------------|---------------|--------|
+
+      Status: VALID | MISSING-FIELD (ERROR) | INVALID-TARGET (ERROR) | PENDING (OK)
+
+  # --------------------------------------------------------------------------
+  # STEP 9: CONDITION RESOLUTION CHECK
+  # --------------------------------------------------------------------------
+  - id: validate-conditions
+    name: Validate Conditional Step Resolution
+    type: action
+    action: analyze
+    stores: conditionValidation
+    instruction: |
+      For every conditional step (condition expressions, skipIf):
+
+      1. Can the condition be evaluated with data available at that point?
+      2. Does the condition reference a valid field?
+      3. Is the condition syntax valid (starts_with, contains, equals)?
+
+      Report:
+      | Step ID | Condition | References | Resolvable? | Status |
+      |---------|-----------|------------|-------------|--------|
+
+      Status:
+      - RESOLVABLE: Can evaluate with available data
+      - RUNTIME: Depends on a prior step's output (OK, resolves during execution)
+      - UNRESOLVABLE: References non-existent field (ERROR)
+
+  # --------------------------------------------------------------------------
+  # STEP 10: VALIDATION VERDICT
+  # --------------------------------------------------------------------------
+  - id: validation-verdict
+    name: Generate Validation Verdict
+    type: output
+    stores: verdict
+    instruction: |
+      Compile all validation results (Steps 6-9) into a verdict.
+
+      ```
+      ══════════════════════════════════════════
+      Plan Validation: {workflow-name}
+      ══════════════════════════════════════════
+
+      Schema Wiring:     {count} errors, {count} warnings
+      Data Availability: {count} errors, {count} warnings
+      Gate Consistency:  {count} errors
+      Conditions:        {count} errors
+
+      ──────────────────────────────────────────
+      VERDICT: {GREEN | YELLOW | RED}
+      ──────────────────────────────────────────
+      ```
+
+      Verdict rules:
+      - **RED**: Any errors exist → HALT, do not execute
+        - Show each error with location and fix suggestion
+        - Ask: "Fix these errors before proceeding?"
+      - **YELLOW**: No errors, but warnings → Show warnings, ask to proceed
+        - "Proceed with warnings? [yes / review / abort]"
+      - **GREEN**: No errors, no warnings → Ready to execute
+        - "Plan validated. Ready to execute."
+
+      After GREEN or YELLOW+proceed:
+      - The plan is now COMMITTED
+      - Oscar must follow it mechanically during execution
+      - Any deviation triggers the Deviation Protocol (halt + report)
+
+outputs:
+  - name: executionPlan
+    description: |
+      The committed execution plan including: execution path, I/O map,
+      validation results, and verdict. This becomes Oscar's contract
+      during execution — he follows it mechanically.
+    optional: false
+  - name: verdict
+    description: |
+      GREEN (proceed), YELLOW (warnings, user chose to proceed),
+      or RED (errors, cannot proceed).
+    optional: false

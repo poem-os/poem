@@ -1,0 +1,463 @@
+# Validate Workflow
+# Cross-references workflow YAML against prompt schemas, data flow, and gate logic
+# to catch wiring bugs before execution.
+#
+# Executed by: Workflow Architect agent (Alex) via *validate command
+# Execution model: Agent-interpreted (steps guide agent behavior, not automated)
+#
+# Path resolution: Inherited from poem-core-config.yaml
+# DO NOT add a paths: section - config service is the source of truth
+
+id: validate-workflow
+name: Validate Workflow Definition
+version: "1.1.0"
+author: POEM Framework
+lastUpdated: "2026-02-19"
+
+pathResolution: config
+
+description: |
+  Validates a workflow YAML definition by mechanically cross-referencing:
+  - Prompt schema inputs vs workflow YAML input mappings (wiring completeness)
+  - Template usage patterns vs runtime value types (type compatibility)
+  - Step outputs (stores:) vs downstream references (dangling references)
+  - Gate field references vs actual data model (gate validity)
+  - Disabled steps and their downstream impact (disabled step cascade)
+
+  This is a structural validation — it catches wiring bugs that would otherwise
+  only surface when Oscar improvises during execution. It does NOT validate
+  prompt quality, schema correctness, or output content.
+
+  Key Principle: Every issue found here is a bug the orchestrator should never
+  have to compensate for. If the workflow is valid, execution is mechanical.
+
+  Type Compatibility Principle: A schema input being "wired" (key name matches)
+  is necessary but not sufficient. The runtime TYPE of the value (object, array,
+  string) must also match how the template uses the variable:
+    - {{var}} flat scalar position → value must be a string or number
+    - {{var.prop}} dot-notation → value must be an object with that property
+    - {{#each var}} iteration → value must be an array
+  Passing an object where a flat scalar is expected causes Handlebars to render
+  "[object Object]" — a silent corruption that produces wrong LLM prompts.
+
+fallback:
+  onMissingInput: prompt-again
+  onApiError: show-error-and-retry
+  onFileConflict: warn-and-confirm
+
+steps:
+  # ============================================================================
+  # STEP 0: LOAD CONFIGURATION AND VALIDATE PREREQUISITES
+  # ============================================================================
+  - id: load-prerequisites
+    name: Load Configuration and Validate Prerequisites
+    type: action
+    action: validate-prerequisites
+    stores: prerequisites
+    instruction: |
+      Load configuration and verify all prerequisites before validation can proceed.
+
+      1. **Load POEM config:**
+         - Check if `packages/poem-core/` exists → DEVELOPMENT mode
+         - Otherwise check `.poem-core/` exists → PRODUCTION mode
+         - If neither exists, HALT: "No POEM core found. Expected packages/poem-core/
+           (development) or .poem-core/ (production) at project root."
+         - Load poem-core-config.yaml if available (graceful degradation if missing)
+
+      2. **Locate workflow directory:**
+         - Scan `poem/workflows/` for subdirectories containing `.yaml` files
+         - If no workflows found, HALT: "No workflows found in poem/workflows/.
+           Nothing to validate."
+         - Store list of available workflows
+
+      3. **Verify co-location pattern:**
+         - For each workflow, check that its prompts directory exists
+         - For each .hbs prompt file referenced, verify a co-located .json schema
+           file exists (same name, same directory)
+         - Record any missing schema files (these become pre-validation errors)
+
+      4. **Report prerequisites status:**
+         ```
+         Prerequisites Check
+         ─────────────────────────────────
+         POEM Core:    {DEVELOPMENT | PRODUCTION | MISSING}
+         Workflows:    {count} found in poem/workflows/
+         Prompts:      {count} .hbs files referenced
+         Schemas:      {count} .json files found ({missing} missing)
+         ─────────────────────────────────
+         Status:       {READY | HALT}
+         ```
+
+         If any schema files are missing, report them as pre-validation errors
+         but do NOT halt — continue with validation (missing schemas will show
+         as errors in Step 2).
+
+         If HALT condition met, stop and report the specific failure.
+
+  # ============================================================================
+  # STEP 1: SELECT AND LOAD WORKFLOW
+  # ============================================================================
+  - id: select-workflow
+    name: Select Workflow to Validate
+    type: elicit
+    elicit: true
+    prompt: |
+      Which workflow would you like to validate?
+
+      Available workflows found during prerequisites check:
+      {list from Step 0}
+
+      You can provide:
+      - A workflow name (e.g., `new-incident`)
+      - A number from the list above
+      - A path to a specific workflow YAML file
+    validation:
+      required: true
+    stores: selectedWorkflow
+    instruction: |
+      Present the available workflows from Step 0 as a numbered list.
+      Once user selects, load the workflow YAML into memory.
+
+      Parse and store the complete workflow structure:
+      - All steps and substeps (id, name, type, action, inputs, outputs, stores)
+      - All gates (id, checks, onPass, onFail)
+      - All conditions (skipIf, condition expressions)
+      - All disabled steps (active: false)
+      - All prompt file references (.hbs paths)
+      - All schema file references (.json paths)
+
+      Verify the YAML parses cleanly. If parse errors exist, HALT:
+      "Workflow YAML has parse errors: {details}. Fix syntax before validating."
+
+  # ============================================================================
+  # STEP 2: BUILD DATA MODEL (What fields exist at each step?)
+  # ============================================================================
+  - id: build-data-model
+    name: Build Cumulative Data Model
+    type: action
+    action: analyze
+    stores: dataModel
+    instruction: |
+      Walk through the workflow steps IN ORDER and build a cumulative data model.
+      Track which fields exist in the workflow context at each point in execution.
+
+      For each step:
+        1. Record what `stores:` adds to the data model
+        2. Record what `outputs:` each substep produces
+        3. If step has `active: false`, mark its outputs as UNAVAILABLE
+        4. If step has `skipIf:`, mark its outputs as CONDITIONAL
+
+      Build a table:
+
+      | Field Name | Produced By | Available After | Status |
+      |------------|-------------|-----------------|--------|
+
+      Status values:
+      - AVAILABLE: Always produced by an active step
+      - UNAVAILABLE: Produced by a disabled step (active: false)
+      - CONDITIONAL: Produced by a step with skipIf condition
+
+      This data model is the source of truth for all subsequent checks.
+
+  # ============================================================================
+  # STEP 3: VALIDATE PROMPT SCHEMA WIRING (Are all prompt inputs mapped?)
+  # ============================================================================
+  - id: validate-schema-wiring
+    name: Validate Prompt Schema Wiring
+    type: action
+    action: analyze
+    stores: schemaWiringResults
+    instruction: |
+      For every step and substep that references a prompt (.hbs file):
+
+        1. Locate the corresponding JSON schema file (same name, .json extension,
+           in the same directory per co-location pattern)
+        2. Read the schema's `properties` to get the list of declared inputs
+        3. Read the schema's `required` array to identify mandatory inputs
+        4. Compare against the workflow YAML's `inputs:` mapping for that step
+
+      For each prompt, report:
+
+      | Prompt | Schema Input | Required? | YAML Mapped? | YAML Source Expression | Status |
+      |--------|-------------|-----------|--------------|----------------------|--------|
+
+      Status values:
+      - WIRED: Schema input has a matching YAML input mapping
+      - MISSING-REQUIRED: Required schema input has NO YAML mapping (ERROR)
+      - MISSING-OPTIONAL: Optional schema input has NO YAML mapping (WARNING)
+      - EXTRA: YAML maps an input not declared in the schema (INFO)
+
+      CRITICAL: This is the check that catches the class of bug where a prompt
+      accepts an input (like incident_qa) but the workflow never passes it.
+      Every MISSING-REQUIRED is a guaranteed data gap during execution.
+
+  # ============================================================================
+  # STEP 4: VALIDATE TYPE COMPATIBILITY (Does the value TYPE match template usage?)
+  # ============================================================================
+  - id: validate-type-compatibility
+    name: Validate Template Type Compatibility
+    type: action
+    action: analyze
+    stores: typeCompatibilityResults
+    instruction: |
+      For every step and substep that references a prompt (.hbs file):
+
+        1. **Read the .hbs template file** and classify each {{variable}} reference
+           by usage pattern:
+
+           | Pattern | Classification | Expected Runtime Type |
+           |---------|---------------|----------------------|
+           | `{{var}}` in text/scalar position | FLAT-SCALAR | string or number |
+           | `{{var.property}}` dot-notation | OBJECT-DOT | object with that property |
+           | `{{#each var}}` iteration | ARRAY | array |
+           | `{{#if var}}` conditional | ANY | any (no type enforcement) |
+
+           Important: `{{var}}` inside a `{{#each var}}` block refers to each
+           element, not the array itself — classify based on outer context.
+
+        2. **Determine runtime type** of the value being passed to each input:
+
+           For each YAML `inputs:` entry, trace the source expression:
+           - `store.someKey` where `someKey` is a `stores:` output from a step
+             that calls an LLM prompt → type is whatever the schema `outputSchema`
+             declares (object, array, string)
+           - `store.someKey` where `someKey` was seeded from pre-loaded data →
+             check the project's input-mapper, seed function, or data conventions
+             to determine the runtime type of each field
+           - Literal string → string
+           - Mapped `{{key}}` from another input → inherit type of that source
+
+           **How to infer data types for this project:**
+           - Read the project's input-mapper.js (or equivalent seed/mapper file)
+             to understand what type each field is when it arrives at the workflow
+           - Check the workflow's input schema files for declared types
+           - Look at mock-data files to see the actual shape of seeded data
+
+           Example (supportsignal new-incident workflow):
+           - `narratives` → object `{ beforeEvent, duringEvent, endEvent, postEvent }`
+           - `answers` → array of `{ question, answer }` objects
+           - `basicInfo` → object `{ participantName, incidentDate, ... }`
+           - `incidentNarrative` (mapped from a specific phase) → string
+
+           Adapt these to the actual project and workflow being validated.
+
+        3. **Cross-reference** template usage classification vs runtime type:
+
+           | Template Var | Usage Pattern | Runtime Type | Compatible? |
+           |--------------|--------------|--------------|-------------|
+           | incidentNarrative | FLAT-SCALAR | object (narratives) | NO — TYPE-MISMATCH |
+           | incident_qa | ARRAY (each) | array | YES |
+           | basicInfo.participantName | OBJECT-DOT | object | YES |
+
+        4. **For each input**, produce a row in the type-compatibility matrix:
+
+           | Prompt | Input Var | Template Usage | YAML Source | Inferred Type | Compatible? | Status |
+           |--------|-----------|---------------|-------------|---------------|-------------|--------|
+
+           Status values:
+           - COMPATIBLE: Runtime type matches template usage
+           - TYPE-MISMATCH: Object passed where flat scalar expected → renders
+             "[object Object]" (ERROR)
+           - ARRAY-AS-SCALAR: Array passed where flat scalar expected → renders
+             count or first element unexpectedly (ERROR)
+           - SCALAR-AS-ARRAY: String/object passed where #each expected → no
+             iterations rendered (ERROR)
+           - UNRESOLVABLE: Cannot determine runtime type without execution (WARNING)
+
+      CRITICAL: This catches the class of bug where a value is correctly wired by
+      name but the runtime TYPE is wrong — e.g. an object passed where a flat scalar
+      is expected, causing Handlebars to render "[object Object]". The schema wiring
+      check (Step 3) sees the key is mapped and passes; only this step catches the
+      type mismatch.
+
+      Every TYPE-MISMATCH is a guaranteed prompt corruption during execution. The LLM
+      receives garbled input, returns non-JSON, and the workflow silently fails.
+
+  # ============================================================================
+  # STEP 5: VALIDATE DOWNSTREAM REFERENCES (Does every reference resolve?)
+  # ============================================================================
+  - id: validate-references
+    name: Validate Downstream References
+    type: action
+    action: analyze
+    stores: referenceResults
+    instruction: |
+      For every `{{variableName}}` reference in the workflow YAML (in inputs,
+      conditions, gates, skipIf, prompts):
+
+        1. Check if `variableName` exists in the cumulative data model (Step 2)
+        2. Check if it is AVAILABLE at the point where it is referenced
+           (i.e., the producing step comes BEFORE the consuming step)
+        3. Check if it is UNAVAILABLE due to a disabled step
+
+      For each reference, report:
+
+      | Reference | Used In (Step) | Produced By | Available? | Status |
+      |-----------|---------------|-------------|------------|--------|
+
+      Status values:
+      - RESOLVED: Reference points to a field that exists and is available
+      - DANGLING: Reference points to a field that no step produces (ERROR)
+      - DISABLED: Reference points to a field from a disabled step (ERROR)
+      - ORDERING: Reference points to a field produced by a LATER step (ERROR)
+      - CONDITIONAL: Reference points to a field that may or may not exist (WARNING)
+
+      CRITICAL: This catches the class of bug where Step 5 is disabled but
+      Step 6 still references {{questions}} (which Step 5 was supposed to produce).
+      Every DANGLING or DISABLED reference means the orchestrator will either
+      fail or improvise.
+
+  # ============================================================================
+  # STEP 6: VALIDATE GATE LOGIC (Do gates check real fields?)
+  # ============================================================================
+  - id: validate-gates
+    name: Validate Gate Field References
+    type: action
+    action: analyze
+    stores: gateResults
+    instruction: |
+      For every gate (type: gate) in the workflow:
+
+        1. Read each `checks[].field` reference
+        2. Verify the field exists in the data model at the point the gate runs
+        3. Verify the field is AVAILABLE (not from a disabled step)
+        4. Check that gate onFail/onPass targets reference valid step IDs
+
+      For each gate check, report:
+
+      | Gate ID | Checks Field | Field Exists? | Field Source | Status |
+      |---------|-------------|---------------|-------------|--------|
+
+      Status values:
+      - VALID: Gate checks a field that exists and is available
+      - MISSING-FIELD: Gate checks a field that doesn't exist (ERROR)
+      - DISABLED-SOURCE: Gate checks a field from a disabled step (ERROR)
+      - INVALID-TARGET: Gate onPass/onFail targets a non-existent step (ERROR)
+
+      CRITICAL: A gate checking a non-existent field will either always pass
+      or always fail, silently breaking the workflow's control flow.
+
+  # ============================================================================
+  # STEP 7: VALIDATE DISABLED STEP CASCADE (What breaks when steps are off?)
+  # ============================================================================
+  - id: validate-disabled-cascade
+    name: Validate Disabled Step Impact
+    type: action
+    action: analyze
+    stores: disabledCascadeResults
+    instruction: |
+      For every step with `active: false`:
+
+        1. Identify all outputs that step would have produced
+        2. Find every downstream step, gate, or substep that references those outputs
+        3. Report each broken dependency
+
+      For each disabled step, report:
+
+      | Disabled Step | Missing Output | Referenced By | Impact |
+      |---------------|---------------|---------------|--------|
+
+      Impact values:
+      - BROKEN-INPUT: A downstream step expects this as input (ERROR)
+      - BROKEN-GATE: A gate checks this field (ERROR)
+      - BROKEN-CONDITION: A conditional expression references this (ERROR)
+      - SAFE: No downstream references (OK to disable)
+
+      This is specifically designed to catch the Step 5 disable pattern:
+      when a step is turned off, its entire downstream dependency chain
+      must be audited.
+
+  # ============================================================================
+  # STEP 8: GENERATE VALIDATION REPORT
+  # ============================================================================
+  - id: generate-report
+    name: Generate Validation Report
+    type: output
+    stores: validationReport
+    instruction: |
+      Compile all findings into a single validation report.
+
+      ## Structure
+
+      ```
+      Workflow Validation Report: {workflow-name} v{version}
+      Validated: {timestamp}
+
+      ══════════════════════════════════════════
+      SUMMARY
+      ══════════════════════════════════════════
+
+      Errors:   {count}  (must fix before execution)
+      Warnings: {count}  (should fix, won't break execution)
+      Info:     {count}  (informational, no action needed)
+
+      Verdict:  PASS | FAIL | WARN
+
+      ══════════════════════════════════════════
+      ERRORS (Must Fix)
+      ══════════════════════════════════════════
+
+      {List each error with:}
+      - Error code (e.g., WIRING-001, TYPE-003, DANGLING-002, GATE-001)
+      - Location (step ID, substep ID, prompt file, line reference if applicable)
+      - Description (what's wrong)
+      - Fix suggestion (what to change in the YAML or template)
+
+      ══════════════════════════════════════════
+      WARNINGS (Should Fix)
+      ══════════════════════════════════════════
+
+      {List each warning with same structure}
+
+      ══════════════════════════════════════════
+      DATA MODEL
+      ══════════════════════════════════════════
+
+      {Show the cumulative data model table from Step 2}
+
+      ══════════════════════════════════════════
+      FULL WIRING MATRIX
+      ══════════════════════════════════════════
+
+      {Show the schema-to-YAML mapping table from Step 3}
+
+      ══════════════════════════════════════════
+      TYPE COMPATIBILITY MATRIX
+      ══════════════════════════════════════════
+
+      {Show the type-compatibility table from Step 4}
+      Every TYPE-MISMATCH row here is a prompt corruption waiting to happen.
+      ```
+
+      ## Verdict Rules
+
+      - FAIL: Any errors exist (MISSING-REQUIRED, TYPE-MISMATCH, ARRAY-AS-SCALAR,
+        SCALAR-AS-ARRAY, DANGLING, DISABLED, MISSING-FIELD)
+      - WARN: No errors, but warnings exist (MISSING-OPTIONAL, CONDITIONAL, UNRESOLVABLE)
+      - PASS: No errors and no warnings
+
+      ## Error Code Prefixes
+
+      - WIRING-NNN: Schema input not mapped in workflow YAML
+      - TYPE-NNN: Runtime type incompatible with template usage pattern
+      - DANGLING-NNN: Reference to a field no step produces
+      - GATE-NNN: Gate checks non-existent or unavailable field
+      - CASCADE-NNN: Disabled step breaks downstream dependency
+
+      ## After Report
+
+      If verdict is FAIL:
+        - Ask user: "Would you like me to fix these errors in the workflow YAML?"
+        - If yes, generate the specific YAML edits needed (show before/after)
+        - Do NOT auto-apply — present as suggestions for user approval
+
+      If verdict is PASS or WARN:
+        - Confirm workflow is ready for execution
+        - Suggest: "You can now run this with Oscar: /poem/agents/oscar then *run"
+
+outputs:
+  - name: validationReport
+    description: |
+      Complete validation report with errors, warnings, data model,
+      and wiring matrix. Saved to workflow directory if user requests.
+    optional: true
