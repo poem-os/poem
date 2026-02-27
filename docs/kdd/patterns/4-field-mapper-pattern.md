@@ -279,6 +279,7 @@ When defining a prompt chain:
   - Test fixture: `packages/poem-app/tests/fixtures/chains/youtube-3-step.yaml` (example with mapper)
 - **QA Gate**: `docs/qa/gates/4.6-run-prompt-chain.yml` (Quality Score: 100/100)
 - **Architecture**: `docs/architecture/core-workflows.md` (Workflow 4: Prompt Chain Execution)
+- **Decision Record**: [ADR-006: Field Mapper Architecture](../decisions/adr-006-field-mapper-architecture.md)
 
 ---
 

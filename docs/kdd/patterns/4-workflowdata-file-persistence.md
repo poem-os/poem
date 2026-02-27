@@ -308,6 +308,7 @@ When implementing file-based workflow persistence:
 - **QA Gate**: `docs/qa/gates/4.6-run-prompt-chain.yml` (Quality Score: 100/100)
 - **Coding Standards**: `docs/architecture/coding-standards.md` (File-Based Everything principle)
 - **Data Model**: `docs/architecture/data-models.md` (WorkflowData interface, lines 185-243)
+- **Decision Record**: [ADR-008: File-Based Workflow Persistence](../decisions/adr-008-file-based-workflow-persistence.md)
 
 ---
 

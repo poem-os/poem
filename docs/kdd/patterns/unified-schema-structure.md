@@ -273,6 +273,7 @@ if (canChainPrompts(extract, generate)) {
 - **Correction**: `docs/stories/3.7.1.story.md` (unified structure refactoring)
 - **Type Definitions**: `packages/poem-app/src/services/schema/types.ts` (UnifiedSchema interface)
 - **Architecture Doc**: `docs/architecture/data-models.md` (lines 155-230, Schema section)
+- **Decision Record**: [ADR-001: Unified Schema Structure](../decisions/adr-001-unified-schema-structure.md)
 
 ---
 

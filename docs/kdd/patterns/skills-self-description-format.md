@@ -315,6 +315,7 @@ Each skill file is loaded into agent context, enabling:
   - `preview-with-data.md` (Story 3.6)
   - `generate-schema.md` (Story 3.6)
   - `list-workflows.md` (Story 3.8)
+- **Decision Record**: [ADR-004: Skills as Markdown Documentation](../decisions/adr-004-skills-as-markdown-documentation.md)
 
 ---
 

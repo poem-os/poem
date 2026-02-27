@@ -100,7 +100,7 @@ Reusable architectural patterns, coding conventions, and design patterns extract
     - **Status**: Active
     - **Convention**: Markdown files with YAML frontmatter for Claude Code slash command integration
 
-### Testing Patterns (2)
+### Testing Patterns (3)
 
 15. **[Testing - Zero-Tolerance Pattern](./testing-zero-tolerance-pattern.md)** - Story 0.7
     - **Type**: Testing Pattern
@@ -109,7 +109,14 @@ Reusable architectural patterns, coding conventions, and design patterns extract
     - **Rule**: Delete all non-passing tests (skipped, flaky, failing) - no exceptions
     - **Enforcement**: Quinn validates 0 skipped tests in QA review
 
-16. **[Output Schema Validation Warnings](./4-output-schema-validation-warnings.md)** - Story 4.2
+16. **[Mandatory Test Gate Pattern](./mandatory-test-gate-pattern.md)** - Stories 0.7, 1.10, 1.11 ⭐ NEW
+    - **Type**: Process Pattern
+    - **Status**: Active
+    - **Problem**: Advisory quality gates systematically ignored under pressure
+    - **Rule**: Test execution is mandatory and blocking at every agent handoff — BLOCK not DEFER
+    - **Promoted**: 2026-02-27 (3 independent recurrences)
+
+17. **[Output Schema Validation Warnings](./4-output-schema-validation-warnings.md)** - Story 4.2
     - **Type**: Validation Pattern
     - **Status**: Active
     - **Problem**: LLM outputs may not match schema
@@ -152,8 +159,9 @@ Reusable architectural patterns, coding conventions, and design patterns extract
 - [API-First Heavy Operations](./api-first-heavy-operations.md)
 - [Skills Self-Description Format](./skills-self-description-format.md)
 
-### Testing (2)
+### Testing (3)
 - [Testing - Zero-Tolerance Pattern](./testing-zero-tolerance-pattern.md)
+- [Mandatory Test Gate Pattern](./mandatory-test-gate-pattern.md) ⭐ NEW
 - [Output Schema Validation Warnings](./4-output-schema-validation-warnings.md)
 
 ### Parsing (1)
@@ -227,5 +235,5 @@ Reusable architectural patterns, coding conventions, and design patterns extract
 ---
 
 **Index maintained by**: Lisa (Librarian)
-**Last updated**: 2026-01-30
-**Total patterns**: 17 (3 new from Epic 1 curation)
+**Last updated**: 2026-02-27
+**Total patterns**: 18 (1 new from health check curation: Mandatory Test Gate)

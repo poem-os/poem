@@ -1,6 +1,6 @@
 ---
 # Architecture Decision Record Metadata
-adr_number: "001"
+adr_number: "012"
 title: "Test Organization by Directory Structure"
 status: "Accepted"
 created: "2026-01-29"
@@ -11,7 +11,7 @@ supersedes: null
 superseded_by: null
 ---
 
-# ADR-001: Test Organization by Directory Structure
+# ADR-012: Test Organization by Directory Structure
 
 > **Status**: Accepted
 > **Date**: 2026-01-29

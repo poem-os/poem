@@ -342,6 +342,7 @@ describe('POST /api/schema/validate - Performance', () => {
 - **API Spec**: `docs/architecture/api-specification.md` (complete API documentation)
 - **Coding Standards**: `docs/architecture/coding-standards.md` (API-First principle)
 - **Skills README**: `packages/poem-core/skills/README.md` (how skills call APIs)
+- **Decision Record**: [ADR-003: API-First for Heavy Operations](../decisions/adr-003-api-first-for-heavy-operations.md)
 
 ---
 

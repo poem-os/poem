@@ -55,7 +55,7 @@ Lisa (Librarian) completed Epic 1 knowledge curation. **Epic 1: Installation & F
    - **Pattern Promoted**: [Zero-Tolerance Testing Pattern](./patterns/testing-zero-tolerance-pattern.md)
 
 ### Decisions
-1. **[ADR-001: Test Organization by Directory Structure](./decisions/adr-001-test-organization-by-directory.md)**
+1. **[ADR-012: Test Organization by Directory Structure](./decisions/adr-012-test-organization-by-directory.md)**
    - Decision: Organize tests by directory (unit/ vs integration/) based on server dependency
    - Rationale: Enables selective test execution, improves discoverability
    - Impact: 32 unit files + 2 integration files properly organized

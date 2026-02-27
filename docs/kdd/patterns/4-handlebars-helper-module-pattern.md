@@ -369,6 +369,7 @@ When creating a new helper:
   - `packages/poem-app/tests/services/handlebars/watcher.test.ts` (18 tests - hot-reload validation)
 - **QA Gate**: `docs/qa/gates/4.4-implement-required-handlebars-helpers.yml` (Quality Score: 100/100)
 - **Tech Stack**: `docs/architecture/tech-stack.md` (Handlebars.js 4.7.x, Vite 5.x)
+- **Decision Record**: [ADR-007: ESM Helpers with Hot-Reload](../decisions/adr-007-esm-helpers-hot-reload.md)
 
 ---
 

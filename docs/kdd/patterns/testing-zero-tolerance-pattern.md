@@ -226,7 +226,7 @@ git rm tests/integration/api/chain-execute.test.ts
 
 ## Related Patterns
 
-- **[Test Organization by Directory](../../kdd/decisions/adr-001-test-organization-by-directory.md)**: ADR-001 established unit/ vs integration/ separation (complements zero-tolerance)
+- **[Test Organization by Directory](../../kdd/decisions/adr-012-test-organization-by-directory.md)**: ADR-001 established unit/ vs integration/ separation (complements zero-tolerance)
 - **Environment Validation Pattern** (future): Pattern for validating required env vars exist (prevents env-related skips)
 
 ## Testing Considerations
@@ -269,7 +269,7 @@ git rm tests/integration/api/chain-execute.test.ts
 
 - Story: [Story 0.7](../../stories/0.7.story.md) - First enforcement of zero-tolerance (deleted 73 non-passing tests)
 - Learning: [Testing - Zero-Tolerance Enforcement](../learnings/testing-zero-tolerance-enforcement-kdd.md) - Detailed incident analysis
-- ADR: [ADR-001: Test Organization by Directory Structure](../decisions/adr-001-test-organization-by-directory.md) - Test organization architecture
+- ADR: [ADR-001: Test Organization by Directory Structure](../decisions/adr-012-test-organization-by-directory.md) - Test organization architecture
 - QA Gate: `docs/qa/gates/0.7-complete-test-infrastructure-improvements.yml` - Quinn's PASS decision after zero-tolerance achieved
 
 ## Quinn's Enforcement

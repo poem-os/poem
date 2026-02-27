@@ -272,6 +272,7 @@ When adding mock generation for a new domain:
   - `packages/poem-app/tests/services/mock-generator/field-detector.test.ts` (21 tests)
   - `packages/poem-app/tests/api/mock-generate.test.ts` (10 tests)
 - **QA Gate**: `docs/qa/gates/4.3-generate-mock-workflow-data.yml` (Quality Score: 100/100)
+- **Decision Record**: [ADR-005: Mock Data Generation with Faker.js](../decisions/adr-005-mock-data-generation-fakerjs.md)
 
 ---
 
