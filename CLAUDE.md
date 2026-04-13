@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**System context**: See [CONTEXT.md](CONTEXT.md) for purpose, core abstractions, key workflows, design decisions, non-obvious constraints, expert mental model, scope limits, and failure modes.
+
 ## Project Overview
 
 **POEM** (Prompt Orchestration and Engineering Method) is a Prompt Engineering Operating System designed to help teams create, manage, and deploy AI prompts with schemas, mappings, and mock data generation. This project uses the **BMAD Method v4** for structured AI-driven development.

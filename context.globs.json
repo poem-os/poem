@@ -1,0 +1,23 @@
+{
+  "pattern": "unknown",
+  "globs": {
+    "docs": ["docs/**/*.md"],
+    "config": ["packages/poem-core/poem-core-config.yaml", "*.config.*", "tsconfig.json", "vitest.config.ts"],
+    "services": ["packages/poem-app/src/services/**/*.ts"],
+    "routes": ["packages/poem-app/src/pages/api/**/*.ts"],
+    "tests": ["tests/**/*.test.ts", "packages/**/*.test.ts", "packages/**/*.spec.ts"],
+    "context": ["CLAUDE.md", "CONTEXT.md"],
+    "planning": ["docs/prd/**/*.md", "docs/planning/**/*.md", "docs/architecture/**/*.md"],
+    "tasks": ["packages/poem-core/tasks/**/*.yaml"]
+  },
+  "aliases": {
+    "backend": ["services", "routes"],
+    "api": ["routes", "services"],
+    "infrastructure": ["config", "tasks"]
+  },
+  "composites": {
+    "understand": ["context", "docs", "config"],
+    "codebase": ["services", "routes"],
+    "full": ["*"]
+  }
+}
