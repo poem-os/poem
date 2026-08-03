@@ -2,7 +2,7 @@
 # Architecture Decision Record Metadata
 adr_number: "010"
 title: "Story Files as Single Source of Truth (Prohibit Handover Documents)"
-status: "Accepted"
+status: "accepted"
 created: "2026-01-30"
 decision_date: "2026-01-30"
 story_reference: "Story 1.12"

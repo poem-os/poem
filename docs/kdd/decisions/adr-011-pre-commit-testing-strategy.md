@@ -2,7 +2,7 @@
 # Architecture Decision Record Metadata
 adr_number: "011"
 title: "Pre-commit Hook Testing Strategy"
-status: "Accepted"
+status: "accepted"
 created: "2026-02-03"
 decision_date: "2026-02-03"
 story_reference: "Epic Renumbering Validation"

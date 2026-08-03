@@ -2,7 +2,7 @@
 # Architecture Decision Record Metadata
 adr_number: "012"
 title: "Test Organization by Directory Structure"
-status: "Accepted"
+status: "accepted"
 created: "2026-01-29"
 decision_date: "2026-01-29"
 story_reference: "Story 0.7"

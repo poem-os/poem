@@ -1,7 +1,7 @@
 ---
 adr_number: 009
 title: "Fixed KDD Taxonomy for POEM"
-status: "Accepted"
+status: "accepted"
 created: "2026-01-25"
 decision_date: "2026-01-25"
 story_reference: "N/A - Design decision"
